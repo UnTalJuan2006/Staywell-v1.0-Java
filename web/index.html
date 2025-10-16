@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel Great Viggio</title>
+<link rel="icon" href="logo.png.jpeg">
+<link rel="stylesheet" href="css/dashboard.css">
+<script src="https://kit.fontawesome.com/tu_clave.js" crossorigin="anonymous"></script>
+<style>
+/* --- Carrusel --- */
+.carousel-container {
+  position: relative;
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.carousel-slide {
+  display: none;
+  text-align: center;
+  position: relative;
+}
+
+.carousel-slide img {
+  width: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+}
+
+.carousel-slide.active {
+  display: block;
+}
+
+button.prev, button.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 20px;
+  z-index: 10;
+}
+
+button.prev { left: 15px; }
+button.next { right: 15px; }
+
+.thumbnails-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.thumbnails {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.thumbnails img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.thumbnails img:hover,
+.thumbnails img.active-thumb {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.description-scroll {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <h1>Great Viggio</h1>
+    <nav class="header-navigation">
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#espacios">Espacios</a></li>
+        <li><a href="#servicio">Servicios</a></li>
+        <li><a href="#contactos">Contactos</a></li>
+        <li><a href="login.xhtml">Iniciar sesión</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <img src="img/cama.png" alt="Habitación Hotel Great Viggio">
+  <div class="hero-text">"Donde el confort se convierte en arte."</div>
+</section>
+
+<!-- Bienvenida -->
+<div id="inicio" class="bienvenida">
+  <div class="txt">
+    <h2>Bienvenido a Great Viggio</h2>
+    <p class="texto1">
+     En nuestro hotel, traemos un pedacito de Italia a Colombia, fusionando la calidez y hospitalidad italianas con la riqueza cultural y la belleza natural de este país. Nos enorgullece ofrecer una experiencia única que combina la elegancia del diseño italiano, el sabor auténtico de su gastronomía y un servicio excepcional que hace sentir a cada huésped como en casa. Ubicados en un entorno privilegiado, nuestro hotel es el lugar ideal para quienes buscan confort, estilo y una atención al detalle que refleja la pasión italiana por la excelencia. Ya sea que viaje por placer o negocios, estamos comprometidos a hacer de su estadía uña experiencia inolvidable.
+  </div>
+  <img class="edificio" src="img/hotel.png" alt="edificio">
+</div>
+
+<!-- Carrusel -->
+<section id="espacios" class="espacios-section">
+  <h2 class="espacios-title">Nuestros Espacios</h2>
+
+  <div class="carousel-container">
+    <div class="carousel-slide active">
+      <img src="img/reuniones.jpg" alt="Reuniones">
+      <div class="description-scroll">
+        <h3>Reuniones</h3>
+        <p>Espacios modernos para reuniones y eventos corporativos.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/spa.jpg" alt="Spa">
+      <div class="description-scroll">
+        <h3>Spa</h3>
+        <p>Relájese en nuestro spa de lujo con tratamientos exclusivos.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/gym.jpg" alt="Gimnasio">
+      <div class="description-scroll">
+        <h3>Gimnasio</h3>
+        <p>Equipado con máquinas de última generación.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/piscina.jpg" alt="Piscina">
+      <div class="description-scroll">
+        <h3>Piscina</h3>
+        <p>Piscina climatizada con vista panorámica.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/bar.jpg" alt="Bar">
+      <div class="description-scroll">
+        <h3>Bar</h3>
+        <p>Bebidas premium y cócteles exclusivos.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/restaurante.jpg" alt="Restaurante">
+      <div class="description-scroll">
+        <h3>Restaurante</h3>
+        <p>Menú internacional y cocina local gourmet.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/recepcion.jpg" alt="Recepción">
+      <div class="description-scroll">
+        <h3>Recepción</h3>
+        <p>Atención personalizada 24/7.</p>
+      </div>
+    </div>
+    <div class="carousel-slide">
+      <img src="img/coliseo.jpg" alt="Coliseo">
+      <div class="description-scroll">
+        <h3>Coliseo</h3>
+        <p>Eventos y espectáculos con gran capacidad.</p>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <button class="prev">&#10094;</button>
+    <button class="next">&#10095;</button>
+  </div>
+
+  <!-- Miniaturas -->
+  <div class="thumbnails-container">
+    <div class="thumbnails">
+      <img src="img/reuniones.jpg" alt="Reuniones">
+      <img src="img/spa.jpg" alt="Spa">
+      <img src="img/gym.jpg" alt="Gimnasio">
+      <img src="img/piscina.jpg" alt="Piscina">
+      <img src="img/bar.jpg" alt="Bar">
+      <img src="img/restaurante.jpg" alt="Restaurante">
+      <img src="img/recepcion.jpg" alt="Recepción">
+      <img src="img/coliseo.jpg" alt="Coliseo">
+    </div>
+  </div>
+</section>
+
+<!-- Servicios -->
+<div id="servicio" class="servicios-section">
+  <h2 class="servicios-title">Nuestros Servicios</h2>
+  <div class="servicios-container">
+    <div class="servicio-item">
+      <img src="img/servicioHabitacion.png" alt="Servicio a la Habitación">
+      <h3>Servicio a la Habitación</h3>
+      <p>Comida gourmet sin salir de tu habitación.</p>
+    </div>
+    <div class="servicio-item">
+      <img src="img/habitaciolujo.png" alt="Habitaciones de lujo">
+      <h3>Habitaciones de lujo</h3>
+      <p>Confort y diseño moderno para una estadía inolvidable.</p>
+    </div>
+    <div class="servicio-item">
+      <img src="img/comodidades.png" alt="Comodidades">
+      <h3>Comodidades</h3>
+      <p>Gimnasio, spa, piscina, sala de juegos y más.</p>
+    </div>
+    <div class="servicio-item">
+      <img src="img/restaurante.png" alt="Restaurante">
+      <h3>Restaurante</h3>
+      <p>Platos gourmet preparados por chefs de clase mundial.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer" id="contactos">
+  <div class="footer-content">
+    <div class="footer-section about">
+      <h3>Great Viggio</h3>
+      <p>Disfruta de la hospitalidad italiana en Colombia.</p>
+      <div class="contact">
+        <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
+        <p><i class="fas fa-phone"></i> +57 123 456 7890</p>
+        <p><i class="fas fa-envelope"></i> info@greatviggio.com</p>
+      </div>
+    </div>
+    <div class="footer-section links">
+      <h3>Enlaces Rápidos</h3>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#espacios">Espacios</a></li>
+        <li><a href="#servicio">Servicios</a></li>
+        <li><a href="#">Reservaciones</a></li>
+        <li><a href="#">Galería</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+    <div class="footer-section subscribe">
+      <h3>Suscríbete</h3>
+      <p>Recibe nuestras ofertas y novedades</p>
+      <form action="#" method="post">
+        <input type="email" name="email" placeholder="Ingresa tu email" required>
+        <button type="submit" class="btn-subscribe">Suscribirse</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="social-media">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-tripadvisor"></i></a>
+    </div>
+    <div class="legal-info">
+      <p>&copy; 2024 Hotel Great Viggio. Todos los derechos reservados.</p>
+      <p><a href="#">Política de privacidad</a> | <a href="#">Términos y condiciones</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- JS Carrusel -->
+<script>
+const slides = document.querySelectorAll('.carousel-slide');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+const thumbs = document.querySelectorAll('.thumbnails img');
+let currentIndex = 0;
+
+function showSlide(index) {
+  slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+  thumbs.forEach((thumb, i) => thumb.classList.toggle('active-thumb', i === index));
+}
+
+prevBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+  showSlide(currentIndex);
+});
+
+nextBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % slides.length;
+  showSlide(currentIndex);
+});
+
+thumbs.forEach((thumb, i) => {
+  thumb.addEventListener('click', () => {
+    currentIndex = i;
+    showSlide(currentIndex);
+  });
+});
+
+setInterval(() => {
+  currentIndex = (currentIndex + 1) % slides.length;
+  showSlide(currentIndex);
+}, 5000);
+
+showSlide(currentIndex);
+</script>
+</body>
+</html>

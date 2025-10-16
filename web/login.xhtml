@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login</title>
+        <h:outputStylesheet name="css/login.css" />
+
+        <style>
+            * {
+                margin: 0;
+                font-family: 'Poppins', sans-serif;
+                padding: 0;
+                box-sizing: border-box;
+                color: #d4af37;
+            }
+
+            body, html {
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .container {
+                display: flex;
+                width: 100%;
+                height: 100vh;
+                color: #d4af37;
+            }
+
+
+            .left-side {
+                width: 45%;
+                background-color: #f6f1eb;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: slideUp 1.2s ease forwards;
+                opacity: 0;
+            }
+
+            .logo-box img {
+                width: 500PX;
+                height: 350px;
+            }
+
+
+            .right-side {
+                width: 55%;
+                background: #131318;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: slideInRight 1s ease forwards;
+                opacity: 0;
+            }
+
+            .login-box {
+                width: 350px;
+                height: 400px;
+                background-color: transparent;
+                border: 2px solid rgba(255, 255, 255, .5);
+                border-radius: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 0px;
+                backdrop-filter: blur(15px);
+                box-shadow: 0px 0px 30px #ededed;
+
+
+            }
+
+            h2 {
+                font-size: 1.5em;
+                color: #fff;
+                text-align: center;
+                margin-bottom: 30px;
+                color: #d4af37;
+                font-family: 'Times New Roman', serif;
+            }
+
+            .input-box {
+                width: 100%;
+                position: relative;
+                margin: 30px 0;
+                border-bottom: 2px solid #fff;
+                padding: 2px;
+            }
+
+            .input-box label {
+                position: absolute;
+                top: 50%;
+                left: 10px;
+                transform: translateY(-50%);
+                font-size: 1em;
+                color: #fff;
+                pointer-events: none;
+                transition: 0.3s;
+                margin-top: 15px;
+            }
+
+            .input-box input {
+                width: 100%;
+                height: 50px;
+                background: transparent;
+                border: none;
+                outline: none;
+                color: #fff;
+                padding: 0 35px 0 10px;
+                font-size: 1em;
+            }
+
+            .input-box input:focus + label,
+            .input-box input:not(:placeholder-shown) + label {
+                top: -10px;
+                font-size: 1em;
+                color: #ddd;
+            }
+
+            .input-box .icon {
+                position: absolute;
+                right: 8px;
+                color: #fff;
+                font-size: 1.2em;
+                line-height: 57px;
+            }
+
+            .remember-forgot {
+                margin: -15px 0 15px;
+                font-size: 0.9em;
+                color: #fff;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .remember-forgot label input {
+                margin-right: 3px;
+            }
+
+            .remember-forgot a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .remember-forgot a:hover {
+                text-decoration: underline;
+            }
+
+
+            .register-link {
+                font-size: .9em;
+                color: #fff;
+                text-align: center;
+                margin: 25px 0 10px;
+            }
+
+            .register-link p a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .register-link p a:hover {
+                text-decoration: underline;
+            }
+
+            /* Animaciones */
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            /* Ajuste para botón de login */
+            .btn-login {
+                width: 100%;
+                height: 45px;
+                background-color: white;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 1em;
+                font-weight: bold;
+                color: #131318;
+                text-align: center;
+                transition: background-color 0.3s ease;
+                margin-top: 10px
+            }
+
+            .btn-login:hover {
+                background-color: #b8962d;
+            }
+
+            .btn-circular {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: #131318;
+                color: #fbf6f5;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+                transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+                cursor: pointer;
+            }
+
+            .btn-circular:hover {
+                background-color: #d4af37;
+                color: #131318;
+                transform: scale(1.1); /* efecto de “pop” al pasar */
+            }
+
+
+
+
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="container">
+            <!-- LADO IZQUIERDO -->
+            <div class="left-side">
+                <div class="logo-box">
+                    <img src="#{request.contextPath}/img/image.png" alt="Logo del hotel" />
+
+
+
+
+                </div>
+            </div>
+
+            <!-- LADO DERECHO -->
+            <div class="right-side">
+                <div class="login-box">
+                    <h:form>
+                        <h2>Iniciar Sesión</h2>
+
+                        <!-- Campo Email -->
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+                            <h:inputText id="EmailUser"
+                                         value="#{usuarioBean.usuario.email}"
+                                         required="true"
+                                         requiredMessage="Debe especificar un email"/>
+                            <label for="EmailUser">Email</label>
+                            <h:message for="EmailUser" style="color:red;" />
+                        </div>
+
+                        <!-- Campo Password -->
+                        <div class="input-box">
+                            <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
+                            <h:inputSecret id="PwUsr"
+                                           value="#{usuarioBean.usuario.password}"
+                                           required="true"
+                                           requiredMessage="Debe especificar una contraseña"/>
+                            <label for="PwUsr">Password</label>
+                            <h:message for="PwUsr" style="color:red;" />
+                        </div>
+
+                        <!-- Remember -->
+                        <label>
+                            Recordar: 
+                        </label>
+                        <a href="#">Olvidaste la contraseña? </a>
+
+                        <!-- Botón Login -->
+                        <div class="buton">
+                            <h:commandButton value="Iniciar sesión"
+                                             actionListener="#{usuarioBean.autenticar()}"
+                                             styleClass="btn-login"/>
+                        </div>
+
+
+
+                        <!-- Link de registro -->
+                        <div class="register-link">
+                            <p>¿No tienes una cuenta?
+                                <h:link outcome="registro.xhtml" value="Registro" />
+                            </p>
+                        </div>
+
+                        <h:messages id="msj" showDetail="true" showSummary="false" style="color:blue;" />
+                    </h:form>
+                </div>
+            </div>
+        </div>
+        <!-- Botón flotante -->
+        <a href="index.html" class="btn-circular" title="Volver">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <!-- Incluye FontAwesome para los iconos (CDN) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+
+
+
+
+        <!-- Ionicons -->
+        <script type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script type="text/javascript"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    </h:body>
+</html>

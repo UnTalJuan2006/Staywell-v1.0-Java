@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="es"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Dashboard Administrativo</title>
+
+        <!-- Bootstrap, Tailwind y FontAwesome -->
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+
+
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f4f6f9;
+                margin: 0;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 270px;
+                background: #131318;
+                color: white;
+                z-index: 1000;
+                overflow-y: auto;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar-header {
+                padding: 2rem 1.5rem;
+                padding-bottom: 10px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .sidebar-header h4 {
+                margin-bottom: 0.5rem;
+                font-weight: 700;
+            }
+
+            .sidebar-nav .nav-link {
+                display: flex;
+                align-items: center;
+                padding: 10px 18px;
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+            }
+
+            .sidebar-nav .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+
+            .sidebar-nav .nav-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border-right: 4px solid #ffd700;
+            }
+
+            .sidebar-footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* Main content */
+            .main-content {
+                margin-left: 260px;
+                padding: 2rem;
+            }
+
+            .top-bar {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .top-bar h2 {
+                margin: 0;
+                color: #495057;
+                font-weight: 600;
+            }
+
+            .user-info {
+                display: flex;
+                align-items: center;
+            }
+
+            /* Métricas rápidas */
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+            }
+
+            .stat-card {
+                background: #fff;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                transition: transform 0.2s;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .stat-icon {
+                font-size: 2em;
+                color: #007bff;
+            }
+
+            .stat-info h3 {
+                margin: 0;
+                font-size: 1.4em;
+                color: #333;
+            }
+
+            .stat-info p {
+                margin: 0;
+                color: #666;
+                font-size: 0.9em;
+            }
+
+            /* Cards con gráficas */
+            .dashboard {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 20px;
+            }
+
+            .card {
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+                padding: 20px;
+                transition: transform 0.2s;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+            .card h3 {
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .chart {
+                width: 100%;
+                height: 300px;
+            }
+            
+                    h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Panel principal */
+        .contenedor {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 80%;
+        }
+
+        /* Botones superiores */
+        .plantillas {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .plantillas .ui-button {
+            border-radius: 8px;
+            font-weight: bold;
+            padding: 10px 20px;
+        }
+
+        /* Layout horizontal */
+        .correo-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        /* Columna izquierda: destinatarios */
+        .destinatarios {
+            border-right: 2px solid #ecf0f1;
+            padding-right: 15px;
+        }
+
+        .destinatarios h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Columna derecha: asunto + mensaje */
+        .mensaje h3 {
+            margin: 10px 0 5px 0;
+        }
+
+        .mensaje input, .mensaje textarea {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Botón enviar */
+        .acciones {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .acciones .ui-button {
+            border-radius: 8px;
+            font-weight: bold;
+            padding: 12px 25px;
+        }
+        
+        /* Hacer que ocupe casi toda la pantalla */
+.contenedor-full {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Templates rápidos */
+.templates-rapidos {
+    margin-bottom: 25px;
+}
+
+.templates-rapidos h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #34495e;
+    border-left: 4px solid #3498db;
+    padding-left: 10px;
+}
+
+.plantillas {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Botones con estilos diferentes */
+.btn-plantilla {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 10px 20px !important;
+    color: #fff !important;
+    transition: transform .2s, box-shadow .2s;
+    border: none !important;
+}
+
+.btn-plantilla:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-plantilla.success { background: #2ecc71 !important; }
+.btn-plantilla.info    { background: #3498db !important; }
+.btn-plantilla.warning { background: #e67e22 !important; }
+
+/* El contenedor ocupa todo el ancho disponible */
+.contenedor-full {
+    width: 100%;
+    margin: 0;
+}
+
+/* Card más grande */
+.card {
+    width: 100%;
+    padding: 25px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Sección templates */
+.templates-rapidos {
+    margin-bottom: 25px;
+}
+
+.templates-rapidos h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plantillas {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Botones modernos tipo pill */
+.btn-plantilla {
+    border: none !important;
+    border-radius: 50px !important;
+    padding: 14px 28px !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff !important;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-plantilla i {
+    font-size: 18px;
+}
+
+.btn-plantilla:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* Gradientes por color */
+.btn-plantilla.success {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+.btn-plantilla.info {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+}
+.btn-plantilla.warning {
+    background: linear-gradient(135deg, #d35400, #e67e22);
+}
+
+/* Layout de formulario */
+.correo-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.destinatarios, .mensaje {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+}
+
+.destinatarios h3, .mensaje h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #34495e;
+}
+/* Forzar altura del selectManyMenu */
+.ui-selectmanymenu, 
+.ui-selectlistbox, 
+.ui-selectlistbox-listcontainer {
+    height: 400px !important;   /* mismo valor que le diste al componente */
+    max-height: 400px !important;
+}
+
+.ui-selectlistbox-list {
+    height: 90% !important;    /* para que la lista crezca dentro */
+    overflow-y: auto !important;
+}
+
+
+
+.card h2 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+input, textarea {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
+    outline: none;
+}
+.btn-enviar {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-enviar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+.btn-cancelar {
+    background: #f0f0f0;
+    border: none;
+    color: #555;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-cancelar:hover {
+    background: #ddd;
+}
+
+.correo-layout h3 {
+    color: #007bff;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+
+        </style>
+
+    </h:head>
+
+    <h:body>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-hotel"></i> StayWell</h4>
+                <p>Panel Admin</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                    <i class="bi bi-speedometer2 me-2"> </i>  Dashboard
+                </h:link>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
+                    <i class="bi bi-door-open me-2"></i> Habitaciones
+                </h:link>
+                <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
+                    <i class="bi bi-calendar-event me-2"></i> Eventos
+                </h:link>
+                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                    <i class="bi bi-people me-2"></i> Usuarios
+                </h:link>
+                <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
+                    <i class="bi bi-journal-bookmark me-2"></i> Reservas
+                </h:link>
+                <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
+                    <i class="bi bi-person-badge me-2"></i> Empleados
+                </h:link>
+                <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
+                    <i class="bi bi-building me-2"></i> Espacios
+                </h:link>
+                <h:link outcome="/Correos.xhtml" styleClass="nav-link">
+                    <i class="bi bi-envelope me-2"></i> Correos
+                </h:link>
+                <h:link outcome="/.xhtml" styleClass="nav-link">
+                    <i class="bi bi-bar-chart me-2"></i> Mantenimientos
+                </h:link>
+            </nav>
+
+
+            <h:form>
+                <div class="sidebar-footer">
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </h:commandLink>
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Main Content -->
+<div class="main-content">
+    <div class="top-bar d-flex justify-content-between align-items-center">
+        <h2><i class="fas fa-tachometer-alt"></i> Gestión de correos </h2>
+        <div class="user-info">
+            <span class="me-3">Bienvenido, Juan<strong>#{usuarioBean.usuario.nombre}</strong></span>
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <p:commandLink onclick="PF('perfilDialog').show();" style="text-decoration:none; color:blue;">
+                            <i class="fas fa-user"></i> Perfil
+                        </p:commandLink>
+                    </li>
+                    <li><h:outputLink value="#"><i class="fas fa-cog"></i> Configuración</h:outputLink></li>
+                    <li><hr class="dropdown-divider" /></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="contenedor-full"  style="margin-top:40px;">
+        <div class="card">
+            <h2>✉️ Envío de Correos Masivos</h2>
+
+            <!-- Formulario -->
+            <h:form id="formCorreo">
+                <div class="correo-layout">
+                    <!-- Columna izquierda -->
+                    <div class="destinatarios">
+                        <h3>👥 Destinatarios</h3>
+                        <p:selectManyMenu value="#{correoBean.dest}" showCheckbox="true" style="width:100%;height:400px;"
+                                          widgetVar="dest" required="true" requiredMessage="Debe seleccionar usuarios">
+                            <f:selectItems value="#{correoBean.listaUsr}" var="usr"
+                                           itemLabel="#{usr.nombre}" itemValue="#{usr.email}" />
+                        </p:selectManyMenu>
+  
+                        <div style="margin-top:10px; display:flex; gap:10px;">
+                            <p:commandButton value="Todos" onclick="PF('dest').selectAll();return false;" />
+                            <p:commandButton value="Ninguno" onclick="PF('dest').unselectAll();return false;" />
+                        </div>
+                    </div>
+
+                    <!-- Columna derecha -->
+                    <div class="mensaje">
+                        <h3>🏷️ Asunto</h3>
+                        <p:inputText value="#{correoBean.asunto}" required="true"
+                                     requiredMessage="Debe especificar un asunto" />
+
+                        <h3>💬 Mensaje</h3>
+                        <p:inputTextarea value="#{correoBean.contmensaje}" rows="8"
+                                         required="true" requiredMessage="Debe especificar un mensaje" />
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="acciones">
+                    <p:commandButton value="✉️ Enviar" ajax="false"
+                                     actionListener="#{correoBean.enviarCorreo()}"
+                                     styleClass="btn-enviar" />
+                    <p:commandButton value="Cancelar" ajax="false" immediate="true"
+                                     action="/admin" styleClass="btn-cancelar" />
+                </div>
+            </h:form>
+        </div>
+    </div>
+</div>
+
+
+    </h:body>
+</html>

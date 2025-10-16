@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Editar Habitación - Great Viggio Hotel</title>
+    <h:outputStylesheet name="css/style.css" />
+    <h:outputScript name="js/script.js" />
+    
+    <style>
+        
+        
+  .modal-glass {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 64, 128, 0.4);
+    border: 2px solid #ffd700; /* Dorado */
+  }
+
+  .modal-header-blue-gold {
+    background: linear-gradient(90deg, #0d1b2a, #1e3c72);
+    color: #ffd700;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+  }
+
+  .text-glow-gold {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.9), 0 0 20px rgba(30, 60, 114, 0.8);
+  }
+
+  .text-gold {
+    color: #ffd700;
+  }
+
+  .btn-blue-gold {
+    background: linear-gradient(90deg, #1e3c72, #2a5298);
+    border: 2px solid #ffd700;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(30, 60, 114, 0.6);
+  }
+  .btn-blue-gold:hover {
+    background: linear-gradient(90deg, #2a5298, #1e3c72);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    transform: scale(1.05);
+  }
+
+    </style>
+</h:head>
+
+<h:body>
+    <h:form id="editarForm">
+        <h2>Editar Habitación</h2>
+
+        <!-- Mensajes de información y error -->
+        <p:messages id="messages"  showDetail="true" closable="true" />
+
+        <h:panelGrid columns="2" columnClasses="label,value" styleClass="edit-habitacion-grid">
+
+            <!-- Número de Habitación -->
+            <h:outputLabel for="numHabitacion" value="Número de Habitación:" />
+            <p:inputText id="numHabitacion" value="#{habitacionBean.habitacion.numHabitacion}" required="true"
+                         label="Número de Habitación" />
+
+            <!-- Estado -->
+            <h:outputLabel for="estado" value="Estado:" />
+            <p:selectOneMenu id="estado" value="#{habitacionBean.habitacion.estado}" required="true">
+                <f:selectItems value="#{habitacionBean.estados}" var="estado" itemLabel="#{estado}" itemValue="#{estado}" />
+            </p:selectOneMenu>
+
+            <!-- Tipo de Habitación -->
+            <h:outputLabel for="tipoHabitacion" value="Tipo de Habitación:" />
+            <p:selectOneMenu id="tipoHabitacion" value="#{habitacionBean.habitacion.tipoHabitacion}" required="true">
+                <f:selectItems value="#{habitacionBean.tipos}" var="tipo" itemLabel="#{tipo}" itemValue="#{tipo}" />
+            </p:selectOneMenu>
+        </h:panelGrid>
+
+        <br />
+
+        <!-- Botones -->
+        <p:commandButton value="Actualizar Habitación" styleClass="btn btn-primary"
+                         action="#{habitacionBean.actualizar(habitacionBean.habitacion)}"
+                         update=":editarForm:messages" icon="pi pi-check" />
+
+        <p:commandButton value="Cancelar" styleClass="btn btn-secondary"
+                         action="Habitaciones?faces-redirect=true" immediate="true" icon="pi pi-times" />
+    </h:form>
+</h:body>
+</html>
