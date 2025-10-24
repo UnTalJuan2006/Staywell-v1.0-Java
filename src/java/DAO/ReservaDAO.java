@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,43 @@ public class ReservaDAO {
             ps.setInt(3, idReserva);
             ps.executeUpdate();
         }
+    }
+
+    public boolean habitacionDisponible(int habitacionId, LocalDateTime checkin, LocalDateTime checkout, Integer reservaExcluirId) throws SQLException {
+        if (checkin == null || checkout == null) {
+            throw new IllegalArgumentException("Las fechas de verificación no pueden ser nulas");
+        }
+
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM reserva WHERE idHabitacion = ? "
+                + "AND (? < COALESCE(checkout, ?)) "
+                + "AND (? > COALESCE(checkin, ?))");
+
+        if (reservaExcluirId != null) {
+            sql.append(" AND idReserva <> ?");
+        }
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql.toString())) {
+            Timestamp checkinTs = Timestamp.valueOf(checkin);
+            Timestamp checkoutTs = Timestamp.valueOf(checkout);
+
+            ps.setInt(1, habitacionId);
+            ps.setTimestamp(2, checkinTs);
+            ps.setTimestamp(3, checkoutTs);
+            ps.setTimestamp(4, checkoutTs);
+            ps.setTimestamp(5, checkinTs);
+
+            if (reservaExcluirId != null) {
+                ps.setInt(6, reservaExcluirId);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void eliminar(int idReserva) throws SQLException {
