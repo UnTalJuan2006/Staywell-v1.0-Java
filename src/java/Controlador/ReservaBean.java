@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -34,8 +35,10 @@ public class ReservaBean implements Serializable {
 
     private Integer habitacionIdSeleccionada;
     private Integer usuarioIdSeleccionado;
+    private String fechasOcupadasJson = "[]";
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     @PostConstruct
     public void init() {
@@ -82,6 +85,7 @@ public class ReservaBean implements Serializable {
                             ? reserva.getHabitacion().getIdHabitacion() : null;
                     usuarioIdSeleccionado = (reserva.getUsuario() != null)
                             ? reserva.getUsuario().getIdUsuario() : null;
+                    refrescarOcupacionesHabitacion();
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "La reserva no existe."));
@@ -95,7 +99,15 @@ public class ReservaBean implements Serializable {
 
     public String guardar() {
         try {
+            if (!validarFechasBasicas(true)) {
+                return null;
+            }
+
             if (!asignarRelaciones()) {
+                return null;
+            }
+
+            if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
 
@@ -117,7 +129,15 @@ public class ReservaBean implements Serializable {
 
     public String actualizar() {
         try {
+            if (!validarFechasBasicas(true)) {
+                return null;
+            }
+
             if (!asignarRelaciones()) {
+                return null;
+            }
+
+            if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
 
@@ -177,6 +197,83 @@ public class ReservaBean implements Serializable {
         return true;
     }
 
+    public void validarFechasAjax() {
+        refrescarOcupacionesHabitacion();
+
+        if (reserva.getCheckin() == null || reserva.getCehckout() == null || habitacionIdSeleccionada == null) {
+            return;
+        }
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (!validarFechasBasicas(false)) {
+            context.validationFailed();
+            return;
+        }
+
+        if (!validarDisponibilidadFechas(false)) {
+            context.validationFailed();
+        }
+    }
+
+    private boolean validarFechasBasicas(boolean mostrarMensajeCamposIncompletos) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Información incompleta", "Debe indicar las fechas de check-in y check-out."));
+            }
+            return false;
+        }
+
+        if (!reserva.getCheckin().isBefore(reserva.getCehckout())) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "Fechas inválidas", "La fecha de check-out debe ser posterior al check-in."));
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validarDisponibilidadFechas(boolean mostrarMensajeCamposIncompletos) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        Integer habitacionId = habitacionIdSeleccionada;
+        if ((habitacionId == null || habitacionId == 0)) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Habitación requerida", "Seleccione una habitación para verificar disponibilidad."));
+            }
+            return false;
+        }
+
+        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Información incompleta", "Debe indicar las fechas de la reserva."));
+            }
+            return false;
+        }
+
+        try {
+            Integer reservaId = reserva != null && reserva.getIdReserva() > 0 ? reserva.getIdReserva() : null;
+            boolean disponible = reservaDAO.habitacionDisponible(habitacionId,
+                    reserva.getCheckin(), reserva.getCehckout(), reservaId);
+            if (!disponible) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Fechas no disponibles", "La habitación ya está reservada en el rango seleccionado."));
+                return false;
+            }
+        } catch (SQLException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error", "No se pudo verificar la disponibilidad de la habitación."));
+            return false;
+        }
+
+        return true;
+    }
+
     private Habitacion obtenerHabitacionPorId(Integer id) {
         if (id == null) {
             return null;
@@ -211,6 +308,7 @@ public class ReservaBean implements Serializable {
         reserva = new Reserva();
         habitacionIdSeleccionada = null;
         usuarioIdSeleccionado = null;
+        fechasOcupadasJson = "[]";
     }
 
     public String formatearFecha(LocalDateTime fecha) {
@@ -249,19 +347,68 @@ public class ReservaBean implements Serializable {
         return listaUsuarios;
     }
 
-    public Integer getHabitacionIdSeleccionada() {
-        return habitacionIdSeleccionada;
-    }
-
-    public void setHabitacionIdSeleccionada(Integer habitacionIdSeleccionada) {
-        this.habitacionIdSeleccionada = habitacionIdSeleccionada;
-    }
-
     public Integer getUsuarioIdSeleccionado() {
         return usuarioIdSeleccionado;
     }
 
     public void setUsuarioIdSeleccionado(Integer usuarioIdSeleccionado) {
         this.usuarioIdSeleccionado = usuarioIdSeleccionado;
+    }
+
+    public String getFechasOcupadasJson() {
+        return fechasOcupadasJson;
+    }
+
+    public void setHabitacionIdSeleccionada(Integer habitacionIdSeleccionada) {
+        this.habitacionIdSeleccionada = habitacionIdSeleccionada;
+        refrescarOcupacionesHabitacion();
+    }
+
+    private void refrescarOcupacionesHabitacion() {
+        if (habitacionIdSeleccionada == null) {
+            fechasOcupadasJson = "[]";
+            return;
+        }
+
+        try {
+            Integer reservaId = reserva != null && reserva.getIdReserva() > 0 ? reserva.getIdReserva() : null;
+            List<Reserva> ocupaciones = reservaDAO.listarOcupacionesHabitacion(habitacionIdSeleccionada, reservaId);
+
+            if (ocupaciones.isEmpty()) {
+                fechasOcupadasJson = "[]";
+                return;
+            }
+
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            for (int i = 0; i < ocupaciones.size(); i++) {
+                Reserva ocupacion = ocupaciones.get(i);
+
+                if (ocupacion.getCheckin() == null || ocupacion.getCehckout() == null) {
+                    continue;
+                }
+
+                if (jsonBuilder.length() > 1) {
+                    jsonBuilder.append(',');
+                }
+
+                jsonBuilder.append('{')
+                        .append("\"from\":\"")
+                        .append(ocupacion.getCheckin().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\",\"to\":\"")
+                        .append(ocupacion.getCehckout().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\"}");
+            }
+
+            jsonBuilder.append(']');
+            fechasOcupadasJson = jsonBuilder.toString();
+        } catch (SQLException e) {
+            fechasOcupadasJson = "[]";
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo consultar la disponibilidad de la habitación."));
+        }
+    }
+
+    public Integer getHabitacionIdSeleccionada() {
+        return habitacionIdSeleccionada;
     }
 }
