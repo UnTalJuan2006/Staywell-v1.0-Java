@@ -323,6 +323,19 @@ public class ReservaBean implements Serializable {
         return "Habitación " + reserva.getHabitacion().getNumHabitacion();
     }
 
+    private String toHtmlInputValue(LocalDateTime fecha) {
+        if (fecha == null) {
+            return "";
+        }
+
+        LocalDateTime truncated = fecha.truncatedTo(ChronoUnit.MINUTES);
+        return truncated.format(HTML_INPUT_FORMATTER);
+    }
+
+    public String getCheckoutMinValue() {
+        return toHtmlInputValue(reserva.getCheckin());
+    }
+
     public EnumEstadoReserva[] getEstados() {
         return EnumEstadoReserva.values();
     }
