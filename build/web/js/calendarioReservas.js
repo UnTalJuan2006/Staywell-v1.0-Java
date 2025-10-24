@@ -33,6 +33,19 @@
         return new Date(date.getTime() - tzOffset).toISOString().slice(0, 19);
     };
 
+    const parseIsoLocal = (valor) => {
+        if (!valor) {
+            return null;
+        }
+
+        const parsed = new Date(valor);
+        if (Number.isNaN(parsed.getTime())) {
+            return null;
+        }
+
+        return parsed;
+    };
+
     const obtenerJson = (id) => {
         const elemento = document.getElementById(id);
         if (!elemento) {
@@ -93,7 +106,27 @@
         if (typeof window.actualizarReservaFechasCommand === 'function') {
             window.actualizarReservaFechasCommand(parametros, {
                 oncomplete: (xhr, status, args) => {
-                    if (!args || !args.success) {
+                    if (args && args.success) {
+                        if (args.evento && calendario) {
+                            try {
+                                const eventoActualizado = JSON.parse(args.evento);
+                                const eventoCalendario = calendario.getEventById(`${eventoActualizado.id}`);
+                                if (eventoCalendario) {
+                                    const nuevoInicio = parseIsoLocal(eventoActualizado.start);
+                                    const nuevoFin = parseIsoLocal(eventoActualizado.end);
+                                    if (nuevoInicio) {
+                                        const opciones = {};
+                                        if (typeof eventoActualizado.allDay === 'boolean') {
+                                            opciones.allDay = eventoActualizado.allDay;
+                                        }
+                                        eventoCalendario.setDates(nuevoInicio, nuevoFin || null, opciones);
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('No se pudo sincronizar la reserva actualizada en el calendario', error);
+                            }
+                        }
+                    } else {
                         if (typeof revertir === 'function') {
                             revertir();
                         }
@@ -243,6 +276,8 @@
             selectable: true,
             editable: true,
             droppable: true,
+            eventDurationEditable: true,
+            eventResizableFromStart: true,
             events: eventosData,
             eventContent: (arg) => {
                 const container = document.createElement('div');
@@ -299,6 +334,7 @@
                 const nombre = eventEl.dataset.nombre;
                 return {
                     title: nombre,
+                    allDay: true,
                     extendedProps: {
                         tipoId,
                         tipoNombre: nombre
