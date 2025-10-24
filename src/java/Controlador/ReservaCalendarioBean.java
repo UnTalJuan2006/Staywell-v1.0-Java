@@ -224,7 +224,7 @@ public class ReservaCalendarioBean implements Serializable {
             primeFaces.ajax().addCallbackParam("success", true);
             primeFaces.ajax().addCallbackParam("evento", construirEventoJson(creada));
             agregarMensajeInformacion("Reserva creada correctamente.");
-        } catch (NumberFormatException | SQLException | DateTimeParseException | IllegalArgumentException e) {
+        } catch ( SQLException | DateTimeParseException | IllegalArgumentException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo crear la nueva reserva desde el calendario.");
         }
