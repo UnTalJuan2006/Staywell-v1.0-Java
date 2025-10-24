@@ -115,7 +115,11 @@
                                     const nuevoInicio = parseIsoLocal(eventoActualizado.start);
                                     const nuevoFin = parseIsoLocal(eventoActualizado.end);
                                     if (nuevoInicio) {
-                                        eventoCalendario.setDates(nuevoInicio, nuevoFin || null);
+                                        const opciones = {};
+                                        if (typeof eventoActualizado.allDay === 'boolean') {
+                                            opciones.allDay = eventoActualizado.allDay;
+                                        }
+                                        eventoCalendario.setDates(nuevoInicio, nuevoFin || null, opciones);
                                     }
                                 }
                             } catch (error) {
@@ -330,6 +334,7 @@
                 const nombre = eventEl.dataset.nombre;
                 return {
                     title: nombre,
+                    allDay: true,
                     extendedProps: {
                         tipoId,
                         tipoNombre: nombre

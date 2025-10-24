@@ -348,6 +348,8 @@ public class ReservaCalendarioBean implements Serializable {
                 .append("\"title\":\"").append(escaparJson(titulo)).append("\",")
                 .append("\"start\":\"").append(formatearFecha(inicio)).append("\",")
                 .append("\"end\":\"").append(formatearFecha(fin)).append("\",")
+                .append("\"allDay\":true,")
+                .append("\"editable\":true,")
                 .append("\"extendedProps\":{")
                 .append("\"habitacionId\":").append(habitacion != null ? habitacion.getIdHabitacion() : 0).append(",")
                 .append("\"habitacionNumero\":").append(habitacion != null ? habitacion.getNumHabitacion() : 0).append(",")
