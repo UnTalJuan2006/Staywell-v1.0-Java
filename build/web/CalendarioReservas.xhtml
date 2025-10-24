@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="es">
+    <h:head>
+        <title>Calendario de Reservas</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pb3VM90c5m0FxZ3q5ETN4Jy5mO7h6G+j6QhB9CclW3Vqx1T8ZDXoy0S8M6xP6G8iP2TgOSj+XmqD9g1Xw4UPzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 270px;
+                background: #131318;
+                color: white;
+                z-index: 1000;
+                overflow-y: auto;
+                transition: all 0.3s ease;
+            }
+
+            .sidebar-header {
+                padding: 2rem 1.5rem 1rem 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+            }
+
+            .sidebar-header h4 {
+                margin-bottom: 0.25rem;
+                font-weight: 700;
+            }
+
+            .sidebar-nav .nav-link {
+                display: flex;
+                align-items: center;
+                padding: 10px 18px;
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+            }
+
+            .sidebar-nav .nav-link:hover,
+            .sidebar-nav .nav-link.active {
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+            }
+
+            .sidebar-footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 2rem 2.5rem;
+            }
+
+            .top-bar {
+                background: #fff;
+                border-radius: 16px;
+                padding: 1.5rem 2rem;
+                border: 1px solid #e9ecef;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            }
+
+            #calendar {
+                min-height: 650px;
+            }
+
+            .external-event {
+                background: #1e3c72;
+                color: #ffd700;
+                border-radius: 12px;
+                padding: 0.75rem 1rem;
+                margin-bottom: 0.75rem;
+                cursor: grab;
+                border: 2px solid rgba(255, 215, 0, 0.4);
+                transition: transform 0.2s ease;
+            }
+
+            .external-event:hover {
+                transform: translateY(-2px);
+            }
+
+            .external-event small {
+                color: rgba(255, 255, 255, 0.8);
+            }
+
+            .fc .fc-toolbar-title {
+                font-size: 1.35rem;
+                font-weight: 600;
+            }
+
+            .fc-event-custom {
+                font-size: 0.8rem;
+                line-height: 1.25rem;
+            }
+
+            .fc-event-room {
+                font-weight: 700;
+            }
+
+            .fc-event-client {
+                font-size: 0.75rem;
+            }
+
+            .fc-event-dates {
+                font-size: 0.7rem;
+                color: rgba(255, 255, 255, 0.85);
+            }
+
+            .calendar-card {
+                border-radius: 18px;
+                border: 1px solid #e0e7ff;
+            }
+
+            .calendar-card .card-body {
+                padding: 0.5rem;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-hotel"></i> StayWell</h4>
+                <p>Panel Admin</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </h:link>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
+                    <i class="bi bi-door-open me-2"></i> Habitaciones
+                </h:link>
+                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link">
+                    <i class="bi bi-journal-bookmark me-2"></i> Catálogo Habitaciones
+                </h:link>
+                <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
+                    <i class="bi bi-journal-bookmark me-2"></i> Reservas
+                </h:link>
+                <h:link outcome="/CalendarioReservas.xhtml" styleClass="nav-link active">
+                    <i class="bi bi-calendar-event me-2"></i> Calendario de reservas
+                </h:link>
+                <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
+                    <i class="bi bi-calendar3 me-2"></i> Eventos
+                </h:link>
+                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                    <i class="bi bi-people me-2"></i> Usuarios
+                </h:link>
+                <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
+                    <i class="bi bi-person-badge me-2"></i> Empleados
+                </h:link>
+                <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
+                    <i class="bi bi-building me-2"></i> Espacios
+                </h:link>
+                <h:link outcome="/Correos.xhtml" styleClass="nav-link">
+                    <i class="bi bi-envelope me-2"></i> Correos
+                </h:link>
+            </nav>
+
+            <h:form>
+                <div class="sidebar-footer">
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </h:commandLink>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="main-content">
+            <h:form id="calendarForm">
+                <div class="top-bar d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <h2 class="mb-0"><i class="bi bi-calendar-week"></i> Calendario de Reservas</h2>
+                        <p class="text-muted mb-0">Gestiona reservas visualmente arrastrando y soltando habitaciones.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <h:link outcome="/Reservas.xhtml" styleClass="btn btn-outline-secondary">
+                            <i class="bi bi-list-ul"></i> Ver listado
+                        </h:link>
+                        <h:link outcome="/crearReserva.xhtml" styleClass="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Nueva reserva
+                        </h:link>
+                    </div>
+                </div>
+
+                <p:growl id="growl" showDetail="true" life="4000" />
+
+                <div class="row mt-4 g-4">
+                    <div class="col-lg-3">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white border-0">
+                                <h5 class="mb-0"><i class="bi bi-columns-gap"></i> Tipos de habitación</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small">Arrastra un tipo de habitación y suéltalo sobre una fecha del calendario para crear una reserva.</p>
+                                <div id="tipos-draggable">
+                                    <ui:repeat value="#{reservaCalendarioBean.tiposHabitacion}" var="tipo">
+                                        <div class="external-event" data-tipo-id="#{tipo.idTipoHabitacion}" data-nombre="#{tipo.nombre}">
+                                            <div class="fw-bold">#{tipo.nombre}</div>
+                                            <small>Capacidad: #{tipo.capacidad} • $ #{tipo.precio}</small>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold">Consejos rápidos</h6>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li>Arrastra los eventos existentes para actualizar fechas de check-in y check-out.</li>
+                                    <li>Haz clic en una reserva para ver su detalle completo.</li>
+                                    <li>Utiliza el panel lateral para crear reservas desde los tipos de habitación.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="card shadow-sm calendar-card">
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p:remoteCommand name="actualizarReservaFechasCommand"
+                                 actionListener="#{reservaCalendarioBean.actualizarFechas}"
+                                 process="@this"
+                                 update="growl" />
+                <p:remoteCommand name="crearReservaCalendarioCommand"
+                                 actionListener="#{reservaCalendarioBean.crearReservaDesdeCalendario}"
+                                 process="@this"
+                                 update="growl" />
+            </h:form>
+        </div>
+
+        <div class="modal fade" id="detalleReservaModal" tabindex="-1" aria-labelledby="detalleReservaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="detalleReservaLabel"><i class="bi bi-info-circle"></i> Detalle de la reserva</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-door-open"></i> Habitación</h6>
+                                    <p class="mb-1" id="detalle-habitacion"></p>
+                                    <p class="mb-0 text-muted" id="detalle-tipo"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-calendar2-week"></i> Fechas</h6>
+                                    <p class="mb-1" id="detalle-fechas"></p>
+                                    <p class="mb-0 text-muted" id="detalle-estado"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-person"></i> Huésped</h6>
+                                    <p class="mb-1" id="detalle-cliente"></p>
+                                    <p class="mb-0"><i class="bi bi-envelope"></i> <span id="detalle-email"></span></p>
+                                    <p class="mb-0"><i class="bi bi-telephone"></i> <span id="detalle-telefono"></span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <h6 class="fw-bold text-primary"><i class="bi bi-journal-text"></i> Observaciones</h6>
+                                    <p class="mb-0" id="detalle-observaciones"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="crearReservaModal" tabindex="-1" aria-labelledby="crearReservaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="crearReservaLabel"><i class="bi bi-calendar-plus"></i> Nueva reserva</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <input type="hidden" id="crear-start" />
+                            <input type="hidden" id="crear-end" />
+                            <input type="hidden" id="crear-tipo-id" />
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Tipo de habitación</label>
+                                <input type="text" class="form-control" id="crear-tipo-nombre" readonly="readonly" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Habitación</label>
+                                <select class="form-select" id="crear-habitacion"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Huésped</label>
+                                <select class="form-select" id="crear-usuario"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Estado</label>
+                                <select class="form-select" id="crear-estado">
+                                    <option value="ACTIVA">Activa</option>
+                                    <option value="FINALIZADA">Finalizada</option>
+                                    <option value="CANCELADA">Cancelada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Nombre del huésped</label>
+                                <input type="text" class="form-control" id="crear-nombre" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Correo electrónico</label>
+                                <input type="email" class="form-control" id="crear-email" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Teléfono</label>
+                                <input type="text" class="form-control" id="crear-telefono" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Observaciones</label>
+                                <textarea class="form-control" id="crear-observaciones" rows="3"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="alert alert-info py-2 mb-0" id="crear-resumen-fechas"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" onclick="guardarNuevaReserva()">
+                            <i class="bi bi-save"></i> Guardar reserva
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="application/json" id="eventos-json"><h:outputText value="#{reservaCalendarioBean.eventosJson}" escape="false" /></script>
+        <script type="application/json" id="tipos-json"><h:outputText value="#{reservaCalendarioBean.tiposHabitacionJson}" escape="false" /></script>
+        <script type="application/json" id="habitaciones-json"><h:outputText value="#{reservaCalendarioBean.habitacionesJson}" escape="false" /></script>
+        <script type="application/json" id="usuarios-json"><h:outputText value="#{reservaCalendarioBean.usuariosJson}" escape="false" /></script>
+
+        <script src="js/calendarioReservas.js"></script>
+        <script>
+            const formatearFechaTexto = (fecha) => {
+                if (!fecha) {
+                    return '';
+                }
+                return new Intl.DateTimeFormat('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).format(fecha);
+            };
+
+            const formatoRango = (evento) => {
+                const inicio = evento.start ? formatearFechaTexto(evento.start) : '';
+                const fin = evento.end ? formatearFechaTexto(evento.end) : '';
+                if (!(!inicio) || !(!fin)) {
+                    return '';
+                }
+                return `${inicio} - ${fin}`;
+            };
+
+            const toLocalIso = (date) => {
+                if (!date) {
+                    return '';
+                }
+                const tzOffset = date.getTimezoneOffset() * 60000;
+                const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 19);
+                return localISOTime;
+            };
+
+            const obtenerJson = (id) => {
+                const elemento = document.getElementById(id);
+                if (!elemento) {
+                    return [];
+                }
+                try {
+                    const contenido = elemento.textContent || elemento.innerText || '[]';
+                    return JSON.parse(contenido);
+                } catch (e) {
+                    console.error('Error al parsear el JSON del elemento', id, e);
+                    return [];
+                }
+            };
+
+            const eventosData = obtenerJson('eventos-json');
+            const tiposHabitacionData = obtenerJson('tipos-json');
+            const habitacionesData = obtenerJson('habitaciones-json');
+            const usuariosData = obtenerJson('usuarios-json');
+
+            let calendario;
+            let crearReservaModalInstance;
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const calendarEl = document.getElementById('calendar');
+                calendario = new FullCalendar.Calendar(calendarEl, {
+                    locale: 'es',
+                    initialView: 'dayGridMonth',
+                    height: 'auto',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                    },
+                    selectable: true,
+                    editable: true,
+                    droppable: true,
+                    events: eventosData,
+                    eventContent: (arg) => {
+                        const container = document.createElement('div');
+                        container.classList.add('fc-event-custom');
+
+                        const room = document.createElement('div');
+                        room.classList.add('fc-event-room');
+                        room.textContent = `Hab. ${arg.event.extendedProps.habitacionNumero || ''}`;
+
+                        const client = document.createElement('div');
+                        client.classList.add('fc-event-client');
+                        client.textContent = arg.event.extendedProps.cliente || '';
+
+                        const range = document.createElement('div');
+                        range.classList.add('fc-event-dates');
+                        range.textContent = formatoRango(arg.event);
+
+                        container.appendChild(room);
+                        container.appendChild(client);
+                        container.appendChild(range);
+
+                        return {domNodes: [container]};
+                    },
+                    eventClick: (info) => {
+                        info.jsEvent.preventDefault();
+                        mostrarDetalleReserva(info.event);
+                    },
+                    eventDrop: (info) => {
+                        actualizarFechasReserva(info.event, info.revert);
+                    },
+                    eventResize: (info) => {
+                        actualizarFechasReserva(info.event, info.revert);
+                    },
+                    eventReceive: (info) => {
+                        manejarNuevaReserva(info.event);
+                    }
+                });
+
+                calendario.render();
+
+                const draggableContainer = document.getElementById('tipos-draggable');
+                if (draggableContainer) {
+                    new FullCalendar.Draggable(draggableContainer, {
+                        itemSelector: '.external-event',
+                        eventData: (eventEl) => {
+                            const tipoId = parseInt(eventEl.dataset.tipoId, 10);
+                            const nombre = eventEl.dataset.nombre;
+                            return {
+                                title: nombre,
+                                extendedProps: {
+                                    tipoId: tipoId,
+                                    tipoNombre: nombre
+                                },
+                                duration: {days: 1}
+                            };
+                        }
+                    });
+                }
+
+                const modalEl = document.getElementById('crearReservaModal');
+                if (modalEl) {
+                    crearReservaModalInstance = new bootstrap.Modal(modalEl);
+                }
+
+                prepararSelectUsuarios();
+            });
+
+            const mostrarDetalleReserva = (evento) => {
+                const modal = new bootstrap.Modal(document.getElementById('detalleReservaModal'));
+                document.getElementById('detalle-habitacion').textContent = `Habitación ${evento.extendedProps.habitacionNumero}`;
+                document.getElementById('detalle-tipo').textContent = evento.extendedProps.tipoHabitacion || 'Sin tipo asignado';
+                document.getElementById('detalle-fechas').textContent = formatoRango(evento);
+                document.getElementById('detalle-estado').textContent = `Estado: ${evento.extendedProps.estado || 'Sin estado'}`;
+                document.getElementById('detalle-cliente').textContent = evento.extendedProps.cliente || 'Sin información';
+                document.getElementById('detalle-email').textContent = evento.extendedProps.email || '-';
+                document.getElementById('detalle-telefono').textContent = evento.extendedProps.telefono || '-';
+                document.getElementById('detalle-observaciones').textContent = evento.extendedProps.observaciones || 'Sin observaciones';
+                modal.show();
+            };
+
+            const actualizarFechasReserva = (evento, revertir) => {
+                const parametros = [
+                    {name: 'id', value: evento.id},
+                    {name: 'start', value: toLocalIso(evento.start)},
+                    {name: 'end', value: toLocalIso(evento.end)}
+                ];
+                actualizarReservaFechasCommand(parametros, {
+                    oncomplete: (xhr, status, args) => {
+                        if (!args || !args.success) {
+                            if (typeof revertir === 'function') {
+                                revertir();
+                            }
+                        }
+                    }
+                });
+            };
+
+            const manejarNuevaReserva = (evento) => {
+                const tipoId = evento.extendedProps.tipoId;
+                const tipoNombre = evento.extendedProps.tipoNombre;
+                const inicio = toLocalIso(evento.start);
+                const fin = toLocalIso(evento.end || new Date(evento.start.getTime() + 86400000));
+
+                evento.remove();
+                abrirModalCreacion({
+                    tipoId,
+                    tipoNombre,
+                    inicio,
+                    fin
+                });
+            };
+
+            const abrirModalCreacion = ({tipoId, tipoNombre, inicio, fin}) => {
+                document.getElementById('crear-tipo-id').value = tipoId || '';
+                document.getElementById('crear-tipo-nombre').value = tipoNombre || '';
+                document.getElementById('crear-start').value = inicio || '';
+                document.getElementById('crear-end').value = fin || '';
+                const resumenFechas = document.getElementById('crear-resumen-fechas');
+                const inicioFecha = inicio ? new Date(inicio) : null;
+                const finFecha = fin ? new Date(fin) : null;
+                resumenFechas.textContent = `Check-in: ${formatearFechaTexto(inicioFecha)} | Check-out: ${formatearFechaTexto(finFecha)}`;
+                document.getElementById('crear-observaciones').value = '';
+                document.getElementById('crear-nombre').value = '';
+                document.getElementById('crear-email').value = '';
+                document.getElementById('crear-telefono').value = '';
+                document.getElementById('crear-estado').value = 'ACTIVA';
+
+                prepararSelectHabitaciones(tipoId);
+                prepararSelectUsuarios();
+
+                if (crearReservaModalInstance) {
+                    crearReservaModalInstance.show();
+                }
+            };
+
+            const prepararSelectHabitaciones = (tipoId) => {
+                const selectHabitacion = document.getElementById('crear-habitacion');
+                selectHabitacion.innerHTML = '';
+
+                const opcionDefault = document.createElement('option');
+                opcionDefault.value = '';
+                opcionDefault.textContent = 'Selecciona una habitación';
+                selectHabitacion.appendChild(opcionDefault);
+
+                habitacionesData
+                        .filter(h => !tipoId || h.tipoId === tipoId)
+                        .forEach(h => {
+                            const option = document.createElement('option');
+                            option.value = h.id;
+                            option.textContent = `Habitación ${h.numero} (${h.tipoNombre})`;
+                            selectHabitacion.appendChild(option);
+                        });
+            };
+
+            const prepararSelectUsuarios = () => {
+                const selectUsuario = document.getElementById('crear-usuario');
+                if (!selectUsuario) {
+                    return;
+                }
+
+                const valorSeleccionado = selectUsuario.value;
+                selectUsuario.innerHTML = '';
+
+                const opcionDefault = document.createElement('option');
+                opcionDefault.value = '';
+                opcionDefault.textContent = 'Selecciona un huésped';
+                selectUsuario.appendChild(opcionDefault);
+
+                usuariosData.forEach(u => {
+                    const option = document.createElement('option');
+                    option.value = u.id;
+                    option.textContent = `${u.nombre} (${u.email})`;
+                    selectUsuario.appendChild(option);
+                });
+
+                if (valorSeleccionado) {
+                    selectUsuario.value = valorSeleccionado;
+                }
+
+                selectUsuario.onchange = (event) => {
+                    const seleccionado = usuariosData.find(u => `${u.id}` === event.target.value);
+                    if (seleccionado) {
+                        document.getElementById('crear-nombre').value = seleccionado.nombre || '';
+                        document.getElementById('crear-email').value = seleccionado.email || '';
+                        document.getElementById('crear-telefono').value = seleccionado.telefono || '';
+                    }
+                };
+            };
+
+            window.guardarNuevaReserva = () => {
+                const inicio = document.getElementById('crear-start').value;
+                const fin = document.getElementById('crear-end').value;
+                const habitacionId = document.getElementById('crear-habitacion').value;
+                const usuarioId = document.getElementById('crear-usuario').value;
+
+                if (!habitacionId || !usuarioId) {
+                    alert('Selecciona una habitación y un huésped para continuar.');
+                    return;
+                }
+
+                const parametros = [
+                    {name: 'start', value: inicio},
+                    {name: 'end', value: fin},
+                    {name: 'habitacionId', value: habitacionId},
+                    {name: 'usuarioId', value: usuarioId},
+                    {name: 'estado', value: document.getElementById('crear-estado').value},
+                    {name: 'clienteNombre', value: document.getElementById('crear-nombre').value},
+                    {name: 'email', value: document.getElementById('crear-email').value},
+                    {name: 'telefono', value: document.getElementById('crear-telefono').value},
+                    {name: 'observaciones', value: document.getElementById('crear-observaciones').value}
+                ];
+
+                crearReservaCalendarioCommand(parametros, {
+                    oncomplete: (xhr, status, args) => {
+                        
+                        if (args && args.success) {
+                        
+                            if (args.evento) {
+                                try {
+                                    const nuevoEvento = JSON.parse(args.evento);
+                                    calendario.addEvent(nuevoEvento);
+                                } catch (e) {
+                                    console.error('No se pudo agregar el evento devuelto por el servidor', e);
+                                }
+                            }
+                            if (crearReservaModalInstance) {
+                                crearReservaModalInstance.hide();
+                            }
+                        }
+                    }
+                });
+            };
+        </script>
+    </h:body>
+</html>
