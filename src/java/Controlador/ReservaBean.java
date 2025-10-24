@@ -95,15 +95,7 @@ public class ReservaBean implements Serializable {
 
     public String guardar() {
         try {
-            if (!validarFechasBasicas(true)) {
-                return null;
-            }
-
             if (!asignarRelaciones()) {
-                return null;
-            }
-
-            if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
 
@@ -125,15 +117,7 @@ public class ReservaBean implements Serializable {
 
     public String actualizar() {
         try {
-            if (!validarFechasBasicas(true)) {
-                return null;
-            }
-
             if (!asignarRelaciones()) {
-                return null;
-            }
-
-            if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
 
@@ -190,81 +174,6 @@ public class ReservaBean implements Serializable {
         if (reserva.getTelefono() == null || reserva.getTelefono().isEmpty()) {
             reserva.setTelefono(usuario.getTelefono());
         }
-        return true;
-    }
-
-    public void validarFechasAjax() {
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null || habitacionIdSeleccionada == null) {
-            return;
-        }
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        if (!validarFechasBasicas(false)) {
-            context.validationFailed();
-            return;
-        }
-
-        if (!validarDisponibilidadFechas(false)) {
-            context.validationFailed();
-        }
-    }
-
-    private boolean validarFechasBasicas(boolean mostrarMensajeCamposIncompletos) {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
-            if (mostrarMensajeCamposIncompletos) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Información incompleta", "Debe indicar las fechas de check-in y check-out."));
-            }
-            return false;
-        }
-
-        if (!reserva.getCheckin().isBefore(reserva.getCehckout())) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                    "Fechas inválidas", "La fecha de check-out debe ser posterior al check-in."));
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean validarDisponibilidadFechas(boolean mostrarMensajeCamposIncompletos) {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        Integer habitacionId = habitacionIdSeleccionada;
-        if ((habitacionId == null || habitacionId == 0)) {
-            if (mostrarMensajeCamposIncompletos) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Habitación requerida", "Seleccione una habitación para verificar disponibilidad."));
-            }
-            return false;
-        }
-
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
-            if (mostrarMensajeCamposIncompletos) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Información incompleta", "Debe indicar las fechas de la reserva."));
-            }
-            return false;
-        }
-
-        try {
-            Integer reservaId = reserva != null && reserva.getIdReserva() > 0 ? reserva.getIdReserva() : null;
-            boolean disponible = reservaDAO.habitacionDisponible(habitacionId,
-                    reserva.getCheckin(), reserva.getCehckout(), reservaId);
-            if (!disponible) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Fechas no disponibles", "La habitación ya está reservada en el rango seleccionado."));
-                return false;
-            }
-        } catch (SQLException e) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Error", "No se pudo verificar la disponibilidad de la habitación."));
-            return false;
-        }
-
         return true;
     }
 

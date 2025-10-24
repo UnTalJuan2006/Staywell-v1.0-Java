@@ -164,38 +164,6 @@ public class ReservaCalendarioBean implements Serializable {
             LocalDateTime inicio = parsearFecha(params.get("start"));
             LocalDateTime fin = parsearFecha(params.get("end"));
 
-            if (inicio == null || fin == null) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("Debe indicar las fechas de check-in y check-out para actualizar la reserva.");
-                return;
-            }
-
-            if (!inicio.isBefore(fin)) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("La fecha de salida debe ser posterior a la fecha de ingreso.");
-                return;
-            }
-
-            Reserva reservaActual = reservaDAO.buscar(idReserva);
-            if (reservaActual == null || reservaActual.getHabitacion() == null) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeError("No se encontró la reserva seleccionada para actualizar.");
-                return;
-            }
-
-            int habitacionId = reservaActual.getHabitacion().getIdHabitacion();
-            if (habitacionId == 0) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeError("La reserva seleccionada no tiene una habitación asociada.");
-                return;
-            }
-
-            if (!reservaDAO.habitacionDisponible(habitacionId, inicio, fin, idReserva)) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("La habitación ya cuenta con una reserva en el rango indicado.");
-                return;
-            }
-
             reservaDAO.actualizarFechas(idReserva, inicio, fin);
             recargarReservas();
 
@@ -215,18 +183,6 @@ public class ReservaCalendarioBean implements Serializable {
             LocalDateTime fin = parsearFecha(params.get("end"));
             int habitacionId = Integer.parseInt(params.get("habitacionId"));
             int usuarioId = Integer.parseInt(params.get("usuarioId"));
-
-            if (inicio == null || fin == null) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("Debe indicar las fechas de check-in y check-out para crear la reserva.");
-                return;
-            }
-
-            if (!inicio.isBefore(fin)) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("La fecha de salida debe ser posterior a la fecha de ingreso.");
-                return;
-            }
 
             Habitacion habitacion = obtenerHabitacionPorId(habitacionId);
             Usuario usuario = obtenerUsuarioPorId(usuarioId);
@@ -256,12 +212,6 @@ public class ReservaCalendarioBean implements Serializable {
             reserva.setEmail(email != null && !email.isEmpty() ? email : usuario.getEmail());
             reserva.setTelefono(telefono != null && !telefono.isEmpty() ? telefono : usuario.getTelefono());
             reserva.setObservaciones(observaciones);
-
-            if (!reservaDAO.habitacionDisponible(habitacionId, inicio, fin, null)) {
-                primeFaces.ajax().addCallbackParam("success", false);
-                agregarMensajeAdvertencia("La habitación seleccionada no está disponible en el rango indicado.");
-                return;
-            }
 
             int nuevoId = reservaDAO.agregarReserva(reserva);
             if (nuevoId <= 0) {
@@ -391,11 +341,6 @@ public class ReservaCalendarioBean implements Serializable {
     private void agregarMensajeError(String detalle) {
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", detalle));
-    }
-
-    private void agregarMensajeAdvertencia(String detalle) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", detalle));
     }
 
     private void agregarMensajeInformacion(String detalle) {
