@@ -11,7 +11,9 @@ import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -161,14 +163,17 @@ public class ReservaCalendarioBean implements Serializable {
 
         try {
             int idReserva = Integer.parseInt(params.get("id"));
-            LocalDateTime inicio = parsearFecha(params.get("start"));
-            LocalDateTime fin = parsearFecha(params.get("end"));
+            LocalDateTime inicioOriginal = parsearFecha(params.get("start"));
+            LocalDateTime finOriginal = parsearFecha(params.get("end"));
 
-            if (inicio == null || fin == null) {
+            if (inicioOriginal == null || finOriginal == null) {
                 primeFaces.ajax().addCallbackParam("success", false);
                 agregarMensajeAdvertencia("Debe indicar las fechas de check-in y check-out para actualizar la reserva.");
                 return;
             }
+
+            LocalDateTime inicio = normalizarInicioCalendario(inicioOriginal);
+            LocalDateTime fin = normalizarFinCalendario(inicio, finOriginal);
 
             if (!inicio.isBefore(fin)) {
                 primeFaces.ajax().addCallbackParam("success", false);
@@ -205,7 +210,7 @@ public class ReservaCalendarioBean implements Serializable {
             }
 
             primeFaces.ajax().addCallbackParam("success", true);
-        } catch (IllegalArgumentException  | SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo actualizar las fechas de la reserva seleccionada.");
         }
@@ -216,16 +221,19 @@ public class ReservaCalendarioBean implements Serializable {
         PrimeFaces primeFaces = PrimeFaces.current();
 
         try {
-            LocalDateTime inicio = parsearFecha(params.get("start"));
-            LocalDateTime fin = parsearFecha(params.get("end"));
+            LocalDateTime inicioOriginal = parsearFecha(params.get("start"));
+            LocalDateTime finOriginal = parsearFecha(params.get("end"));
             int habitacionId = Integer.parseInt(params.get("habitacionId"));
             int usuarioId = Integer.parseInt(params.get("usuarioId"));
 
-            if (inicio == null || fin == null) {
+            if (inicioOriginal == null || finOriginal == null) {
                 primeFaces.ajax().addCallbackParam("success", false);
                 agregarMensajeAdvertencia("Debe indicar las fechas de check-in y check-out para crear la reserva.");
                 return;
             }
+
+            LocalDateTime inicio = normalizarInicioCalendario(inicioOriginal);
+            LocalDateTime fin = normalizarFinCalendario(inicio, finOriginal);
 
             if (!inicio.isBefore(fin)) {
                 primeFaces.ajax().addCallbackParam("success", false);
@@ -279,7 +287,7 @@ public class ReservaCalendarioBean implements Serializable {
             primeFaces.ajax().addCallbackParam("success", true);
             primeFaces.ajax().addCallbackParam("evento", construirEventoJson(creada));
             agregarMensajeInformacion("Reserva creada correctamente.");
-        } catch (IllegalArgumentException| SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo crear la nueva reserva desde el calendario.");
         }
@@ -392,6 +400,37 @@ public class ReservaCalendarioBean implements Serializable {
         } catch (DateTimeParseException ex) {
             return OffsetDateTime.parse(valor).toLocalDateTime();
         }
+    }
+
+    private LocalDateTime normalizarInicioCalendario(LocalDateTime inicio) {
+        if (inicio == null) {
+            return null;
+        }
+        return inicio.toLocalDate().atStartOfDay();
+    }
+
+    private LocalDateTime normalizarFinCalendario(LocalDateTime inicioNormalizado, LocalDateTime fin) {
+        if (inicioNormalizado == null) {
+            return fin;
+        }
+
+        LocalDate fechaFin = inicioNormalizado.toLocalDate();
+
+        if (fin != null) {
+            fechaFin = fin.toLocalDate();
+            if (fin.toLocalTime().equals(LocalTime.MIDNIGHT)
+                    && fin.toLocalDate().isAfter(inicioNormalizado.toLocalDate())) {
+                fechaFin = fechaFin.minusDays(1);
+            }
+        }
+
+        LocalDateTime finNormalizado = fechaFin.atTime(23, 59);
+
+        if (!inicioNormalizado.isBefore(finNormalizado)) {
+            finNormalizado = inicioNormalizado.toLocalDate().atTime(23, 59);
+        }
+
+        return finNormalizado;
     }
 
     private EnumEstadoReserva obtenerEstado(String estado) {
