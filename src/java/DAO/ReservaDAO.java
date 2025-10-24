@@ -64,20 +64,20 @@ public class ReservaDAO {
     }
 
     public int agregarReserva(Reserva reserva) throws SQLException {
-        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reserva (checkin, checkout,  estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
             ps.setTimestamp(2, reserva.getCehckout() != null ? Timestamp.valueOf(reserva.getCehckout()) : null);
-            ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : null);
-            ps.setString(4, reserva.getEstado() != null ? reserva.getEstado().name() : null);
-            ps.setString(5, reserva.getNombreCliente());
-            ps.setString(6, reserva.getEmail());
-            ps.setString(7, reserva.getTelefono());
-            ps.setString(8, reserva.getObservaciones());
-            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(10, reserva.getUsuario().getIdUsuario());
+//            ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : null);
+            ps.setString(3, reserva.getEstado() != null ? reserva.getEstado().name() : null);
+            ps.setString(4, reserva.getNombreCliente());
+            ps.setString(5, reserva.getEmail());
+            ps.setString(6, reserva.getTelefono());
+            ps.setString(7, reserva.getObservaciones());
+            ps.setInt(8, reserva.getHabitacion().getIdHabitacion());
+            ps.setInt(9, reserva.getUsuario().getIdUsuario());
 
             ps.executeUpdate();
 
