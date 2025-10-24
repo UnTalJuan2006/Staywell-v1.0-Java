@@ -199,8 +199,13 @@ public class ReservaCalendarioBean implements Serializable {
             reservaDAO.actualizarFechas(idReserva, inicio, fin);
             recargarReservas();
 
+            Reserva actualizada = reservaDAO.buscar(idReserva);
+            if (actualizada != null) {
+                primeFaces.ajax().addCallbackParam("evento", construirEventoJson(actualizada));
+            }
+
             primeFaces.ajax().addCallbackParam("success", true);
-        } catch (IllegalArgumentException  | SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo actualizar las fechas de la reserva seleccionada.");
         }
@@ -274,7 +279,7 @@ public class ReservaCalendarioBean implements Serializable {
             primeFaces.ajax().addCallbackParam("success", true);
             primeFaces.ajax().addCallbackParam("evento", construirEventoJson(creada));
             agregarMensajeInformacion("Reserva creada correctamente.");
-        } catch (IllegalArgumentException  | SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo crear la nueva reserva desde el calendario.");
         }
@@ -325,6 +330,13 @@ public class ReservaCalendarioBean implements Serializable {
         Usuario usuario = reserva.getUsuario();
         TipoHabitacion tipoHabitacion = habitacion != null ? habitacion.getTipoHabitacion() : null;
 
+        LocalDateTime inicio = reserva.getCheckin();
+        LocalDateTime fin = reserva.getCehckout();
+
+        if (inicio != null && (fin == null || !inicio.isBefore(fin))) {
+            fin = inicio.plusDays(1);
+        }
+
         String titulo = "Habitación " + (habitacion != null ? habitacion.getNumHabitacion() : "Sin asignar");
         if (reserva.getNombreCliente() != null && !reserva.getNombreCliente().isEmpty()) {
             titulo += " • " + reserva.getNombreCliente();
@@ -334,8 +346,10 @@ public class ReservaCalendarioBean implements Serializable {
         json.append("{")
                 .append("\"id\":").append(reserva.getIdReserva()).append(",")
                 .append("\"title\":\"").append(escaparJson(titulo)).append("\",")
-                .append("\"start\":\"").append(formatearFecha(reserva.getCheckin())).append("\",")
-                .append("\"end\":\"").append(formatearFecha(reserva.getCehckout())).append("\",")
+                .append("\"start\":\"").append(formatearFecha(inicio)).append("\",")
+                .append("\"end\":\"").append(formatearFecha(fin)).append("\",")
+                .append("\"allDay\":true,")
+                .append("\"editable\":true,")
                 .append("\"extendedProps\":{")
                 .append("\"habitacionId\":").append(habitacion != null ? habitacion.getIdHabitacion() : 0).append(",")
                 .append("\"habitacionNumero\":").append(habitacion != null ? habitacion.getNumHabitacion() : 0).append(",")

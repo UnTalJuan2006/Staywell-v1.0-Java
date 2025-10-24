@@ -159,6 +159,46 @@ public class ReservaDAO {
         return true;
     }
 
+    public List<Reserva> listarOcupacionesHabitacion(int habitacionId, Integer reservaExcluirId) throws SQLException {
+        List<Reserva> ocupaciones = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT idReserva, checkin, checkout FROM reserva WHERE idHabitacion = ?");
+
+        if (reservaExcluirId != null) {
+            sql.append(" AND idReserva <> ?");
+        }
+
+        sql.append(" ORDER BY checkin");
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql.toString())) {
+            ps.setInt(1, habitacionId);
+
+            if (reservaExcluirId != null) {
+                ps.setInt(2, reservaExcluirId);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Reserva reserva = new Reserva();
+                    reserva.setIdReserva(rs.getInt("idReserva"));
+
+                    Timestamp checkin = rs.getTimestamp("checkin");
+                    if (checkin != null) {
+                        reserva.setCheckin(checkin.toLocalDateTime());
+                    }
+
+                    Timestamp checkout = rs.getTimestamp("checkout");
+                    if (checkout != null) {
+                        reserva.setCehckout(checkout.toLocalDateTime());
+                    }
+
+                    ocupaciones.add(reserva);
+                }
+            }
+        }
+
+        return ocupaciones;
+    }
+
     public void eliminar(int idReserva) throws SQLException {
         String sql = "DELETE FROM reserva WHERE idReserva = ?";
 

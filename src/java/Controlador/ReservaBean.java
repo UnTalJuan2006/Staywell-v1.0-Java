@@ -35,6 +35,7 @@ public class ReservaBean implements Serializable {
 
     private Integer habitacionIdSeleccionada;
     private Integer usuarioIdSeleccionado;
+    private String fechasOcupadasJson = "[]";
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -84,6 +85,7 @@ public class ReservaBean implements Serializable {
                             ? reserva.getHabitacion().getIdHabitacion() : null;
                     usuarioIdSeleccionado = (reserva.getUsuario() != null)
                             ? reserva.getUsuario().getIdUsuario() : null;
+                    refrescarOcupacionesHabitacion();
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "La reserva no existe."));
@@ -196,6 +198,8 @@ public class ReservaBean implements Serializable {
     }
 
     public void validarFechasAjax() {
+        refrescarOcupacionesHabitacion();
+
         if (reserva.getCheckin() == null || reserva.getCehckout() == null || habitacionIdSeleccionada == null) {
             return;
         }
@@ -208,10 +212,6 @@ public class ReservaBean implements Serializable {
         }
 
         if (!validarDisponibilidadFechas(false)) {
-            if (reserva.getCheckin() != null && reserva.getCehckout() != null) {
-                reserva.setCheckin(null);
-                reserva.setCehckout(null);
-            }
             context.validationFailed();
         }
     }
@@ -308,6 +308,7 @@ public class ReservaBean implements Serializable {
         reserva = new Reserva();
         habitacionIdSeleccionada = null;
         usuarioIdSeleccionado = null;
+        fechasOcupadasJson = "[]";
     }
 
     public String formatearFecha(LocalDateTime fecha) {
@@ -359,19 +360,68 @@ public class ReservaBean implements Serializable {
         return listaUsuarios;
     }
 
-    public Integer getHabitacionIdSeleccionada() {
-        return habitacionIdSeleccionada;
-    }
-
-    public void setHabitacionIdSeleccionada(Integer habitacionIdSeleccionada) {
-        this.habitacionIdSeleccionada = habitacionIdSeleccionada;
-    }
-
     public Integer getUsuarioIdSeleccionado() {
         return usuarioIdSeleccionado;
     }
 
     public void setUsuarioIdSeleccionado(Integer usuarioIdSeleccionado) {
         this.usuarioIdSeleccionado = usuarioIdSeleccionado;
+    }
+
+    public String getFechasOcupadasJson() {
+        return fechasOcupadasJson;
+    }
+
+    public void setHabitacionIdSeleccionada(Integer habitacionIdSeleccionada) {
+        this.habitacionIdSeleccionada = habitacionIdSeleccionada;
+        refrescarOcupacionesHabitacion();
+    }
+
+    private void refrescarOcupacionesHabitacion() {
+        if (habitacionIdSeleccionada == null) {
+            fechasOcupadasJson = "[]";
+            return;
+        }
+
+        try {
+            Integer reservaId = reserva != null && reserva.getIdReserva() > 0 ? reserva.getIdReserva() : null;
+            List<Reserva> ocupaciones = reservaDAO.listarOcupacionesHabitacion(habitacionIdSeleccionada, reservaId);
+
+            if (ocupaciones.isEmpty()) {
+                fechasOcupadasJson = "[]";
+                return;
+            }
+
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            for (int i = 0; i < ocupaciones.size(); i++) {
+                Reserva ocupacion = ocupaciones.get(i);
+
+                if (ocupacion.getCheckin() == null || ocupacion.getCehckout() == null) {
+                    continue;
+                }
+
+                if (jsonBuilder.length() > 1) {
+                    jsonBuilder.append(',');
+                }
+
+                jsonBuilder.append('{')
+                        .append("\"from\":\"")
+                        .append(ocupacion.getCheckin().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\",\"to\":\"")
+                        .append(ocupacion.getCehckout().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\"}");
+            }
+
+            jsonBuilder.append(']');
+            fechasOcupadasJson = jsonBuilder.toString();
+        } catch (SQLException e) {
+            fechasOcupadasJson = "[]";
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo consultar la disponibilidad de la habitación."));
+        }
+    }
+
+    public Integer getHabitacionIdSeleccionada() {
+        return habitacionIdSeleccionada;
     }
 }
