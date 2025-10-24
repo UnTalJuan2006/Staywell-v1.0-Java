@@ -10,10 +10,11 @@ import java.util.List;
 public class Habitacion {
     private int idHabitacion;
     private int numHabitacion;
+    private TipoHabitacion tipoHabitacion;
     private EnumEstadoHabitacion estado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
-    private EnumTipoHabitacion tipoHabitacion;
+   
     
     public int getIdHabitacion() {
         return idHabitacion;
@@ -54,16 +55,14 @@ public class Habitacion {
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) {
         this.fechaActualizacion = fechaActualizacion;
     } 
-    
-     public EnumTipoHabitacion getTipoHabitacion() {
+
+    public TipoHabitacion getTipoHabitacion() {
         return tipoHabitacion;
     }
 
-    public void setTipoHabitacion(EnumTipoHabitacion tipoHabitacion) {
+    public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
         this.tipoHabitacion = tipoHabitacion;
     }
-    
-    
-
+        
     
 }

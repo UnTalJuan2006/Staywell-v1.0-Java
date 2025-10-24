@@ -10,165 +10,83 @@ import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import Modelo.Espacio;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 
 public class EventoDAO {
     PreparedStatement ps;
     ResultSet rs;
-
-    public List<Evento> listar() throws SQLException {
-        List<Evento> listaEventos = new ArrayList<>();
-
-        try {
+    
+    public List<Evento> listar() throws SQLException{
+        List<Evento> listaEvento = new ArrayList<>();
+        EspacioDAO espDAO = new EspacioDAO();
+        
+        try{
             String sql = "SELECT * FROM evento";
-             ps = Conexion.conectar().prepareStatement(sql);
+            ps = Conexion.conectar().prepareStatement(sql);
             rs = ps.executeQuery();
-
-            while (rs.next()) {
+            
+            while(rs.next()){
                 Evento v = new Evento();
                 v.setIdEvento(rs.getInt("idEvento"));
                 v.setNombreEvento(rs.getString("nombreEvento"));
                 v.setDescripcion(rs.getString("descripcion"));
                 v.setFechaEvento(rs.getDate("fechaEvento"));
-                v.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
                 v.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-                v.setHoraInicio(rs.getTime("horaInicio"));
-                v.setHoraFin(rs.getTime("horaFin"));
-
-                v.setNombreCliente(rs.getString("nombreCliente"));
-
-                listaEventos.add(v);
-            }
-        } catch (SQLException e) {
-            System.out.println(" Error al listar eventos: " + e.getMessage());
-        }
-        return listaEventos;
-    }
-
-    public void agregar(Evento v) throws SQLException {
-        String sql = "INSERT INTO evento(nombreEvento, fechaEvento, descripcion, fechaCreacion, fechaActualizacion, horaInicio, horaFin, nombreCliente) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try {
-            ps = Conexion.conectar().prepareStatement(sql);
-
-            ps.setString(1, v.getNombreEvento());
-
-           
-            java.util.Date fecha = v.getFechaEvento();
-            if (fecha != null) {
-                ps.setDate(2, new java.sql.Date(fecha.getTime()));
-            } else {
-                ps.setDate(2, null);
-            }
-
-            ps.setString(3, v.getDescripcion());
-            ps.setTimestamp(4, Timestamp.valueOf(v.getFechaCreacion()));
-            ps.setTimestamp(5, Timestamp.valueOf(v.getFechaActualizacion()));
-
-            
-            if (v.getHoraInicio() != null) {
-                ps.setTime(6, new Time(v.getHoraInicio().getTime()));
-            } else {
-                ps.setTime(6, null);
-            }
-
-            if (v.getHoraFin() != null) {
-                ps.setTime(7, new Time(v.getHoraFin().getTime()));
-            } else {
-                ps.setTime(7, null);
-            }
-
-            ps.setString(8, v.getNombreCliente());
-
-            ps.executeUpdate();
-            System.out.println(" Evento registrado correctamente");
-        } catch (SQLException e) {
-            System.out.println(" Error al registrar evento: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    public void actualizar(Evento v) {
-        try {
-            String sql = "UPDATE evento SET nombreEvento = ?, fechaEvento = ?, descripcion = ?, "
-                       + "fechaActualizacion = ?, horaInicio = ?, horaFin = ?, nombreCliente = ? "
-                       + "WHERE idEvento = ?";
-
-            ps = Conexion.conectar().prepareStatement(sql);
-
-            ps.setString(1, v.getNombreEvento());
-
-           
-            java.util.Date fecha = v.getFechaEvento();
-            if (fecha != null) {
-                ps.setDate(2, new java.sql.Date(fecha.getTime()));
-            } else {
-                ps.setDate(2, null);
-            }
-
-            ps.setString(3, v.getDescripcion());
-            ps.setTimestamp(4, Timestamp.valueOf(v.getFechaActualizacion()));
-
-           
-            if (v.getHoraInicio() != null) {
-                ps.setTime(5, new Time(v.getHoraInicio().getTime()));
-            } else {
-                ps.setTime(5, null);
-            }
-
-            if (v.getHoraFin() != null) {
-                ps.setTime(6, new Time(v.getHoraFin().getTime()));
-            } else {
-                ps.setTime(6, null);
-            }
-
-            ps.setString(7, v.getNombreCliente());
-            ps.setInt(8, v.getIdEvento());
-
-            ps.executeUpdate();
-            System.out.println(" Evento actualizado correctamente");
-        } catch (SQLException e) {
-            System.out.println(" Error al actualizar evento: " + e.getMessage());
-        }
-    }
-
-    public void eliminar(Evento v) {
-        try {
-            String sql = "DELETE FROM evento WHERE idEvento = ?";
-            ps = Conexion.conectar().prepareStatement(sql);
-            ps.setInt(1, v.getIdEvento());
-            ps.executeUpdate();
-            System.out.println("Evento eliminado correctamente");
-        } catch (SQLException e) {
-            System.out.println(" Error al eliminar evento: " + e.getMessage());
-        }
-    }
-
-    public Evento buscar(int id) {
-        Evento v = null;
-        try {
-            String sql = "SELECT * FROM evento WHERE idEvento = ?";
-            ps = Conexion.conectar().prepareStatement(sql);
-            ps.setInt(1, id);
-
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                v = new Evento();
-                v.setIdEvento(rs.getInt("idEvento"));
-                v.setNombreEvento(rs.getString("nombreEvento"));
-                v.setDescripcion(rs.getString("descripcion"));
-                v.setFechaEvento(rs.getDate("fechaEvento")); 
                 v.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
-                v.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-                v.setHoraInicio(rs.getTime("horaInicio"));
-                v.setHoraFin(rs.getTime("horaFin"));
+                
+                 Time horaInicio = rs.getTime("horaInicio");
+                if (horaInicio != null) {
+                    v.setHoraInicio(horaInicio.toLocalTime());
+                }
 
+                Time horaFin = rs.getTime("horaFin");
+                if (horaFin != null) {
+                    v.setHoraFin(horaFin.toLocalTime());
+                }
+                
                 v.setNombreCliente(rs.getString("nombreCliente"));
+                v.setEspacio(espDAO.buscar(rs.getInt("idEspacio")));
+                
+                listaEvento.add(v);
             }
-        } catch (SQLException e) {
-            System.out.println("Error al buscar evento: " + e.getMessage());
+        }catch(SQLException e ){
+              FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error listando asistencias"));
         }
-        return v;
+        return listaEvento;
     }
+    
+   public void agregarEventoHuesped(Evento evento) throws SQLException{
+    try {
+        String sql = "INSERT INTO evento (nombreEvento, descripcion, fechaEvento, horaInicio, horaFin, fechaCreacion, fechaActualizacion, nombreCliente, idEspacio) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        ps = Conexion.conectar().prepareStatement(sql);
+        ps.setString(1, evento.getNombreEvento());
+        ps.setString(2, evento.getDescripcion());
+        ps.setDate(3, new Date(evento.getFechaEvento().getTime())); 
+        ps.setTime(4, Time.valueOf(evento.getHoraInicio()));
+        ps.setTime(5, Time.valueOf(evento.getHoraFin()));
+        ps.setTimestamp(6, Timestamp.valueOf(evento.getFechaCreacion()));
+        ps.setTimestamp(7, Timestamp.valueOf(evento.getFechaActualizacion()));
+        ps.setString(8, evento.getNombreCliente());
+        ps.setInt(9, evento.getEspacio().getIdEspacio()); 
+
+        ps.executeUpdate();
+
+        
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Reserva creada correctamente"));
+        
+    } catch (SQLException e) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error al crear la reserva: " + e.getMessage()));
+        System.out.println("Error al agregar evento (huésped): " + e.getMessage());
+    }
+}
+    
+
+ 
 }

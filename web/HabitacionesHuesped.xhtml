@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="es">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home Huesped</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background-color: #fbf6f5;
+                color: #333333;
+                line-height: 1.6;
+            }
+
+            /* Encabezado */
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 90px;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 70px;
+                z-index: 1000;
+
+            }
+
+            .header::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.35);
+                z-index: 0;
+            }
+
+            .header * {
+                position: relative;
+                z-index: 1;
+            }
+
+            .header img {
+                height: 150px;
+                width: auto;
+                object-fit: contain;
+                margin-left: 10px;
+                cursor: pointer;
+                transition: transform 0.3s ease;
+            }
+
+            .header img:hover {
+                transform: scale(1.05);
+            }
+
+            .header-navigation ul {
+                list-style: none;
+                display: flex;
+                gap: 35px;
+                margin-right: 40px;
+            }
+
+            .header-navigation ul li a {
+                color: #d4af37;
+                text-decoration: none;
+                font-size: 1rem;
+                font-weight: 500;
+                text-transform: uppercase;
+                padding: 6px 12px;
+                border-radius: 4px;
+                font-family: 'Segoe UI', sans-serif;
+                text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+            }
+
+            .header-navigation ul li a:hover {
+                background: rgba(255, 255, 255, 0.15);
+                color: #d4af37;
+            }
+
+            /* Sección de bienvenida */
+
+            >
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background-color: #fbf6f5;
+                margin: 0;
+                padding: 0;
+                color: #131318;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 50px 20px;
+            }
+
+            /* 💫 Estilo del título */
+            h2 {
+                text-align: center;
+                font-size: 3rem;
+                font-family: 'Times New Roman', serif;
+                background: linear-gradient(90deg, #d4af37, #ffd700, #e6c200);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: #d4af37;
+                text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            }
+
+
+            .bienvenida-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: #ffffff;
+                border-radius: 20px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                padding: 60px 80px;
+                margin: 160px auto 60px auto;
+                max-width: 1200px;
+                font-family: Arial, sans-serif;
+            }
+
+            .bienvenida-contenido {
+                max-width: 60%;
+            }
+
+            .bienvenida-contenido h2 {
+                font-size: 3rem;
+                font-weight: 700;
+                color: #d4af37;
+                line-height: 1.2;
+            }
+
+            .bienvenida-contenido p {
+                margin-top: 20px;
+                font-size: 1.3rem;
+                color: #2e3a42;
+                line-height: 1.6;
+            }
+
+            .bienvenida-imagen img {
+                width: 350px;
+                height: auto;
+                border: none;
+            }
+
+            @media (max-width: 900px) {
+                .bienvenida-card {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 40px;
+                }
+
+                .bienvenida-contenido {
+                    max-width: 100%;
+                }
+                .bienvenida-imagen {
+                    margin-top: 30px;
+                }
+            }
+
+            /* ---- CARD ESTILO HOTEL ---- */
+            .grid {
+                display: flex;
+                flex-direction: column;
+                gap: 3rem;
+                align-items: center;
+                padding: 2rem;
+            }
+
+            .product-card {
+                display: flex;
+                align-items: stretch;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                max-width: 1000px;
+                margin: 0 auto;
+            }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+
+            .card-imagen img {
+                width: 400px;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .card-texto {
+                flex: 1;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .card-texto h3 {
+                font-size: 1.8rem;
+                color: #d4af37;
+                text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+                font-family: 'Times New Roman', serif;
+                margin-bottom: 10px;
+            }
+
+            .card-texto p {
+                color: #444;
+                margin-bottom: 8px;
+                line-height: 1.5;
+                font-size: 1rem;
+            }
+
+            .descripcion {
+                text-align: justify;
+                margin-bottom: 12px;
+            }
+
+            .precio {
+                font-size: 1.4rem;
+                font-weight: bold;
+                color: #007a3d;
+                margin-top: 10px;
+            }
+
+            .precio small {
+                display: block;
+                font-size: 0.85rem;
+                color: #555;
+            }
+
+            .disponible {
+                background-color: #e6f4ea;
+                color: #007a3d;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                display: inline-block;
+            }
+
+            .no-disponible {
+                background-color: #fdecea;
+                color: #b21f1f;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                display: inline-block;
+            }
+
+            .product-card {
+                display: flex;
+                align-items: stretch;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                max-width: 1000px;
+                margin: 20px auto;
+            }
+
+
+            .btn-reservar {
+                background-color: #004d1d !important;
+                color: #fff !important;
+                border: none;
+                border-radius: 6px;
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                width: fit-content;
+            }
+
+            .btn-reservar:hover {
+                background-color: #007a3d !important;
+            }
+
+            @media (max-width: 900px) {
+                .product-card {
+                    flex-direction: column;
+                    max-width: 90%;
+                }
+
+                .card-imagen img {
+                    width: 100%;
+                    height: auto;
+                }
+
+                .card-texto {
+                    padding: 1.5rem;
+                    text-align: center;
+                }
+
+                .btn-reservar {
+                    margin: 0 auto;
+                }
+            }
+
+
+            .btn-circular {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 9999;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: #131318;
+                color: #fbf6f5;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+                transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+                cursor: pointer;
+            }
+
+            .btn-circular:hover {
+                background-color: #d4af37;
+                color: #131318;
+                transform: scale(1.1); /* efecto de “pop” al pasar */
+            }
+
+
+
+        </style>
+    </h:head>
+
+    <h:body>
+        <!-- Header -->
+        <div class="header">
+            <img src="img/image.png" alt="Logo Great Viggio" />
+            <div class="header-navigation">
+                <ul>
+                    <li><a href="#contactos">ES</a></li>
+                    <li><a href="login.xhtml">Perfil</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <p:growl id="globalMessages" showDetail="true" life="4000" />
+
+        <!-- Sección de bienvenida -->
+        <section class="bienvenida-card">
+            <div class="bienvenida-contenido">
+                <h2>
+                    <span>Bienvenido</span> disfruta de<br />
+                    nuestras Habitaciones
+                </h2>
+                <p>
+                    En nuestro hotel, nos preocupamos por el confort de todos nuestros huéspedes. Por eso, también ofrecemos habitaciones adaptadas y equipadas para personas con movilidad reducida. Además, contamos con diferentes tipos de habitaciones para satisfacer las necesidades de cada uno de nuestros huéspedes. ¡Y no te preocupes por la conexión a internet! Ofrecemos servicio de WiFi gratis en todas nuestras instalaciones para que puedas mantenerte conectado durante tu estancia. ¡Ven y disfruta de nuestra hospitalidad!
+                </p>
+            </div>
+            <div class="bienvenida-imagen">
+                <img src="img/image.png" alt="Espacios del hotel" />
+            </div>
+        </section>
+        <!-- Catálogo de Espacios -->
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+            Nuestras Habitaciones
+        </h2>
+        <!-- Recorremos los tipos únicos de habitación -->
+        <p:repeat var="t" value="#{tipoHabitacionBean.listaTipoHabitaciones}">
+            <div class="product-card">
+                <div class="card-imagen">
+                    <img src="#{request.contextPath}/img/#{t.imagen}"  />
+                </div>
+
+                <div class="card-texto">
+                    <div>
+
+                        <p><strong>Tipo:</strong> #{t.nombre}</p>
+                        <p><strong>Descripcion: </strong>#{t.descripcion}</p>
+                        <p><strong>Capacidad:</strong> #{t.capacidad} personas</p>
+                    </div>
+
+                    <div>
+                        <p class="precio">
+                            <small>Desde</small>
+                            Col$
+                            <h:outputText value="#{t.precio}">
+                                <f:convertNumber pattern="#,##0.00" />
+                            </h:outputText>
+                        </p>
+
+                  
+
+           
+
+                    </div>
+                </div>
+            </div>
+        </p:repeat>
+
+
+
+
+        <h:panelGroup rendered="#{empty habitacionBean.listaHabitaciones}">
+            <p class="text-center text-gray-600 text-lg col-span-full">
+                No hay espacios disponibles en este momento.
+            </p>
+        </h:panelGroup>
+
+
+
+        <!-- Botón flotante -->
+        <a href="HomeHuesped.xhtml" class="btn-circular" title="Volver">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+    </h:body>
+</html>

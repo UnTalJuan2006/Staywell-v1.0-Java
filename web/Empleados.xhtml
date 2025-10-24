@@ -197,6 +197,7 @@
                 <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
                     <i class="bi bi-door-open me-2"></i> Habitaciones
                 </h:link>
+                  <h:link outcome="/CatalogoHabitaciones.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
                 <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
                     <i class="bi bi-calendar-event me-2"></i> Eventos
                 </h:link>
@@ -237,10 +238,9 @@
 
                 <h:form prependId="false">
                     <div class="user-info">
-                        <span class="me-3">Bienvenido, <strong>
-                                #{usuarioBean.usuario.nombre} Juan
-                            </strong></span>
-
+                     <span class="me-3">
+                    Bienvenido, <strong>#{usuarioLogueado.nombre}</strong>
+                </span>
                         <div class="dropdown">
                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle"></i>

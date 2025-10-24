@@ -6,7 +6,6 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Habitacion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/Conexion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/UsuarioBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeAdmin.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Evento.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumTipoHabitacion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumEstadoUsuario.java</file>
@@ -33,7 +32,6 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/restaurante.png</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/restaurante.jpg</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/image.png</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/HabitacionDataSource.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/pdf.png</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/bar.jpg</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/Eventos.jpg</file>
@@ -43,19 +41,37 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeHuesped.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/reporte/coffee.jpg</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/reporte/image.jpg</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Habitaciones.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Usuarios.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Correos.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Empleados.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EmpleadoDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/HabitacionDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EmpleadoBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/HabitacionBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/UsuarioDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Empleado.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/EspacioHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Espacio.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Espacios.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/Espacios.png</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/img/jardin.png</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Converter/LocalTimeConverter.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EventoDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Asistencia.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/TipoHabitacion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Eventos.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HabitacionesHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/TipoHabitacionDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/TipoHabitacionBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/CatalogoHabitaciones.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/HabitacionDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/HabitacionBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EmpleadoDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EmpleadoBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EspacioDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EspacioBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Habitaciones.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/AsistenciaDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/AsistenciaBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeAdmin.xhtml</file>
         </group>
     </open-files>
 </project-private>

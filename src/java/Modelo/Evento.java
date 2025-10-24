@@ -1,6 +1,7 @@
 package Modelo;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class Evento {
@@ -9,10 +10,11 @@ public class Evento {
     private String descripcion;
     private LocalDateTime fechaActualizacion;
     private LocalDateTime fechaCreacion;
-    private Date horaInicio;
-    private Date horaFin;
+    private LocalTime horaInicio;
+    private LocalTime horaFin;
     private String nombreCliente;
     private Date fechaEvento;
+    private Espacio espacio;
 
     public Evento() {
     }
@@ -59,19 +61,19 @@ public class Evento {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public Date getHoraInicio() {
+    public LocalTime getHoraInicio() {
         return horaInicio;
     }
 
-    public void setHoraInicio(Date horaInicio) {
+    public void setHoraInicio(LocalTime horaInicio) {
         this.horaInicio = horaInicio;
     }
 
-    public Date getHoraFin() {
+    public LocalTime getHoraFin() {
         return horaFin;
     }
 
-    public void setHoraFin(Date horaFin) {
+    public void setHoraFin(LocalTime horaFin) {
         this.horaFin = horaFin;
     }
 
@@ -90,4 +92,13 @@ public class Evento {
     public void setFechaEvento(Date fechaEvento) {
         this.fechaEvento = fechaEvento;
     }
+
+    public Espacio getEspacio() {
+        return espacio;
+    }
+
+    public void setEspacio(Espacio espacio) {
+        this.espacio = espacio;
+    }
+    
 }

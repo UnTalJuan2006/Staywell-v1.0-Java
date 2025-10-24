@@ -88,6 +88,43 @@ public class UsuarioDAO {
         }
     }
     
+    
+    
+    public Usuario buscar(int id){
+        Usuario u = null;
+        String sql = "SELECT * FROM ususario where idUsuario = ?";
+        
+        try{
+             ps = Conexion.conectar().prepareStatement(sql);
+             ps.setInt(1, id);
+             rs = ps.executeQuery();
+             
+             
+             while (rs.next()) {
+                if ("Huesped".equalsIgnoreCase(rs.getString("rol"))) {
+                    u = new Usuario();
+                    u.setIdUsuario(rs.getInt("idUsuario"));
+                    u.setNombre(rs.getString("nombre"));
+                    u.setEmail(rs.getString("email"));
+                    u.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+                    u.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
+                    u.setRol(EnumRoles.HUESPED);
+                    u.setEstado(EnumEstadoUsuario.valueOf(rs.getString("estado")));
+                    u.setDireccion(rs.getString("direccion"));
+                    u.setTelefono(rs.getString("telefono"));
+
+               
+                }
+            }
+             
+             
+        }catch(SQLException e){
+            System.out.println("Error al buscar usuario");
+        }
+            return u;
+    }
+    
+    
     public void cambiarEstado(int idUsuario, EnumEstadoUsuario nuevoEstado) throws SQLException {
     try {
         String sql = "UPDATE usuario SET estado = ?, fechaActualizacion = ? WHERE idUsuario = ?";
