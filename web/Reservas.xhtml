@@ -114,11 +114,16 @@
         </div>
 
         <div class="main-content">
-            <div class="top-bar d-flex justify-content-between align-items-center">
-                <h2><i class="bi bi-journal-bookmark"></i> Gestión de Reservas</h2>
-                <h:link outcome="/crearReserva.xhtml" styleClass="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Nueva Reserva
-                </h:link>
+            <div class="top-bar d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h2 class="mb-0"><i class="bi bi-journal-bookmark"></i> Gestión de Reservas</h2>
+                <div class="d-flex gap-2">
+                    <h:link outcome="/CalendarioReservas.xhtml" styleClass="btn btn-outline-secondary">
+                        <i class="bi bi-calendar-event"></i> Ver calendario
+                    </h:link>
+                    <h:link outcome="/crearReserva.xhtml" styleClass="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Nueva Reserva
+                    </h:link>
+                </div>
             </div>
 
             <div class="mt-4">
