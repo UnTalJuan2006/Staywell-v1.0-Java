@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -36,6 +37,7 @@ public class ReservaBean implements Serializable {
     private Integer usuarioIdSeleccionado;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     @PostConstruct
     public void init() {
@@ -206,6 +208,10 @@ public class ReservaBean implements Serializable {
         }
 
         if (!validarDisponibilidadFechas(false)) {
+            if (reserva.getCheckin() != null && reserva.getCehckout() != null) {
+                reserva.setCheckin(null);
+                reserva.setCehckout(null);
+            }
             context.validationFailed();
         }
     }
@@ -314,6 +320,19 @@ public class ReservaBean implements Serializable {
         }
 
         return "Habitación " + reserva.getHabitacion().getNumHabitacion();
+    }
+
+    private String toHtmlInputValue(LocalDateTime fecha) {
+        if (fecha == null) {
+            return "";
+        }
+
+        LocalDateTime truncated = fecha.truncatedTo(ChronoUnit.MINUTES);
+        return truncated.format(HTML_INPUT_FORMATTER);
+    }
+
+    public String getCheckoutMinValue() {
+        return toHtmlInputValue(reserva.getCheckin());
     }
 
     public EnumEstadoReserva[] getEstados() {

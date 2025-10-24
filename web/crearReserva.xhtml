@@ -195,6 +195,7 @@
                                                  converter="localDateTimeConverter" styleClass="form-control"
                                                  required="true" requiredMessage="Debe indicar la fecha de check-out.">
                                         <f:passThroughAttribute name="type" value="datetime-local" />
+                                        <f:passThroughAttribute name="min" value="#{reservaBean.checkoutMinValue}" />
                                         <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
                                     </h:inputText>
                                 </div>
