@@ -43,7 +43,57 @@ public class HabitacionDAO {
         }
         return listaHabitaciones;
     }
-   
+
+    public List<Habitacion> listarPorTipo(int idTipoHabitacion) throws SQLException {
+        List<Habitacion> listaHabitaciones = new ArrayList<>();
+        TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
+
+        String sql = "SELECT * FROM habitacion WHERE idTipoHabitacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idTipoHabitacion);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Habitacion habitacion = new Habitacion();
+                    habitacion.setIdHabitacion(rs.getInt("idHabitacion"));
+                    habitacion.setNumHabitacion(rs.getInt("numHabitacion"));
+                    habitacion.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
+                    habitacion.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+                    habitacion.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
+                    habitacion.setTipoHabitacion(tipoDAO.buscar(idTipoHabitacion));
+                    listaHabitaciones.add(habitacion);
+                }
+            }
+        }
+
+        return listaHabitaciones;
+    }
+
+    public Habitacion buscarPorId(int idHabitacion) throws SQLException {
+        Habitacion habitacion = null;
+        String sql = "SELECT * FROM habitacion WHERE idHabitacion = ?";
+        TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idHabitacion);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    habitacion = new Habitacion();
+                    habitacion.setIdHabitacion(rs.getInt("idHabitacion"));
+                    habitacion.setNumHabitacion(rs.getInt("numHabitacion"));
+                    habitacion.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
+                    habitacion.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+                    habitacion.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
+                    habitacion.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
+                }
+            }
+        }
+
+        return habitacion;
+    }
+
  public void agregar(Habitacion h) throws SQLException {
     String sql = "INSERT INTO habitacion (numHabitacion, estado, fechaCreacion, fechaActualizacion, idTipoHabitacion) "
                + "VALUES (?, ?, ?, ?, ?)";
@@ -69,31 +119,4 @@ public class HabitacionDAO {
             System.out.println("Error al eliminar habitación: " + e.getMessage());
         }
     }
-    
-    public List<Habitacion> listarPorTipo(int idTipoHabitacion) throws SQLException {
-    List<Habitacion> listaHabitaciones = new ArrayList<>();
-    TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
-    
-    try {
-        String sql = "SELECT * FROM habitacion WHERE idTipoHabitacion = ?";
-        ps = Conexion.conectar().prepareStatement(sql);
-        ps.setInt(1, idTipoHabitacion);
-        rs = ps.executeQuery();
-
-        while (rs.next()) {
-            Habitacion h = new Habitacion();
-            h.setIdHabitacion(rs.getInt("idHabitacion"));
-            h.setNumHabitacion(rs.getInt("numHabitacion"));
-            h.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
-            h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
-            h.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
-            h.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-            listaHabitaciones.add(h);
-        }
-    } catch (SQLException e) {
-        System.out.println("Error al listar habitaciones por tipo: " + e.getMessage());
-    }
-    return listaHabitaciones;
-}
-
 }
