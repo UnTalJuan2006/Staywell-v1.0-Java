@@ -69,4 +69,31 @@ public class HabitacionDAO {
             System.out.println("Error al eliminar habitación: " + e.getMessage());
         }
     }
+    
+    public List<Habitacion> listarPorTipo(int idTipoHabitacion) throws SQLException {
+    List<Habitacion> listaHabitaciones = new ArrayList<>();
+    TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
+    
+    try {
+        String sql = "SELECT * FROM habitacion WHERE idTipoHabitacion = ?";
+        ps = Conexion.conectar().prepareStatement(sql);
+        ps.setInt(1, idTipoHabitacion);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Habitacion h = new Habitacion();
+            h.setIdHabitacion(rs.getInt("idHabitacion"));
+            h.setNumHabitacion(rs.getInt("numHabitacion"));
+            h.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
+            h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
+            h.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+            h.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
+            listaHabitaciones.add(h);
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al listar habitaciones por tipo: " + e.getMessage());
+    }
+    return listaHabitaciones;
+}
+
 }

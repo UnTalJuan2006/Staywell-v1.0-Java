@@ -210,7 +210,7 @@ public class ReservaCalendarioBean implements Serializable {
             }
 
             primeFaces.ajax().addCallbackParam("success", true);
-        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo actualizar las fechas de la reserva seleccionada.");
         }
@@ -287,7 +287,7 @@ public class ReservaCalendarioBean implements Serializable {
             primeFaces.ajax().addCallbackParam("success", true);
             primeFaces.ajax().addCallbackParam("evento", construirEventoJson(creada));
             agregarMensajeInformacion("Reserva creada correctamente.");
-        } catch (IllegalArgumentException | NumberFormatException | SQLException | DateTimeParseException e) {
+        } catch (IllegalArgumentException | SQLException | DateTimeParseException e) {
             primeFaces.ajax().addCallbackParam("success", false);
             agregarMensajeError("No se pudo crear la nueva reserva desde el calendario.");
         }

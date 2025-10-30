@@ -355,7 +355,7 @@
                 <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
                 <a href="#" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
                 <a href="#" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
-                <a href="MiPerfil.xhtml" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
+                <a href="#" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
 
                 <h:form>
                     <div class="sidebar-footer">
@@ -370,84 +370,7 @@
 
             <!-- CONTENIDO -->
             <div class="content">
-                <!-- Welcome card con contenido RESTAURADO -->
-                <div class="welcome-card">
-                    <div class="welcome-icon">
-                        <i class="bi bi-building"></i>
-                    </div>
-                    <h2 class="welcome-title">¡Bienvenido a Great Viggio!</h2>
-                    <p class="welcome-text">
-                        Gestiona todas tus reservas de forma fácil y rápida. Desde aquí puedes crear nuevas
-                        reservas, consultar tus estancias actuales, reservar espacios para eventos y actualizar
-                        tu perfil.
-                    </p>
-                    <div class="welcome-actions">
-                        <a href="#" class="welcome-link"><i class="bi bi-calendar2-check"></i> Reservas Rápidas</a>
-                        <a href="#espacios" class="welcome-link"><i class="bi bi-building"></i> Espacios para Eventos</a>
-                        <a href="#" class="welcome-link"><i class="bi bi-person-gear"></i> Gestión de Perfil</a>
-                    </div>
-                </div>
-
-                <!-- Sección de habitaciones (dinámica) -->
-                <div class="habitaciones-section">
-                    <div class="habitaciones-header">
-                        <h3>Nuestras Habitaciones</h3>
-                        <span>WiFi gratuito y desayuno incluido</span>
-                    </div>
-
-                    <div class="habitaciones-grid">
-                        <p:repeat var="t" value="#{tipoHabitacionBean.listaTipoHabitaciones}">
-                            <div class="habitacion-card">
-                                <div class="habitacion-img">
-                                    <img src="#{request.contextPath}/img/#{t.imagen}" alt="#{t.nombre}" />
-                                </div>
-                                <div class="habitacion-body">
-                                    <h4>#{t.nombre}</h4>
-                                    <p>#{t.descripcion}</p>
-                                    <div>
-                                        <span class="precio">Col$
-                                            <h:outputText value="#{t.precio}">
-                                                <f:convertNumber pattern="#,##0.00" />
-                                            </h:outputText>
-                                        </span>
-                                        <br/>
-                                        <span class="personas"><i class="bi bi-people"></i> #{t.capacidad} personas</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:repeat>
-                    </div>
-                </div>
-
-                <div class="habitaciones-section" id="espacios">
-                    <div class="habitaciones-header">
-                        <h3>Nuestros Espacios</h3>
-                        <span></span>
-                    </div>
-
-                    <div class="habitaciones-grid">
-                        <p:repeat var="p" value="#{espacioBean.listaEspacios}">
-                            <div class="habitacion-card">
-                                <div class="habitacion-img">
-                                    <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}" />
-                                </div>
-                                <div class="habitacion-body">
-                                    <h4>#{p.nombre}</h4>
-                                    <p>#{p.descripcion}</p>
-                                    <div>
-                                        <span class="precio">Col$
-                                            <h:outputText value="#{p.costoHora}">
-                                                <f:convertNumber pattern="#,##0.00" />
-                                            </h:outputText>
-                                        </span>
-                                        <br/>
-                                        <span class="personas"><i class="bi bi-people"></i> #{p.capacidad} personas</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </p:repeat>
-                    </div>
-                </div>
+           
 
             </div>
         </div>

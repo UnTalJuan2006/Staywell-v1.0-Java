@@ -1,320 +1,455 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
- "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Home Huesped</title>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="es">
+    <h:head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Great Viaggio - Panel del Cliente</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #fbf6f5;
-    color: #333;
-    line-height: 1.6;
-}
+            html, body {
+                height: 100%;
+                overflow: hidden; /* evita scroll en body */
+                font-family: 'Segoe UI', Roboto, sans-serif;
+                background: #f5f5f5;
+            }
 
-/* Encabezado */
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 70px;
-    z-index: 1000;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-}
+            /* HEADER FIJO */
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 70px;
+                background: #fff;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 24px;
+                z-index: 1000;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
 
-/* Logo */
-.header img {
-    height: 180px;
-    width: auto;
-    object-fit: contain;
-    margin-left: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
+            .header-left .logo-text {
+                font-weight: bold;
+                font-size: 22px;
+                color: #1a9b8e;
+                text-decoration: none;
+            }
+            .header-right {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
 
-.header img:hover {
-    transform: scale(1.05);
-}
+            .btn-crear-reserva {
+                background-color: #1a9b8e;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
 
-/* Navegación */
-.header-navigation ul {
-    list-style: none;
-    display: flex;
-    gap: 35px;
-    margin-right: 40px;
-}
+            .btn-crear-reserva:hover {
+                background-color: #158076;
+            }
+            .icon-btn {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                color: #666;
+            }
 
-.header-navigation ul li a {
-    color: #d4af37;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-family: 'Segoe UI', sans-serif;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-}
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border-left: 1px solid #e0e0e0;
+                padding-left: 10px;
+            }
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: #e0e0e0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #555;
+            }
 
-.header-navigation ul li a:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #d4af37;
-}
+            /* LAYOUT */
+            .layout {
+                display: flex;
+                height: 100%;
+                padding-top: 70px;
+            }
 
-h1 {
-    color: #d4af37;
-    -webkit-text-stroke: 1px #fff;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
-}
+            /* SIDEBAR FIJA */
+            .sidebar {
+                width: 220px;
+                background: #f9f9f9;
+                border-right: 1px solid #e0e0e0;
+                position: fixed;
+                top: 70px;
+                bottom: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                padding-top: 20px;
+            }
 
-.header::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    z-index: 0;
-}
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px 20px;
+                color: #555;
+                text-decoration: none;
+                margin: 10px;
+                border-left: 3px solid transparent;
+                transition: all 0.2s;
+            }
+            .nav-link:hover {
+                background: #eefaf8;
+                color: #1a9b8e;
+            }
+            .nav-link.active {
+                background: #e8f5f3;
+                border-left-color: #1a9b8e;
+                color: #1a9b8e;
+                font-weight: 600;
+            }
 
-.header * {
-    position: relative;
-    z-index: 1;
-}
+            /* CONTENIDO SCROLLABLE */
+            .content {
+                margin-left: 220px;
+                padding: 30px 40px;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                background: #f5f5f5;
+            }
 
-/* Hero */
-.hero {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-}
+            /* TARJETA BIENVENIDA (contenido restaurado) */
+            .welcome-card {
+                background: #f3fdfa;
+                border: 1px solid #d9f3ee;
+                border-radius: 14px;
+                padding: 40px;
+                margin-bottom: 40px;
+                text-align: center;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                max-width: 1050px;
+                margin-left: auto;
+                margin-right: auto;
+                /* ajuste visual: subir ligeramente sin cambiar tamaño */
+                margin-top: 6px;
+            }
 
-.hero img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
+            .welcome-top {
+                margin-bottom: 22px;
+            }
 
-.hero-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 2.8rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 0 20px;
-    text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
-    font-family: 'Times New Roman', serif;
-}
+            .welcome-icon {
+                width: 75px;
+                height: 75px;
+                background: #c9f1ec;
+                color: #1a9b8e;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 35px;
+                margin: 0 auto 12px;
+            }
 
-/* Sección Habitaciones */
-#inicio {
-    background-color: #FBFDFE;
-    color: rgba(0, 0, 0, 0.7);
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 80px 100px;
-    gap: 40px;
-}
+            .welcome-actions {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 30px;
+            }
 
-#inicio .txt {
-    flex: 1;
-    min-width: 320px;
-}
+            .welcome-link {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #1a9b8e;
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.2s ease, transform 0.2s ease;
+            }
 
-#inicio .texto1 {
-    padding-right: 20px;
-    line-height: 1.7;
-    font-size: 1.05rem;
-}
+            .welcome-link:hover {
+                color: #0c6f67;
+                transform: translateY(-2px);
+            }
 
-#inicio img {
-    flex: 1;
-    max-width: 420px;
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
+            .welcome-link i {
+                font-size: 18px;
+            }
 
-h2 {
-    color: #d4af37;
-    font-family: 'Times New Roman', serif;
-    font-size: 2rem;
-    margin-bottom: 20px;
-} 
+            .welcome-title {
+                font-size: 26px;
+                font-weight: 700;
+                color: #002d2b;
+                margin-bottom: 10px;
+            }
 
- .btn-vermas {
-  background: linear-gradient(135deg, #007F8C, #4FC3C9);
-  border: none;
-  border-radius: 30px;
-  padding: 12px 28px;
-  margin-top: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 127, 140, 0.3);
-}
+            .welcome-text {
+                color: #555;
+                font-size: 1rem;
+                max-width: 700px;
+                margin: 0 auto 18px;
+                line-height: 1.5;
+            }
 
-.btn-vermas a {
-  color: #fbfdfE;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
+            .welcome-actions {
+                display: flex;
+                justify-content: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
 
-.btn-vermas:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 127, 140, 0.5);
-  background: linear-gradient(135deg, #4FC3C9, #007F8C);
-}
+            .btn-primary,
+            .btn-outline {
+                padding: 10px 18px;
+                font-size: 0.95rem;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
 
-.btn-vermas:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(0, 127, 140, 0.4);
-}
-.contenedor-espacios {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
-  padding: 2rem 6rem;
-}
+            .btn-primary {
+                background-color: #1a9b8e;
+                color: #fff;
+                border: none;
+            }
+            .btn-primary:hover {
+                background-color: #158076;
+            }
 
-.contenedor-espacios {
-  display: flex;
-  flex-direction: row-reverse;
-}
+            .btn-outline {
+                border: 1px solid #1a9b8e;
+                background: transparent;
+                color: #1a9b8e;
+            }
+            .btn-outline:hover {
+                background: #e9f8f6;
+            }
+
+            /* SECCIÓN HABITACIONES */
+            .habitaciones-section {
+                background: #fff;
+                border-radius: 14px;
+                padding: 30px 40px;
+                box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+                max-width: 1100px;
+                margin: 0 auto 40px auto;
+            }
+            .habitaciones-header {
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:18px;
+            }
+            .habitaciones-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 22px;
+            }
+
+            .habitacion-card {
+                background:#fff;
+                border:1px solid #eaeaea;
+                border-radius:12px;
+                overflow:hidden;
+                box-shadow:0 3px 10px rgba(0,0,0,0.05);
+            }
+            .habitacion-img {
+                height:160px;
+                overflow:hidden;
+            }
+            .habitacion-img img {
+                width:100%;
+                height:100%;
+                object-fit:cover;
+                display:block;
+            }
+            .habitacion-body {
+                padding:14px 16px;
+            }
+            .precio {
+                color:#1a9b8e;
+                font-weight:700;
+            }
+            .personas {
+                color:#777;
+                font-size:.9rem;
+            }
+
+            /* Responsive */
+            @media (max-width: 900px) {
+                .content {
+                    padding: 20px;
+                }
+                .welcome-card {
+                    padding: 28px;
+                    margin-top: 8px;
+                }
+                .habitaciones-section {
+                    padding: 20px;
+                    width: 100%;
+                }
+                .habitaciones-grid {
+                    gap: 16px;
+                }
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="logo-text">Great Viaggio</a>
+            </div>
+            <div class="header-right">
+                <a href="NuevaReservaHuesped.xhtml" class="btn-crear-reserva">
+                    <i class="bi bi-plus-circle"></i> Crear Reserva
+                </a>
 
 
-.imagen-espacio img {
-  width: 500px;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
+                <button class="btn-crear-reserva"><i class="bi bi-plus-circle"></i> Crear Evento</button>
+                <button class="icon-btn"><i class="bi bi-bell"></i></button>
+                <div class="user-profile">
+                    <span><strong>#{usuarioLogueado.nombre}</strong></span>
+                    <div class="user-avatar"><i class="bi bi-person"></i></div>
+                </div>
+            </div>
+        </div>
 
-.texto-espacio {
-  flex: 1;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #131318;
-}
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <a href="HomeHuesped.xhmtl" class="nav-link active"><i class="bi bi-house-door"></i>Inicio</a>
+                <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
+                <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
+                <a href="#" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
+                <a href="#" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
+                <a href="MiPerfil.xhtml" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
 
-#ubicacion {
-  padding: 80px 100px;
-  text-align: center;
-  background-color: #fbf6f5;
-}
+                <h:form>
+                    <div class="sidebar-footer">
+                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </h:commandLink>
+                    </div>
+                </h:form>
+            </div>
 
-#ubicacion h2 {
-  color: #d4af37;
-  font-family: 'Times New Roman', serif;
-  font-size: 2rem;
-  margin-bottom: 20px;
-}
 
-.mapa-container {
-  margin-top: 20px;
-  border-radius: 15px;
-  overflow: hidden;
-  width: 80%;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-</style>
-</head>
-<body>
 
-<!-- Header -->
-<div class="header">
-  <img src="img/image.png" alt="Logo Great Viggio" />
-  <div class="header-navigation">
-    <ul>
-      <li><a href="#inicio">Habitaciones</a></li>
-      <li><a href="#espacios">Espacios</a></li>
-      <li><a href="#servicio">Ubicación</a></li>
-      <li><a href="#contactos">ES</a></li>
-      <li><a href="login.xhtml">Perfil</a></li>
-    </ul>
-  </div>
-</div>
+            <!-- CONTENIDO -->
+            <div class="content">
+                <!-- Welcome card con contenido RESTAURADO -->
+                <div class="welcome-card">
+                    <div class="welcome-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <h2 class="welcome-title">¡Bienvenido a Great Viggio!</h2>
+                    <p class="welcome-text">
+                        Gestiona todas tus reservas de forma fácil y rápida. Desde aquí puedes crear nuevas
+                        reservas, consultar tus estancias actuales, reservar espacios para eventos y actualizar
+                        tu perfil.
+                    </p>
+                    <div class="welcome-actions">
+                        <a href="#" class="welcome-link"><i class="bi bi-calendar2-check"></i> Reservas Rápidas</a>
+                        <a href="#espacios" class="welcome-link"><i class="bi bi-building"></i> Espacios para Eventos</a>
+                        <a href="#" class="welcome-link"><i class="bi bi-person-gear"></i> Gestión de Perfil</a>
+                    </div>
+                </div>
 
-<!-- Hero principal -->
-<div class="hero">
-  <img src="img/def.png" alt="Habitación Hotel Great Viggio" />
-  <div class="hero-text">
-       <span class="me-3">
-                    Bienvenido/a, <strong>#{usuarioLogueado.nombre}</strong>
-                </span>
-  </div>
-</div>
+                <!-- Sección de habitaciones (dinámica) -->
+                <div class="habitaciones-section">
+                    <div class="habitaciones-header">
+                        <h3>Nuestras Habitaciones</h3>
+                        <span>WiFi gratuito y desayuno incluido</span>
+                    </div>
 
-<!-- Habitaciones -->
-<div id="inicio">
-  <div class="txt">
-    <h2>Habitaciones</h2>
-    <p class="texto1">
-      Bienvenido a Great Viggio, un lugar donde la elegancia y el confort se encuentran para brindarte una experiencia inolvidable.
-      Nuestras habitaciones de lujo, modernas y cuidadosamente diseñadas, te ofrecen el equilibrio perfecto entre relax, estilo y exclusividad.
-      Disfruta de cada detalle, de nuestras vistas encantadoras y del ambiente que solo Great Viggio puede ofrecer.
-    </p>
-    <p>🌟 Descubre el placer de hospedarte en un espacio hecho para ti.</p>
-    <button class="btn-vermas"><a href="HabitacionesHuesped.xhtml">Ver más</a></button>
-  </div>
-  <img src="img/puroLujo.png" alt="Habitación de lujo" />
-</div>
-<hr />
+                    <div class="habitaciones-grid">
+                        <p:repeat var="t" value="#{tipoHabitacionBean.listaTipoHabitaciones}">
+                            <div class="habitacion-card">
+                                <div class="habitacion-img">
+                                    <img src="#{request.contextPath}/img/#{t.imagen}" alt="#{t.nombre}" />
+                                </div>
+                                <div class="habitacion-body">
+                                    <h4>#{t.nombre}</h4>
+                                    <p>#{t.descripcion}</p>
+                                    <div>
+                                        <span class="precio">Col$
+                                            <h:outputText value="#{t.precio}">
+                                                <f:convertNumber pattern="#,##0.00" />
+                                            </h:outputText>
+                                        </span>
+                                        <br/>
+                                        <span class="personas"><i class="bi bi-people"></i> #{t.capacidad} personas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:repeat>
+                    </div>
+                </div>
 
-<!-- Espacios -->
-<div class="seccion-espacios" id="espacios">
-  <div class="contenedor-espacios">
-    <div class="texto-espacio">
-      <h2>Espacios</h2>
-      <p class="texto1">
-        En Great Viggio, cada espacio ha sido creado pensando en tu confort y bienestar. 
-        Nuestros ambientes combinan diseño contemporáneo con detalles clásicos, brindándote lugares perfectos para relajarte,
-        socializar o disfrutar de momentos únicos. Ya sea en nuestros elegantes salones, áreas verdes o terrazas con vistas impresionantes,
-        encontrarás el equilibrio ideal entre lujo y tranquilidad.
-      </p>
-      <p>🌿 Vive la experiencia de cada rincón pensado especialmente para ti.</p>
-      <button class="btn-vermas"><a href="EspacioHuesped.xhtml">Ver más</a></button>
-    </div>
-    <div class="imagen-espacio">
-      <img src="img/Espacios.png" alt="Espacios de lujo" />
-    </div>
-  </div>
-</div>
-<hr />
-<section id="inicio">
-  <div class="txt">
-    <h2>Ubicación</h2>
-    <p class="texto1">
-        Nos encontramos en la zona más exclusiva de la ciudad, rodeados de un entorno moderno, seguro y lleno de comodidades. Nuestro espacio ha sido diseñado para ofrecer una experiencia única, combinando elegancia, confort y accesibilidad.
-A pocos minutos de los principales puntos de interés, centros comerciales, restaurantes y vías de acceso, este lugar representa el equilibrio perfecto entre tranquilidad y conectividad.
-         
-    </p>
-  </div>
-  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15904.963761399631!2d-74.0723099637657!3d4.728161392089562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f8523bf36c35f%3A0xdf6887d9af157f3!2sCl.%20131a%20%2358D-20%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1760644325274!5m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    
-</section>
+                <div class="habitaciones-section" id="espacios">
+                    <div class="habitaciones-header">
+                        <h3>Nuestros Espacios</h3>
+                        <span></span>
+                    </div>
 
-</body>
+                    <div class="habitaciones-grid">
+                        <p:repeat var="p" value="#{espacioBean.listaEspacios}">
+                            <div class="habitacion-card">
+                                <div class="habitacion-img">
+                                    <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}" />
+                                </div>
+                                <div class="habitacion-body">
+                                    <h4>#{p.nombre}</h4>
+                                    <p>#{p.descripcion}</p>
+                                    <div>
+                                        <span class="precio">Col$
+                                            <h:outputText value="#{p.costoHora}">
+                                                <f:convertNumber pattern="#,##0.00" />
+                                            </h:outputText>
+                                        </span>
+                                        <br/>
+                                        <span class="personas"><i class="bi bi-people"></i> #{p.capacidad} personas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:repeat>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </h:body>
 </html>

@@ -8,5 +8,5 @@ package Modelo;
 public enum EnumRoles {
     ADMIN,
     HUESPED,
-    EMPLEADO
+  
 }

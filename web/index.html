@@ -86,6 +86,8 @@ button.next { right: 15px; }
   color: white;
   text-align: center;
   text-shadow: 0 0 10px rgba(0,0,0,0.7);
+  
+ 
 }
 </style>
 </head>
@@ -98,33 +100,79 @@ button.next { right: 15px; }
     <nav class="header-navigation">
       <ul>
         <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#espacios">Espacios</a></li>
-        <li><a href="#servicio">Servicios</a></li>
-        <li><a href="#contactos">Contactos</a></li>
-        <li><a href="login.xhtml">Iniciar sesión</a></li>
+        <li><a href="#sobre">Sobre Nosotros</a></li>
+        <li><a href="#habitaciones">Habitaciones</a></li>
+        <li><a href="#instalaciones">Instalaciones</a></li>
+        <li><a href="#ubicacion">Ubicación</a></li>
+        <li><a href="login.xhtml" class="boton">Reservar ahora</a></li>
       </ul>
     </nav>
   </div>
 </header>
 
+
 <!-- Hero -->
 <section class="hero">
-  <img src="img/cama.png" alt="Habitación Hotel Great Viggio">
-  <div class="hero-text">"Donde el confort se convierte en arte."</div>
+  <img src="img/GreatVi.png" alt="Habitación Hotel Great Viggio"id="inicio">
+  <div class="hero-text">Bienvenido a Great Viggio.</div>
 </section>
 
-<!-- Bienvenida -->
-<div id="inicio" class="bienvenida">
-  <div class="txt">
-    <h2>Bienvenido a Great Viggio</h2>
-    <p class="texto1">
-     En nuestro hotel, traemos un pedacito de Italia a Colombia, fusionando la calidez y hospitalidad italianas con la riqueza cultural y la belleza natural de este país. Nos enorgullece ofrecer una experiencia única que combina la elegancia del diseño italiano, el sabor auténtico de su gastronomía y un servicio excepcional que hace sentir a cada huésped como en casa. Ubicados en un entorno privilegiado, nuestro hotel es el lugar ideal para quienes buscan confort, estilo y una atención al detalle que refleja la pasión italiana por la excelencia. Ya sea que viaje por placer o negocios, estamos comprometidos a hacer de su estadía uña experiencia inolvidable.
+<!-- Sobre -->
+<section class="sobre-section" id="sobre">
+  <div class="sobre-container">
+    <div class="sobre-imagen">
+      <img src="img/recepcion.png" alt="Lobby del hotel Great Viggio">
+    </div>
+
+    <div class="sobre-contenido">
+      <h2>Sobre Great Viggio</h2>
+      <p class="intro">
+        Great Viggio es más que un hotel, es una experiencia única que combina elegancia, confort y hospitalidad excepcional.
+        Ubicado en un entorno privilegiado, nuestro hotel ofrece a nuestros huéspedes un refugio de tranquilidad y lujo.
+      </p>
+      <p>
+        Con años de experiencia en la industria hotelera, nos enorgullecemos de ofrecer servicios de primera clase,
+        instalaciones modernas y una atención personalizada que supera las expectativas de cada visitante.
+        Cada detalle ha sido cuidadosamente diseñado para garantizar su máxima satisfacción.
+      </p>
+
+      <div class="beneficios">
+        <div class="beneficio">
+          <div class="icono">⭐</div>
+          <div>
+            <h4>Servicio 5 Estrellas</h4>
+            <p>Atención personalizada las 24 horas</p>
+          </div>
+        </div>
+        <div class="beneficio">
+          <div class="icono">📍</div>
+          <div>
+            <h4>Ubicación privilegiada</h4>
+            <p>En el corazón de la ciudad</p>
+          </div>
+        </div>
+        <div class="beneficio">
+          <div class="icono">🍽️</div>
+          <div>
+            <h4>Gastronomía Exquisita</h4>
+            <p>Restaurante gourmet internacional</p>
+          </div>
+        </div>
+        <div class="beneficio">
+          <div class="icono">🛡️</div>
+          <div>
+            <h4>Seguridad Total</h4>
+            <p>Protocolos de higiene certificados</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <img class="edificio" src="img/hotel.png" alt="edificio">
-</div>
+</section>
+
 
 <!-- Carrusel -->
-<section id="espacios" class="espacios-section">
+<section id="instalaciones" class="espacios-section">
   <h2 class="espacios-title">Nuestros Espacios</h2>
 
   <div class="carousel-container">
@@ -205,32 +253,68 @@ button.next { right: 15px; }
   </div>
 </section>
 
-<!-- Servicios -->
-<div id="servicio" class="servicios-section">
-  <h2 class="servicios-title">Nuestros Servicios</h2>
-  <div class="servicios-container">
-    <div class="servicio-item">
-      <img src="img/servicioHabitacion.png" alt="Servicio a la Habitación">
-      <h3>Servicio a la Habitación</h3>
-      <p>Comida gourmet sin salir de tu habitación.</p>
+<section class="servicios-section">
+    <h2>Servicios incluidos</h2>
+    <p class="subtitulo">Todo lo que necesitas para una estancia perfecta.</p>
+
+    <div class="servicios-grid">
+        <div class="servicio-card">
+            <div class="icono">📶</div>
+            <h3>WiFi de alta velocidad</h3>
+            <p>Conexión gratuita en todo el hotel.</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">🅿️</div>
+            <h3>Estacionamiento</h3>
+            <p>Valet parking y garaje seguro</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">🛎️</div>
+            <h3>Servicio a Habitación</h3>
+            <p>Disponible 24/7</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">💼</div>
+            <h3>Centro de Negocios</h3>
+            <p>Salas de reuniones equipadas</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">✈️</div>
+            <h3>Traslado Aeropuerto</h3>
+            <p>Servicio de transporte privado</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">🛡️</div>
+            <h3>Seguridad 24/7</h3>
+            <p>Vigilancia y cámaras</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">🎧</div>
+            <h3>Conserje</h3>
+            <p>Asistencia personalizada</p>
+        </div>
+        <div class="servicio-card">
+            <div class="icono">👕</div>
+            <h3>Lavandería</h3>
+            <p>Servicio exprés disponible</p>
+        </div>
     </div>
-    <div class="servicio-item">
-      <img src="img/habitaciolujo.png" alt="Habitaciones de lujo">
-      <h3>Habitaciones de lujo</h3>
-      <p>Confort y diseño moderno para una estadía inolvidable.</p>
-    </div>
-    <div class="servicio-item">
-      <img src="img/comodidades.png" alt="Comodidades">
-      <h3>Comodidades</h3>
-      <p>Gimnasio, spa, piscina, sala de juegos y más.</p>
-    </div>
-    <div class="servicio-item">
-      <img src="img/restaurante.png" alt="Restaurante">
-      <h3>Restaurante</h3>
-      <p>Platos gourmet preparados por chefs de clase mundial.</p>
+</section>
+
+<section id="ubicacion" class="ubicacion-section">
+  <div class="ubicacion-container">
+    <h2>Nuestra Ubicación</h2>
+    <p class="subtitulo">En el corazón de la ciudad, cerca de todo lo que necesitas</p>
+
+    <div class="ubicacion-content">
+      <!-- Mapa -->
+      <div class="mapa">
+       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15904.963761399631!2d-74.0723099637657!3d4.728161392089562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f8523bf36c35f%3A0xdf6887d9af157f3!2sCl.%20131a%20%2358D-20%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1760644325274!5m2!1ses-419!2sco" width="600" height="1000" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
 
 <!-- Footer -->
 <footer class="footer" id="contactos">

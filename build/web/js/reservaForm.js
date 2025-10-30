@@ -1,6 +1,6 @@
 (function () {
     const FORM_SELECTOR = 'form.reserva-form';
-    const DATE_FORMAT = "Y-m-d'T'H:i";
+    const DATE_FORMAT = "Y-m-d\\TH:i";
 
     function localizeCalendar() {
         if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.es) {

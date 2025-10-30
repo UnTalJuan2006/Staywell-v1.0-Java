@@ -22,6 +22,8 @@ public class TipoHabitacionBean {
     private TipoHabitacion tipoHabitacion = new TipoHabitacion();
     private TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private Part imagen;
+    private List<TipoHabitacion> listaTipoHabitaciones;
+
 
     public TipoHabitacion getTipoHabitacion() {
         return tipoHabitacion;
@@ -38,7 +40,13 @@ public class TipoHabitacionBean {
     public void setImagen(Part imagen) {
         this.imagen = imagen;
     }
-    
+       // Getter
+  
+
+    // Setter
+    public void setListaTipoHabitaciones(List<TipoHabitacion> listaTipoHabitaciones) {
+        this.listaTipoHabitaciones = listaTipoHabitaciones;
+    }
     
     @PostConstruct
     public void init(){

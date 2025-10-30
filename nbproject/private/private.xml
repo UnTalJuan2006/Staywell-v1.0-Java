@@ -3,15 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EspacioBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EspacioDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/AsistenciaDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/AsistenciaBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EmpleadoDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/ReservaCalendarioBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EventoDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/CalendarioReservas.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Habitacion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/Conexion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/UsuarioBean.java</file>
@@ -62,13 +53,12 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Converter/LocalTimeConverter.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Asistencia.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Eventos.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HabitacionesHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/MisReservas.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/nbproject/build-impl.xml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/TipoHabitacion.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/TipoHabitacionDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/TipoHabitacionBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/TipoHabitacion.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeAdmin.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Habitaciones.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/HabitacionDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EmpleadoBean.java</file>
@@ -81,6 +71,18 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/ReservaBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crearReserva.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Reservas.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/css/dashboard.css</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/NuevaReservaHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/CalendarioReservas.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeAdmin.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/editarHabitacion.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/js/calendarioReservas.js</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/js/reservaForm.js</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/ReservaCalendarioBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EmpleadoDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EventoDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/MiPerfil.xhtml</file>
         </group>
     </open-files>
 </project-private>

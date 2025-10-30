@@ -4,8 +4,10 @@ import DAO.HabitacionDAO;
 import DAO.ReservaDAO;
 import DAO.UsuarioDAO;
 import Modelo.EnumEstadoReserva;
+import Modelo.EnumRoles;
 import Modelo.Habitacion;
 import Modelo.Reserva;
+import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ public class ReservaBean implements Serializable {
     private final ReservaDAO reservaDAO = new ReservaDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private List<TipoHabitacion> listaTipoHabitaciones;
 
     private Reserva reserva = new Reserva();
     private List<Reserva> listaReservas = new ArrayList<>();
@@ -39,27 +42,87 @@ public class ReservaBean implements Serializable {
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private Usuario usuarioLogueado;
 
-    @PostConstruct
-    public void init() {
-        try {
-            listaHabitaciones = habitacionDAO.listar();
-        } catch (SQLException e) {
-            listaHabitaciones = new ArrayList<>();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las habitaciones."));
+    private List<Habitacion> habitaciones;
+    private List<Habitacion> habitacionesFiltradas;
+    private TipoHabitacion tipoSeleccionado;
+    public List<Reserva> listarPorUsuario = new ArrayList<>();
+    
+
+  @PostConstruct
+public void init() {
+    FacesContext context = FacesContext.getCurrentInstance();
+
+    try {
+      
+        if (context == null) {
+            System.out.println("⚠ No hay FacesContext activo. Posible navegación directa o refresco fuera del ciclo JSF.");
+            inicializarListasVacias();
+            return;
         }
 
+        
+        usuarioLogueado = (Usuario) context.getExternalContext()
+                .getSessionMap().get("usuarioLogueado");
+
+        if (usuarioLogueado == null) {
+            System.out.println("⚠ No hay usuario logueado en sesión. Se detiene la carga de datos.");
+            inicializarListasVacias();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe iniciar sesión para acceder a las reservas."));
+            return;
+        }
+
+ 
         try {
+            habitaciones = habitacionDAO.listar();
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
+            listaHabitaciones = new ArrayList<>(habitaciones);
             listaUsuarios = usuarioDAO.listar();
         } catch (SQLException e) {
-            listaUsuarios = new ArrayList<>();
+            System.out.println("❌ Error al cargar habitaciones o usuarios: " + e.getMessage());
+            inicializarListasVacias();
+        }
+        
+        
+        
+        try {
+            if (usuarioLogueado.getRol() == EnumRoles.ADMIN) {
+                cargarReservas(); // todas las reservas
+            } else if (usuarioLogueado.getRol() == EnumRoles.HUESPED) {
+                listarReservasDelUsuarioLogueado();
+            } else {
+                listaReservas = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Error al cargar reservas: " + e.getMessage());
+            listaReservas = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar los usuarios."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
         }
 
-        cargarReservas();
+        System.out.println("✅ ReservaBean inicializado correctamente para el usuario: " + usuarioLogueado.getNombre());
+
+    } catch (Exception ex) {
+        System.out.println("❌ Error inesperado en init(): " + ex.getMessage());
+        ex.printStackTrace();
+        inicializarListasVacias();
     }
+}
+
+/**
+ * Método auxiliar para inicializar todas las listas vacías.
+ */
+private void inicializarListasVacias() {
+    listaReservas = new ArrayList<>();
+    listaHabitaciones = new ArrayList<>();
+    habitaciones = new ArrayList<>();
+    habitacionesFiltradas = new ArrayList<>();
+    listaUsuarios = new ArrayList<>();
+}
+
 
     public void cargarReservas() {
         try {
@@ -68,6 +131,67 @@ public class ReservaBean implements Serializable {
             listaReservas = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
+        }
+    }
+
+    public void listarReservasDelUsuarioLogueado() {
+        try {
+            if (usuarioLogueado != null) {
+                listarPorUsuario = reservaDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
+            } else {
+                listarPorUsuario = new ArrayList<>();
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No hay un usuario logueado."));
+            }
+        } catch (SQLException e) {
+            listarPorUsuario = new ArrayList<>();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas del usuario."));
+            e.printStackTrace();
+        }
+    }
+
+    public String guardarComoCliente() {
+        try {
+            if (!validarFechasBasicas(true)) {
+                return null;
+            }
+            reserva.setUsuario(usuarioLogueado);
+
+            Habitacion habitacion = obtenerHabitacionPorId(habitacionIdSeleccionada);
+            if (habitacion == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar una habitación."));
+                return null;
+            }
+            reserva.setHabitacion(habitacion);
+
+            if (reserva.getNombreCliente() == null || reserva.getNombreCliente().isEmpty()) {
+                reserva.setNombreCliente(usuarioLogueado.getNombre());
+            }
+            if (reserva.getEmail() == null || reserva.getEmail().isEmpty()) {
+                reserva.setEmail(usuarioLogueado.getEmail());
+            }
+            if (reserva.getTelefono() == null || reserva.getTelefono().isEmpty()) {
+                reserva.setTelefono(usuarioLogueado.getTelefono());
+            }
+
+            if (reserva.getFechaReserva() == null) {
+                reserva.setFechaReserva(LocalDateTime.now());
+            }
+
+            reserva.setEstado(EnumEstadoReserva.ACTIVA);
+            reservaDAO.reservaHuespd(reserva);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Reserva registrada correctamente."));
+            limpiarFormulario();
+            return "HomeHuesped?faces-redirect=true";
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar la reserva."));
+            return null;
         }
     }
 
@@ -377,6 +501,26 @@ public class ReservaBean implements Serializable {
         refrescarOcupacionesHabitacion();
     }
 
+    public Usuario getUsuarioLogueado() {
+        return usuarioLogueado;
+    }
+
+    public void setUsuarioLogueado(Usuario usuarioLogueado) {
+        this.usuarioLogueado = usuarioLogueado;
+    }
+
+    public List<TipoHabitacion> getListaTipoHabitaciones() {
+        return listaTipoHabitaciones;
+    }
+
+    public List<Reserva> getListarPorUsuario() {
+        return listarPorUsuario;
+    }
+
+    public void setListarPorUsuario(List<Reserva> listarPorUsuario) {
+        this.listarPorUsuario = listarPorUsuario;
+    }
+
     private void refrescarOcupacionesHabitacion() {
         if (habitacionIdSeleccionada == null) {
             fechasOcupadasJson = "[]";
@@ -424,4 +568,93 @@ public class ReservaBean implements Serializable {
     public Integer getHabitacionIdSeleccionada() {
         return habitacionIdSeleccionada;
     }
+
+    public String getHabitacionesPorTipoJson(int tipoId) {
+        StringBuilder json = new StringBuilder();
+        json.append("[");
+
+        List<Habitacion> habitacionesFiltradas = new ArrayList<>();
+
+        for (Habitacion habitacion : listaHabitaciones) {
+            TipoHabitacion tipo = habitacion.getTipoHabitacion();
+            if (tipo != null && tipo.getIdTipoHabitacion() == tipoId) {
+                habitacionesFiltradas.add(habitacion);
+            }
+        }
+
+        for (int i = 0; i < habitacionesFiltradas.size(); i++) {
+            Habitacion habitacion = habitacionesFiltradas.get(i);
+            TipoHabitacion tipo = habitacion.getTipoHabitacion();
+            json.append("{")
+                    .append("\"id\":").append(habitacion.getIdHabitacion()).append(",")
+                    .append("\"numero\":").append(habitacion.getNumHabitacion()).append(",")
+                    .append("\"tipoId\":").append(tipo.getIdTipoHabitacion()).append(",")
+                    .append("\"tipoNombre\":\"").append(escaparJson(tipo.getNombre())).append("\"")
+                    .append("}");
+            if (i < habitacionesFiltradas.size() - 1) {
+                json.append(",");
+            }
+        }
+
+        json.append("]");
+        return json.toString();
+    }
+
+    private String escaparJson(String valor) {
+        if (valor == null) {
+            return "";
+        }
+        return valor.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("<", "\\u003C")
+                .replace(">", "\\u003E")
+                .replace("&", "\\u0026");
+    }
+
+    public void filtrarHabitacionesPorTipo() {
+        if (habitacionesFiltradas == null) {
+            habitacionesFiltradas = new ArrayList<>();
+        } else {
+            habitacionesFiltradas.clear();
+        }
+
+        if (tipoSeleccionado == null) {
+            habitacionesFiltradas.addAll(habitaciones);
+            return;
+        }
+
+        for (Habitacion h : habitaciones) {
+            if (h.getTipoHabitacion() != null
+                    && h.getTipoHabitacion().getIdTipoHabitacion() == tipoSeleccionado.getIdTipoHabitacion()) {
+                habitacionesFiltradas.add(h);
+            }
+        }
+    }
+
+    public List<Habitacion> getHabitaciones() {
+        return habitaciones;
+    }
+
+    public void setHabitaciones(List<Habitacion> habitaciones) {
+        this.habitaciones = habitaciones;
+    }
+
+    public List<Habitacion> getHabitacionesFiltradas() {
+        return habitacionesFiltradas;
+    }
+
+    public void setHabitacionesFiltradas(List<Habitacion> habitacionesFiltradas) {
+        this.habitacionesFiltradas = habitacionesFiltradas;
+    }
+
+    public TipoHabitacion getTipoSeleccionado() {
+        return tipoSeleccionado;
+    }
+
+    public void setTipoSeleccionado(TipoHabitacion tipoSeleccionado) {
+        this.tipoSeleccionado = tipoSeleccionado;
+    }
+
 }
