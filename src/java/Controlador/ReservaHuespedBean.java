@@ -31,6 +31,7 @@ import javax.faces.context.FacesContext;
 public class ReservaHuespedBean implements Serializable {
 
     private static final DateTimeFormatter RESUMEN_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     private final TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
@@ -38,6 +39,7 @@ public class ReservaHuespedBean implements Serializable {
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
+    private String fechasOcupadasJson = "[]";
 
     private Integer tipoHabitacionSeleccionada;
     private Integer habitacionSeleccionada;
@@ -70,6 +72,8 @@ public class ReservaHuespedBean implements Serializable {
             email = usuarioLogueado.getEmail();
             telefono = usuarioLogueado.getTelefono();
         }
+
+        prepararNuevaReserva();
     }
 
     private void cargarTiposHabitacion() {
@@ -85,7 +89,7 @@ public class ReservaHuespedBean implements Serializable {
 
     public void prepararNuevaReserva() {
         tipoHabitacionSeleccionada = null;
-        habitacionSeleccionada = null;
+        setHabitacionSeleccionada(null);
         habitacionesDisponibles = new ArrayList<>();
         checkin = null;
         checkout = null;
@@ -93,15 +97,18 @@ public class ReservaHuespedBean implements Serializable {
         numeroNoches = 0;
         totalReserva = BigDecimal.ZERO;
         precioPorNoche = BigDecimal.ZERO;
+        fechasOcupadasJson = "[]";
     }
 
     public void onTipoHabitacionChange() {
         actualizarHabitacionesDisponibles();
         actualizarPrecioPorNoche();
         recalcularResumen();
+        fechasOcupadasJson = "[]";
     }
 
     public void onHabitacionChange() {
+        actualizarFechasOcupadas();
         recalcularResumen();
     }
 
@@ -111,7 +118,7 @@ public class ReservaHuespedBean implements Serializable {
 
     private void actualizarHabitacionesDisponibles() {
         habitacionesDisponibles = new ArrayList<>();
-        habitacionSeleccionada = null;
+        setHabitacionSeleccionada(null);
 
         if (tipoHabitacionSeleccionada == null) {
             return;
@@ -206,6 +213,55 @@ public class ReservaHuespedBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                             "No se pudo obtener la información de la habitación."));
             return null;
+        }
+    }
+
+    private void actualizarFechasOcupadas() {
+        fechasOcupadasJson = "[]";
+
+        if (habitacionSeleccionada == null) {
+            return;
+        }
+
+        try {
+            List<Reserva> ocupaciones = reservaDAO.listarOcupacionesHabitacion(habitacionSeleccionada, null);
+
+            if (ocupaciones.isEmpty()) {
+                return;
+            }
+
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            boolean first = true;
+
+            for (Reserva ocupacion : ocupaciones) {
+                LocalDateTime entrada = ocupacion.getCheckin();
+                LocalDateTime salida = ocupacion.getCehckout();
+
+                if (entrada == null || salida == null) {
+                    continue;
+                }
+
+                if (!first) {
+                    jsonBuilder.append(',');
+                }
+
+                jsonBuilder.append('{')
+                        .append("\"from\":\"")
+                        .append(entrada.truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\",\"to\":\"")
+                        .append(salida.truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append("\"}");
+
+                first = false;
+            }
+
+            jsonBuilder.append(']');
+            fechasOcupadasJson = jsonBuilder.toString();
+        } catch (SQLException ex) {
+            fechasOcupadasJson = "[]";
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudieron consultar las reservas de la habitación seleccionada."));
         }
     }
 
@@ -324,6 +380,7 @@ public class ReservaHuespedBean implements Serializable {
 
     public void setHabitacionSeleccionada(Integer habitacionSeleccionada) {
         this.habitacionSeleccionada = habitacionSeleccionada;
+        actualizarFechasOcupadas();
     }
 
     public Date getCheckin() {
@@ -332,6 +389,7 @@ public class ReservaHuespedBean implements Serializable {
 
     public void setCheckin(Date checkin) {
         this.checkin = checkin;
+        recalcularResumen();
     }
 
     public Date getCheckout() {
@@ -340,6 +398,7 @@ public class ReservaHuespedBean implements Serializable {
 
     public void setCheckout(Date checkout) {
         this.checkout = checkout;
+        recalcularResumen();
     }
 
     public String getObservaciones() {
@@ -392,5 +451,13 @@ public class ReservaHuespedBean implements Serializable {
 
     public Date getCheckoutMinDate() {
         return checkin;
+    }
+
+    public String getFechasOcupadasJson() {
+        return fechasOcupadasJson;
+    }
+
+    public Usuario getUsuarioLogueado() {
+        return usuarioLogueado;
     }
 }
