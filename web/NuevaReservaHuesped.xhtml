@@ -424,9 +424,10 @@
            
 
 <p:commandButton value="RESERVA YA / BOOK NOW"
-                 action="#{eventoBean.seleccionarEspacio(p)}"
+                 action="#{reservaHuespedBean.prepararNuevaReserva}"
                  styleClass="btn-reservar"
-                 update=":formReservarEvento:globalMessages"
+                 update="formReservarEvento"
+                 process="@this"
                  onclick="var myModal = new bootstrap.Modal(document.getElementById('modalReservaEspacio')); myModal.show();" />
 
                     </div>
@@ -453,7 +454,7 @@
 
             <!-- Header -->
             <div class="modal-header modal-header-blue-gold">
-                <h5 class="modal-title text-glow-gold" id="modalReservaEspacioLabel">🎟️ Reserva de Espacio</h5>
+                <h5 class="modal-title text-glow-gold" id="modalReservaEspacioLabel">🛎️ Reserva de Habitación</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
@@ -463,48 +464,89 @@
                     <p:messages id="globalMessages" />
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <!-- 🧾 Formulario del huésped -->
+                        <!-- 🧾 Formulario de reserva -->
                         <div>
-                            <h4 class="text-lg font-bold text-gold mb-3">Datos del Huésped</h4>
+                            <h4 class="text-lg font-bold text-gold mb-3">Datos de la reserva</h4>
 
                             <div class="mb-3">
-                                <label class="form-label">Nombre del Evento</label>
-                                <h:inputText value="#{eventoBean.evento.nombreEvento}" styleClass="form-control" required="true" />
+                                <label class="form-label">Tipo de habitación</label>
+                                <h:selectOneMenu id="tipoHabitacion" value="#{reservaHuespedBean.tipoHabitacionSeleccionada}" styleClass="form-select">
+                                    <f:selectItem itemLabel="Seleccione un tipo de habitación" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{reservaHuespedBean.tiposHabitacion}" var="tipo"
+                                                   itemValue="#{tipo.idTipoHabitacion}" itemLabel="#{tipo.nombre}" />
+                                    <f:ajax listener="#{reservaHuespedBean.onTipoHabitacionChange}" render="habitacionSelect resumenReserva" />
+                                </h:selectOneMenu>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Descripción</label>
-                                <h:inputTextarea value="#{eventoBean.evento.descripcion}" styleClass="form-control" rows="2" />
+                                <label class="form-label">Habitación</label>
+                                <h:selectOneMenu id="habitacionSelect"
+                                                 value="#{reservaHuespedBean.habitacionSeleccionada}"
+                                                 styleClass="form-select"
+                                                 disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}">
+                                    <f:selectItem itemLabel="#{reservaHuespedBean.habitacionInputDeshabilitado ? 'Seleccione un tipo primero' : 'Seleccione una habitación'}"
+                                                  itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{reservaHuespedBean.habitacionesDisponibles}" var="habitacion"
+                                                   itemValue="#{habitacion.idHabitacion}" itemLabel="Hab. #{habitacion.numHabitacion}" />
+                                    <f:ajax listener="#{reservaHuespedBean.onHabitacionChange}" render="resumenReserva" />
+                                </h:selectOneMenu>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Fecha del Evento</label>
-                                <p:calendar value="#{eventoBean.evento.fechaEvento}"
-                                            navigator="true"
-                                            showButtonPanel="true"
-                                            locale="es"
-                                           
-                                            styleClass="form-control"/>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div class="mb-3">
-                                    <label class="form-label">Hora Inicio</label>
-                                    <h:inputText value="#{eventoBean.evento.horaInicio}" styleClass="form-control" />
+                                    <label class="form-label">Check-in</label>
+                                    <p:calendar id="checkin"
+                                                value="#{reservaHuespedBean.checkin}"
+                                                pattern="yyyy-MM-dd"
+                                                showIcon="true"
+                                                navigator="true"
+                                                locale="es">
+                                        <p:ajax event="dateSelect" listener="#{reservaHuespedBean.onFechasChange}" update="resumenReserva" />
+                                        <p:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}" update="resumenReserva" />
+                                    </p:calendar>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Hora Fin</label>
-                                    <h:inputText value="#{eventoBean.evento.horaFin}" styleClass="form-control" />
+                                    <label class="form-label">Check-out</label>
+                                    <p:calendar id="checkout"
+                                                value="#{reservaHuespedBean.checkout}"
+                                                pattern="yyyy-MM-dd"
+                                                showIcon="true"
+                                                navigator="true"
+                                                locale="es"
+                                                mindate="#{reservaHuespedBean.checkoutMinDate}">
+                                        <p:ajax event="dateSelect" listener="#{reservaHuespedBean.onFechasChange}" update="resumenReserva" />
+                                        <p:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}" update="resumenReserva" />
+                                    </p:calendar>
                                 </div>
                             </div>
 
-                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre del huésped</label>
+                                    <h:inputText value="#{reservaHuespedBean.nombreCliente}" styleClass="form-control" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Correo electrónico</label>
+                                    <h:inputText value="#{reservaHuespedBean.email}" styleClass="form-control" />
+                                </div>
+                                <div class="mb-3 md:col-span-2">
+                                    <label class="form-label">Teléfono</label>
+                                    <h:inputText value="#{reservaHuespedBean.telefono}" styleClass="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Observaciones</label>
+                                <h:inputTextarea value="#{reservaHuespedBean.observaciones}" styleClass="form-control" rows="3" />
+                            </div>
+
                             <div class="text-end mt-4">
-                                <h:commandButton value="✅ Confirmar Reserva"
-                                                 action="#{eventoBean.agregarEventoHuesped}"
+                                <p:commandButton value="✅ Confirmar Reserva"
+                                                 action="#{reservaHuespedBean.confirmarReserva}"
+                                                 process="@form"
+                                                 update="formReservarEvento"
                                                  styleClass="btn btn-blue-gold px-4 py-2 rounded"
-                                               
-                                                 onclick="var myModal = bootstrap.Modal.getInstance(document.getElementById('modalReservaEspacio')); if(myModal) myModal.hide();" />
+                                                 oncomplete="if (!args.validationFailed) { var myModal = bootstrap.Modal.getInstance(document.getElementById('modalReservaEspacio')); if (myModal) { myModal.hide(); } }" />
                             </div>
                         </div>
 
@@ -512,40 +554,31 @@
                         <div class="border-l border-gray-300 pl-4">
                             <h4 class="text-lg font-bold text-gold mb-3">Resumen de la Reserva</h4>
 
-                            <h:panelGroup rendered="#{eventoBean.espacioSeleccionado != null}">
-                                <div class="flex flex-col items-center mb-3">
-                                    <img src="#{request.contextPath}/img/#{eventoBean.espacioSeleccionado.imagen}"
-                                         alt="Imagen del espacio"
-                                         class="rounded shadow mb-2"
-                                         style="width:100%; max-height:200px; object-fit:cover;" />
-                                </div>
+                            <h:panelGroup id="resumenReserva">
+                                <h:panelGroup rendered="#{reservaHuespedBean.tipoHabitacionSeleccionada != null}">
+                                    <p><b>Huésped:</b> #{empty reservaHuespedBean.nombreCliente ? 'Sin definir' : reservaHuespedBean.nombreCliente}</p>
+                                    <p><b>Tipo de habitación:</b> #{reservaHuespedBean.resumenTipoHabitacion}</p>
+                                    <p><b>Habitación:</b> #{reservaHuespedBean.resumenHabitacion}</p>
+                                    <p><b>Check-in:</b> #{reservaHuespedBean.resumenCheckin}</p>
+                                    <p><b>Check-out:</b> #{reservaHuespedBean.resumenCheckout}</p>
+                                    <p><b>Noches:</b> #{reservaHuespedBean.numeroNoches}</p>
+                                    <p><b>Precio por noche:</b>
+                                        <h:outputText value="#{reservaHuespedBean.precioPorNoche}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </p>
+                                    <hr />
+                                    <h5 class="text-end text-gold">
+                                        Total estimado:
+                                        <h:outputText value="#{reservaHuespedBean.totalReserva}">
+                                            <f:convertNumber type="currency" currencySymbol="$" />
+                                        </h:outputText>
+                                    </h5>
+                                </h:panelGroup>
 
-                                <p><b>Espacio:</b> #{eventoBean.espacioSeleccionado.nombre}</p>
-                                <p><b>Tipo:</b> #{eventoBean.espacioSeleccionado.tipo}</p>
-                                <p><b>Capacidad:</b> #{eventoBean.espacioSeleccionado.capacidad} personas</p>
-                                <p><b>Costo por hora:</b> $#{eventoBean.espacioSeleccionado.costoHora}</p>
-
-                                <hr/>
-
-                                <p><b>Fecha seleccionada:</b>
-                                    <h:outputText value="#{eventoBean.evento.fechaEvento}">
-                                        <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    </h:outputText>
-                                </p>
-                                <p><b>Hora:</b>
-                                    #{eventoBean.evento.horaInicio} - #{eventoBean.evento.horaFin}
-                                </p>
-
-                                <hr/>
-                                <h5 class="text-end text-gold">
-                                    Total Estimado:
-                                    <h:outputText value="#{eventoBean.espacioSeleccionado.costoHora}" />
-                                    <small>por hora</small>
-                                </h5>
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{eventoBean.espacioSeleccionado == null}">
-                                <p>No hay espacio seleccionado.</p>
+                                <h:panelGroup rendered="#{reservaHuespedBean.tipoHabitacionSeleccionada == null}">
+                                    <p class="text-gray-600">Selecciona un tipo de habitación y las fechas para ver el resumen de tu reserva.</p>
+                                </h:panelGroup>
                             </h:panelGroup>
                         </div>
                     </div> <!-- fin grid -->
