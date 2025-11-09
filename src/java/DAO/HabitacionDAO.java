@@ -20,7 +20,7 @@ public class HabitacionDAO {
 
     
     public List<Habitacion> listar() throws SQLException {
-        List<Habitacion> listaHabitaciones = new ArrayList<>();
+    List<Habitacion> listaHabitaciones = new ArrayList<>();
         TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
 
         try {

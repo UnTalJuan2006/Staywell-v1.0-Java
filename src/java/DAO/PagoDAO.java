@@ -23,18 +23,19 @@ public class PagoDAO {
     ResultSet rs;
     
 
-    public int agregarPago(Pago p) throws SQLException {
-    String sql = "INSERT INTO pago (idReserva, tipoTarjeta, numeroTarjeta, titular, codigoSeguridad, fechaCreacion) "
-               + "VALUES (?, ?, ?, ?, ?, ?)";
-    
+public int agregarPago(Pago p) throws SQLException {
+    String sql = "INSERT INTO pago (idReserva, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
     try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-        
+
         ps.setInt(1, p.getReserva().getIdReserva());
         ps.setString(2, p.getTipoTarjeta().name());
         ps.setString(3, p.getNumeroTarjeta());
         ps.setString(4, p.getTitular());
-        ps.setString(5, p.getCodigoSeguridad());
-        ps.setTimestamp(6, Timestamp.valueOf(p.getFechaCreacion()));
+        ps.setDate(5, java.sql.Date.valueOf(p.getFechaVencimiento())); 
+        ps.setString(6, p.getCodigoSeguridad());
+        ps.setTimestamp(7, Timestamp.valueOf(p.getFechaCreacion()));   
 
         ps.executeUpdate();
 
@@ -46,6 +47,7 @@ public class PagoDAO {
     }
     return -1;
 }
+
 
     
 }
