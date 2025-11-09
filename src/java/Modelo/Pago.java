@@ -15,7 +15,6 @@ public class Pago {
     private String titular;
     private LocalDate fechaVencimiento;
     private String codigoSeguridad;
-    private float monto;
     private LocalDateTime fechaCreacion;
 
     public int getIdPago() {
@@ -72,14 +71,6 @@ public class Pago {
 
     public void setCodigoSeguridad(String codigoSeguridad) {
         this.codigoSeguridad = codigoSeguridad;
-    }
-
-    public float getMonto() {
-        return monto;
-    }
-
-    public void setMonto(float monto) {
-        this.monto = monto;
     }
 
     public LocalDateTime getFechaCreacion() {

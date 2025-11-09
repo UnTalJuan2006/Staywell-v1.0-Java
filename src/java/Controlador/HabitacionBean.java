@@ -54,9 +54,14 @@ public void init() {
             habitaciones = new ArrayList<>();
         }
 
+        int ddd = 0;
+        
+        if(habitaciones != null)
+            ddd = habitaciones.size();
+        
         habitacionesFiltradas = new ArrayList<>(habitaciones);
-
-        System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
+        
+        System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + ddd);
 
     } catch (Exception e) {
         System.out.println("💥 Error en @PostConstruct: " + e.getMessage());
