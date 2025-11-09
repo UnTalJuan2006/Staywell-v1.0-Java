@@ -1,6 +1,10 @@
 package Modelo;
 
-public class TipoHabitacion {
+import java.io.Serializable;
+
+public class TipoHabitacion implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private int idTipoHabitacion;
     private String nombre;
