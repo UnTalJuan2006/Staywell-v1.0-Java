@@ -1,13 +1,11 @@
-
 package Modelo;
 
-import Modelo.EnumEstadoHabitacion;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import Modelo.EnumTipoHabitacion;
 
-import java.util.List;
+public class Habitacion implements Serializable {
 
-public class Habitacion {
+    private static final long serialVersionUID = 1L;
     private int idHabitacion;
     private int numHabitacion;
     private TipoHabitacion tipoHabitacion;
