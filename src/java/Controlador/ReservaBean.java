@@ -112,9 +112,7 @@ public void init() {
     }
 }
 
-/**
- * Método auxiliar para inicializar todas las listas vacías.
- */
+
 private void inicializarListasVacias() {
     listaReservas = new ArrayList<>();
     listaHabitaciones = new ArrayList<>();

@@ -417,7 +417,7 @@
             <div class="sidebar">
                 <a href="HomeHuesped.xhtml" class="nav-link active"><i class="bi bi-house-door"></i>Inicio</a>
                 <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
-                <a href="MisReservas.xhtmls" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
+                <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
                 <a href="#" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
                 <a href="#" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
                 <a href="#" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
@@ -432,179 +432,190 @@
             </div>
 
             <div class="main-content">
-                <div class="form-container">
-                    <!-- FORMULARIO PRINCIPAL -->
-                    <div>
-                        <h:messages styleClass="alert-info" layout="table" />
+                <h:form id="formReserva" styleClass="reserva-form">
+                    <h:messages styleClass="alert-info" layout="table" />
 
+                    <div class="form-container">
+                        <!-- FORMULARIO PRINCIPAL -->
                         <div class="form-card">
                             <h5><i class="bi bi-calendar-event"></i> Datos de la Reserva</h5>
 
-                            <h:form id="formReserva" styleClass="reserva-form">
-                                <h:outputText id="ocupacionesJson" value="#{reservaBean.fechasOcupadasJson}"
-                                              styleClass="d-none reserva-ocupaciones-json" />
+                            <h:outputText id="ocupacionesJson" value="#{reservaHuespedBean.fechasOcupadasJson}"
+                                          styleClass="d-none reserva-ocupaciones-json" />
 
-                                <!-- Fila 1: Tipo de Habitación y Habitación -->
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="tipoHabitacion" class="form-label">
-                                            <i class="bi bi-door-closed" style="color: #1a9b8e;"></i> Tipo de Habitación
-                                        </label>
-                                        <h:selectOneMenu id="tipoHabitacion" value="#{reservaBean.tipoSeleccionado}" 
-                                                         styleClass="form-select">
-                                            <f:selectItem itemLabel="Seleccione un tipo" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItems value="#{reservaBean.listaTipoHabitaciones}" var="tipo"
-                                                           itemLabel="#{tipo.nombre}" itemValue="#{tipo}" />
-                                            <f:ajax event="change" listener="#{reservaBean.filtrarHabitacionesPorTipo}" 
-                                                    render="habitacion" />
-                                        </h:selectOneMenu>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="habitacion" class="form-label">
-                                            <i class="bi bi-door-open" style="color: #1a9b8e;"></i> Habitación
-                                        </label>
-                                        <h:selectOneMenu id="habitacion" value="#{reservaBean.habitacionIdSeleccionada}"
-                                                         styleClass="form-select" required="true"
-                                                         requiredMessage="Debe seleccionar una habitación.">
-                                            <f:selectItem itemLabel="Seleccione una habitación" itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{reservaBean.habitacionesFiltradas}" var="habitacion"
-                                                           itemValue="#{habitacion.idHabitacion}"
-                                                           itemLabel="Habitación #{habitacion.numHabitacion}" />
-                                            <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
-                                        </h:selectOneMenu>
-                                    </div>
+                            <!-- Fila 1: Tipo de Habitación y Habitación -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="tipoHabitacion" class="form-label">
+                                        <i class="bi bi-door-closed" style="color: #1a9b8e;"></i> Tipo de Habitación
+                                    </label>
+                                    <h:selectOneMenu id="tipoHabitacion" value="#{reservaHuespedBean.tipoHabitacionSeleccionada}"
+                                                     styleClass="form-select" required="true"
+                                                     requiredMessage="Seleccione un tipo de habitación.">
+                                        <f:selectItem itemLabel="Seleccione un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{reservaHuespedBean.tiposHabitacion}" var="tipo"
+                                                       itemLabel="#{tipo.nombre}" itemValue="#{tipo.idTipoHabitacion}" />
+                                        <f:ajax event="change" listener="#{reservaHuespedBean.onTipoHabitacionChange}"
+                                                render="habitacion ocupacionesJson panelResumen" />
+                                    </h:selectOneMenu>
                                 </div>
 
-                                <!-- Fila 2: Huésped y Nombre del Cliente -->
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="usuario" class="form-label">
-                                            <i class="bi bi-person" style="color: #1a9b8e;"></i> Huésped
-                                        </label>
-                                        <h:inputText id="usuario" value="#{reservaBean.usuarioLogueado.nombre}" 
-                                                     styleClass="form-control" readonly="true" />
-                                    </div>
+                                <div class="form-group">
+                                    <label for="habitacion" class="form-label">
+                                        <i class="bi bi-door-open" style="color: #1a9b8e;"></i> Habitación
+                                    </label>
+                                    <h:selectOneMenu id="habitacion" value="#{reservaHuespedBean.habitacionSeleccionada}"
+                                                     styleClass="form-select" disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}"
+                                                     required="true" requiredMessage="Debe seleccionar una habitación.">
+                                        <f:selectItem itemLabel="Seleccione una habitación" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{reservaHuespedBean.habitacionesDisponibles}" var="habitacion"
+                                                       itemValue="#{habitacion.idHabitacion}"
+                                                       itemLabel="Habitación #{habitacion.numHabitacion}" />
+                                        <f:ajax event="change" listener="#{reservaHuespedBean.onHabitacionChange}"
+                                                render="panelResumen ocupacionesJson" />
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
 
-                                    <div class="form-group">
-                                        <label for="nombreCliente" class="form-label">
-                                            <i class="bi bi-person-badge" style="color: #1a9b8e;"></i> Nombre del Cliente
-                                        </label>
-                                        <h:inputText id="nombreCliente" value="#{reservaBean.reserva.nombreCliente}" 
-                                                     styleClass="form-control" />
-                                    </div>
+                            <!-- Fila 2: Huésped y Nombre del Cliente -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="usuario" class="form-label">
+                                        <i class="bi bi-person" style="color: #1a9b8e;"></i> Huésped
+                                    </label>
+                                    <h:inputText id="usuario"
+                                                 value="#{reservaHuespedBean.usuarioLogueado != null ? reservaHuespedBean.usuarioLogueado.nombre : ''}"
+                                                 styleClass="form-control" readonly="true" />
                                 </div>
 
-                                <!-- Fila 3: Email y Teléfono -->
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="email" class="form-label">
-                                            <i class="bi bi-envelope" style="color: #1a9b8e;"></i> Correo Electrónico
-                                        </label>
-                                        <h:inputText id="email" value="#{reservaBean.reserva.email}" 
-                                                     styleClass="form-control" />
-                                    </div>
+                                <div class="form-group">
+                                    <label for="nombreCliente" class="form-label">
+                                        <i class="bi bi-person-badge" style="color: #1a9b8e;"></i> Nombre del Cliente
+                                    </label>
+                                    <h:inputText id="nombreCliente" value="#{reservaHuespedBean.nombreCliente}"
+                                                 styleClass="form-control" />
+                                </div>
+                            </div>
 
-                                    <div class="form-group">
-                                        <label for="telefono" class="form-label">
-                                            <i class="bi bi-telephone" style="color: #1a9b8e;"></i> Teléfono
-                                        </label>
-                                        <h:inputText id="telefono" value="#{reservaBean.reserva.telefono}" 
-                                                     styleClass="form-control" />
-                                    </div>
+                            <!-- Fila 3: Email y Teléfono -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email" class="form-label">
+                                        <i class="bi bi-envelope" style="color: #1a9b8e;"></i> Correo Electrónico
+                                    </label>
+                                    <h:inputText id="email" value="#{reservaHuespedBean.email}"
+                                                 styleClass="form-control" />
                                 </div>
 
-                                <!-- Fila 4: Check-in y Check-out -->
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="checkin" class="form-label">
-                                            <i class="bi bi-calendar-check" style="color: #1a9b8e;"></i> Check-in
-                                        </label>
-                                        <h:inputText id="checkin" value="#{reservaBean.reserva.checkin}"
-                                                     converter="localDateTimeConverter" styleClass="form-control"
-                                                     required="true" requiredMessage="Debe indicar la fecha de check-in.">
-                                            <f:passThroughAttribute name="type" value="text" />
-                                            <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
-                                        </h:inputText>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="telefono" class="form-label">
+                                        <i class="bi bi-telephone" style="color: #1a9b8e;"></i> Teléfono
+                                    </label>
+                                    <h:inputText id="telefono" value="#{reservaHuespedBean.telefono}"
+                                                 styleClass="form-control" />
+                                </div>
+                            </div>
 
-                                    <div class="form-group">
-                                        <label for="checkout" class="form-label">
-                                            <i class="bi bi-calendar-x" style="color: #1a9b8e;"></i> Check-out
-                                        </label>
-                                        <h:inputText id="checkout" value="#{reservaBean.reserva.cehckout}"
-                                                     converter="localDateTimeConverter" styleClass="form-control"
-                                                     required="true" requiredMessage="Debe indicar la fecha de check-out.">
-                                            <f:passThroughAttribute name="type" value="text" />
-                                            <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
-                                        </h:inputText>
-                                    </div>
+                            <!-- Fila 4: Check-in y Check-out -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="checkin" class="form-label">
+                                        <i class="bi bi-calendar-check" style="color: #1a9b8e;"></i> Check-in
+                                    </label>
+                                    <h:inputText id="checkin" value="#{reservaHuespedBean.checkin}"
+                                                 styleClass="form-control" required="true"
+                                                 requiredMessage="Debe indicar la fecha de check-in.">
+                                        <f:passThroughAttribute name="type" value="text" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
+                                        <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
+                                                render="panelResumen" />
+                                    </h:inputText>
                                 </div>
 
-                                <!-- Fila 5: Observaciones (Full Width) -->
-                                <div class="form-row full">
-                                    <div class="form-group">
-                                        <label for="observaciones" class="form-label">
-                                            <i class="bi bi-chat-left-text" style="color: #1a9b8e;"></i> Observaciones
-                                        </label>
-                                        <h:inputTextarea id="observaciones" value="#{reservaBean.reserva.observaciones}" 
-                                                         styleClass="form-control" rows="4" />
-                                    </div>
+                                <div class="form-group">
+                                    <label for="checkout" class="form-label">
+                                        <i class="bi bi-calendar-x" style="color: #1a9b8e;"></i> Check-out
+                                    </label>
+                                    <h:inputText id="checkout" value="#{reservaHuespedBean.checkout}"
+                                                 styleClass="form-control" required="true"
+                                                 requiredMessage="Debe indicar la fecha de check-out.">
+                                        <f:passThroughAttribute name="type" value="text" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
+                                        <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
+                                                render="panelResumen" />
+                                    </h:inputText>
                                 </div>
+                            </div>
 
-                                <!-- Botones de Acción -->
-                                <!--                                <div class="btn-group-form">
-                                                                  
-                                                                    <h:commandButton value="Guardar Reserva" action="#{reservaBean.guardarComoCliente()}" 
-                                                                                     styleClass="btn-primary-custom" />
-                                                                </div>-->
-                            </h:form>
+                            <!-- Fila 5: Observaciones (Full Width) -->
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="observaciones" class="form-label">
+                                        <i class="bi bi-chat-left-text" style="color: #1a9b8e;"></i> Observaciones
+                                    </label>
+                                    <h:inputTextarea id="observaciones" value="#{reservaHuespedBean.observaciones}"
+                                                     styleClass="form-control" rows="4" />
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- RESUMEN LATERAL -->
-                    <!-- 🔹 RESUMEN LATERAL -->
-                    <h:panelGroup id="panelResumen" layout="block">
-                        <div class="summary-card">
-                            <h5><i class="bi bi-receipt"></i> Resumen</h5>
+                        <!-- RESUMEN LATERAL -->
+                        <h:panelGroup id="panelResumen" layout="block">
+                            <div class="summary-card">
+                                <h5><i class="bi bi-receipt"></i> Resumen</h5>
 
-                            <div class="summary-item">
-                                <strong>Entrada:</strong>
-                                <span>#{reservaBean.reserva.checkin}</span>
-                            </div>
+                                <div class="summary-item">
+                                    <strong>Tipo:</strong>
+                                    <span>#{reservaHuespedBean.resumenTipoHabitacion}</span>
+                                </div>
 
-                            <div class="summary-item">
-                                <strong>Salida:</strong>
-                                <span>#{reservaBean.reserva.cehckout}</span>
-                            </div>
-                            <div class="summary-item">
-                                <strong>Huésped:</strong>
-                                <span>#{reservaBean.reserva.nombreCliente}</span>
-                            </div>
+                                <div class="summary-item">
+                                    <strong>Habitación:</strong>
+                                    <span>#{reservaHuespedBean.resumenHabitacion}</span>
+                                </div>
 
-                            <div class="summary-item">
-                                <strong>Habitación:</strong>
-                                <span>#{reservaBean.habitacionIdSeleccionada}</span>
-                            </div>
+                                <div class="summary-item">
+                                    <strong>Entrada:</strong>
+                                    <span>#{reservaHuespedBean.resumenCheckin}</span>
+                                </div>
 
-                            <div class="summary-item">
-                                <strong>PrecioNoche:</strong>
-                                <span>#{tipoHabitacionBean.tipoHabitacion.precio}</span>
-                            </div>
+                                <div class="summary-item">
+                                    <strong>Salida:</strong>
+                                    <span>#{reservaHuespedBean.resumenCheckout}</span>
+                                </div>
 
-                            <div class="summary-total">
-                                <span>Total:</span>
-                                <span>$</span>
-                            </div>
+                                <div class="summary-item">
+                                    <strong>Noches:</strong>
+                                    <span>#{reservaHuespedBean.numeroNoches}</span>
+                                </div>
 
-                            <h:form>
-                                <h:commandButton value="Confirmar Reserva" 
-                                                 action="#{reservaBean.guardarComoCliente()}" 
+                                <div class="summary-item">
+                                    <strong>Precio por noche:</strong>
+                                    <span>
+                                        <h:outputText value="#{reservaHuespedBean.precioPorNoche}">
+                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                             minFractionDigits="2" maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <div class="summary-total">
+                                    <span>Total:</span>
+                                    <span>
+                                        <h:outputText value="#{reservaHuespedBean.totalReserva}">
+                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                             minFractionDigits="2" maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+
+                                <h:commandButton value="Confirmar Reserva"
+                                                 action="#{reservaHuespedBean.confirmarReserva}"
                                                  styleClass="btn-confirm" />
-                            </h:form>
-                        </div>
-                    </h:panelGroup>
-                </div>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </h:form>
             </div>
         </div>
         <script src="js/reservaForm.js"></script>

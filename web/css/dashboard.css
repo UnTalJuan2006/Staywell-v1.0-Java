@@ -1,4 +1,4 @@
-* {
+/** {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11,10 +11,10 @@ body {
   line-height: 1.6;
 }
 
-/* Encabezado */
+ Encabezado 
 .header {
-  background-color: #ffffff; /* blanco puro */
-  color: #131318; /* texto oscuro */
+  background-color: #ffffff;  blanco puro 
+  color: #131318;  texto oscuro 
   position: fixed;
   height: 95px;
   text-align: center;
@@ -23,7 +23,7 @@ body {
   width: 100%;
   z-index: 1000;
   padding: 30px 30px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); /* sombra suave */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);  sombra suave 
 }
 
 .container {
@@ -36,7 +36,7 @@ body {
   font-family: 'Times New Roman', serif;
   font-size: 2rem;
   font-weight: bold;
-  color: #009688; /* tono verde-azulado (como el botón de la imagen) */
+  color: #1a7c8f;  tono verde-azulado (como el botón de la imagen) 
   letter-spacing: 1px;
   padding-left: 60px;
 }
@@ -48,7 +48,7 @@ body {
 }
 
 .header-navigation ul li a {
-  color: #131318; /* texto oscuro */
+  color: #131318;  texto oscuro 
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
@@ -60,13 +60,13 @@ body {
 }
 
 .header-navigation ul li a:hover {
-  color: #009688; /* hover con el color del logo */
+  color: #009688;  hover con el color del logo 
 }
 
-/* Botón de acción "Reservar ahora" */
+ Botón de acción "Reservar ahora" 
 .header-navigation ul li a.boton {
-  background-color: #009688; /* verde-azulado exacto */
-  color: #ffffff; /* texto blanco */
+  background-color:#1a7c8f;  verde-azulado exacto 
+  color: #ffffff;  texto blanco 
   border-radius: 20px;
   padding: 8px 18px;
   font-weight: 600;
@@ -74,13 +74,13 @@ body {
 }
 
 .header-navigation ul li a.boton:hover {
-  background-color: #00796b; /* tono más oscuro al pasar el mouse */
+  background-color: #00796b;  tono más oscuro al pasar el mouse 
 }
 
 
-/* Sección Hero */
+ Sección Hero 
 .hero {
-  margin-top: 95px; /* altura del header */
+  margin-top: 95px;  altura del header 
   position: relative;
   width: 100%;
   height: 100vh;
@@ -108,7 +108,7 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
-/* ======== Sección Sobre ======== */
+ ======== Sección Sobre ======== 
 .sobre-section {
   background-color: #fbf6f5;
   padding: 6rem 2rem;
@@ -120,25 +120,25 @@ body {
 .sobre-container {
   display: flex;
   flex-wrap: wrap;
-  align-items: stretch; /* 🔹 asegura que la imagen y el texto tengan la misma altura */
+  align-items: stretch;  🔹 asegura que la imagen y el texto tengan la misma altura 
   gap: 2rem;
   max-width: 1200px;
   border-radius: 25px;
   padding: 2rem;
 }
 
-/* Imagen */
+ Imagen 
 .sobre-imagen {
   flex: 1 1 45%;
 }
 .sobre-imagen img {
   width: 100%;
-  height: 100%; /* 🔹 igual altura que el texto */
+  height: 100%;  🔹 igual altura que el texto 
   border-radius: 20px;
   object-fit: cover;
 }
 
-/* Contenido */
+ Contenido 
 .sobre-contenido {
   flex: 1 1 50%;
   color: #131318;
@@ -161,7 +161,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* Beneficios */
+ Beneficios 
 .beneficios {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -194,7 +194,7 @@ body {
   color: #333;
 }
 
-/* Responsive */
+ Responsive 
 @media (max-width: 900px) {
   .sobre-container {
     flex-direction: column;
@@ -208,7 +208,141 @@ body {
   }
 }
 
-/* Espacios / Carrusel */
+
+ ======== Sección Habitaciones ======== 
+.habitaciones-section {
+  background-color: #fbf6f5;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+
+.habitaciones-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0.5rem;
+}
+
+.habitaciones-subtitulo {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+ ======== Grid ======== 
+.habitaciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+ ======== Tarjeta ======== 
+.habitacion-card {
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.habitacion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+ ======== Imagen ======== 
+.habitacion-img {
+  position: relative;
+}
+
+.habitacion-img img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.precio {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #1a7c8f;
+  color: white;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+ ======== Información ======== 
+.habitacion-info {
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.habitacion-info h3 {
+  font-size: 1.3rem;
+  color: #131318;
+  margin-bottom: 0.5rem;
+}
+
+.habitacion-info p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+ ======== Tags ======== 
+.habitacion-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.habitacion-tags span {
+  background-color: #e0f2f1;
+  color: #00796b;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+ ======== Botón ======== 
+.btn-reservar {
+  width: 100%;
+  background-color: #1a7c8f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-reservar:hover {
+  background-color: #00796b;
+}
+
+ ======== Responsive ======== 
+@media (max-width: 768px) {
+  .habitaciones-section {
+    padding: 3rem 1rem;
+  }
+
+  .habitacion-info {
+    padding: 1.2rem;
+  }
+}
+
+
+ Espacios / Carrusel 
 .espacios-section {
   text-align: center;
   margin: 10px auto 40px;;
@@ -244,7 +378,7 @@ body {
 
 .carousel-slide img {
   width: 100%;
-  height: 500px; /* altura fija, evita deformaciones */
+  height: 500px;  altura fija, evita deformaciones 
   object-fit: cover;
   border-radius: 15px;
 }
@@ -305,7 +439,7 @@ button.prev, button.next {
 button.prev { left: 15px; }
 button.next { right: 15px; }
 
-/* ======== Sección ======== */
+ ======== Sección ======== 
 .servicios-section {
     text-align: center;
     padding: 4rem 2rem;
@@ -325,7 +459,7 @@ button.next { right: 15px; }
     margin-bottom: 3rem;
 }
 
-/* ======== Grid ======== */
+ ======== Grid ======== 
 .servicios-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -334,7 +468,7 @@ button.next { right: 15px; }
     margin: 0 auto;
 }
 
-/* ======== Tarjeta de servicio ======== */
+ ======== Tarjeta de servicio ======== 
 .servicio-card {
     background-color: #ffffff;
     border-radius: 15px;
@@ -348,7 +482,7 @@ button.next { right: 15px; }
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* ======== Iconos ======== */
+ ======== Iconos ======== 
 .icono {
     background-color: #d1f2eb;
     color: #009688;
@@ -362,7 +496,7 @@ button.next { right: 15px; }
     margin: 0 auto 1rem auto;
 }
 
-/* ======== Texto ======== */
+ ======== Texto ======== 
 .servicio-card h3 {
     font-size: 1.1rem;
     font-weight: 600;
@@ -375,7 +509,7 @@ button.next { right: 15px; }
     margin: 0;
 }
 
-/* ======== Responsive ======== */
+ ======== Responsive ======== 
 @media (max-width: 768px) {
     .servicios-section {
         padding: 3rem 1rem;
@@ -386,7 +520,7 @@ button.next { right: 15px; }
     }
 }
 
- /* ======= Sección de Ubicación ======= */
+  ======= Sección de Ubicación ======= 
 .ubicacion-section {
   background-color: #fbf6f5;
   color: #131318;
@@ -401,7 +535,7 @@ button.next { right: 15px; }
   text-align: center;
 }
 
-/* ======= Títulos ======= */
+ ======= Títulos ======= 
 .ubicacion-container h2 {
   font-size: 2.5rem;
   margin-bottom: 10px;
@@ -414,7 +548,7 @@ button.next { right: 15px; }
   margin-bottom: 40px;
 }
 
-/* ======= Contenido principal (mapa + información) ======= */
+ ======= Contenido principal (mapa + información) ======= 
 .ubicacion-content {
   display: flex;
   justify-content: center;
@@ -423,7 +557,7 @@ button.next { right: 15px; }
   flex-wrap: wrap;
 }
 
-/* ======= Card de información ======= */
+ ======= Card de información ======= 
 .info-contacto {
   background: #ffffff;
   border-radius: 16px;
@@ -473,7 +607,7 @@ button.next { right: 15px; }
   line-height: 1.5;
 }
 
-/* ======= Mapa ======= */
+ ======= Mapa ======= 
 .mapa {
   flex: 1 1 500px;
   border-radius: 16px;
@@ -489,7 +623,7 @@ button.next { right: 15px; }
   border-radius: 16px;
 }
 
-/* ======= Responsivo ======= */
+ ======= Responsivo ======= 
 @media (max-width: 992px) {
   .ubicacion-content {
     flex-direction: column-reverse;
@@ -502,57 +636,128 @@ button.next { right: 15px; }
 
 
 
-/* Footer */
+ ======== FOOTER ======== 
 .footer {
-  background: #f6f1eb;
-  color: black;
-  padding: 40px 20px;
+  background-color: #131318;
+  color: #fbf6f5;
+  padding: 3rem 2rem 1rem;
+  font-family: 'Times New Roman', serif;
 }
 
-.footer-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 20px;
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: auto;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.footer-section {
-  flex: 1 1 300px;
+ ======== Columna: About ======== 
+.footer-logo {
+  font-family: 'Times New Roman', serif;
+  font-size: 1.8rem;
+  color: #fbf6f5;
+  margin-bottom: 0.5rem;
 }
 
-.footer-section h3 {
-  margin-bottom: 15px;
-  padding-left: 80px;
+.footer-about p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
-.footer-section ul {
-  list-style: none;
-}
-
-.footer-section ul li {
-  margin-bottom: 10px;
-}
-
-.footer-section ul li a {
-  color: black;
-  text-decoration: none;
-  padding-left: 100px;
-}
-
-.footer-bottom {
-  border-top: 1px solid #555;
-  margin-top: 20px;
-  padding-top: 10px;
-  text-align: center;
-}
-
-.social-media a {
-  color: white;
-  margin: 0 8px;
-  font-size: 1.2rem;
+.footer-socials a {
+  display: inline-block;
+  color: #fbf6f5;
+  margin-right: 0.8rem;
+  font-size: 1.1rem;
   transition: color 0.3s;
 }
 
-.social-media a:hover {
-  color: #d4af37;
+.footer-socials a:hover {
+  color: #1a7c8f;
 }
+
+ ======== Columna: Links & Services ======== 
+.footer-links h4,
+.footer-services h4,
+.footer-contact h4 {
+  color: #fbf6f5;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.footer-links ul,
+.footer-services ul,
+.footer-contact ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li,
+.footer-services ul li,
+.footer-contact ul li {
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.footer-links a,
+.footer-services a {
+  color: #cfcfcf;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover,
+.footer-services a:hover {
+  color: #1a7c8f;
+}
+
+ ======== Contacto ======== 
+.footer-contact i {
+  color: #1a7c8f;
+  margin-right: 8px;
+}
+
+ ======== Parte inferior ======== 
+.footer-bottom {
+  max-width: 1200px;
+  margin: 1rem auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #bbb;
+  text-align: center;
+}
+
+.footer-bottom a {
+  color: #bbb;
+  text-decoration: none;
+  margin-left: 1rem;
+  transition: color 0.3s;
+}
+
+.footer-bottom a:hover {
+  color: #1a7c8f;
+}
+
+.footer-bottom p {
+  margin: 0.5rem 0;
+}
+
+ ======== Responsive ======== 
+@media (max-width: 768px) {
+  .footer-container {
+    text-align: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
+*/

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="es">
+    <f:metadata>
+        <f:viewAction action="#{habitacionBean.cargarHabitacionPorId()}" />
+    </f:metadata>
+    <h:head>
+        <title>Detalle de Habitacion</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 270px;
+                background: #131318;
+                color: white;
+                z-index: 1000;
+                overflow-y: auto;
+            }
+
+            .sidebar-header {
+                padding: 2rem 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+                padding-bottom: 10px;
+            }
+
+            .sidebar-nav .nav-link {
+                display: flex;
+                align-items: center;
+                padding: 10px 18px;
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+            }
+
+            .sidebar-nav .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+
+            .sidebar-nav .nav-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border-right: 4px solid #ffd700;
+            }
+
+            .sidebar-footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 2rem;
+            }
+
+            .top-bar {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .detail-card {
+                max-width: 700px;
+            }
+
+            .detail-item {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .detail-item:last-child {
+                border-bottom: none;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-hotel"></i> StayWell</h4>
+                <p>Panel Admin</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
+                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+                <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
+                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
+                <h:link outcome="/Reservas.xhtml" styleClass="nav-link active"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
+                <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
+                <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
+                <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
+                <h:link outcome="/.xhtml" styleClass="nav-link"><i class="bi bi-bar-chart me-2"></i> Mantenimientos</h:link>
+            </nav>
+
+            <h:form>
+                <div class="sidebar-footer">
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </h:commandLink>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-eye"></i> Detalle de la Habitacion</h2>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </h:link>
+            </div>
+
+            <div class="mt-4 detail-card">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Información general</h5>
+
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">Habitación</span>
+                            <span>#{habitacionBean.habitacion.numHabitacion}</span>
+                        </div>
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">estado</span>
+                            <span>#{habitacionBean.habitacion.estado}</span>
+                        </div>
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">fecha Creacion</span>
+                            <span>#{habitacionBean.habitacion.fechaCreacion}</span>
+                        </div>
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">FechaActualizacion</span>
+                            <span>#{habitacionBean.habitacion.fechaActualizacion}</span>
+                        </div>
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">TipoHabitacion</span>
+                            <span>#{habitacionBean.habitacion.tipoHabitacion.nombre}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -126,5 +127,36 @@ public class TipoHabitacionBean {
     }
 }
 
+   public void cargarTipoPorId() {
+       String idParam = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("id");
+       
+       if (idParam != null) {
+           try{
+               int id = Integer.parseInt(idParam);
+               TipoHabitacion tipoHabitacionEncontrada = tipoHabitacionDAO.buscar(id);
+               
+               if(tipoHabitacionEncontrada != null){
+                   this.tipoHabitacion = tipoHabitacionEncontrada;
+                   
+                   FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "TipoHabitación cargada correctamente",
+                            "Se cargó el tipo  con ID: " + id));
+               }else {
+                      FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia",
+                            "El Tipohabitación no existe."));
+               }
+           }catch(NumberFormatException | SQLException e){
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error",
+                        "No se pudo cargar el tipohabitación."));
+                e.printStackTrace();
+           }
+       }
+   }
 
 }

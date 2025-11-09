@@ -94,20 +94,42 @@ public class HabitacionDAO {
         return habitacion;
     }
 
- public void agregar(Habitacion h) throws SQLException {
+ public int agregar(Habitacion h) throws SQLException {
     String sql = "INSERT INTO habitacion (numHabitacion, estado, fechaCreacion, fechaActualizacion, idTipoHabitacion) "
                + "VALUES (?, ?, ?, ?, ?)";
-    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
         ps.setInt(1, h.getNumHabitacion());
-        ps.setString(2, h.getEstado().name());
+        ps.setString(2, "Disponible");
         ps.setTimestamp(3, Timestamp.valueOf(h.getFechaCreacion()));
         ps.setTimestamp(4, Timestamp.valueOf(h.getFechaActualizacion()));
         ps.setInt(5, h.getTipoHabitacion().getIdTipoHabitacion());
         ps.executeUpdate();
-    } catch (SQLException e) {
-        throw e; // el Bean maneja los mensajes
+    
+       try(ResultSet generatedKeys = ps.getGeneratedKeys()){
+           if(generatedKeys.next()){
+               return generatedKeys.getInt(1);
+           }
+       }
     }
+    return -1;
 }
+ 
+ 
+ public void actualizar (Habitacion h) throws SQLException {
+     String sql = "UPDATE habitacion SET numHabitacion = ? , estado= ?, fechaActualizacion = ?, idTipoHabitacion = ?, where idHabitacion = ?";
+     
+      try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+          ps.setInt(1, h.getIdHabitacion());
+          ps.setString(2, h.getEstado() != null ? h.getEstado().name() : null);
+          ps.setTimestamp(3, Timestamp.valueOf(h.getFechaActualizacion()));
+          ps.setInt(4 , h.getTipoHabitacion().getIdTipoHabitacion());
+          ps.setInt(5, h.getIdHabitacion());
+          
+          ps.executeUpdate();    
+      }
+ }
+ 
+ 
     public void eliminar(Habitacion h) {
         try {
             String sql = "DELETE FROM habitacion WHERE idHabitacion = ?";
@@ -118,5 +140,25 @@ public class HabitacionDAO {
         } catch (SQLException e) {
             System.out.println("Error al eliminar habitación: " + e.getMessage());
         }
+    }
+    
+    
+    
+        public int contarPorTipo(int idTipoHabitacion) throws SQLException {
+        int total = 0;
+        String sql = "SELECT COUNT(*) AS total FROM habitacion WHERE idTipoHabitacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idTipoHabitacion);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    total = rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al contar habitaciones tipo " + idTipoHabitacion + ": " + e.getMessage());
+            throw e;
+        }
+        return total;
     }
 }

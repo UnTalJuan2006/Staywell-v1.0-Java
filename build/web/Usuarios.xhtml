@@ -17,24 +17,20 @@
 
 
         <style>
-            .dashboard-page {
+            body {
                 background-color: #f8f9fa;
-                min-height: 100vh;
             }
 
-            /* Sidebar */
             .sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
                 height: 100vh;
                 width: 260px;
-                
-                background:#1a7c8f;
+                background: #1a7c8f;
                 color: white;
                 z-index: 1000;
                 overflow-y: auto;
-                transition: all 0.3s ease;
             }
 
             .sidebar-header {
@@ -44,15 +40,10 @@
                 padding-bottom: 10px;
             }
 
-            .sidebar-header h4 {
-                margin-bottom: 0.5rem;
-                font-weight: 700;
-            }
-
             .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10px 18px;
+                padding: 10.5px 18px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
             }
@@ -89,18 +80,29 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
-            .top-bar h2 {
-                margin: 0;
-                color: #495057;
-                font-weight: 600;
+            .table-actions a,
+            .table-actions button {
+                margin-right: 0.5rem;
             }
 
-            .user-info {
-                display: flex;
-                align-items: center;
+            .main-content {
+                margin-left: 280px;
+                padding: 2rem;
             }
 
-            /* Métricas rápidas */
+            .top-bar {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-actions a,
+            .table-actions button {
+                margin-right: 0.5rem;
+            }
+
+
             .stats {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -158,6 +160,15 @@
 
             }
 
+            .table-actions .btn {
+                margin-right: 0.4rem !important;
+            }
+
+            .table-actions .btn:last-child {
+                margin-right: 0 !important;
+            }
+
+
 
 
 
@@ -182,11 +193,11 @@
                 <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
                     <i class="bi bi-door-open me-2"></i> Habitaciones
                 </h:link>
-                             <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
                 <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
                     <i class="bi bi-calendar-event me-2"></i> Eventos
                 </h:link>
-                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link active">
                     <i class="bi bi-people me-2"></i> Usuarios
                 </h:link>
                 <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
@@ -201,9 +212,7 @@
                 <h:link outcome="/Correos.xhtml" styleClass="nav-link">
                     <i class="bi bi-envelope me-2"></i> Correos
                 </h:link>
-                <h:link outcome="/.xhtml" styleClass="nav-link">
-                    <i class="bi bi-bar-chart me-2"></i> Mantenimientos
-                </h:link>
+
             </nav>
 
             <h:form>
@@ -219,170 +228,145 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
-                <h2><i class="fas fa-tachometer-alt"></i> Gestión de Usuarios</h2>
+                <h2><i class="bi bi-people"></i> Gestión de usuarios</h2>
 
-                <h:form prependId="false">
-                    <div class="user-info">
-                        <span class="me-3">
-                            Bienvenido, <strong>#{usuarioLogueado.nombre}</strong>
-                        </span>
-
-                        <div class="dropdown">
-                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <h:outputLink value="#"><i class="fas fa-user"></i> Perfil</h:outputLink>
-                                </li>
-                                <li>
-                                    <h:outputLink value="#"><i class="fas fa-cog"></i> Configuración</h:outputLink>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </h:form>
             </div>
 
             <div class="mt-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <h:messages styleClass="alert alert-info" layout="table" />
+                <div class="stats grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-100 my-4">
+                    <!-- 🟦 Total Usuarios Huéspedes -->
+                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
+                        <i class="bi bi-people-fill" style="font-size: 36px; color: #131318;"></i>
+                        <div class="mt-2">
+                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalUsuariosHuesped()}</h3>
+                            <p class="text-muted m-0">Total Usuarios Huéspedes</p>
+                        </div>
+                    </div>
 
-                    <h3 class="text-2xl font-bold text-black mb-4 ml-4 tracking-wide border-b-2 border-gray-400 pb-2">
-                        Lista de Usuarios
-                    </h3>
+                    <!-- ✅ Usuarios Activos -->
+                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
+                        <i class="bi bi-person-check" style="font-size: 36px; color: #131318;"></i>
+                        <div class="mt-2">
+                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalActivos()}</h3>
+                            <p class="text-muted m-0">Usuarios Activos</p>
+                        </div>
+                    </div>
 
-
-
-                    <!-- Botones -->
-                    <div class="d-flex gap-2">
-                        <!-- Botón Exportar Excel -->
-                        <h:form>
-                            <h:commandLink>
-                                <p:graphicImage url="/img/xls.png" width="35" />
-                                <p:dataExporter type="xls" target="tblUsuarios" fileName="Usuarios"/>
-                            </h:commandLink>
-                        </h:form>
-
-                        <h:form>
-                            <h:commandLink>
-                                <p:graphicImage url="/img/pdf.png" width="30" />
-                                <p:dataExporter type="pdf" target="tblUsuarios" fileName="Usuarios"/>
-                            </h:commandLink>
-
-                        </h:form>
+                    <!-- 🚫 Usuarios Inactivos -->
+                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
+                        <i class="bi bi-person-dash" style="font-size: 36px; color: #131318;"></i>
+                        <div class="mt-2">
+                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalInactivos()}</h3>
+                            <p class="text-muted m-0">Usuarios Inactivos</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="stats">
-                    <div class="stat-card">
-                        <i class="fas fa-users stat-icon"></i>
-                        <div class="stat-info">
-                            <h3>#{usuarioBean.totalUsuariosHuesped()}</h3>
-                            <p>Usuarios Registrados</p>
+
+                <div class="mb-4">
+                    <h:messages styleClass="alert alert-info" layout="table" />
+                    <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap">
+                        <!-- 🔍 Buscador -->
+                        <div class="position-relative mb-2" style="width: 100%; max-width: 350px;">
+                            <i class="bi bi-search text-secondary position-absolute"
+                               style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+
+                            <p:inputText id="globalFilter"
+                                         onkeyup="PF('dtEventos').filter()"
+                                         placeholder="Buscar Usuario..."
+                                         styleClass="form-control ps-5 shadow-sm"
+                                         style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
+                                         onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
+                                         onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
                         </div>
-                    </div>
 
-                    <div class="stat-card">
-                        <i class="fas fa-users stat-icon"></i>
-                        <div class="stat-info">
-                            <h3>#{usuarioBean.totalActivos()}</h3>
-                            <p>Usuarios Activos</p>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <i class="fas fa-users stat-icon"></i>
-                        <div class="stat-info">
-                            <h3>#{usuarioBean.totalInactivos()}</h3>
-                            <p>Usuarios Inactivos</p>
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div class="mb-3">
-                    <h:form>
-                        <p:inputText id="globalFilter" onkeyup="PF('dtEventos').filter()"
-                                     placeholder="🔍 Buscar Usuario..." styleClass="form-control" />
+                        <!-- 📊 Botones de exportar -->
+                        <!--                        <div class="d-flex gap-2 mb-2">
+                                                    <h:form>
+                                                        <h:commandLink>
+                                                            <p:graphicImage url="/img/xls.png" width="35" />
+                                                            <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones"/>
+                                                        </h:commandLink>
+                                                    </h:form>
+                        
+                                                    <h:form>
+                                                        <h:commandLink>
+                                                            <p:graphicImage url="/img/pdf.png" width="30" />
+                                                            <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Productos"/>
+                                                        </h:commandLink>
+                                                    </h:form>
+                                                </div>-->
                     </h:form>
                 </div>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Usuario registrados</h5>
+                        <h:panelGroup rendered="#{empty usuarioBean.listaUsuarios}">
+                            <div class="alert alert-warning mb-0">
+                                No se encontraron Usuarios registrados.
+                            </div>
+                        </h:panelGroup>
 
-                <div class="table-responsive bg-white shadow rounded">
-                    <p:dataTable id="tblUsuarios" value="#{usuarioBean.listaUsuarios}" var="u"
-                                 styleClass="table table-hover table-bordered " 
-                                 style="table-layout: fixed; width:100%; color: blue;">
+                        <h:panelGroup rendered="#{not empty usuarioBean.listaUsuarios}" >
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle" id="tblUsuarios">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>nombre</th>
+                                            <th>email</th>
+                                            <th>fecha Creacion</th>
+                                            <th>rol</th>
+                                            <th>telefono</th>
+                                            <th>estado</th>
 
-                        <p:column headerText="ID" style="width: 35px; text-align:center; ">
-                            <h:outputText value="#{u.idUsuario}"/>
-                        </p:column>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ui:repeat value="#{usuarioBean.listaUsuarios}" var="usuario" varStatus="loop">
+                                            <tr>
+                                                <td>#{loop.index + 1}</td>
+                                                <td>#{usuario.nombre}</td>
+                                                <td>#{usuario.email}</td>
+                                                <td style="display: none;">#{usuario.fechaActualizacion} </td>
+                                                <td>#{usuario.fechaCreacion}</td>
+                                                <td>#{usuario.rol}</td>
+                                                <td>#{usuario.telefono}</td>
+                                                <td style="display: none;">#{usuario.direccion}</td>
+                                                <td>#{usuario.estado}</td>
 
-                        <p:column headerText="Nombre" style="width: 110px; text-align:center; white-space:nowrap;">
-                            <h:outputText value="#{u.nombre}"/>
-                        </p:column>
+                                                <td class="table-actions">
+                                                    <h:form styleClass="d-inline">
+                                                        <h:commandLink 
+                                                            action="#{usuarioBean.toggleEstado(usuario)}"
+                                                            styleClass="#{usuario.estado eq 'Activo' ? 'btn btn-outline-warning btn-sm' : 'btn btn-outline-success btn-sm'}"
+                                                            onclick="return confirm('¿Seguro que deseas #{usuario.estado eq 'Activo' ? 'inactivar' : 'activar'} este usuario?');">
 
-                        <p:column headerText="Email"  visible="false">
-                            <h:outputText value="#{u.email}"/>
-                        </p:column>
+                                                            <i class="#{usuario.estado eq 'Activo' ? 'bi bi-person-dash' : 'bi bi-person-check'}"></i>
+                                                            <h:outputText value="#{usuario.estado eq 'Activo' ? 'Inactivar' : 'Activar'}" />
 
+                                                            <f:ajax execute="@this" render=":formUsuarios" />
 
-                        <p:column headerText="Fecha Registro" style="width: 160px; text-align:center;">
-                            <h:outputText value="#{u.fechaCreacion}" />
-                        </p:column>
+                                                        </h:commandLink>
+                                                    </h:form>
 
-                        <!-- Oculto -->
-                        <p:column headerText="Fecha Actualización" visible="false">
-                            <h:outputText value="#{u.fechaActualizacion}" />
-                        </p:column>
+                                                </td>
 
-                        <p:column headerText="Rol" style="width: 90px; text-align:center;">
-                            <h:outputText value="#{u.rol}"/>
-                        </p:column>
-
-                        <p:column headerText="Dirección" style="width: 150px; text-align:center; white-space:nowrap;">
-                            <h:outputText value="#{u.direccion}"/>
-                        </p:column>
-
-                        <p:column headerText="Teléfono" style="width: 100px; text-align:center;">
-                            <h:outputText value="#{u.telefono}"/>
-                        </p:column>
-
-                        <p:column headerText="Estado" style="width: 70px; text-align:center;">
-                            <h:outputText value="#{u.estado}"/>
-                        </p:column>
-
-                        <p:column headerText="Acciones" style="width: 100px; text-align:center;" exportable="false">
-                            <f:facet name="header">Acciones</f:facet>
-                            <h:form style="display:flex; justify-content:center; gap:4px;">
-
-
-
-                                <h:commandLink value="#{u.estado eq 'Activo' ? 'Inactivar' : 'Activar'}"
-                                               action="#{usuarioBean.toggleEstado(u)}"
-                                               onclick="return confirm('¿Seguro que deseas #{u.estado eq 'Activo' ? 'inactivar' : 'activar'} este usuario?');"
-                                               styleClass="#{u.estado eq 'Activo' ? 'btn btn-warning btn-xs' : 'btn btn-success btn-xs'} d-flex align-items-center justify-content-center"
-                                               style="min-width:85px; font-size:12px; padding:4px 6px;">
-                                    <i class="#{u.estado eq 'Activo' ? 'fas fa-user-slash me-1' : 'fas fa-user-check me-1'}"></i>
-                                    #{u.estado eq 'Activo' ? 'Inactivar' : 'Activar'}
-                                </h:commandLink>
-                            </h:form>
-                        </p:column>
-
-                    </p:dataTable>
+                                            </tr>
 
 
+
+                                        </ui:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </h:panelGroup>
+
+
+                    </div>
                 </div>
-
             </div>
         </div>
-
-
-
-
-
-
-
     </h:body>
 </html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <meta charset="UTF-8" />
+    <title>Nueva Habitación</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</h:head>
+
+<h:body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
+        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Registrar Nueva Habitación</h1>
+
+        <h:form>
+            <!-- Mensajes -->
+            <h:messages styleClass="mb-4 text-center text-red-600" layout="table" />
+
+            <!-- Número de habitación -->
+            <div class="mb-4">
+                <label for="numHabitacion" class="block text-gray-700 font-semibold mb-1">Número de habitación:</label>
+                <h:inputText id="numHabitacion" value="#{habitacionBean.habitacion.numHabitacion}"
+                             styleClass="border rounded-lg w-full p-2 focus:ring-2 focus:ring-indigo-500"
+                             required="true" requiredMessage="El número de habitación es obligatorio." />
+            </div>
+
+            <!-- Tipo de habitación -->
+            <div class="mb-4">
+                <label for="tipoHabitacion" class="block text-gray-700 font-semibold mb-1">Tipo de habitación:</label>
+                <h:selectOneMenu id="tipoHabitacion"
+                                 value="#{habitacionBean.idTipoSeleccionado}"
+                                 styleClass="border rounded-lg w-full p-2 focus:ring-2 focus:ring-indigo-500"
+                                 required="true"
+                                 requiredMessage="Debe seleccionar un tipo de habitación.">
+                    <f:selectItem itemLabel="-- Seleccione un tipo --" itemValue="" />
+                    <f:selectItems value="#{habitacionBean.listaTipos}"
+                                   var="t"
+                                   itemValue="#{t.idTipoHabitacion}"
+                                   itemLabel="#{t.nombre}" />
+                </h:selectOneMenu>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-between items-center mt-6">
+                <h:commandButton value="Registrar"
+                                 action="#{habitacionBean.agregar}"
+                                 styleClass="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition" />
+
+                <h:link outcome="Habitaciones"
+                        value="Volver al listado"
+                        styleClass="text-indigo-600 hover:text-indigo-800 font-medium" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

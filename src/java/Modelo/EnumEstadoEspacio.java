@@ -10,6 +10,5 @@ package Modelo;
  */
 public enum EnumEstadoEspacio {
     Disponible,
-    Ocupada,
     Mantenimiento
 }

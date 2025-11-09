@@ -1,403 +1,1284 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hotel Great Viggio</title>
-<link rel="icon" href="logo.png.jpeg">
-<link rel="stylesheet" href="css/dashboard.css">
-<script src="https://kit.fontawesome.com/tu_clave.js" crossorigin="anonymous"></script>
-<style>
-/* --- Carrusel --- */
-.carousel-container {
-  position: relative;
-  width: 80%;
-  margin: auto;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hotel Great Viggio</title>
+        <link rel="icon" href="logo.png.jpeg">
+        <link rel="stylesheet" href="css/dashboard.css">
+        <script src="https://kit.fontawesome.com/tu_clave.js" crossorigin="anonymous"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-.carousel-slide {
-  display: none;
-  text-align: center;
-  position: relative;
-}
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background-color: #fbf6f5;
+                color: #131318;
+                line-height: 1.6;
+            }
 
-.carousel-slide img {
-  width: 100%;
-  border-radius: 15px;
-  object-fit: cover;
-}
+            /* Encabezado */
+            .header {
+                background-color: #ffffff; /* blanco puro */
+                color: #131318; /* texto oscuro */
+                position: fixed;
+                height: 95px;
+                text-align: center;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
+                padding: 30px 30px;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.08); /* sombra suave */
+            }
 
-.carousel-slide.active {
-  display: block;
-}
+            .container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
 
-button.prev, button.next {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  padding: 12px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 20px;
-  z-index: 10;
-}
+            .header h1 {
+                font-family: 'Times New Roman', serif;
+                font-size: 2rem;
+                font-weight: bold;
+                color: #1a7c8f; /* tono verde-azulado (como el botón de la imagen) */
+                letter-spacing: 1px;
+                padding-left: 60px;
+            }
 
-button.prev { left: 15px; }
-button.next { right: 15px; }
+            .header-navigation ul {
+                list-style: none;
+                display: flex;
+                gap: 25px;
+            }
 
-.thumbnails-container {
-  margin-top: 15px;
-  text-align: center;
-}
+            .header-navigation ul li a {
+                color: #131318; /* texto oscuro */
+                text-decoration: none;
+                font-size: 0.95rem;
+                font-weight: 500;
+                text-transform: capitalize;
+                padding: 6px 12px;
+                border-radius: 4px;
+                transition: background 0.3s ease, color 0.3s ease;
+                font-family: 'Segoe UI', sans-serif;
+            }
 
-.thumbnails {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
+            .header-navigation ul li a:hover {
+                color: #009688; /* hover con el color del logo */
+            }
 
-.thumbnails img {
-  width: 80px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.3s, transform 0.3s;
-}
+            /* Botón de acción "Reservar ahora" */
+            .header-navigation ul li a.boton {
+                background-color:#1a7c8f; /* verde-azulado exacto */
+                color: #ffffff; /* texto blanco */
+                border-radius: 20px;
+                padding: 8px 18px;
+                font-weight: 600;
+                transition: background 0.3s ease;
+            }
 
-.thumbnails img:hover,
-.thumbnails img.active-thumb {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-.description-scroll {
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(0,0,0,0.7);
-  
- 
-}
-</style>
-</head>
-<body>
-
-<!-- Header -->
-<header class="header">
-  <div class="container">
-    <h1>Great Viggio</h1>
-    <nav class="header-navigation">
-      <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#sobre">Sobre Nosotros</a></li>
-        <li><a href="#habitaciones">Habitaciones</a></li>
-        <li><a href="#instalaciones">Instalaciones</a></li>
-        <li><a href="#ubicacion">Ubicación</a></li>
-        <li><a href="login.xhtml" class="boton">Reservar ahora</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+            .header-navigation ul li a.boton:hover {
+                background-color: #00796b; /* tono más oscuro al pasar el mouse */
+            }
 
 
-<!-- Hero -->
-<section class="hero">
-  <img src="img/GreatVi.png" alt="Habitación Hotel Great Viggio"id="inicio">
-  <div class="hero-text">Bienvenido a Great Viggio.</div>
-</section>
+            /* Sección Hero */
+            .hero {
+                margin-top: 95px; /* altura del header */
+                position: relative;
+                width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
 
-<!-- Sobre -->
-<section class="sobre-section" id="sobre">
-  <div class="sobre-container">
-    <div class="sobre-imagen">
-      <img src="img/recepcion.png" alt="Lobby del hotel Great Viggio">
-    </div>
+            .hero img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
 
-    <div class="sobre-contenido">
-      <h2>Sobre Great Viggio</h2>
-      <p class="intro">
-        Great Viggio es más que un hotel, es una experiencia única que combina elegancia, confort y hospitalidad excepcional.
-        Ubicado en un entorno privilegiado, nuestro hotel ofrece a nuestros huéspedes un refugio de tranquilidad y lujo.
-      </p>
-      <p>
-        Con años de experiencia en la industria hotelera, nos enorgullecemos de ofrecer servicios de primera clase,
-        instalaciones modernas y una atención personalizada que supera las expectativas de cada visitante.
-        Cada detalle ha sido cuidadosamente diseñado para garantizar su máxima satisfacción.
-      </p>
+            .hero-text {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                font-size: 3rem;
+                font-weight: bold;
+                text-align: center;
+                padding: 0 20px;
+                text-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+                font-family: 'Poppins', sans-serif;
+            }
 
-      <div class="beneficios">
-        <div class="beneficio">
-          <div class="icono">⭐</div>
-          <div>
-            <h4>Servicio 5 Estrellas</h4>
-            <p>Atención personalizada las 24 horas</p>
-          </div>
-        </div>
-        <div class="beneficio">
-          <div class="icono">📍</div>
-          <div>
-            <h4>Ubicación privilegiada</h4>
-            <p>En el corazón de la ciudad</p>
-          </div>
-        </div>
-        <div class="beneficio">
-          <div class="icono">🍽️</div>
-          <div>
-            <h4>Gastronomía Exquisita</h4>
-            <p>Restaurante gourmet internacional</p>
-          </div>
-        </div>
-        <div class="beneficio">
-          <div class="icono">🛡️</div>
-          <div>
-            <h4>Seguridad Total</h4>
-            <p>Protocolos de higiene certificados</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+            /* ======== Sección Sobre ======== */
+            .sobre-section {
+                background-color: #fbf6f5;
+                padding: 6rem 2rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
+            .sobre-container {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: stretch; /* 🔹 asegura que la imagen y el texto tengan la misma altura */
+                gap: 2rem;
+                max-width: 1200px;
+                border-radius: 25px;
+                padding: 2rem;
+            }
 
-<!-- Carrusel -->
-<section id="instalaciones" class="espacios-section">
-  <h2 class="espacios-title">Nuestros Espacios</h2>
+            /* Imagen */
+            .sobre-imagen {
+                flex: 1 1 45%;
+            }
+            .sobre-imagen img {
+                width: 100%;
+                height: 100%; /* 🔹 igual altura que el texto */
+                border-radius: 20px;
+                object-fit: cover;
+            }
 
-  <div class="carousel-container">
-    <div class="carousel-slide active">
-      <img src="img/reuniones.jpg" alt="Reuniones">
-      <div class="description-scroll">
-        <h3>Reuniones</h3>
-        <p>Espacios modernos para reuniones y eventos corporativos.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/spa.jpg" alt="Spa">
-      <div class="description-scroll">
-        <h3>Spa</h3>
-        <p>Relájese en nuestro spa de lujo con tratamientos exclusivos.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/gym.jpg" alt="Gimnasio">
-      <div class="description-scroll">
-        <h3>Gimnasio</h3>
-        <p>Equipado con máquinas de última generación.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/piscina.jpg" alt="Piscina">
-      <div class="description-scroll">
-        <h3>Piscina</h3>
-        <p>Piscina climatizada con vista panorámica.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/bar.jpg" alt="Bar">
-      <div class="description-scroll">
-        <h3>Bar</h3>
-        <p>Bebidas premium y cócteles exclusivos.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/restaurante.jpg" alt="Restaurante">
-      <div class="description-scroll">
-        <h3>Restaurante</h3>
-        <p>Menú internacional y cocina local gourmet.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/recepcion.jpg" alt="Recepción">
-      <div class="description-scroll">
-        <h3>Recepción</h3>
-        <p>Atención personalizada 24/7.</p>
-      </div>
-    </div>
-    <div class="carousel-slide">
-      <img src="img/coliseo.jpg" alt="Coliseo">
-      <div class="description-scroll">
-        <h3>Coliseo</h3>
-        <p>Eventos y espectáculos con gran capacidad.</p>
-      </div>
-    </div>
+            /* Contenido */
+            .sobre-contenido {
+                flex: 1 1 50%;
+                color: #131318;
+            }
+            .sobre-contenido h2 {
+                font-family: 'Times New Roman', serif;
+                font-size: 2.5rem;
+                font-weight: bold;
+                margin-bottom: 1.5rem;
+                color: black;
+            }
+            .sobre-contenido p {
+                line-height: 1.7;
+                margin-bottom: 1rem;
+                font-size: 1.05rem;
+            }
+            .sobre-contenido .intro {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 1.5rem;
+            }
 
-    <!-- Botones -->
-    <button class="prev">&#10094;</button>
-    <button class="next">&#10095;</button>
-  </div>
+            /* Beneficios */
+            .beneficios {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+            .beneficio {
+                display: flex;
+                align-items: flex-start;
+                gap: 1rem;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 15px;
+                padding: 1rem;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .beneficio:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+            .icono {
+                font-size: 1.8rem;
+                color: #009688;
+            }
+            .beneficio h4 {
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+            .beneficio p {
+                font-size: 0.95rem;
+                color: #333;
+            }
 
-  <!-- Miniaturas -->
-  <div class="thumbnails-container">
-    <div class="thumbnails">
-      <img src="img/reuniones.jpg" alt="Reuniones">
-      <img src="img/spa.jpg" alt="Spa">
-      <img src="img/gym.jpg" alt="Gimnasio">
-      <img src="img/piscina.jpg" alt="Piscina">
-      <img src="img/bar.jpg" alt="Bar">
-      <img src="img/restaurante.jpg" alt="Restaurante">
-      <img src="img/recepcion.jpg" alt="Recepción">
-      <img src="img/coliseo.jpg" alt="Coliseo">
-    </div>
-  </div>
-</section>
-
-<section class="servicios-section">
-    <h2>Servicios incluidos</h2>
-    <p class="subtitulo">Todo lo que necesitas para una estancia perfecta.</p>
-
-    <div class="servicios-grid">
-        <div class="servicio-card">
-            <div class="icono">📶</div>
-            <h3>WiFi de alta velocidad</h3>
-            <p>Conexión gratuita en todo el hotel.</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">🅿️</div>
-            <h3>Estacionamiento</h3>
-            <p>Valet parking y garaje seguro</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">🛎️</div>
-            <h3>Servicio a Habitación</h3>
-            <p>Disponible 24/7</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">💼</div>
-            <h3>Centro de Negocios</h3>
-            <p>Salas de reuniones equipadas</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">✈️</div>
-            <h3>Traslado Aeropuerto</h3>
-            <p>Servicio de transporte privado</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">🛡️</div>
-            <h3>Seguridad 24/7</h3>
-            <p>Vigilancia y cámaras</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">🎧</div>
-            <h3>Conserje</h3>
-            <p>Asistencia personalizada</p>
-        </div>
-        <div class="servicio-card">
-            <div class="icono">👕</div>
-            <h3>Lavandería</h3>
-            <p>Servicio exprés disponible</p>
-        </div>
-    </div>
-</section>
-
-<section id="ubicacion" class="ubicacion-section">
-  <div class="ubicacion-container">
-    <h2>Nuestra Ubicación</h2>
-    <p class="subtitulo">En el corazón de la ciudad, cerca de todo lo que necesitas</p>
-
-    <div class="ubicacion-content">
-      <!-- Mapa -->
-      <div class="mapa">
-       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15904.963761399631!2d-74.0723099637657!3d4.728161392089562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f8523bf36c35f%3A0xdf6887d9af157f3!2sCl.%20131a%20%2358D-20%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1760644325274!5m2!1ses-419!2sco" width="600" height="1000" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      </div>
-    </div>
-  </div>
-</section>
+            /* Responsive */
+            @media (max-width: 900px) {
+                .sobre-container {
+                    flex-direction: column;
+                }
+                .sobre-imagen,
+                .sobre-contenido {
+                    flex: 1 1 100%;
+                }
+                .sobre-imagen img {
+                    height: auto;
+                }
+            }
 
 
-<!-- Footer -->
-<footer class="footer" id="contactos">
-  <div class="footer-content">
-    <div class="footer-section about">
-      <h3>Great Viggio</h3>
-      <p>Disfruta de la hospitalidad italiana en Colombia.</p>
-      <div class="contact">
-        <p><i class="fas fa-map-marker-alt"></i> Calle Principal #123, Ciudad</p>
-        <p><i class="fas fa-phone"></i> +57 123 456 7890</p>
-        <p><i class="fas fa-envelope"></i> info@greatviggio.com</p>
-      </div>
-    </div>
-    <div class="footer-section links">
-      <h3>Enlaces Rápidos</h3>
-      <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#espacios">Espacios</a></li>
-        <li><a href="#servicio">Servicios</a></li>
-        <li><a href="#">Reservaciones</a></li>
-        <li><a href="#">Galería</a></li>
-        <li><a href="#">Contacto</a></li>
-      </ul>
-    </div>
-    <div class="footer-section subscribe">
-      <h3>Suscríbete</h3>
-      <p>Recibe nuestras ofertas y novedades</p>
-      <form action="#" method="post">
-        <input type="email" name="email" placeholder="Ingresa tu email" required>
-        <button type="submit" class="btn-subscribe">Suscribirse</button>
-      </form>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="social-media">
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-tripadvisor"></i></a>
-    </div>
-    <div class="legal-info">
-      <p>&copy; 2024 Hotel Great Viggio. Todos los derechos reservados.</p>
-      <p><a href="#">Política de privacidad</a> | <a href="#">Términos y condiciones</a></p>
-    </div>
-  </div>
-</footer>
+            /* ======== Sección Habitaciones ======== */
+            .habitaciones-section {
+                background-color: #fbf6f5;
+                text-align: center;
+                padding: 4rem 2rem;
+                margin-top: -5rem; /* 🔹 súbela un poco hacia arriba */
+            }
 
-<!-- JS Carrusel -->
-<script>
-const slides = document.querySelectorAll('.carousel-slide');
-const prevBtn = document.querySelector('.prev');
-const nextBtn = document.querySelector('.next');
-const thumbs = document.querySelectorAll('.thumbnails img');
-let currentIndex = 0;
+            .habitaciones-title {
+                font-family: 'Times New Roman', serif;
+                font-size: 2.5rem;
+                font-weight: bold;
+                color: black;
+                margin-bottom: 0.5rem;
+            }
 
-function showSlide(index) {
-  slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
-  thumbs.forEach((thumb, i) => thumb.classList.toggle('active-thumb', i === index));
-}
+            .habitaciones-subtitulo {
+                color: #555;
+                font-size: 1.1rem;
+                margin-bottom: 3rem;
+            }
 
-prevBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  showSlide(currentIndex);
-});
+            /* ======== Grid ======== */
+            .habitaciones-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                max-width: 1100px;
+                margin: 0 auto;
+            }
 
-nextBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  showSlide(currentIndex);
-});
+            /* ======== Tarjeta ======== */
+            .habitacion-card {
+                background: #fff;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
 
-thumbs.forEach((thumb, i) => {
-  thumb.addEventListener('click', () => {
-    currentIndex = i;
-    showSlide(currentIndex);
-  });
-});
+            .habitacion-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            }
 
-setInterval(() => {
-  currentIndex = (currentIndex + 1) % slides.length;
-  showSlide(currentIndex);
-}, 5000);
+            /* ======== Imagen ======== */
+            .habitacion-img {
+                position: relative;
+            }
 
-showSlide(currentIndex);
-</script>
-</body>
+            .habitacion-img img {
+                width: 100%;
+                height: 220px;
+                object-fit: cover;
+                display: block;
+            }
+
+            .precio {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #1a7c8f;
+                color: white;
+                font-weight: 600;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+            }
+
+            /* ======== Información ======== */
+            .habitacion-info {
+                padding: 1.5rem;
+                text-align: left;
+            }
+
+            .habitacion-info h3 {
+                font-size: 1.3rem;
+                color: #131318;
+                margin-bottom: 0.5rem;
+            }
+
+            .habitacion-info p {
+                font-size: 0.95rem;
+                color: #555;
+                margin-bottom: 1rem;
+                line-height: 1.5;
+            }
+
+            /* ======== Tags ======== */
+            .habitacion-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 1rem;
+            }
+
+            .habitacion-tags span {
+                background-color: #e0f2f1;
+                color: #00796b;
+                font-size: 0.85rem;
+                padding: 4px 10px;
+                border-radius: 12px;
+            }
+
+            /* ======== Botón ======== */
+            .btn-reservar {
+                width: 100%;
+                background-color: #1a7c8f;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+
+            .btn-reservar:hover {
+                background-color: #00796b;
+            }
+
+            /* ======== Responsive ======== */
+            @media (max-width: 768px) {
+                .habitaciones-section {
+                    padding: 3rem 1rem;
+                }
+
+                .habitacion-info {
+                    padding: 1.2rem;
+                }
+            }
+
+
+            /* Espacios / Carrusel */
+            .espacios-section {
+                text-align: center;
+                margin: 10px auto 40px;
+                ;
+            }
+
+
+            .espacios-title{
+                font-family: 'Times New Roman', serif;
+                font-size: 2.5rem;
+                font-weight: bold;
+                margin-bottom: 1.5rem;
+                color: black;
+
+            }
+            .carousel-container {
+                position: relative;
+                width: 80%;
+                max-width: 1000px;
+                margin: auto;
+                overflow: hidden;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            }
+
+            .carousel-slide {
+                display: none;
+                position: relative;
+            }
+
+            .carousel-slide.active {
+                display: block;
+            }
+
+            .carousel-slide img {
+                width: 100%;
+                height: 500px; /* altura fija, evita deformaciones */
+                object-fit: cover;
+                border-radius: 15px;
+            }
+
+            .description-scroll {
+                position: absolute;
+                bottom: 15px;
+                left: 20px;
+                color: white;
+                background: rgba(0,0,0,0.5);
+                padding: 10px 15px;
+                border-radius: 8px;
+                max-width: 90%;
+                text-align: left;
+            }
+
+            .thumbnails-container {
+                margin-top: 15px;
+            }
+
+            .thumbnails {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .thumbnails img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+                cursor: pointer;
+                opacity: 0.6;
+                transition: opacity 0.3s, transform 0.3s;
+            }
+
+            .thumbnails img:hover,
+            .thumbnails img.active-thumb {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            button.prev, button.next {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(0,0,0,0.5);
+                color: #fff;
+                border: none;
+                padding: 12px;
+                cursor: pointer;
+                border-radius: 50%;
+                font-size: 20px;
+                z-index: 10;
+            }
+
+            button.prev {
+                left: 15px;
+            }
+            button.next {
+                right: 15px;
+            }
+
+            /* ======== Sección ======== */
+            .servicios-section {
+                text-align: center;
+                padding: 4rem 2rem;
+            }
+
+            .servicios-section h2 {
+                font-size: 2.3rem;
+                font-weight: 700;
+                color: #131318;
+                margin-bottom: 0.5rem;
+                font-family: 'Times New Roman', serif;
+            }
+
+            .subtitulo {
+                color: #555;
+                font-size: 1.1rem;
+                margin-bottom: 3rem;
+            }
+
+            /* ======== Grid ======== */
+            .servicios-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+
+            /* ======== Tarjeta de servicio ======== */
+            .servicio-card {
+                background-color: #ffffff;
+                border-radius: 15px;
+                padding: 2rem 1.5rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .servicio-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            /* ======== Iconos ======== */
+            .icono {
+                background-color: #d1f2eb;
+                color: #009688;
+                font-size: 2rem;
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem auto;
+            }
+
+            /* ======== Texto ======== */
+            .servicio-card h3 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin: 0.5rem 0;
+            }
+
+            .servicio-card p {
+                font-size: 0.95rem;
+                color: #555;
+                margin: 0;
+            }
+
+            /* ======== Responsive ======== */
+            @media (max-width: 768px) {
+                .servicios-section {
+                    padding: 3rem 1rem;
+                }
+
+                .servicio-card {
+                    padding: 1.5rem;
+                }
+            }
+
+            /* ======= Sección de Ubicación ======= */
+            .ubicacion-section {
+                background-color: #fbf6f5;
+                color: #131318;
+                padding: 60px 0;
+                font-family: 'Times New Roman', serif;
+            }
+
+            .ubicacion-container {
+                width: 90%;
+                max-width: 1200px;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            /* ======= Títulos ======= */
+            .ubicacion-container h2 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+                font-weight: bold;
+            }
+
+            .subtitulo {
+                font-size: 1.2rem;
+                color: #555;
+                margin-bottom: 40px;
+            }
+
+            /* ======= Contenido principal (mapa + información) ======= */
+            .ubicacion-content {
+                display: flex;
+                justify-content: center;
+                align-items: stretch;
+                gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            /* ======= Card de información ======= */
+            .info-contacto {
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                flex: 1 1 500px;
+                padding: 40px;
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .info-contacto h3 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+                color: #131318;
+                text-align: center;
+            }
+
+            .info-contacto ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .info-contacto li {
+                display: flex;
+                align-items: flex-start;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+
+            .info-contacto i {
+                font-size: 1.4rem;
+                color: #008080;
+                margin-top: 5px;
+            }
+
+            .info-contacto strong {
+                font-weight: bold;
+                color: #131318;
+            }
+
+            .info-contacto p {
+                margin: 3px 0 0;
+                color: #444;
+                line-height: 1.5;
+            }
+
+            /* ======= Mapa ======= */
+            .mapa {
+                flex: 1 1 500px;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .mapa iframe {
+                width: 100%;
+                height: 100%;
+                min-height: 500px;
+                border: 0;
+                border-radius: 16px;
+            }
+
+            /* ======= Responsivo ======= */
+            @media (max-width: 992px) {
+                .ubicacion-content {
+                    flex-direction: column-reverse;
+                }
+
+                .mapa iframe {
+                    min-height: 400px;
+                }
+            }
+
+
+
+            /* ======== FOOTER ======== */
+            .footer {
+                background-color: #131318;
+                color: #fbf6f5;
+                padding: 3rem 2rem 1rem;
+                font-family: 'Times New Roman', serif;
+            }
+
+            .footer-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+                gap: 2.5rem;
+                max-width: 1200px;
+                margin: auto;
+                padding-bottom: 2rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* ======== Columna: About ======== */
+            .footer-logo {
+                font-family: 'Times New Roman', serif;
+                font-size: 1.8rem;
+                color: #fbf6f5;
+                margin-bottom: 0.5rem;
+            }
+
+            .footer-about p {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                margin-bottom: 1rem;
+            }
+
+            .footer-socials a {
+                display: inline-block;
+                color: #fbf6f5;
+                margin-right: 0.8rem;
+                font-size: 1.1rem;
+                transition: color 0.3s;
+            }
+
+            .footer-socials a:hover {
+                color: #1a7c8f;
+            }
+
+            /* ======== Columna: Links & Services ======== */
+            .footer-links h4,
+            .footer-services h4,
+            .footer-contact h4 {
+                color: #fbf6f5;
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+            }
+
+            .footer-links ul,
+            .footer-services ul,
+            .footer-contact ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .footer-links ul li,
+            .footer-services ul li,
+            .footer-contact ul li {
+                margin-bottom: 0.6rem;
+                font-size: 0.95rem;
+            }
+
+            .footer-links a,
+            .footer-services a {
+                color: #cfcfcf;
+                text-decoration: none;
+                transition: color 0.3s;
+            }
+
+            .footer-links a:hover,
+            .footer-services a:hover {
+                color: #1a7c8f;
+            }
+
+            /* ======== Contacto ======== */
+            .footer-contact i {
+                color: #1a7c8f;
+                margin-right: 8px;
+            }
+
+            /* ======== Parte inferior ======== */
+            .footer-bottom {
+                max-width: 1200px;
+                margin: 1rem auto 0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 0.85rem;
+                color: #bbb;
+                text-align: center;
+            }
+
+            .footer-bottom a {
+                color: #bbb;
+                text-decoration: none;
+                margin-left: 1rem;
+                transition: color 0.3s;
+            }
+
+            .footer-bottom a:hover {
+                color: #1a7c8f;
+            }
+
+            .footer-bottom p {
+                margin: 0.5rem 0;
+            }
+
+            /* ======== Responsive ======== */
+            @media (max-width: 768px) {
+                .footer-container {
+                    text-align: center;
+                }
+
+                .footer-bottom {
+                    flex-direction: column;
+                    gap: 0.8rem;
+                }
+            }
+
+
+            /* --- Carrusel --- */
+            .carousel-container {
+                position: relative;
+                width: 80%;
+                margin: auto;
+                overflow: hidden;
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            }
+
+            .carousel-slide {
+                display: none;
+                text-align: center;
+                position: relative;
+            }
+
+            .carousel-slide img {
+                width: 100%;
+                border-radius: 15px;
+                object-fit: cover;
+            }
+
+            .carousel-slide.active {
+                display: block;
+            }
+
+            button.prev, button.next {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(0,0,0,0.5);
+                color: #fff;
+                border: none;
+                padding: 12px;
+                cursor: pointer;
+                border-radius: 50%;
+                font-size: 20px;
+                z-index: 10;
+            }
+
+            button.prev {
+                left: 15px;
+            }
+            button.next {
+                right: 15px;
+            }
+
+            .thumbnails-container {
+                margin-top: 15px;
+                text-align: center;
+            }
+
+            .thumbnails {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .thumbnails img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+                cursor: pointer;
+                opacity: 0.6;
+                transition: opacity 0.3s, transform 0.3s;
+            }
+
+            .thumbnails img:hover,
+            .thumbnails img.active-thumb {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            .description-scroll {
+                position: absolute;
+                bottom: 10%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: white;
+                text-align: center;
+                text-shadow: 0 0 10px rgba(0,0,0,0.7);
+
+
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1>Great Viggio</h1>
+                <nav class="header-navigation">
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#sobre">Sobre Nosotros</a></li>
+                        <li><a href="#habitaciones">Habitaciones</a></li>
+                        <li><a href="#instalaciones">Instalaciones</a></li>
+                        <li><a href="#ubicacion">Ubicación</a></li>
+                        <li><a href="login.xhtml" class="boton">Reservar ahora</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+
+        <!-- Hero -->
+        <section class="hero">
+            <img src="img/GreatVi.png" alt="Habitación Hotel Great Viggio"id="inicio">
+            <div class="hero-text">Bienvenido a Great Viggio.</div>
+        </section>
+
+        <!-- Sobre -->
+        <section class="sobre-section" id="sobre">
+            <div class="sobre-container">
+                <div class="sobre-imagen">
+                    <img src="img/restaurante.jpg" alt="Lobby del hotel Great Viggio">
+                </div>
+
+                <div class="sobre-contenido">
+                    <h2>Sobre Great Viggio</h2>
+                    <p>
+                        Great Viggio es más que un hotel, es una experiencia única que combina elegancia, confort y hospitalidad excepcional.
+                        Ubicado en un entorno privilegiado, nuestro hotel ofrece a nuestros huéspedes un refugio de tranquilidad y lujo.
+                    </p>
+                    <p>
+                        Con años de experiencia en la industria hotelera, nos enorgullecemos de ofrecer servicios de primera clase,
+                        instalaciones modernas y una atención personalizada que supera las expectativas de cada visitante.
+                        Cada detalle ha sido cuidadosamente diseñado para garantizar su máxima satisfacción.
+                    </p>
+
+                    <div class="beneficios">
+                        <div class="beneficio">
+                            <div class="icono">⭐</div>
+                            <div>
+                                <h4>Servicio 5 Estrellas</h4>
+                                <p>Atención personalizada las 24 horas</p>
+                            </div>
+                        </div>
+                        <div class="beneficio">
+                            <div class="icono">📍</div>
+                            <div>
+                                <h4>Ubicación privilegiada</h4>
+                                <p>En el corazón de la ciudad</p>
+                            </div>
+                        </div>
+                        <div class="beneficio">
+                            <div class="icono">🍽️</div>
+                            <div>
+                                <h4>Gastronomía Exquisita</h4>
+                                <p>Restaurante gourmet internacional</p>
+                            </div>
+                        </div>
+                        <div class="beneficio">
+                            <div class="icono">🛡️</div>
+                            <div>
+                                <h4>Seguridad Total</h4>
+                                <p>Protocolos de higiene certificados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Habitaciones -->
+        <section id="habitaciones" class="habitaciones-section">
+            <h2 class="habitaciones-title">Nuestras Habitaciones</h2>
+            <p class="habitaciones-subtitulo">Comodidad, elegancia y diseño en cada detalle.</p>
+
+            <div class="habitaciones-grid">
+                <!-- Tarjeta 1 -->
+                <div class="habitacion-card">
+                    <div class="habitacion-img">
+                        <img src="img/estandar.png" alt="Habitación Estándar">
+                        <span class="precio">$180.000/noche</span>
+                    </div>
+                    <div class="habitacion-info">
+                        <h3>Habitación Estándar</h3>
+                        <p>Perfecta para viajeros que buscan comodidad y funcionalidad con todas las amenidades esenciales.</p>
+                        <div class="habitacion-tags">
+                            <span>Wifi Gratis</span>
+                            <span>Capacidad para 2 personas</span>
+                            <span>TV HD</span>
+                            <span>Baño Privado</span>
+                            <span>Aire Acondicionado</span>
+                            <span>Desayuno Incluido</span>
+                            <span>Escritorio</span>
+
+                        </div>
+                        <button class="btn-reservar" onclick="window.location.href = 'login.xhtml'">
+                            Reservar Ahora
+                        </button>
+
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="habitacion-card">
+                    <div class="habitacion-img">
+                        <img src="img/vip.png" alt="Habitación Superior">
+                        <span class="precio">$500.000/noche</span>
+                    </div>
+                    <div class="habitacion-info">
+                        <h3>Habitación VIP</h3>
+                        <p>Espacio amplio con vistas panorámicas y decoración elegante, ideal para estancias prolongadas.</p>
+                        <div class="habitacion-tags">
+                            <span>Cama King</span>
+                            <span>2 camas basicas</span>
+                            <span>Capacidad para 4 personas</span>
+                            <span>Vista Ciudad</span>
+                            <span>Minibar</span>
+                            <span>Escritorio</span>
+                            <span>Baño Privado</span>
+                            <span>jacuzi Privado</span>
+                        </div>
+                        <button class="btn-reservar" onclick="window.location.href = 'login.xhtml'">
+                            Reservar Ahora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3 -->
+                <div class="habitacion-card">
+                    <div class="habitacion-img">
+                        <img src="img/Duplex1.png" alt="Suite Ejecutiva">
+                        <span class="precio">$1.000.000/noche</span>
+                    </div>
+                    <div class="habitacion-info">
+                        <h3>Duplex</h3>
+                        <p>Diseñada para quienes buscan confort premium, con área de estar y vistas espectaculares.</p>
+                        <div class="habitacion-tags">
+                            <span>Jacuzzi</span>
+                            <span>Smart TV</span>
+                            <span>Vista Panorámica</span>
+                            <span>Capacidad 6 personas</span>
+                            <span>Desayuno Incluido</span>
+                            <span>Minibar</span>
+                            <span>Escritorio</span>
+                            <span>Baño Privado</span>
+                            <span>jacuzi Privado</span>
+                            <span>Cuenta con dos pisos</span>
+
+                        </div>
+                        <button class="btn-reservar" onclick="window.location.href = 'login.xhtml'">
+                            Reservar Ahora
+                        </button>
+                    </div>
+                </div>   
+            </div>
+        </section>
+
+
+
+        <!-- Carrusel -->
+        <section id="instalaciones" class="espacios-section">
+            <h2 class="espacios-title">Nuestros Espacios</h2>
+            <p class="habitaciones-subtitulo">Espacios que combinan estilo, confort y armonía.</p>
+
+            <div class="carousel-container">
+                <div class="carousel-slide active">
+                    <img src="img/reuniones.jpg" alt="Reuniones">
+                    <div class="description-scroll">
+                        <h3>Reuniones</h3>
+                        <p>Espacios modernos para reuniones y eventos corporativos.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/spa.jpg" alt="Spa">
+                    <div class="description-scroll">
+                        <h3>Spa</h3>
+                        <p>Relájese en nuestro spa de lujo con tratamientos exclusivos.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/gym.jpg" alt="Gimnasio">
+                    <div class="description-scroll">
+                        <h3>Gimnasio</h3>
+                        <p>Equipado con máquinas de última generación.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/piscina.jpg" alt="Piscina">
+                    <div class="description-scroll">
+                        <h3>Piscina</h3>
+                        <p>Piscina climatizada con vista panorámica.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/bar.jpg" alt="Bar">
+                    <div class="description-scroll">
+                        <h3>Bar</h3>
+                        <p>Bebidas premium y cócteles exclusivos.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/restaurante.jpg" alt="Restaurante">
+                    <div class="description-scroll">
+                        <h3>Restaurante</h3>
+                        <p>Menú internacional y cocina local gourmet.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/recepcion.jpg" alt="Recepción">
+                    <div class="description-scroll">
+                        <h3>Recepción</h3>
+                        <p>Atención personalizada 24/7.</p>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/coliseo.jpg" alt="Coliseo">
+                    <div class="description-scroll">
+                        <h3>Coliseo</h3>
+                        <p>Eventos y espectáculos con gran capacidad.</p>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <button class="prev">&#10094;</button>
+                <button class="next">&#10095;</button>
+            </div>
+
+            <!-- Miniaturas -->
+            <div class="thumbnails-container">
+                <div class="thumbnails">
+                    <img src="img/reuniones.jpg" alt="Reuniones">
+                    <img src="img/spa.jpg" alt="Spa">
+                    <img src="img/gym.jpg" alt="Gimnasio">
+                    <img src="img/piscina.jpg" alt="Piscina">
+                    <img src="img/bar.jpg" alt="Bar">
+                    <img src="img/restaurante.jpg" alt="Restaurante">
+                    <img src="img/recepcion.jpg" alt="Recepción">
+                    <img src="img/coliseo.jpg" alt="Coliseo">
+                </div>
+            </div>
+        </section>
+
+        <section class="servicios-section">
+            <h2>Servicios incluidos</h2>
+            <p class="subtitulo">Todo lo que necesitas para una estancia perfecta.</p>
+
+            <div class="servicios-grid">
+                <div class="servicio-card">
+                    <div class="icono">📶</div>
+                    <h3>WiFi de alta velocidad</h3>
+                    <p>Conexión gratuita en todo el hotel.</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">🅿️</div>
+                    <h3>Estacionamiento</h3>
+                    <p>Valet parking y garaje seguro</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">🛎️</div>
+                    <h3>Servicio a Habitación</h3>
+                    <p>Disponible 24/7</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">💼</div>
+                    <h3>Centro de Negocios</h3>
+                    <p>Salas de reuniones equipadas</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">✈️</div>
+                    <h3>Traslado Aeropuerto</h3>
+                    <p>Servicio de transporte privado</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">🛡️</div>
+                    <h3>Seguridad 24/7</h3>
+                    <p>Vigilancia y cámaras</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">🎧</div>
+                    <h3>Conserje</h3>
+                    <p>Asistencia personalizada</p>
+                </div>
+                <div class="servicio-card">
+                    <div class="icono">👕</div>
+                    <h3>Lavandería</h3>
+                    <p>Servicio exprés disponible</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ubicacion" class="ubicacion-section">
+            <div class="ubicacion-container">
+                <h2>Nuestra Ubicación</h2>
+                <p class="subtitulo">En el corazón de la ciudad, cerca de todo lo que necesitas</p>
+
+                <div class="ubicacion-content">
+                    <!-- Mapa -->
+                    <div class="mapa">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15904.963761399631!2d-74.0723099637657!3d4.728161392089562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f8523bf36c35f%3A0xdf6887d9af157f3!2sCl.%20131a%20%2358D-20%2C%20Bogot%C3%A1!5e0!3m2!1ses-419!2sco!4v1760644325274!5m2!1ses-419!2sco" width="600" height="1000" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <!-- ======== FOOTER ======== -->
+        <footer class="footer">
+            <div class="footer-container">
+                <!-- Columna 1 -->
+                <div class="footer-about">
+                    <h3 class="footer-logo">Great Viggio</h3>
+                    <p>Tu destino de lujo y confort.<br>Experiencias inolvidables en cada estancia.</p>
+                    <div class="footer-socials">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- Columna 2 -->
+                <div class="footer-links">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#sobre">Sobre Nosotros</a></li>
+                        <li><a href="#habitaciones">Habitaciones</a></li>
+                        <li><a href="#instalaciones">Instalaciones</a></li>
+                        <li><a href="#ubicacion">Ubicación</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 3 -->
+                <div class="footer-services">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="#">Spa & Wellness</a</li>
+                        <li><a href="#">Restaurante Gourmet</a></li>
+                        <li><a href="#">Eventos Corporativos</a></li>
+                        <li><a href="#">Servicio de Concierge</a></li>
+                        <li><a href="#">Traslado Aeropuerto</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4 -->
+                <div class="footer-contact">
+                    <h4>Contacto</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i>Calle131a#58D-20<br> Ciudad, Bogotá Colombia</li>
+                        <li><i class="fas fa-phone-alt"></i> 3123466149</li>
+                        <li><i class="fas fa-envelope"></i>staywell@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Great Viggio Hotel. Todos los derechos reservados.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Powered by Readdy</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/4d3e9b6e8b.js" crossorigin="anonymous"></script>
+
+
+        <!-- JS Carrusel -->
+        <script>
+                    const slides = document.querySelectorAll('.carousel-slide');
+                    const prevBtn = document.querySelector('.prev');
+                    const nextBtn = document.querySelector('.next');
+                    const thumbs = document.querySelectorAll('.thumbnails img');
+                    let currentIndex = 0;
+
+                    function showSlide(index) {
+                        slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+                        thumbs.forEach((thumb, i) => thumb.classList.toggle('active-thumb', i === index));
+                    }
+
+                    prevBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                        showSlide(currentIndex);
+                    });
+
+                    nextBtn.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        showSlide(currentIndex);
+                    });
+
+                    thumbs.forEach((thumb, i) => {
+                        thumb.addEventListener('click', () => {
+                            currentIndex = i;
+                            showSlide(currentIndex);
+                        });
+                    });
+
+                    setInterval(() => {
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        showSlide(currentIndex);
+                    }, 5000);
+
+                    showSlide(currentIndex);
+        </script>
+    </body>
 </html>

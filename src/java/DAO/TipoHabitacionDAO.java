@@ -41,24 +41,28 @@ public class TipoHabitacionDAO {
         return listaTipoHabitaciones;
     }
     
-    public void agregar(TipoHabitacion t) throws SQLException {
-        try{
-            String sql = "INSERT INTO tipohabitacion(nombre, descripcion, capacidad, precio, imagen )" +
-                    "VALUES(?,?,?,?,?)";
-            
-            ps= Conexion.conectar().prepareStatement(sql);
-            ps.setString(1, t.getNombre());
-            ps.setString(2, t.getDescripcion());
-            ps.setInt(3, t.getCapacidad());
-            ps.setFloat(4, t.getPrecio());
-            ps.setString(5, t.getImagen());
-            
-            ps.executeUpdate();
-            
-        }catch(SQLException e){
-            System.out.println("Error al registrar tipo" + e.getMessage());
+public void agregar(TipoHabitacion t) throws SQLException {
+    String sql = "INSERT INTO tipohabitacion(nombre, descripcion, capacidad, precio, imagen) VALUES(?,?,?,?,?)";
+
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql) ){
+
+        ps.setString(1, t.getNombre());
+        ps.setString(2, t.getDescripcion());
+        ps.setInt(3, t.getCapacidad());
+        ps.setFloat(4, t.getPrecio());
+        ps.setString(5, t.getImagen());
+
+        int filas = ps.executeUpdate();
+        if(filas == 0){
+            throw new SQLException("No se pudo insertar el tipo de habitación");
         }
+
+    } catch (SQLException e) {
+        System.out.println("Error al registrar tipo: " + e.getMessage());
+        throw e; 
     }
+}
+    
     public TipoHabitacion buscar(int idTipoHabitacion) throws SQLException {
     TipoHabitacion t = null;
     try {

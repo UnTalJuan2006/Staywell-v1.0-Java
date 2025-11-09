@@ -39,7 +39,7 @@
             .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10px 18px;
+                padding: 10.5px 18px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
             }
@@ -80,8 +80,8 @@
             .table-actions button {
                 margin-right: 0.5rem;
             }
-            
-               .main-content {
+
+            .main-content {
                 margin-left: 280px;
                 padding: 2rem;
             }
@@ -97,6 +97,7 @@
             .table-actions button {
                 margin-right: 0.5rem;
             }
+
         </style>
     </h:head>
 
@@ -118,7 +119,6 @@
                 <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
                 <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
                 <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
-                <h:link outcome="/.xhtml" styleClass="nav-link"><i class="bi bi-bar-chart me-2"></i> Mantenimientos</h:link>
             </nav>
 
             <h:form>
@@ -145,6 +145,20 @@
 
             <div class="mt-4">
                 <h:messages styleClass="alert alert-info" layout="table" />
+                <div class="position-relative mb-4" style="width: 100%; max-width: 350px; margin-bottom: 1.5rem;">
+                    <i class="bi bi-search text-secondary position-absolute"
+                       style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+
+                    <p:inputText id="globalFilter"
+                                 onkeyup="PF('dtEventos').filter()"
+                                 placeholder="Buscar Reserva..."
+                                 styleClass="form-control ps-5 shadow-sm"
+                                 style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
+                                 onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
+                                 onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+                </div>
+
+
 
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -192,8 +206,8 @@
                                                     </h:link>
                                                     <h:form styleClass="d-inline">
                                                         <h:commandLink action="#{reservaBean.eliminar(reserva)}"
-                                                                      styleClass="btn btn-outline-danger btn-sm"
-                                                                      onclick="return confirm('¿Desea eliminar la reserva?');">
+                                                                       styleClass="btn btn-outline-danger btn-sm"
+                                                                       onclick="return confirm('¿Desea eliminar la reserva?');">
                                                             <i class="bi bi-trash"></i>
                                                         </h:commandLink>
                                                     </h:form>

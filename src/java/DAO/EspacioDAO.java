@@ -43,11 +43,11 @@ public class EspacioDAO {
     }
 
     // Agregar espacio
-    public void agregar(Espacio p) throws SQLException {
+    public int agregar(Espacio p) throws SQLException {
         String sql = "INSERT INTO espacio (nombre, tipo, descripcion, capacidad, costoHora, fechaActualizacion, estado, imagen) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        ps = Conexion.conectar().prepareStatement(sql);
+       try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+           
         ps.setString(1, p.getNombre());
         ps.setString(2, p.getTipo().name());
         ps.setString(3, p.getDescripcion());
@@ -58,6 +58,9 @@ public class EspacioDAO {
         ps.setString(8, p.getImagen());
 
         ps.executeUpdate();
+        
+       }   
+       return -1;
     }
 
     public Espacio buscar(int id) {

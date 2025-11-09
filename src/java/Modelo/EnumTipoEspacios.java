@@ -13,5 +13,6 @@ public enum EnumTipoEspacios {
     TerrazaVip,
     Auditorio,
     BBQ,
-    Jardin
+    Jardin,
+    SalonComunal
 }

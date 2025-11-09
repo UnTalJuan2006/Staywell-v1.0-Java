@@ -1,332 +1,800 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <h:head>
+    <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login</title>
-        <h:outputStylesheet name="css/login.css" />
+        <title>Great Viggio Hotel</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="stylesheet" href="login.css" />
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule="true" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
         <style>
             * {
                 margin: 0;
-                font-family: 'Poppins', sans-serif;
                 padding: 0;
                 box-sizing: border-box;
-                color: #d4af37;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
 
-            body, html {
-                height: 100%;
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
                 overflow: hidden;
             }
 
-            .container {
-                display: flex;
+            /* Fondo de Nueva York */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
                 width: 100%;
-                height: 100vh;
-                color: #d4af37;
+                height: 100%;
+                background-image: url('https://us.123rf.com/450wm/f11photo/f11photo1403/f11photo140300074/26434674-horizonte-de-la-ciudad-de-nueva-york-al-atardecer-con-el-empire-state-building-manhattan-en-blanco.jpg?ver=6');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: brightness(0.4) contrast(1.1);
+                z-index: -2;
+                animation: backgroundZoom 30s ease-in-out infinite;
             }
 
+            @keyframes backgroundZoom {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
 
+            /* Efectos de luz */
+            .light-effect {
+                position: fixed;
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background: radial-gradient(circle,
+                    #ffffff 0%,
+                    rgba(4, 100, 119, 0.15) 30%,
+                    transparent 70%);
+                filter: blur(30px);
+                pointer-events: none;
+                transition: transform 0.1s ease-out;
+                z-index: -1;
+                animation: lightPulse 4s ease-in-out infinite;
+            }
+
+            @keyframes lightPulse {
+                0%, 100% {
+                    opacity: 0.6;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.9;
+                    transform: scale(1.1);
+                }
+            }
+
+            /* Partículas */
+            .particles {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                pointer-events: none;
+            }
+
+            .particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 50%;
+                animation: float 20s infinite linear;
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(100vh) translateX(0) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.8;
+                }
+                90% {
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translateY(-100px) translateX(100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+
+            /* Contenedor principal */
+            .container {
+                width: 70%;
+                max-width: 900px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(20px);
+                border-radius: 25px;
+                box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+                display: flex;
+                overflow: hidden;
+                min-height: 500px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: containerFloat 6s ease-in-out infinite;
+            }
+
+            @keyframes containerFloat {
+                0%, 100% {
+                    transform: translateY(0px) rotate(0deg);
+                }
+                33% {
+                    transform: translateY(-10px) rotate(0.5deg);
+                }
+                66% {
+                    transform: translateY(-5px) rotate(-0.5deg);
+                }
+            }
+
+            /* LADO IZQUIERDO */
             .left-side {
-                width: 45%;
-                background-color: white;
+                flex: 1;
+                background: linear-gradient(135deg,
+                    rgba(26, 124, 143, 0.9) 0%,
+                    rgba(20, 90, 107, 0.8) 100%);
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: slideUp 1.2s ease forwards;
-                opacity: 0;
-            }
-
-            .logo-box img {
-                width: 500PX;
-                height: 350px;
-            }
-
-
-            .right-side {
-                width: 55%;
-                background: #131318;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                animation: slideInRight 1s ease forwards;
-                opacity: 0;
-            }
-
-            .login-box {
-                width: 350px;
-                height: 400px;
-                background-color: transparent;
-                border: 2px solid rgba(255, 255, 255, .5);
-                border-radius: 20px;
-                display: flex;
-                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                padding: 0px;
-                backdrop-filter: blur(15px);
-                box-shadow: 0px 0px 30px #ededed;
-
-
+                padding: 40px;
+                position: relative;
+                overflow: hidden;
             }
 
-            h2 {
-                font-size: 1.5em;
-                color: #fff;
+            .left-side::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+                opacity: 0.3;
+            }
+
+            .logo-box {
                 text-align: center;
-                margin-bottom: 30px;
-                color: #d4af37;
-                font-family: 'Times New Roman', serif;
+                color: white;
+                z-index: 1;
+                animation: fadeInUp 1s ease-out;
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .logo-img {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 25px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 3px solid rgba(255, 255, 255, 0.3);
+                animation: logoGlow 3s ease-in-out infinite;
+            }
+
+            @keyframes logoGlow {
+                0%, 100% {
+                    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+                }
+                50% {
+                    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+                }
+            }
+
+            .logo-img i {
+                font-size: 3rem;
+                color: white;
+            }
+
+            .hotel-name h1 {
+                font-size: 2.8rem;
+                font-weight: 300;
+                letter-spacing: 4px;
+                margin-bottom: 8px;
+                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+                animation: titleGlow 3s ease-in-out infinite;
+            }
+
+            @keyframes titleGlow {
+                0%, 100% {
+                    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+                }
+                50% {
+                    text-shadow: 2px 2px 15px rgba(255, 255, 255, 0.3),
+                        0 0 20px rgba(255, 255, 255, 0.2);
+                }
+            }
+
+            .hotel-name p {
+                font-size: 1.3rem;
+                letter-spacing: 10px;
+                text-transform: uppercase;
+                border-top: 2px solid rgba(255, 255, 255, 0.5);
+                padding-top: 12px;
+                display: inline-block;
+            }
+
+            .welcome-text {
+                margin-top: 30px;
+                padding: 20px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .welcome-text p {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            /* LADO DERECHO */
+            .right-side {
+                flex: 1;
+                padding: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            /* Contenedores de formularios */
+            .form-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 40px;
+                transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                transform-style: preserve-3d;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            /* Login visible por defecto */
+            .login-container {
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+                z-index: 2;
+            }
+
+            .form-box {
+                width: 100%;
+                max-width: 450px;
+                animation: formSlideIn 0.8s ease-out;
+            }
+
+            @keyframes formSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .form-box h2 {
+                color: white;
+                font-size: 2.2rem;
+                text-align: center;
+                margin-bottom: 40px;
+                font-weight: 600;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                position: relative;
+            }
+
+            .form-box h2::after {
+                content: '';
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, transparent, #1a7c8f, transparent);
+                border-radius: 2px;
+                animation: linePulse 2s ease-in-out infinite;
+            }
+
+            @keyframes linePulse {
+                0%, 100% {
+                    width: 60px;
+                    opacity: 0.7;
+                }
+                50% {
+                    width: 100px;
+                    opacity: 1;
+                }
             }
 
             .input-box {
-                width: 100%;
                 position: relative;
-                margin: 30px 0;
-                border-bottom: 2px solid #fff;
-                padding: 2px;
+                margin-bottom: 30px;
+                animation: inputSlide 0.6s ease-out;
             }
 
-            .input-box label {
-                position: absolute;
-                top: 50%;
-                left: 10px;
-                transform: translateY(-50%);
-                font-size: 1em;
-                color: #fff;
-                pointer-events: none;
-                transition: 0.3s;
-                margin-top: 15px;
-            }
-
-            .input-box input {
-                width: 100%;
-                height: 50px;
-                background: transparent;
-                border: none;
-                outline: none;
-                color: #fff;
-                padding: 0 35px 0 10px;
-                font-size: 1em;
-            }
-
-            .input-box input:focus + label,
-            .input-box input:not(:placeholder-shown) + label {
-                top: -10px;
-                font-size: 1em;
-                color: #ddd;
+            @keyframes inputSlide {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
             }
 
             .input-box .icon {
                 position: absolute;
-                right: 8px;
-                color: #fff;
-                font-size: 1.2em;
-                line-height: 57px;
+                left: 20px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #1a7c8f;
+                font-size: 1.3rem;
+                transition: all 0.3s ease;
+                animation: iconBounce 2s ease-in-out infinite;
+            }
+
+            @keyframes iconBounce {
+                0%, 100% {
+                    transform: translateY(-50%);
+                }
+                50% {
+                    transform: translateY(-55%);
+                }
+            }
+
+            /* Estilos para inputs JSF */
+            .input-box input,
+            .input-box input[type="text"],
+            .input-box input[type="password"] {
+                width: 100%;
+                padding: 18px 20px 18px 60px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 15px;
+                font-size: 1rem;
+                color: #333;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                outline: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .input-box input::placeholder {
+                color: #999;
+            }
+
+            .input-box input:focus {
+                border-color: #1a7c8f;
+                background: white;
+                box-shadow: 0 0 0 4px rgba(26, 124, 143, 0.2),
+                    0 10px 25px rgba(0, 0, 0, 0.15);
+                transform: translateY(-2px);
+            }
+
+            .input-box input:focus + .icon {
+                color: #145a6b;
+                animation: iconFocus 0.6s ease-out;
+            }
+
+            @keyframes iconFocus {
+                0% {
+                    transform: translateY(-50%) scale(1);
+                }
+                50% {
+                    transform: translateY(-50%) scale(1.3);
+                }
+                100% {
+                    transform: translateY(-50%) scale(1.2);
+                }
+            }
+
+            .input-box label {
+                position: absolute;
+                left: 60px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #666;
+                font-size: 1rem;
+                pointer-events: none;
+                transition: all 0.3s ease;
+                background: transparent;
+            }
+
+            .input-box input:focus + label,
+            .input-box input:not(:placeholder-shown) + label {
+                top: -12px;
+                left: 20px;
+                font-size: 0.8rem;
+                color: #1a7c8f;
+                background: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
             .remember-forgot {
-                margin: -15px 0 15px;
-                font-size: 0.9em;
-                color: #fff;
                 display: flex;
                 justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.8);
+                animation: fadeInUp 0.8s ease-out 0.2s both;
             }
 
-            .remember-forgot label input {
-                margin-right: 3px;
+            .remember-forgot label {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            .remember-forgot input {
+                margin-right: 8px;
+                accent-color: #1a7c8f;
+                transform: scale(1.2);
             }
 
             .remember-forgot a {
-                color: #fff;
+                color: #1a7c8f;
                 text-decoration: none;
+                transition: all 0.3s ease;
+                font-weight: 500;
             }
 
             .remember-forgot a:hover {
+                color: #145a6b;
                 text-decoration: underline;
             }
 
-
-            .register-link {
-                font-size: .9em;
-                color: #fff;
-                text-align: center;
-                margin: 25px 0 10px;
-            }
-
-            .register-link p a {
-                color: #fff;
-                text-decoration: none;
-            }
-
-            .register-link p a:hover {
-                text-decoration: underline;
-            }
-
-            /* Animaciones */
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes slideUp {
-                from {
-                    transform: translateY(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateY(0);
-                    opacity: 1;
-                }
-            }
-
-            /* Ajuste para botón de login */
             .btn-login {
                 width: 100%;
-                height: 45px;
-                background-color: white;
+                padding: 18px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #145a6b 100%);
                 border: none;
-                border-radius: 20px;
+                border-radius: 15px;
+                color: white;
+                font-size: 1.1rem;
+                font-weight: 600;
                 cursor: pointer;
-                font-size: 1em;
-                font-weight: bold;
-                color: #131318;
-                text-align: center;
-                transition: background-color 0.3s ease;
-                margin-top: 10px
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                margin-bottom: 25px;
+                box-shadow: 0 10px 25px rgba(26, 124, 143, 0.4);
+                position: relative;
+                overflow: hidden;
+                animation: buttonPulse 3s ease-in-out infinite;
+            }
+
+            @keyframes buttonPulse {
+                0%, 100% {
+                    box-shadow: 0 10px 25px rgba(26, 124, 143, 0.4);
+                }
+                50% {
+                    box-shadow: 0 15px 35px rgba(26, 124, 143, 0.6),
+                        0 0 30px rgba(26, 124, 143, 0.3);
+                }
+            }
+
+            .btn-login::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
+                transition: left 0.6s;
+            }
+
+            .btn-login:hover::before {
+                left: 100%;
             }
 
             .btn-login:hover {
-                background-color: #b8962d;
+                background: linear-gradient(135deg, #145a6b 0%, #1a7c8f 100%);
+                box-shadow: 0 15px 35px rgba(26, 124, 143, 0.6),
+                    0 0 40px rgba(26, 124, 143, 0.4);
+                transform: translateY(-3px);
+                animation-play-state: paused;
             }
 
+            .btn-login:active {
+                transform: scale(0.98);
+            }
+
+            .register-link {
+                text-align: center;
+                color: rgba(255, 255, 255, 0.8);
+                font-size: 0.9rem;
+                animation: fadeInUp 0.8s ease-out 0.6s both;
+            }
+
+            .register-link a {
+                color: #1a7c8f;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                position: relative;
+            }
+
+            .register-link a::before {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: #1a7c8f;
+                transition: width 0.3s ease;
+                border-radius: 1px;
+            }
+
+            .register-link a:hover::before {
+                width: 100%;
+            }
+
+            .register-link a:hover {
+                color: #145a6b;
+            }
+
+            /* Botón flotante */
             .btn-circular {
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 9999;
-                width: 50px;
-                height: 50px;
+                bottom: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #145a6b 100%);
                 border-radius: 50%;
-                background-color: #131318;
-                color: #fbf6f5;
-                font-size: 24px;
                 display: flex;
-                align-items: center;
                 justify-content: center;
+                align-items: center;
+                color: white;
                 text-decoration: none;
-                box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
-                transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-                cursor: pointer;
+                box-shadow: 0 8px 25px rgba(26, 124, 143, 0.4);
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                z-index: 1000;
+                animation: floatButton 4s ease-in-out infinite;
+            }
+
+            @keyframes floatButton {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
             }
 
             .btn-circular:hover {
-                background-color: #d4af37;
-                color: #131318;
-                transform: scale(1.1); /* efecto de “pop” al pasar */
+                transform: scale(1.1) rotate(5deg);
+                box-shadow: 0 12px 35px rgba(26, 124, 143, 0.6);
+                animation-play-state: paused;
             }
 
+            .btn-circular i {
+                font-size: 1.3rem;
+            }
 
+            /* Mensajes de error */
+            .error-message {
+                color: #ff6b6b;
+                font-size: 0.8rem;
+                margin-top: 8px;
+                font-weight: 500;
+                animation: shake 0.5s ease-in-out;
+                display: block;
+            }
 
+            @keyframes shake {
+                0%, 100% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(-5px);
+                }
+                75% {
+                    transform: translateX(5px);
+                }
+            }
 
+            /* Estilos para el botón de JSF */
+            .buton {
+                margin-bottom: 25px;
+            }
+
+            /* Responsive */
+            @media (max-width: 968px) {
+                .container {
+                    flex-direction: column;
+                    min-height: auto;
+                }
+
+                .left-side {
+                    padding: 30px 20px;
+                }
+
+                .right-side {
+                    padding: 30px 20px;
+                }
+
+                .hotel-name h1 {
+                    font-size: 2.2rem;
+                }
+
+                .form-container {
+                    position: relative;
+                    transform: none !important;
+                    opacity: 1 !important;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .container {
+                    width: 95%;
+                    margin: 10px;
+                }
+
+                .form-box h2 {
+                    font-size: 1.8rem;
+                }
+
+                .input-box input,
+                .input-box input[type="text"],
+                .input-box input[type="password"] {
+                    padding: 15px 15px 15px 50px;
+                }
+
+                .remember-forgot {
+                    flex-direction: column;
+                    gap: 15px;
+                    align-items: flex-start;
+                }
+
+                .btn-circular {
+                    bottom: 20px;
+                    right: 20px;
+                    width: 50px;
+                    height: 50px;
+                }
+            }
         </style>
-    </h:head>
+    </head>
 
-    <h:body>
+    <body>
+        <!-- Efectos de luz -->
+        <div class="light-effect" id="lightEffect"></div>
+        <div class="particles" id="particles"></div>
+
         <div class="container">
             <!-- LADO IZQUIERDO -->
             <div class="left-side">
                 <div class="logo-box">
-                    <img src="#{request.contextPath}/img/image.png" alt="Logo del hotel" />
-
-
-
-
+                    <div class="logo-img">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <div class="hotel-name">
+                        <h1>GREAT VIGGIO</h1>
+                        <p>HOTEL</p>
+                    </div>
+                    <div class="welcome-text">
+                        <p>Bienvenido al lujo y confort en el corazón de la hotelería</p>
+                    </div>
                 </div>
             </div>
 
             <!-- LADO DERECHO -->
             <div class="right-side">
-                <div class="login-box">
-                    <h:form>
-                        <h2>Iniciar Sesión</h2>
+                <div class="form-container login-container active" id="loginContainer">
+                    <div class="form-box">
+                        <h2>Bienvenidos</h2>
 
-                        <!-- Campo Email -->
-                        <div class="input-box">
-                            <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-                            <h:inputText id="EmailUser"
-                                         value="#{usuarioBean.usuario.email}"
-                                         required="true"
-                                         requiredMessage="Debe especificar un email"/>
-                            <label for="EmailUser">Email</label>
-                            <h:message for="EmailUser" style="color:red;" />
-                        </div>
+                        <h:form id="loginForm">
+                            <!-- Campo Email -->
+                            <div class="input-box">
+                                <span class="icon">
+                                    <ion-icon name="mail-outline"></ion-icon>
+                                </span>
 
-                        <!-- Campo Password -->
-                        <div class="input-box">
-                            <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
-                            <h:inputSecret id="PwUsr"
-                                           value="#{usuarioBean.usuario.password}"
-                                           required="true"
-                                           requiredMessage="Debe especificar una contraseña"/>
-                            <label for="PwUsr">Password</label>
-                            <h:message for="PwUsr" style="color:red;" />
-                        </div>
+                                <h:inputText id="EmailUser"
+                                             value="#{usuarioBean.usuario.email}"
+                                             required="true"
+                                             requiredMessage="Debe especificar un email"
+                                             styleClass="input-field"
+                                             />
+                                <label for="EmailUser">Email</label>
+                                <h:message for="EmailUser" styleClass="error-message" />
+                            </div>
 
-                        <!-- Remember -->
-                        <label>
-                            Recordar: 
-                        </label>
-                        <a href="#">Olvidaste la contraseña? </a>
+                            <!-- Campo Password -->
+                            <div class="input-box">
+                                <span class="icon">
+                                    <ion-icon name="lock-closed-outline"></ion-icon>
+                                </span>
 
-                        <!-- Botón Login -->
-                        <div class="buton">
-                            <h:commandButton value="Iniciar sesión"
-                                             actionListener="#{usuarioBean.autenticar()}"
-                                             styleClass="btn-login"/>
-                        </div>
+                                <h:inputSecret id="PwUsr"
+                                               value="#{usuarioBean.usuario.password}"
+                                               required="true"
+                                               requiredMessage="Debe especificar una contraseña"
+                                               styleClass="input-field"
+                                               />
+                                <label for="PwUsr">Password</label>
+                                <h:message for="PwUsr" styleClass="error-message" />
+                            </div>
 
+                            <!-- Botón Login -->
+                            <div class="button">
+                                <h:commandButton value="Iniciar sesión"
+                                                 actionListener="#{usuarioBean.autenticar}"
+                                                 styleClass="btn-login" />
+                            </div>
 
+                            <!-- Remember -->
+                            <div class="remember-forgot">
+                                <label>Recordar:</label>
+                                <a href="#">¿Olvidaste la contraseña?</a>
+                            </div>
 
-                        <!-- Link de registro -->
-                        <div class="register-link">
-                            <p>¿No tienes una cuenta?
-                                <h:link outcome="registro.xhtml" value="Registro" />
-                            </p>
-                        </div>
-
-                        <h:messages id="msj" showDetail="true" showSummary="false" style="color:blue;" />
-                    </h:form>
+                            <!-- Link de registro -->
+                            <div class="register-link">
+                                <p>¿No tienes una cuenta?
+                                    <a href="registro.xhtml" id="showRegister">Registro</a>
+                                </p>
+                            </div>
+                        </h:form>
+                    </div>
                 </div>
             </div>
         </div>
+
         <!-- Botón flotante -->
         <a href="index.html" class="btn-circular" title="Volver">
             <i class="fas fa-arrow-left"></i>
         </a>
 
-        <!-- Incluye FontAwesome para los iconos (CDN) -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
-
-
-
-
-        <!-- Ionicons -->
-        <script type="module"
-        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-        <script type="text/javascript"
-        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    </h:body>
+        <!-- Script -->
+        <script src="login.js"></script>
+    </body>
 </html>

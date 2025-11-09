@@ -265,78 +265,92 @@ public class ReservaHuespedBean implements Serializable {
         }
     }
 
-    public String confirmarReserva() {
-        FacesContext context = FacesContext.getCurrentInstance();
+   public String confirmarReserva() {
+    FacesContext context = FacesContext.getCurrentInstance();
 
-        if (usuarioLogueado == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "Debe iniciar sesión para realizar una reserva."));
-            return null;
-        }
-
-        if (tipoHabitacionSeleccionada == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "Seleccione un tipo de habitación."));
-            return null;
-        }
-
-        Habitacion habitacion = obtenerHabitacionSeleccionada();
-        if (habitacion == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "Seleccione una habitación disponible."));
-            return null;
-        }
-
-        LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
-        LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
-
-        if (fechaEntrada == null || fechaSalida == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "Debe seleccionar las fechas de entrada y salida."));
-            return null;
-        }
-
-        if (!fechaSalida.isAfter(fechaEntrada)) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "La fecha de salida debe ser posterior a la fecha de entrada."));
-            return null;
-        }
-
-        try {
-            if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
-                        "La habitación no está disponible en el rango seleccionado."));
-                return null;
-            }
-        } catch (SQLException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo verificar la disponibilidad de la habitación."));
-            return null;
-        }
-
-        Reserva reserva = new Reserva();
-        reserva.setHabitacion(habitacion);
-        reserva.setUsuario(usuarioLogueado);
-        reserva.setEstado(EnumEstadoReserva.ACTIVA);
-        reserva.setNombreCliente(nombreCliente != null ? nombreCliente : usuarioLogueado.getNombre());
-        reserva.setEmail(email != null ? email : usuarioLogueado.getEmail());
-        reserva.setTelefono(telefono != null ? telefono : usuarioLogueado.getTelefono());
-        reserva.setObservaciones(observaciones);
-        reserva.setCheckin(fechaEntrada);
-        reserva.setCehckout(fechaSalida);
-        reserva.setFechaReserva(LocalDateTime.now());
-
-        try {
-            reservaDAO.agregarReserva(reserva);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
-                    "Reserva registrada correctamente."));
-            prepararNuevaReserva();
-        } catch (SQLException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo registrar la reserva."));
-        }
+    if (usuarioLogueado == null) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                "Debe iniciar sesión para realizar una reserva."));
         return null;
     }
+
+    if (tipoHabitacionSeleccionada == null) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                "Seleccione un tipo de habitación."));
+        return null;
+    }
+
+    Habitacion habitacion = obtenerHabitacionSeleccionada();
+    if (habitacion == null) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                "Seleccione una habitación disponible."));
+        return null;
+    }
+
+    LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
+    LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
+
+    if (fechaEntrada == null || fechaSalida == null) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                "Debe seleccionar las fechas de entrada y salida."));
+        return null;
+    }
+
+    if (!fechaSalida.isAfter(fechaEntrada)) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                "La fecha de salida debe ser posterior a la fecha de entrada."));
+        return null;
+    }
+
+    try {
+        if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
+                    "La habitación no está disponible en el rango seleccionado."));
+            return null;
+        }
+    } catch (SQLException ex) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                "No se pudo verificar la disponibilidad de la habitación."));
+        return null;
+    }
+
+    Reserva reserva = new Reserva();
+    reserva.setHabitacion(habitacion);
+    reserva.setUsuario(usuarioLogueado);
+    reserva.setEstado(EnumEstadoReserva.ACTIVA);
+    reserva.setNombreCliente(nombreCliente != null ? nombreCliente : usuarioLogueado.getNombre());
+    reserva.setEmail(email != null ? email : usuarioLogueado.getEmail());
+    reserva.setTelefono(telefono != null ? telefono : usuarioLogueado.getTelefono());
+    reserva.setObservaciones(observaciones);
+    reserva.setCheckin(fechaEntrada);
+    reserva.setCehckout(fechaSalida);
+    reserva.setFechaReserva(LocalDateTime.now());
+
+    try {
+        // 🔹 Ahora guardamos la reserva y obtenemos el ID generado
+        int idGenerado = reservaDAO.reservaHuespd(reserva);
+
+        if (idGenerado > 0) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
+                    "Reserva registrada correctamente."));
+
+            prepararNuevaReserva();
+
+            // 🔹 Redirigimos a Pagos.xhtml con el id de la reserva creada
+            return "Pagos.xhtml?idReserva=" + idGenerado + "&faces-redirect=true";
+        } else {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo obtener el ID de la reserva creada."));
+        }
+
+    } catch (SQLException ex) {
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                "No se pudo registrar la reserva."));
+    }
+
+    return null;
+}
+
 
     public String getResumenTipoHabitacion() {
         TipoHabitacion tipo = obtenerTipoSeleccionado();

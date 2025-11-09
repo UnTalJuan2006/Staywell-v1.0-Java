@@ -16,65 +16,148 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-        }
+         body {
+                background-color: #f8f9fa;
+            }
 
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 260px;
-            background:#1a7c8f;
-            color: white;
-            z-index: 1000;
-            overflow-y: auto;
-            transition: all 0.3s ease;
-        }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 260px;
+                background: #1a7c8f;
+                color: white;
+                z-index: 1000;
+                overflow-y: auto;
+            }
 
-        .sidebar-header {
-            padding: 2rem 1.5rem;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
+            .sidebar-header {
+                padding: 2rem 1.5rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: center;
+                padding-bottom: 10px;
+            }
 
-        .sidebar-header h4 {
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        .sidebar-nav .nav-link {
+            .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10px 18px;
+                padding: 10.5px 18px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
             }
 
-        .sidebar-nav .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
+            .sidebar-nav .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+            }
 
-        .sidebar-nav .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-right: 4px solid #ffd700;
-        }
+            .sidebar-nav .nav-link.active {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border-right: 4px solid #ffd700;
+            }
 
-        .sidebar-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
+            .sidebar-footer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 1.5rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 2rem;
+            }
+
+            .top-bar {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-actions a,
+            .table-actions button {
+                margin-right: 0.5rem;
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 2rem;
+            }
+
+            .top-bar {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-bottom: 1px solid #e9ecef;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-actions a,
+            .table-actions button {
+                margin-right: 0.5rem;
+            }
+
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+                margin-top: -8px;
+            }
+
+            .stat-card {
+                background: #ffffff;
+                border: 3px solid #2196f3;
+                padding: 20px;
+                border-radius: 16px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                transition: transform 0.2s;
+            }
+
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .stat-icon {
+                font-size: 2em;
+                color: #007bff;
+            }
+
+            .stat-info h3 {
+                margin: 0;
+                font-size: 1.4em;
+                color: #333;
+            }
+
+            .stat-info p {
+                margin: 0;
+                color: #666;
+                font-size: 0.9em;
+            }
+
+            .btn-exportar {
+                background-color: #007bff;
+                color: white;
+                padding: 10px
+            }
+
+            .btn-exportar:hover {
+                background-color: #0056b3;
+            }
+            h3{
+                color:#000000;
+                font-size: unset;
+
+            }
 
         /* Main content */
         .main-content {
@@ -179,7 +262,7 @@
         </div>
 
         <nav class="sidebar-nav">
-            <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
+            <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
             <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
               <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
             <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
@@ -188,9 +271,7 @@
             <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
             <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
             <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
-            <h:link outcome="/.xhtml" styleClass="nav-link">
-                    <i class="bi bi-bar-chart me-2"></i> Mantenimientos
-                </h:link>
+            
 
         </nav>
 
