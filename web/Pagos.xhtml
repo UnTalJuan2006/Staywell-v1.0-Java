@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <title>Pago de Reserva</title>
     <style>
@@ -23,6 +24,16 @@
             color: #333;
         }
     </style>
+    <h:outputScript>
+        function onPagoCompletado(args){
+            if(args &amp;&amp; args.pagoExitoso){
+                PF('pagoExitoDialog').show();
+                if(args.destino){
+                    setTimeout(function(){window.location=args.destino;},3200);
+                }
+            }
+        }
+    </h:outputScript>
 </h:head>
 <h:body>
 
@@ -32,6 +43,27 @@
     <!-- Formulario principal de pago -->
     <h:form id="formPago" class="card">
         <h2 style="text-align:center;">Confirmar Pago</h2>
+
+        <ui:fragment rendered="#{pagoBean.reserva == null}">
+            <div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:1rem; border-radius:10px; margin-bottom:1.5rem; text-align:center;">
+                No se encontró la información de la reserva. Regresa a <a href="MisReservas.xhtml" style="color:#b91c1c; font-weight:600;">Mis Reservas</a> para intentarlo de nuevo.
+            </div>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{not empty pagoBean.reserva}">
+            <div style="background:#f0f9f7; border:1px solid #b7f0e3; border-radius:10px; padding:1rem; margin-bottom:1.5rem;">
+                <div style="font-weight:600; color:#1a9b8e; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="pi pi-calendar-check" style="font-size:1.2rem;"></i>
+                    Detalles de la reserva
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:1rem; color:#374151;">
+                    <span><strong>ID:</strong> RES-#{pagoBean.reserva.idReserva}</span>
+                    <span><strong>Cliente:</strong> #{pagoBean.reserva.nombreCliente}</span>
+                    <span><strong>Correo:</strong> #{pagoBean.reserva.email}</span>
+                    <span><strong>Teléfono:</strong> #{pagoBean.reserva.telefono}</span>
+                </div>
+            </div>
+        </ui:fragment>
 
         <h:panelGrid columns="2" columnClasses="label,value" cellpadding="6" style="width:100%;">
 
@@ -88,18 +120,19 @@
         <div style="margin-top:2rem; text-align:center;">
             <p:commandButton value="Confirmar Pago"
                              actionListener="#{pagoBean.registrarPago}"
-                             update="@form :growl pagoExitoDialog"
+                             update="@form :growl formPago:pagoExitoDialog"
                              icon="pi pi-check"
                              styleClass="p-button-success"
-                             oncomplete="if(args &amp;&amp; args.pagoExitoso){PF('pagoExitoDialog').show();}" />
+                             disabled="#{pagoBean.reserva == null}"
+                             oncomplete="onPagoCompletado(args)" />
             <p:commandButton value="Cancelar" type="reset"
                              icon="pi pi-times"
                              styleClass="p-button-secondary" />
         </div>
 
         <p:dialog id="pagoExitoDialog" widgetVar="pagoExitoDialog" modal="true" closable="false"
-                  rendered="#{pagoBean.pagoExitoso}" showEffect="fade" hideEffect="fade"
-                  styleClass="pago-exito-dialog">
+                  showEffect="fade" hideEffect="fade" appendTo="@body"
+                  draggable="false" resizable="false" styleClass="pago-exito-dialog">
             <h3 style="text-align:center; margin-bottom:1rem; color:#1a9b8e;">
                 <i class="pi pi-check-circle" style="font-size:2rem; margin-right:.5rem;"></i>
                 ¡Pago confirmado!

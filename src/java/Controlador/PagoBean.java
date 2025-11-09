@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.primefaces.PrimeFaces;
 
@@ -48,10 +49,17 @@ public class PagoBean implements Serializable {
                 ReservaDAO reservaDAO = new ReservaDAO();
                 reserva = reservaDAO.buscar(idReserva);
                 pago.setReserva(reserva);
-          
+
             } catch (Exception e) {
                 System.out.println("Error al cargar la reserva: " + e.getMessage());
             }
+        }
+
+        if (reserva == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Reserva no disponible",
+                            "No se pudo recuperar la información de la reserva."));
         }
     }
 
@@ -60,6 +68,7 @@ public class PagoBean implements Serializable {
         PrimeFaces primeFaces = PrimeFaces.current();
         if (primeFaces != null) {
             primeFaces.ajax().addCallbackParam("pagoExitoso", false);
+            primeFaces.ajax().addCallbackParam("destino", null);
         }
 
         if (!validarFormulario(context)) {
@@ -85,7 +94,9 @@ public class PagoBean implements Serializable {
 
                 if (primeFaces != null) {
                     primeFaces.ajax().addCallbackParam("pagoExitoso", true);
+                    primeFaces.ajax().addCallbackParam("destino", construirUrlMisReservas(idGenerado));
                 }
+                propagarConfirmacion();
                 limpiarFormulario();
             } else {
                 pagoExitoso = false;
@@ -135,6 +146,7 @@ public class PagoBean implements Serializable {
                             mensajeExito + " Código: " + codigoPagoGenerado));
         }
         context.getExternalContext().getFlash().put("codigoPago", codigoPagoGenerado);
+        context.getExternalContext().getFlash().put("mensajePago", mensajeExito);
         pagoExitoso = false;
         return "MisReservas.xhtml?faces-redirect=true";
     }
@@ -143,6 +155,30 @@ public class PagoBean implements Serializable {
         cuotas = null;
         pago = new Pago();
         pago.setReserva(reserva);
+    }
+
+    private void propagarConfirmacion() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        if (codigoPagoGenerado != null) {
+            externalContext.getFlash().setKeepMessages(true);
+            externalContext.getFlash().put("codigoPago", codigoPagoGenerado);
+            externalContext.getFlash().put("mensajePago", mensajeExito);
+        }
+    }
+
+    private String construirUrlMisReservas(int codigoPago) {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String contextPath = externalContext.getRequestContextPath();
+        StringBuilder destino = new StringBuilder();
+        if (contextPath != null && !contextPath.isEmpty()) {
+            destino.append(contextPath);
+            if (!contextPath.endsWith("/")) {
+                destino.append('/');
+            }
+        }
+        destino.append("MisReservas.xhtml?codigoPago=").append(codigoPago);
+        return destino.toString();
     }
 
     private boolean validarFormulario(FacesContext context) {

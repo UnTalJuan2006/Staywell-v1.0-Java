@@ -66,7 +66,6 @@ public class HabitacionBean implements Serializable {
             habitaciones = new ArrayList<>();
             habitacionesFiltradas = new ArrayList<>();
         }
-
     }
 
 
