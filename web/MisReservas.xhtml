@@ -458,6 +458,14 @@
     </h:head>
 
     <h:body>
+        <p:growl id="mensajes" showDetail="true" life="5000" />
+        <ui:fragment rendered="#{not empty flash.codigoPago}">
+            <div style="max-width:480px; margin:90px auto 20px auto; background:#e8f5f3; color:#0f5132; border-radius:12px; padding:18px; box-shadow:0 6px 18px rgba(16, 185, 129, 0.25); text-align:center;">
+                <i class="bi bi-credit-card-check" style="font-size:1.6rem; margin-bottom:6px;"></i>
+                <div style="font-weight:700; font-size:1.1rem;">Pago confirmado</div>
+                <div style="font-size:0.95rem;">Tu pago se registró correctamente. Código de seguimiento <strong>#{flash.codigoPago}</strong>.</div>
+            </div>
+        </ui:fragment>
         <div class="header">
             <div class="header-left">
                 <a href="#" class="logo-text">Great Viaggio</a>
