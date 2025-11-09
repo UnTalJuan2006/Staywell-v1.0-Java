@@ -22,9 +22,11 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class HabitacionBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Habitacion habitacion;
-    private HabitacionDAO habitacionDAO;
-    private TipoHabitacionDAO tipoHabitacionDAO;
+    private transient HabitacionDAO habitacionDAO;
+    private transient TipoHabitacionDAO tipoHabitacionDAO;
 
     private List<Habitacion> habitaciones;
     private List<Habitacion> habitacionesFiltradas;
@@ -32,50 +34,45 @@ public class HabitacionBean implements Serializable {
 
     private Integer idTipoSeleccionado; // ✅ Solo manejamos el ID
 
-@PostConstruct
-public void init() {
-    System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
-    try {
-        habitacion = new Habitacion();
-        habitacionDAO = new HabitacionDAO();
-        tipoHabitacionDAO = new TipoHabitacionDAO();
+    @PostConstruct
+    public void init() {
+        System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
+        try {
+            habitacion = new Habitacion();
+            ensureDaos();
 
-        System.out.println("➡️  Cargando lista de tipos...");
-        listaTipos = tipoHabitacionDAO.listar();
-        if (listaTipos == null) {
-            System.out.println("⚠️ tipoHabitacionDAO.listar() devolvió null, se crea lista vacía");
+            System.out.println("➡️  Cargando lista de tipos...");
+            listaTipos = getTipoHabitacionDAO().listar();
+            if (listaTipos == null) {
+                System.out.println("⚠️ tipoHabitacionDAO.listar() devolvió null, se crea lista vacía");
+                listaTipos = new ArrayList<>();
+            }
+
+            System.out.println("➡️  Cargando lista de habitaciones...");
+            habitaciones = getHabitacionDAO().listar();
+            if (habitaciones == null) {
+                System.out.println("⚠️ habitacionDAO.listar() devolvió null, se crea lista vacía");
+                habitaciones = new ArrayList<>();
+            }
+
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
+
+            System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
+
+        } catch (Exception e) {
+            System.out.println("💥 Error en @PostConstruct: " + e.getMessage());
+            e.printStackTrace();
             listaTipos = new ArrayList<>();
-        }
-
-        System.out.println("➡️  Cargando lista de habitaciones...");
-        habitaciones = habitacionDAO.listar();
-        if (habitaciones == null) {
-            System.out.println("⚠️ habitacionDAO.listar() devolvió null, se crea lista vacía");
             habitaciones = new ArrayList<>();
+            habitacionesFiltradas = new ArrayList<>();
         }
 
-        int ddd = 0;
-        
-        if(habitaciones != null)
-            ddd = habitaciones.size();
-        
-        habitacionesFiltradas = new ArrayList<>(habitaciones);
-        
-        System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + ddd);
-
-    } catch (Exception e) {
-        System.out.println("💥 Error en @PostConstruct: " + e.getMessage());
-        e.printStackTrace();
-        listaTipos = new ArrayList<>();
-        habitaciones = new ArrayList<>();
-        habitacionesFiltradas = new ArrayList<>();
     }
-}
 
 
     public List<Habitacion> getListaHabitaciones() {
         try {
-            return habitacionDAO.listar();
+            return getHabitacionDAO().listar();
         } catch (SQLException e) {
             System.out.println("Error al listar habitaciones: " + e.getMessage());
             return new ArrayList<>();
@@ -116,10 +113,10 @@ public void init() {
             habitacion.setFechaActualizacion(LocalDateTime.now());
             habitacion.setEstado(EnumEstadoHabitacion.Disponible);
 
-            habitacionDAO.agregar(habitacion);
+            getHabitacionDAO().agregar(habitacion);
 
             // Refrescar datos
-            habitaciones = habitacionDAO.listar();
+            habitaciones = getHabitacionDAO().listar();
             habitacionesFiltradas = new ArrayList<>(habitaciones);
 
             // Reiniciar formulario
@@ -141,7 +138,7 @@ public void init() {
     public String actualizar(){
         try{
             habitacion.setFechaActualizacion(LocalDateTime.now());
-            habitacionDAO.actualizar(habitacion);
+            getHabitacionDAO().actualizar(habitacion);
             habitacion = new Habitacion();
             
              FacesContext.getCurrentInstance().addMessage(null,
@@ -161,7 +158,7 @@ public void init() {
         if (idParam != null) {
             try {
                 int id = Integer.parseInt(idParam);
-                Habitacion habitacionEncontrada = habitacionDAO.buscarPorId(id);
+                Habitacion habitacionEncontrada = getHabitacionDAO().buscarPorId(id);
 
                 if (habitacionEncontrada != null) {
                     this.habitacion = habitacionEncontrada;
@@ -190,23 +187,23 @@ public void init() {
 
     // --- CONTADORES POR TIPO ---
     public int totalHabitacionesEstandar() throws SQLException {
-        return habitacionDAO.contarPorTipo(1);
+        return getHabitacionDAO().contarPorTipo(1);
     }
 
     public int totalHabitacionesFamiliar() throws SQLException {
-        return habitacionDAO.contarPorTipo(2);
+        return getHabitacionDAO().contarPorTipo(2);
     }
 
     public int totalHabitacionesVip() throws SQLException {
-        return habitacionDAO.contarPorTipo(3);
+        return getHabitacionDAO().contarPorTipo(3);
     }
 
     public int totalHabitacionesDuplex() throws SQLException {
-        return habitacionDAO.contarPorTipo(4);
+        return getHabitacionDAO().contarPorTipo(4);
     }
 
     public int totalHabitacionesIndividual() throws SQLException {
-        return habitacionDAO.contarPorTipo(5);
+        return getHabitacionDAO().contarPorTipo(5);
     }
 
     // --- GETTERS Y SETTERS ---
@@ -240,5 +237,28 @@ public void init() {
 
     public void setListaTipos(List<TipoHabitacion> listaTipos) {
         this.listaTipos = listaTipos;
+    }
+
+    private void ensureDaos() {
+        if (habitacionDAO == null) {
+            habitacionDAO = new HabitacionDAO();
+        }
+        if (tipoHabitacionDAO == null) {
+            tipoHabitacionDAO = new TipoHabitacionDAO();
+        }
+    }
+
+    private HabitacionDAO getHabitacionDAO() {
+        if (habitacionDAO == null) {
+            habitacionDAO = new HabitacionDAO();
+        }
+        return habitacionDAO;
+    }
+
+    private TipoHabitacionDAO getTipoHabitacionDAO() {
+        if (tipoHabitacionDAO == null) {
+            tipoHabitacionDAO = new TipoHabitacionDAO();
+        }
+        return tipoHabitacionDAO;
     }
 }

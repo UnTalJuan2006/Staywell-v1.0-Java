@@ -27,13 +27,16 @@
 <h:body>
 
     <!-- Growl global fuera del formulario -->
-    <p:growl id="growl" showDetail="true" life="4000" />
+    <p:growl id="growl" showDetail="true" life="4500" />
 
     <!-- Formulario principal de pago -->
     <h:form id="formPago" class="card">
         <h2 style="text-align:center;">Confirmar Pago</h2>
 
         <h:panelGrid columns="2" columnClasses="label,value" cellpadding="6" style="width:100%;">
+
+            <h:outputLabel value="Reserva:" />
+            <h:outputText value="#{pagoBean.reserva != null ? pagoBean.reserva.idReserva : 'No encontrada'}" />
 
             <!-- Tipo de tarjeta -->
             <h:outputLabel value="Tipo de Tarjeta:" for="tipo" />
@@ -46,21 +49,30 @@
 
             <!-- Número de tarjeta -->
             <h:outputLabel value="Número de Tarjeta:" for="num" />
-            <p:inputText id="num" value="#{pagoBean.pago.numeroTarjeta}" maxlength="16"
-                         required="true" label="Número de Tarjeta"/>
+            <p:inputText id="num" value="#{pagoBean.pago.numeroTarjeta}" maxlength="19"
+                         required="true" label="Número de Tarjeta">
+                <f:validateRegex pattern="\d{13,19}" />
+                <p:ajax event="blur" update=":growl" />
+            </p:inputText>
 
             <!-- Titular -->
             <h:outputLabel value="Titular:" for="titular" />
-            <p:inputText id="titular" value="#{pagoBean.pago.titular}" required="true" />
+            <p:inputText id="titular" value="#{pagoBean.pago.titular}" required="true">
+                <f:validateRegex pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,60}" />
+                <p:ajax event="blur" update=":growl" />
+            </p:inputText>
 
-        
+
 
             <!-- Código de seguridad -->
             <h:outputLabel value="Código de Seguridad:" for="cvv" />
-            <p:password id="cvv" value="#{pagoBean.pago.codigoSeguridad}" maxlength="3" required="true" />
+            <p:password id="cvv" value="#{pagoBean.pago.codigoSeguridad}" maxlength="4" required="true">
+                <f:validateRegex pattern="\d{3,4}" />
+                <p:ajax event="blur" update=":growl" />
+            </p:password>
 
             <!-- Monto -->
-       
+
         </h:panelGrid>
 
         <!-- Panel dinámico para cuotas -->
@@ -76,13 +88,36 @@
         <div style="margin-top:2rem; text-align:center;">
             <p:commandButton value="Confirmar Pago"
                              actionListener="#{pagoBean.registrarPago}"
-                             update="@form :growl"
+                             update="@form :growl pagoExitoDialog"
                              icon="pi pi-check"
-                             styleClass="p-button-success" />
+                             styleClass="p-button-success"
+                             oncomplete="if(args &amp;&amp; args.pagoExitoso){PF('pagoExitoDialog').show();}" />
             <p:commandButton value="Cancelar" type="reset"
                              icon="pi pi-times"
                              styleClass="p-button-secondary" />
         </div>
+
+        <p:dialog id="pagoExitoDialog" widgetVar="pagoExitoDialog" modal="true" closable="false"
+                  rendered="#{pagoBean.pagoExitoso}" showEffect="fade" hideEffect="fade"
+                  styleClass="pago-exito-dialog">
+            <h3 style="text-align:center; margin-bottom:1rem; color:#1a9b8e;">
+                <i class="pi pi-check-circle" style="font-size:2rem; margin-right:.5rem;"></i>
+                ¡Pago confirmado!
+            </h3>
+            <p style="text-align:center; font-size:1.1rem;">
+                #{pagoBean.mensajeExito}
+            </p>
+            <p style="text-align:center; color:#6c757d; margin-top:.5rem;">
+                Código de pago: <strong>#{pagoBean.codigoPagoGenerado}</strong>
+            </p>
+            <div style="display:flex; justify-content:center; gap:1rem; margin-top:2rem;">
+                <p:commandButton value="Ver mis reservas" action="#{pagoBean.irMisReservas}"
+                                 icon="pi pi-arrow-right" ajax="false"
+                                 styleClass="p-button-rounded p-button-success" />
+                <p:commandButton type="button" value="Cerrar" icon="pi pi-times" onclick="PF('pagoExitoDialog').hide();"
+                                 styleClass="p-button-rounded p-button-secondary" />
+            </div>
+        </p:dialog>
 
     </h:form>
 </h:body>
