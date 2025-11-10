@@ -405,6 +405,33 @@
                 box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
             }
 
+            .btn-confirm-modal {
+                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-confirm-modal:hover {
+                box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
+            }
+
+            .payment-resume {
+                margin-top: 1.2rem;
+                font-size: 0.9rem;
+                color: #1a1a1a;
+                background: #f4fafa;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+            }
+
             .alert-info {
                 background: #e8f5f3;
                 border: 1px solid #1a9b8e;
@@ -682,7 +709,7 @@
                             </h:panelGroup>
 
                             <div class="payment-card">
-                                <h5><i class="bi bi-shield-lock"></i> Detalles de pago seguro</h5>
+                                <h5><i class="bi bi-shield-lock"></i> Método de pago</h5>
 
                                 <div class="payment-summary">
                                     <div class="summary-label">
@@ -702,83 +729,104 @@
                                     </h:panelGroup>
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="tipoPago" class="form-label">
-                                            <i class="bi bi-credit-card" style="color: #1a9b8e;"></i> Tipo de tarjeta
-                                        </label>
-                                        <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
-                                                         styleClass="form-select" required="true"
-                                                         requiredMessage="Selecciona el tipo de tarjeta.">
-                                            <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItems value="#{reservaHuespedBean.tiposPago}" var="tipoPago"
-                                                           itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
-                                        </h:selectOneMenu>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="numeroTarjeta" class="form-label">
-                                            <i class="bi bi-123" style="color: #1a9b8e;"></i> Número de tarjeta
-                                        </label>
-                                        <h:inputText id="numeroTarjeta" value="#{reservaHuespedBean.numeroTarjeta}"
-                                                     styleClass="form-control" required="true"
-                                                     requiredMessage="Ingresa el número de la tarjeta.">
-                                            <f:passThroughAttribute name="maxlength" value="19" />
-                                            <f:passThroughAttribute name="inputmode" value="numeric" />
-                                            <f:passThroughAttribute name="pattern" value="\d*" />
-                                            <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
-                                        </h:inputText>
-                                    </div>
+                                <div class="payment-note" style="margin-top: 1rem;">
+                                    Confirma tu reserva ingresando los datos de tu tarjeta cuando estés listo.
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="titularTarjeta" class="form-label">
-                                            <i class="bi bi-person-vcard" style="color: #1a9b8e;"></i> Titular de la tarjeta
-                                        </label>
-                                        <h:inputText id="titularTarjeta" value="#{reservaHuespedBean.titularTarjeta}"
-                                                     styleClass="form-control" required="true"
-                                                     requiredMessage="Ingresa el nombre del titular." />
-                                    </div>
+                                <button type="button" class="btn-confirm" data-bs-toggle="modal" data-bs-target="#modalPago">
+                                    Ingresar o editar datos de pago
+                                </button>
 
-                                    <div class="form-group">
-                                        <label for="fechaVencimiento" class="form-label">
-                                            <i class="bi bi-calendar-event" style="color: #1a9b8e;"></i> Vencimiento
-                                        </label>
-                                        <h:inputText id="fechaVencimiento" value="#{reservaHuespedBean.fechaVencimientoTarjeta}"
-                                                     styleClass="form-control" required="true"
-                                                     requiredMessage="Selecciona el vencimiento de la tarjeta.">
-                                            <f:passThroughAttribute name="type" value="month" />
-                                        </h:inputText>
-                                    </div>
+                                <div class="payment-resume">
+                                    #{reservaHuespedBean.resumenMetodoPago}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="codigoSeguridad" class="form-label">
-                                            <i class="bi bi-shield-check" style="color: #1a9b8e;"></i> Código de seguridad
-                                        </label>
-                                        <h:inputText id="codigoSeguridad" value="#{reservaHuespedBean.codigoSeguridadTarjeta}"
-                                                     styleClass="form-control" required="true"
-                                                     requiredMessage="Ingresa el código de seguridad.">
-                                            <f:passThroughAttribute name="maxlength" value="4" />
-                                            <f:passThroughAttribute name="inputmode" value="numeric" />
-                                            <f:passThroughAttribute name="pattern" value="\d*" />
-                                            <f:passThroughAttribute name="placeholder" value="CVV" />
-                                        </h:inputText>
-                                    </div>
+                    <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="modalPagoLabel">Confirmar método de pago</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="tipoPago" styleClass="form-label"
+                                                          value="<i class='bi bi-credit-card' style='color: #1a9b8e;'></i> Tipo de tarjeta"
+                                                          escape="false" />
+                                            <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
+                                                             styleClass="form-select" required="true"
+                                                             requiredMessage="Selecciona el tipo de tarjeta.">
+                                                <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{reservaHuespedBean.tiposPago}" var="tipoPago"
+                                                               itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                            </h:selectOneMenu>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label class="form-label" style="visibility:hidden;">&nbsp;</label>
-                                        <div class="payment-note">
-                                            Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar la reserva.
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label"
+                                                          value="<i class='bi bi-123' style='color: #1a9b8e;'></i> Número de tarjeta"
+                                                          escape="false" />
+                                            <h:inputText id="numeroTarjeta" value="#{reservaHuespedBean.numeroTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el número de la tarjeta.">
+                                                <f:passThroughAttribute name="maxlength" value="19" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="titularTarjeta" styleClass="form-label"
+                                                          value="<i class='bi bi-person-vcard' style='color: #1a9b8e;'></i> Titular de la tarjeta"
+                                                          escape="false" />
+                                            <h:inputText id="titularTarjeta" value="#{reservaHuespedBean.titularTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el nombre del titular." />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label"
+                                                          value="<i class='bi bi-calendar-event' style='color: #1a9b8e;'></i> Vencimiento"
+                                                          escape="false" />
+                                            <h:inputText id="fechaVencimiento" value="#{reservaHuespedBean.fechaVencimientoTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                                <f:passThroughAttribute name="type" value="month" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label"
+                                                          value="<i class='bi bi-shield-check' style='color: #1a9b8e;'></i> Código de seguridad"
+                                                          escape="false" />
+                                            <h:inputText id="codigoSeguridad" value="#{reservaHuespedBean.codigoSeguridadTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el código de seguridad.">
+                                                <f:passThroughAttribute name="maxlength" value="4" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="CVV" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="payment-note" style="margin:0;">
+                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar la reserva.
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <h:commandButton value="Confirmar reserva y pagar"
-                                                 action="#{reservaHuespedBean.confirmarReserva}"
-                                                 styleClass="btn-confirm" />
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <h:commandButton value="Confirmar reserva y pagar"
+                                                     action="#{reservaHuespedBean.confirmarReserva}"
+                                                     styleClass="btn-confirm-modal" />
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -414,7 +414,7 @@ public class ReservaHuespedBean implements Serializable {
         }
 
         fechaVencimientoTarjeta = fechaVencimientoTarjeta != null ? fechaVencimientoTarjeta.trim() : null;
-        if (fechaVencimientoTarjeta == null || fechaVencimientoTarjeta.isBlank()) {
+        if (isNullOrTrimmedEmpty(fechaVencimientoTarjeta)) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Vencimiento requerido",
                     "Selecciona la fecha de vencimiento de la tarjeta."));
             return false;
@@ -430,7 +430,7 @@ public class ReservaHuespedBean implements Serializable {
         }
 
         codigoSeguridadTarjeta = codigoSeguridadTarjeta != null ? codigoSeguridadTarjeta.trim() : null;
-        if (codigoSeguridadTarjeta == null || codigoSeguridadTarjeta.isBlank()) {
+        if (isNullOrTrimmedEmpty(codigoSeguridadTarjeta)) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Código requerido",
                     "Ingresa el código de seguridad."));
             return false;
@@ -443,6 +443,10 @@ public class ReservaHuespedBean implements Serializable {
         }
 
         return true;
+    }
+
+    private boolean isNullOrTrimmedEmpty(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     private boolean registrarPagoParaReserva(FacesContext context, Reserva reserva) {
@@ -484,6 +488,22 @@ public class ReservaHuespedBean implements Serializable {
 
     public EnumPago[] getTiposPago() {
         return EnumPago.values();
+    }
+
+    public String getResumenMetodoPago() {
+        if (numeroTarjeta == null || numeroTarjeta.isEmpty()) {
+            return "Aún no has ingresado los datos de la tarjeta.";
+        }
+
+        String digitos = numeroTarjeta.replaceAll("\\D", "");
+        if (digitos.length() >= 4) {
+            String ultimos = digitos.substring(digitos.length() - 4);
+            String titularNormalizado = titularTarjeta != null ? titularTarjeta.trim() : null;
+            return "Tarjeta terminada en " + ultimos + (titularNormalizado != null && !titularNormalizado.isEmpty()
+                    ? " a nombre de " + titularNormalizado : "");
+        }
+
+        return "Datos de tarjeta registrados.";
     }
 
 
