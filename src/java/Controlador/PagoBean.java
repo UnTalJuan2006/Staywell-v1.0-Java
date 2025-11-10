@@ -6,6 +6,7 @@ import Modelo.EnumPago;
 import Modelo.Pago;
 import Modelo.Reserva;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import javax.annotation.PostConstruct;
@@ -38,6 +39,7 @@ public class PagoBean implements Serializable {
         pagoExitoso = false;
         codigoPagoGenerado = null;
         mensajeExito = null;
+        pago.setMonto(BigDecimal.ZERO);
 
         // Leer el idReserva desde los parámetros URL
         String idParam = FacesContext.getCurrentInstance().getExternalContext()
@@ -49,6 +51,9 @@ public class PagoBean implements Serializable {
                 ReservaDAO reservaDAO = new ReservaDAO();
                 reserva = reservaDAO.buscar(idReserva);
                 pago.setReserva(reserva);
+                if (reserva != null && pago.getMonto() == null) {
+                    pago.setMonto(BigDecimal.ZERO);
+                }
 
             } catch (Exception e) {
                 System.out.println("Error al cargar la reserva: " + e.getMessage());
@@ -80,6 +85,9 @@ public class PagoBean implements Serializable {
 
         try {
             pago.setFechaCreacion(LocalDateTime.now());
+            if (pago.getMonto() == null) {
+                pago.setMonto(BigDecimal.ZERO);
+            }
 
             int idGenerado = getPagoDAO().agregarPago(pago);
             if (idGenerado > 0) {
@@ -155,6 +163,7 @@ public class PagoBean implements Serializable {
         cuotas = null;
         pago = new Pago();
         pago.setReserva(reserva);
+        pago.setMonto(BigDecimal.ZERO);
     }
 
     private void propagarConfirmacion() {

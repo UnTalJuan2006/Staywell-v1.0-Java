@@ -1,11 +1,14 @@
 package Controlador;
 
 import DAO.HabitacionDAO;
+import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
 import Modelo.EnumEstadoReserva;
+import Modelo.EnumPago;
 import Modelo.Habitacion;
 import Modelo.Reserva;
+import Modelo.Pago;
 import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
@@ -15,7 +18,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +41,7 @@ public class ReservaHuespedBean implements Serializable {
     private final TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final ReservaDAO reservaDAO = new ReservaDAO();
+    private final PagoDAO pagoDAO = new PagoDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
@@ -58,6 +64,13 @@ public class ReservaHuespedBean implements Serializable {
     private long numeroNoches = 0;
 
     private Usuario usuarioLogueado;
+
+    private EnumPago tipoPagoSeleccionado;
+    private String numeroTarjeta;
+    private String titularTarjeta;
+    private String fechaVencimientoTarjeta;
+    private String codigoSeguridadTarjeta;
+    private LocalDate fechaVencimientoTarjetaParseada;
 
     @PostConstruct
     public void init() {
@@ -98,6 +111,12 @@ public class ReservaHuespedBean implements Serializable {
         totalReserva = BigDecimal.ZERO;
         precioPorNoche = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
+        tipoPagoSeleccionado = null;
+        numeroTarjeta = null;
+        titularTarjeta = null;
+        fechaVencimientoTarjeta = null;
+        codigoSeguridadTarjeta = null;
+        fechaVencimientoTarjetaParseada = null;
     }
 
     public void onTipoHabitacionChange() {
@@ -265,91 +284,227 @@ public class ReservaHuespedBean implements Serializable {
         }
     }
 
-   public String confirmarReserva() {
-    FacesContext context = FacesContext.getCurrentInstance();
+    public String confirmarReserva() {
+        FacesContext context = FacesContext.getCurrentInstance();
 
-    if (usuarioLogueado == null) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                "Debe iniciar sesión para realizar una reserva."));
-        return null;
-    }
-
-    if (tipoHabitacionSeleccionada == null) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                "Seleccione un tipo de habitación."));
-        return null;
-    }
-
-    Habitacion habitacion = obtenerHabitacionSeleccionada();
-    if (habitacion == null) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                "Seleccione una habitación disponible."));
-        return null;
-    }
-
-    LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
-    LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
-
-    if (fechaEntrada == null || fechaSalida == null) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                "Debe seleccionar las fechas de entrada y salida."));
-        return null;
-    }
-
-    if (!fechaSalida.isAfter(fechaEntrada)) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                "La fecha de salida debe ser posterior a la fecha de entrada."));
-        return null;
-    }
-
-    try {
-        if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
-                    "La habitación no está disponible en el rango seleccionado."));
+        if (usuarioLogueado == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "Debe iniciar sesión para realizar una reserva."));
             return null;
         }
-    } catch (SQLException ex) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                "No se pudo verificar la disponibilidad de la habitación."));
+
+        if (tipoHabitacionSeleccionada == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                    "Seleccione un tipo de habitación."));
+            return null;
+        }
+
+        Habitacion habitacion = obtenerHabitacionSeleccionada();
+        if (habitacion == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                    "Seleccione una habitación disponible."));
+            return null;
+        }
+
+        LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
+        LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
+
+        if (fechaEntrada == null || fechaSalida == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                    "Debe seleccionar las fechas de entrada y salida."));
+            return null;
+        }
+
+        if (!fechaSalida.isAfter(fechaEntrada)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                    "La fecha de salida debe ser posterior a la fecha de entrada."));
+            return null;
+        }
+
+        try {
+            if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
+                        "La habitación no está disponible en el rango seleccionado."));
+                return null;
+            }
+        } catch (SQLException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo verificar la disponibilidad de la habitación."));
+            return null;
+        }
+
+        if (!validarDatosPago(context)) {
+            return null;
+        }
+
+        Reserva reserva = new Reserva();
+        reserva.setHabitacion(habitacion);
+        reserva.setUsuario(usuarioLogueado);
+        reserva.setEstado(EnumEstadoReserva.ACTIVA);
+        reserva.setNombreCliente(nombreCliente != null ? nombreCliente : usuarioLogueado.getNombre());
+        reserva.setEmail(email != null ? email : usuarioLogueado.getEmail());
+        reserva.setTelefono(telefono != null ? telefono : usuarioLogueado.getTelefono());
+        reserva.setObservaciones(observaciones);
+        reserva.setCheckin(fechaEntrada);
+        reserva.setCheckout(fechaSalida);
+        reserva.setFechaReserva(LocalDateTime.now());
+
+        try {
+            int idGenerado = reservaDAO.reservaHuespd(reserva);
+
+            if (idGenerado > 0) {
+                reserva.setIdReserva(idGenerado);
+
+                if (!registrarPagoParaReserva(context, reserva)) {
+                    return null;
+                }
+
+                context.getExternalContext().getFlash().setKeepMessages(true);
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
+                        "Reserva y pago confirmados correctamente."));
+
+                prepararNuevaReserva();
+                return "MisReservas.xhtml?faces-redirect=true";
+            } else {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                        "No se pudo obtener el ID de la reserva creada."));
+            }
+
+        } catch (SQLException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo registrar la reserva."));
+        }
+
         return null;
     }
 
-    Reserva reserva = new Reserva();
-    reserva.setHabitacion(habitacion);
-    reserva.setUsuario(usuarioLogueado);
-    reserva.setEstado(EnumEstadoReserva.ACTIVA);
-    reserva.setNombreCliente(nombreCliente != null ? nombreCliente : usuarioLogueado.getNombre());
-    reserva.setEmail(email != null ? email : usuarioLogueado.getEmail());
-    reserva.setTelefono(telefono != null ? telefono : usuarioLogueado.getTelefono());
-    reserva.setObservaciones(observaciones);
-    reserva.setCheckin(fechaEntrada);
-    reserva.setCheckout(fechaSalida);
-    reserva.setFechaReserva(LocalDateTime.now());
 
-    try {
-        // 🔹 Ahora guardamos la reserva y obtenemos el ID generado
-        int idGenerado = reservaDAO.reservaHuespd(reserva);
-
-        if (idGenerado > 0) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
-                    "Reserva registrada correctamente."));
-
-            prepararNuevaReserva();
-
-            // 🔹 Redirigimos a Pagos.xhtml con el id de la reserva creada
-            return "Pagos.xhtml?idReserva=" + idGenerado + "&faces-redirect=true";
-        } else {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo obtener el ID de la reserva creada."));
+    private boolean validarDatosPago(FacesContext context) {
+        if (totalReserva == null || totalReserva.compareTo(BigDecimal.ZERO) <= 0) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Importe pendiente",
+                    "Calcula el total de la reserva antes de continuar."));
+            return false;
         }
 
-    } catch (SQLException ex) {
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                "No se pudo registrar la reserva."));
+        if (tipoPagoSeleccionado == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Tipo de pago requerido",
+                    "Selecciona el tipo de tarjeta."));
+            return false;
+        }
+
+        String numeroNormalizado = numeroTarjeta != null ? numeroTarjeta.replaceAll("\\s+", "") : null;
+        if (numeroNormalizado == null || numeroNormalizado.isEmpty()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Número requerido",
+                    "Ingresa el número de la tarjeta."));
+            return false;
+        }
+
+        if (!numeroNormalizado.matches("\\d{13,19}")) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Número inválido",
+                    "El número de tarjeta debe contener entre 13 y 19 dígitos."));
+            return false;
+        }
+        numeroTarjeta = numeroNormalizado;
+
+        titularTarjeta = titularTarjeta != null ? titularTarjeta.trim() : null;
+        if (titularTarjeta == null || titularTarjeta.isEmpty()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Titular requerido",
+                    "Ingresa el nombre del titular de la tarjeta."));
+            return false;
+        }
+
+        fechaVencimientoTarjeta = fechaVencimientoTarjeta != null ? fechaVencimientoTarjeta.trim() : null;
+        if (isNullOrTrimmedEmpty(fechaVencimientoTarjeta)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Vencimiento requerido",
+                    "Selecciona la fecha de vencimiento de la tarjeta."));
+            return false;
+        }
+
+        try {
+            YearMonth yearMonth = YearMonth.parse(fechaVencimientoTarjeta);
+            fechaVencimientoTarjetaParseada = yearMonth.atEndOfMonth();
+        } catch (DateTimeParseException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fecha inválida",
+                    "La fecha de vencimiento no tiene un formato válido."));
+            return false;
+        }
+
+        codigoSeguridadTarjeta = codigoSeguridadTarjeta != null ? codigoSeguridadTarjeta.trim() : null;
+        if (isNullOrTrimmedEmpty(codigoSeguridadTarjeta)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Código requerido",
+                    "Ingresa el código de seguridad."));
+            return false;
+        }
+
+        if (!codigoSeguridadTarjeta.matches("\\d{3,4}")) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Código inválido",
+                    "El código de seguridad debe ser numérico (3 o 4 dígitos)."));
+            return false;
+        }
+
+        return true;
     }
 
-    return null;
-}
+    private boolean isNullOrTrimmedEmpty(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private boolean registrarPagoParaReserva(FacesContext context, Reserva reserva) {
+        Pago pago = new Pago();
+        pago.setReserva(reserva);
+        pago.setMonto(totalReserva);
+        pago.setTipoTarjeta(tipoPagoSeleccionado);
+        pago.setNumeroTarjeta(numeroTarjeta);
+        pago.setTitular(titularTarjeta);
+        pago.setFechaVencimiento(fechaVencimientoTarjetaParseada);
+        pago.setCodigoSeguridad(codigoSeguridadTarjeta);
+        pago.setFechaCreacion(LocalDateTime.now());
+
+        try {
+            int idPago = pagoDAO.agregarPago(pago);
+            if (idPago <= 0) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pago no registrado",
+                        "No se pudo guardar el pago asociado a la reserva."));
+                intentarRevertirReserva(reserva.getIdReserva());
+                return false;
+            }
+        } catch (SQLException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al registrar el pago",
+                    "No se pudo almacenar el pago de la reserva."));
+            intentarRevertirReserva(reserva.getIdReserva());
+            return false;
+        }
+
+        return true;
+    }
+
+    private void intentarRevertirReserva(int idReserva) {
+        try {
+            reservaDAO.eliminar(idReserva);
+        } catch (SQLException ex) {
+            System.err.println("No se pudo revertir la reserva con ID " + idReserva + ": " + ex.getMessage());
+        }
+    }
+
+    public EnumPago[] getTiposPago() {
+        return EnumPago.values();
+    }
+
+    public String getResumenMetodoPago() {
+        if (numeroTarjeta == null || numeroTarjeta.isEmpty()) {
+            return "Aún no has ingresado los datos de la tarjeta.";
+        }
+
+        String digitos = numeroTarjeta.replaceAll("\\D", "");
+        if (digitos.length() >= 4) {
+            String ultimos = digitos.substring(digitos.length() - 4);
+            String titularNormalizado = titularTarjeta != null ? titularTarjeta.trim() : null;
+            return "Tarjeta terminada en " + ultimos + (titularNormalizado != null && !titularNormalizado.isEmpty()
+                    ? " a nombre de " + titularNormalizado : "");
+        }
+
+        return "Datos de tarjeta registrados.";
+    }
 
 
     public String getResumenTipoHabitacion() {
@@ -473,5 +628,45 @@ public class ReservaHuespedBean implements Serializable {
 
     public Usuario getUsuarioLogueado() {
         return usuarioLogueado;
+    }
+
+    public EnumPago getTipoPagoSeleccionado() {
+        return tipoPagoSeleccionado;
+    }
+
+    public void setTipoPagoSeleccionado(EnumPago tipoPagoSeleccionado) {
+        this.tipoPagoSeleccionado = tipoPagoSeleccionado;
+    }
+
+    public String getNumeroTarjeta() {
+        return numeroTarjeta;
+    }
+
+    public void setNumeroTarjeta(String numeroTarjeta) {
+        this.numeroTarjeta = numeroTarjeta;
+    }
+
+    public String getTitularTarjeta() {
+        return titularTarjeta;
+    }
+
+    public void setTitularTarjeta(String titularTarjeta) {
+        this.titularTarjeta = titularTarjeta;
+    }
+
+    public String getFechaVencimientoTarjeta() {
+        return fechaVencimientoTarjeta;
+    }
+
+    public void setFechaVencimientoTarjeta(String fechaVencimientoTarjeta) {
+        this.fechaVencimientoTarjeta = fechaVencimientoTarjeta;
+    }
+
+    public String getCodigoSeguridadTarjeta() {
+        return codigoSeguridadTarjeta;
+    }
+
+    public void setCodigoSeguridadTarjeta(String codigoSeguridadTarjeta) {
+        this.codigoSeguridadTarjeta = codigoSeguridadTarjeta;
     }
 }

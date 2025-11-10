@@ -163,6 +163,12 @@
                 max-width: 1300px;
             }
 
+            .summary-column {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
             .form-card {
                 background: white;
                 border-radius: 12px;
@@ -272,6 +278,65 @@
                 top: 100px;
             }
 
+            .payment-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 1.8rem;
+                position: sticky;
+                top: 420px;
+            }
+
+            .payment-card h5 {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .payment-card h5 i {
+                color: #1a9b8e;
+                font-size: 1.2rem;
+            }
+
+            .payment-summary {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: linear-gradient(135deg, rgba(26, 155, 142, 0.1) 0%, rgba(13, 122, 111, 0.15) 100%);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .payment-summary .summary-label {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: #0d7a6f;
+                font-weight: 600;
+            }
+
+            .payment-summary .summary-label i {
+                font-size: 1.5rem;
+            }
+
+            .payment-summary .summary-amount {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #0d7a6f;
+            }
+
+            .payment-note {
+                font-size: 0.85rem;
+                color: #6c757d;
+                margin-top: 0.5rem;
+                line-height: 1.4;
+            }
+
             .summary-card h5 {
                 font-size: 1.1rem;
                 font-weight: 700;
@@ -340,6 +405,33 @@
                 box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
             }
 
+            .btn-confirm-modal {
+                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-confirm-modal:hover {
+                box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
+            }
+
+            .payment-resume {
+                margin-top: 1.2rem;
+                font-size: 0.9rem;
+                color: #1a1a1a;
+                background: #f4fafa;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+            }
+
             .alert-info {
                 background: #e8f5f3;
                 border: 1px solid #1a9b8e;
@@ -355,6 +447,10 @@
                 }
 
                 .summary-card {
+                    position: static;
+                }
+
+                .payment-card {
                     position: static;
                 }
 
@@ -456,7 +552,7 @@
                                         <f:selectItems value="#{reservaHuespedBean.tiposHabitacion}" var="tipo"
                                                        itemLabel="#{tipo.nombre}" itemValue="#{tipo.idTipoHabitacion}" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onTipoHabitacionChange}"
-                                                render="habitacion ocupacionesJson panelResumen" />
+                                                render="habitacion ocupacionesJson panelResumen montoPago" />
                                     </h:selectOneMenu>
                                 </div>
 
@@ -472,7 +568,7 @@
                                                        itemValue="#{habitacion.idHabitacion}"
                                                        itemLabel="Habitación #{habitacion.numHabitacion}" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onHabitacionChange}"
-                                                render="panelResumen ocupacionesJson" />
+                                                render="panelResumen ocupacionesJson montoPago" />
                                     </h:selectOneMenu>
                                 </div>
                             </div>
@@ -528,7 +624,7 @@
                                         <f:passThroughAttribute name="type" value="text" />
                                         <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
-                                                render="panelResumen" />
+                                                render="panelResumen montoPago" />
                                     </h:inputText>
                                 </div>
 
@@ -542,7 +638,7 @@
                                         <f:passThroughAttribute name="type" value="text" />
                                         <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
-                                                render="panelResumen" />
+                                                render="panelResumen montoPago" />
                                     </h:inputText>
                                 </div>
                             </div>
@@ -559,61 +655,180 @@
                             </div>
                         </div>
 
-                        <!-- RESUMEN LATERAL -->
-                        <h:panelGroup id="panelResumen" layout="block">
-                            <div class="summary-card">
-                                <h5><i class="bi bi-receipt"></i> Resumen</h5>
+                        <!-- RESUMEN Y PAGO -->
+                        <div class="summary-column">
+                            <h:panelGroup id="panelResumen" layout="block">
+                                <div class="summary-card">
+                                    <h5><i class="bi bi-receipt"></i> Resumen</h5>
 
-                                <div class="summary-item">
-                                    <strong>Tipo:</strong>
-                                    <span>#{reservaHuespedBean.resumenTipoHabitacion}</span>
+                                    <div class="summary-item">
+                                        <strong>Tipo:</strong>
+                                        <span>#{reservaHuespedBean.resumenTipoHabitacion}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Habitación:</strong>
+                                        <span>#{reservaHuespedBean.resumenHabitacion}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Entrada:</strong>
+                                        <span>#{reservaHuespedBean.resumenCheckin}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Salida:</strong>
+                                        <span>#{reservaHuespedBean.resumenCheckout}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Noches:</strong>
+                                        <span>#{reservaHuespedBean.numeroNoches}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Precio por noche:</strong>
+                                        <span>
+                                            <h:outputText value="#{reservaHuespedBean.precioPorNoche}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-total">
+                                        <span>Total:</span>
+                                        <span>
+                                            <h:outputText value="#{reservaHuespedBean.totalReserva}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+
+                            <div class="payment-card">
+                                <h5><i class="bi bi-shield-lock"></i> Método de pago</h5>
+
+                                <div class="payment-summary">
+                                    <div class="summary-label">
+                                        <i class="bi bi-credit-card-2-front"></i>
+                                        <div>
+                                            <span>Total a pagar</span>
+                                            <div style="font-size:0.8rem; color:#0d7a6f; font-weight:400;">Se cargará al confirmar la reserva</div>
+                                        </div>
+                                    </div>
+                                    <h:panelGroup id="montoPago">
+                                        <span class="summary-amount">
+                                            <h:outputText value="#{reservaHuespedBean.totalReserva}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </h:panelGroup>
                                 </div>
 
-                                <div class="summary-item">
-                                    <strong>Habitación:</strong>
-                                    <span>#{reservaHuespedBean.resumenHabitacion}</span>
+                                <div class="payment-note" style="margin-top: 1rem;">
+                                    Confirma tu reserva ingresando los datos de tu tarjeta cuando estés listo.
                                 </div>
 
-                                <div class="summary-item">
-                                    <strong>Entrada:</strong>
-                                    <span>#{reservaHuespedBean.resumenCheckin}</span>
-                                </div>
+                                <button type="button" class="btn-confirm" data-bs-toggle="modal" data-bs-target="#modalPago">
+                                    Ingresar o editar datos de pago
+                                </button>
 
-                                <div class="summary-item">
-                                    <strong>Salida:</strong>
-                                    <span>#{reservaHuespedBean.resumenCheckout}</span>
+                                <div class="payment-resume">
+                                    #{reservaHuespedBean.resumenMetodoPago}
                                 </div>
-
-                                <div class="summary-item">
-                                    <strong>Noches:</strong>
-                                    <span>#{reservaHuespedBean.numeroNoches}</span>
-                                </div>
-
-                                <div class="summary-item">
-                                    <strong>Precio por noche:</strong>
-                                    <span>
-                                        <h:outputText value="#{reservaHuespedBean.precioPorNoche}">
-                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
-                                                             minFractionDigits="2" maxFractionDigits="2" />
-                                        </h:outputText>
-                                    </span>
-                                </div>
-
-                                <div class="summary-total">
-                                    <span>Total:</span>
-                                    <span>
-                                        <h:outputText value="#{reservaHuespedBean.totalReserva}">
-                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
-                                                             minFractionDigits="2" maxFractionDigits="2" />
-                                        </h:outputText>
-                                    </span>
-                                </div>
-
-                                <h:commandButton value="Confirmar Reserva"
-                                                 action="#{reservaHuespedBean.confirmarReserva}"
-                                                 styleClass="btn-confirm" />
                             </div>
-                        </h:panelGroup>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="modalPagoLabel">Confirmar método de pago</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="tipoPago" styleClass="form-label"
+                                                          value="<i class='bi bi-credit-card' style='color: #1a9b8e;'></i> Tipo de tarjeta"
+                                                          escape="false" />
+                                            <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
+                                                             styleClass="form-select" required="true"
+                                                             requiredMessage="Selecciona el tipo de tarjeta.">
+                                                <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{reservaHuespedBean.tiposPago}" var="tipoPago"
+                                                               itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                            </h:selectOneMenu>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label"
+                                                          value="<i class='bi bi-123' style='color: #1a9b8e;'></i> Número de tarjeta"
+                                                          escape="false" />
+                                            <h:inputText id="numeroTarjeta" value="#{reservaHuespedBean.numeroTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el número de la tarjeta.">
+                                                <f:passThroughAttribute name="maxlength" value="19" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="titularTarjeta" styleClass="form-label"
+                                                          value="<i class='bi bi-person-vcard' style='color: #1a9b8e;'></i> Titular de la tarjeta"
+                                                          escape="false" />
+                                            <h:inputText id="titularTarjeta" value="#{reservaHuespedBean.titularTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el nombre del titular." />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label"
+                                                          value="<i class='bi bi-calendar-event' style='color: #1a9b8e;'></i> Vencimiento"
+                                                          escape="false" />
+                                            <h:inputText id="fechaVencimiento" value="#{reservaHuespedBean.fechaVencimientoTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                                <f:passThroughAttribute name="type" value="month" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label"
+                                                          value="<i class='bi bi-shield-check' style='color: #1a9b8e;'></i> Código de seguridad"
+                                                          escape="false" />
+                                            <h:inputText id="codigoSeguridad" value="#{reservaHuespedBean.codigoSeguridadTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el código de seguridad.">
+                                                <f:passThroughAttribute name="maxlength" value="4" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="CVV" />
+                                            </h:inputText>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="payment-note" style="margin:0;">
+                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar la reserva.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <h:commandButton value="Confirmar reserva y pagar"
+                                                     action="#{reservaHuespedBean.confirmarReserva}"
+                                                     styleClass="btn-confirm-modal" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </h:form>
             </div>
