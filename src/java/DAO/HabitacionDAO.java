@@ -15,32 +15,41 @@ import javax.faces.context.FacesContext;
 
 
 public class HabitacionDAO {
-    PreparedStatement ps;
-    ResultSet rs;
 
-    
     public List<Habitacion> listar() throws SQLException {
-    List<Habitacion> listaHabitaciones = new ArrayList<>();
-        TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
+        List<Habitacion> listaHabitaciones = new ArrayList<>();
+        //TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
+        String sql = "SELECT * FROM habitacion h inner join tipohabitacion th on th.idTipoHabitacion = h.idTipoHabitacion order by numHabitacion";
 
-        try {
-            String sql = "SELECT * FROM habitacion";
-            ps = Conexion.conectar().prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Habitacion h = new Habitacion();
                 h.setIdHabitacion(rs.getInt("idHabitacion"));
                 h.setNumHabitacion(rs.getInt("numHabitacion"));
-                h.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
+                h.setNombreTipoHabitacion(rs.getString("nombre"));
+//                h.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
                 h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
-                h.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
-                h.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
+
+                // Manejo seguro de timestamps que pueden ser NULL
+                java.sql.Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
+                if (fechaCreacion != null) {
+                    h.setFechaCreacion(fechaCreacion.toLocalDateTime());
+                }
+
+                java.sql.Timestamp fechaActualizacion = rs.getTimestamp("fechaActualizacion");
+                if (fechaActualizacion != null) {
+                    h.setFechaActualizacion(fechaActualizacion.toLocalDateTime());
+                }
+
                 listaHabitaciones.add(h);
             }
         } catch (SQLException e) {
-            System.out.println(" Error al listar habitaciones: " + e.getMessage());
+            System.out.println("Error al listar habitaciones: " + e.getMessage());
+            throw e;
         }
+
         return listaHabitaciones;
     }
 
@@ -115,30 +124,30 @@ public class HabitacionDAO {
 }
  
  
- public void actualizar (Habitacion h) throws SQLException {
-     String sql = "UPDATE habitacion SET numHabitacion = ? , estado= ?, fechaActualizacion = ?, idTipoHabitacion = ?, where idHabitacion = ?";
-     
+ public void actualizar(Habitacion h) throws SQLException {
+     String sql = "UPDATE habitacion SET numHabitacion = ?, estado = ?, fechaActualizacion = ?, idTipoHabitacion = ? WHERE idHabitacion = ?";
+
       try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
-          ps.setInt(1, h.getIdHabitacion());
+          ps.setInt(1, h.getNumHabitacion());
           ps.setString(2, h.getEstado() != null ? h.getEstado().name() : null);
           ps.setTimestamp(3, Timestamp.valueOf(h.getFechaActualizacion()));
-          ps.setInt(4 , h.getTipoHabitacion().getIdTipoHabitacion());
+          ps.setInt(4, h.getTipoHabitacion().getIdTipoHabitacion());
           ps.setInt(5, h.getIdHabitacion());
-          
-          ps.executeUpdate();    
+
+          ps.executeUpdate();
       }
  }
  
  
-    public void eliminar(Habitacion h) {
-        try {
-            String sql = "DELETE FROM habitacion WHERE idHabitacion = ?";
-            ps = Conexion.conectar().prepareStatement(sql);
-            ps.setInt(1, h.getIdHabitacion());
+    public void eliminar(Habitacion h) throws SQLException {
+        String sql = "DELETE FROM habitacion WHERE idHabitacion = ?";
 
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, h.getIdHabitacion());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error al eliminar habitación: " + e.getMessage());
+            throw e;
         }
     }
     

@@ -254,7 +254,7 @@ public class ReservaCalendarioBean implements Serializable {
 
             Reserva reserva = new Reserva();
             reserva.setCheckin(inicio);
-            reserva.setCehckout(fin);
+            reserva.setCheckout(fin);
             reserva.setFechaReserva(LocalDateTime.now());
             reserva.setEstado(obtenerEstado(params.get("estado")));
             reserva.setHabitacion(habitacion);
@@ -339,7 +339,7 @@ public class ReservaCalendarioBean implements Serializable {
         TipoHabitacion tipoHabitacion = habitacion != null ? habitacion.getTipoHabitacion() : null;
 
         LocalDateTime inicio = reserva.getCheckin();
-        LocalDateTime fin = reserva.getCehckout();
+        LocalDateTime fin = reserva.getCheckout();
 
         if (inicio != null && (fin == null || !inicio.isBefore(fin))) {
             fin = inicio.plusDays(1);

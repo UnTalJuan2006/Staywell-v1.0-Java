@@ -235,7 +235,7 @@ public class ReservaHuespedBean implements Serializable {
 
             for (Reserva ocupacion : ocupaciones) {
                 LocalDateTime entrada = ocupacion.getCheckin();
-                LocalDateTime salida = ocupacion.getCehckout();
+                LocalDateTime salida = ocupacion.getCheckout();
 
                 if (entrada == null || salida == null) {
                     continue;
@@ -323,7 +323,7 @@ public class ReservaHuespedBean implements Serializable {
     reserva.setTelefono(telefono != null ? telefono : usuarioLogueado.getTelefono());
     reserva.setObservaciones(observaciones);
     reserva.setCheckin(fechaEntrada);
-    reserva.setCehckout(fechaSalida);
+    reserva.setCheckout(fechaSalida);
     reserva.setFechaReserva(LocalDateTime.now());
 
     try {

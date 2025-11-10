@@ -322,7 +322,7 @@ private void inicializarListasVacias() {
     public void validarFechasAjax() {
         refrescarOcupacionesHabitacion();
 
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null || habitacionIdSeleccionada == null) {
+        if (reserva.getCheckin() == null || reserva.getCheckout() == null || habitacionIdSeleccionada == null) {
             return;
         }
 
@@ -341,7 +341,7 @@ private void inicializarListasVacias() {
     private boolean validarFechasBasicas(boolean mostrarMensajeCamposIncompletos) {
         FacesContext context = FacesContext.getCurrentInstance();
 
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
+        if (reserva.getCheckin() == null || reserva.getCheckout() == null) {
             if (mostrarMensajeCamposIncompletos) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Información incompleta", "Debe indicar las fechas de check-in y check-out."));
@@ -349,7 +349,7 @@ private void inicializarListasVacias() {
             return false;
         }
 
-        if (!reserva.getCheckin().isBefore(reserva.getCehckout())) {
+        if (!reserva.getCheckin().isBefore(reserva.getCheckout())) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
                     "Fechas inválidas", "La fecha de check-out debe ser posterior al check-in."));
             return false;
@@ -370,7 +370,7 @@ private void inicializarListasVacias() {
             return false;
         }
 
-        if (reserva.getCheckin() == null || reserva.getCehckout() == null) {
+        if (reserva.getCheckin() == null || reserva.getCheckout() == null) {
             if (mostrarMensajeCamposIncompletos) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Información incompleta", "Debe indicar las fechas de la reserva."));
@@ -381,7 +381,7 @@ private void inicializarListasVacias() {
         try {
             Integer reservaId = reserva != null && reserva.getIdReserva() > 0 ? reserva.getIdReserva() : null;
             boolean disponible = reservaDAO.habitacionDisponible(habitacionId,
-                    reserva.getCheckin(), reserva.getCehckout(), reservaId);
+                    reserva.getCheckin(), reserva.getCheckout(), reservaId);
             if (!disponible) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Fechas no disponibles", "La habitación ya está reservada en el rango seleccionado."));
@@ -538,7 +538,7 @@ private void inicializarListasVacias() {
             for (int i = 0; i < ocupaciones.size(); i++) {
                 Reserva ocupacion = ocupaciones.get(i);
 
-                if (ocupacion.getCheckin() == null || ocupacion.getCehckout() == null) {
+                if (ocupacion.getCheckin() == null || ocupacion.getCheckout() == null) {
                     continue;
                 }
 
@@ -550,7 +550,7 @@ private void inicializarListasVacias() {
                         .append("\"from\":\"")
                         .append(ocupacion.getCheckin().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
                         .append("\",\"to\":\"")
-                        .append(ocupacion.getCehckout().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
+                        .append(ocupacion.getCheckout().truncatedTo(ChronoUnit.MINUTES).format(HTML_INPUT_FORMATTER))
                         .append("\"}");
             }
 

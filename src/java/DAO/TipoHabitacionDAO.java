@@ -12,18 +12,15 @@ import Modelo.TipoHabitacion;
 
 
 public class TipoHabitacionDAO {
-    PreparedStatement ps;
-    ResultSet rs;
-    
-    public List<TipoHabitacion> listar()throws SQLException {
+
+    public List<TipoHabitacion> listar() throws SQLException {
         List<TipoHabitacion> listaTipoHabitaciones = new ArrayList<>();
-        
-        try{
-            String sql = "Select * from tipohabitacion";
-            ps = Conexion.conectar().prepareStatement(sql);
-            rs = ps.executeQuery();
-            
-            while(rs.next()){
+        String sql = "SELECT * FROM tipohabitacion";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
                 TipoHabitacion t = new TipoHabitacion();
                 t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
                 t.setNombre(rs.getString("nombre"));
@@ -32,12 +29,12 @@ public class TipoHabitacionDAO {
                 t.setPrecio(rs.getFloat("precio"));
                 t.setImagen(rs.getString("imagen"));
                 listaTipoHabitaciones.add(t);
-                
-                
             }
-        }catch(SQLException e){
-            System.out.println("Error al listar Tipos" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error al listar Tipos: " + e.getMessage());
+            throw e;
         }
+
         return listaTipoHabitaciones;
     }
     
@@ -64,26 +61,29 @@ public void agregar(TipoHabitacion t) throws SQLException {
 }
     
     public TipoHabitacion buscar(int idTipoHabitacion) throws SQLException {
-    TipoHabitacion t = null;
-    try {
+        TipoHabitacion t = null;
         String sql = "SELECT * FROM tipohabitacion WHERE idTipoHabitacion = ?";
-        ps = Conexion.conectar().prepareStatement(sql);
-        ps.setInt(1, idTipoHabitacion);
-        rs = ps.executeQuery();
 
-        if (rs.next()) {
-            t = new TipoHabitacion();
-            t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
-            t.setNombre(rs.getString("nombre"));
-            t.setDescripcion(rs.getString("descripcion"));
-            t.setCapacidad(rs.getInt("capacidad"));
-            t.setPrecio(rs.getFloat("precio"));
-            t.setImagen(rs.getString("imagen"));
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idTipoHabitacion);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    t = new TipoHabitacion();
+                    t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
+                    t.setNombre(rs.getString("nombre"));
+                    t.setDescripcion(rs.getString("descripcion"));
+                    t.setCapacidad(rs.getInt("capacidad"));
+                    t.setPrecio(rs.getFloat("precio"));
+                    t.setImagen(rs.getString("imagen"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al buscar TipoHabitacion: " + e.getMessage());
+            throw e;
         }
-    } catch (SQLException e) {
-        System.out.println("Error al buscar TipoHabitacion: " + e.getMessage());
+
+        return t;
     }
-    return t;
-}
     
 }

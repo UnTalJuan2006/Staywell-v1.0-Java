@@ -9,7 +9,7 @@ import Modelo.EnumEstadoReserva;
 public class Reserva {
     private int idReserva;
     private LocalDateTime checkin;
-    private LocalDateTime cehckout;
+    private LocalDateTime checkout;
     private LocalDateTime fechaReserva;
     private EnumEstadoReserva estado;
     private String nombreCliente;
@@ -35,12 +35,12 @@ public class Reserva {
         this.checkin = checkin;
     }
 
-    public LocalDateTime getCehckout() {
-        return cehckout;
+    public LocalDateTime getCheckout() {
+        return checkout;
     }
 
-    public void setCehckout(LocalDateTime cehckout) {
-        this.cehckout = cehckout;
+    public void setCheckout(LocalDateTime checkout) {
+        this.checkout = checkout;
     }
 
     public LocalDateTime getFechaReserva() {

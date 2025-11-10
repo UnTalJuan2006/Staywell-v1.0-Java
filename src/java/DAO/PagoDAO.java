@@ -18,12 +18,8 @@ import Modelo.EnumPago;
 import Modelo.Pago;
 
 public class PagoDAO {
-    
-    PreparedStatement ps;
-    ResultSet rs;
-    
 
-public int agregarPago(Pago p) throws SQLException {
+    public int agregarPago(Pago p) throws SQLException {
     String sql = "INSERT INTO pago (idReserva, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 

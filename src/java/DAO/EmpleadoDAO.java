@@ -15,16 +15,12 @@ import java.util.List;
 
 public class EmpleadoDAO {
 
-    PreparedStatement ps;
-    ResultSet rs;
-
     public List<Empleado> listar() throws SQLException {
         List<Empleado> listaEmpleados = new ArrayList<>();
+        String sql = "SELECT * FROM empleado";
 
-        try {
-            String sql = "Select * from empleado";
-            ps = Conexion.conectar().prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Empleado m = new Empleado();
@@ -51,10 +47,11 @@ public class EmpleadoDAO {
 
                 listaEmpleados.add(m);
             }
-
         } catch (SQLException e) {
-            System.out.println(" Error al listar Empleados: " + e.getMessage());
+            System.out.println("Error al listar Empleados: " + e.getMessage());
+            throw e;
         }
+
         return listaEmpleados;
     }
 
@@ -62,8 +59,7 @@ public class EmpleadoDAO {
         String sql = "INSERT INTO empleado(nombre, documento, email, telefono, fechaCreacion, fechaActualizacion, cargo, horarioEntrada, horarioSalida, estado) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try {
-            ps = Conexion.conectar().prepareStatement(sql);
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setString(1, m.getNombre());
             ps.setString(2, m.getDocumento());
             ps.setString(3, m.getEmail());
@@ -100,14 +96,12 @@ public class EmpleadoDAO {
             throw e;
         }
     }
-public void actualizar(Empleado m) {
+public void actualizar(Empleado m) throws SQLException {
+        String sql = "UPDATE empleado SET nombre = ?, documento = ?, email = ?, telefono = ?, "
+               + "fechaActualizacion = ?, cargo = ?, horarioEntrada = ?, horarioSalida = ?, estado = ? "
+               + "WHERE idEmpleado = ?";
 
-        try {
-            String sql = "UPDATE empleado SET nombre = ?, documento = ?, email = ?, telefono = ?, "
-                   + "fechaActualizacion = ?, cargo = ?, horarioEntrada = ?, horarioSalida = ?, estado = ? "
-                   + "WHERE idEmpleado = ?"; 
-
-            ps = Conexion.conectar().prepareStatement(sql);
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
 
             ps.setString(1, m.getNombre());
             ps.setString(2, m.getDocumento());
@@ -134,22 +128,21 @@ public void actualizar(Empleado m) {
             ps.setInt(10, m.getIdEmpleado());
 
             ps.executeUpdate();
-            System.out.println(" Empleado actualizado correctamente");
-
-        }catch(SQLException e){
-            System.out.println("Error al actualizar empleado" + e.getMessage());
+            System.out.println("Empleado actualizado correctamente");
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar empleado: " + e.getMessage());
+            throw e;
         }
     }
 
-    
-    public Empleado buscar(int id) {
+    public Empleado buscar(int id) throws SQLException {
         Empleado m = null;
         String sql = "SELECT * FROM empleado WHERE idEmpleado = ?";
 
-        try {
-            ps = Conexion.conectar().prepareStatement(sql);
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setInt(1, id);
-            rs = ps.executeQuery();
+
+            try (ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 m = new Empleado();
@@ -185,9 +178,10 @@ public void actualizar(Empleado m) {
                     m.setEstado(EnumEstadoEmpleado.valueOf(estadoStr.toUpperCase()));
                 }
             }
-
+            }
         } catch (SQLException e) {
             System.out.println("Error al buscar empleado: " + e.getMessage());
+            throw e;
         }
 
         return m;

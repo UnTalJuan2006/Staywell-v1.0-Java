@@ -17,9 +17,6 @@ import javax.faces.context.FacesContext;
 
 public class ReservaDAO {
 
-    PreparedStatement ps;
-    ResultSet rs;
-
     public List<Reserva> listar() throws SQLException {
         List<Reserva> listaReservas = new ArrayList<>();
         String sql = "SELECT r.*, h.numHabitacion AS numeroHabitacion, h.idTipoHabitacion AS habitacionTipoId, "
@@ -56,7 +53,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
                 Reserva reserva = new Reserva();
                 reserva.setIdReserva(rs.getInt("idReserva"));
                 reserva.setCheckin(rs.getTimestamp("checkin").toLocalDateTime());
-                reserva.setCehckout(rs.getTimestamp("checkout").toLocalDateTime());
+                reserva.setCheckout(rs.getTimestamp("checkout").toLocalDateTime());
                 reserva.setFechaReserva(rs.getTimestamp("fechaReserva").toLocalDateTime());
                 reserva.setEstado(EnumEstadoReserva.valueOf(rs.getString("estado")));
                 reserva.setNombreCliente(rs.getString("nombreCliente"));
@@ -115,7 +112,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
-            ps.setTimestamp(2, reserva.getCehckout() != null ? Timestamp.valueOf(reserva.getCehckout()) : null);
+            ps.setTimestamp(2, reserva.getCheckout() != null ? Timestamp.valueOf(reserva.getCheckout()) : null);
 //            ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : null);
             ps.setString(3, reserva.getEstado() != null ? reserva.getEstado().name() : null);
             ps.setString(4, reserva.getNombreCliente());
@@ -150,7 +147,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
-            ps.setTimestamp(2, reserva.getCehckout() != null ? Timestamp.valueOf(reserva.getCehckout()) : null);
+            ps.setTimestamp(2, reserva.getCheckout() != null ? Timestamp.valueOf(reserva.getCheckout()) : null);
             ps.setString(3, "ACTIVA");
             ps.setString(4, reserva.getNombreCliente());
             ps.setString(5, reserva.getEmail());
@@ -179,7 +176,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
-            ps.setTimestamp(2, reserva.getCehckout() != null ? Timestamp.valueOf(reserva.getCehckout()) : null);
+            ps.setTimestamp(2, reserva.getCheckout() != null ? Timestamp.valueOf(reserva.getCheckout()) : null);
             ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : null);
             ps.setString(4, reserva.getEstado() != null ? reserva.getEstado().name() : null);
             ps.setString(5, reserva.getNombreCliente());
@@ -271,7 +268,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
                     Timestamp checkout = rs.getTimestamp("checkout");
                     if (checkout != null) {
-                        reserva.setCehckout(checkout.toLocalDateTime());
+                        reserva.setCheckout(checkout.toLocalDateTime());
                     }
 
                     ocupaciones.add(reserva);
@@ -303,7 +300,7 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
         Timestamp checkout = rs.getTimestamp("checkout");
         if (checkout != null) {
-            reserva.setCehckout(checkout.toLocalDateTime());
+            reserva.setCheckout(checkout.toLocalDateTime());
         }
 
         Timestamp fechaReserva = rs.getTimestamp("fechaReserva");

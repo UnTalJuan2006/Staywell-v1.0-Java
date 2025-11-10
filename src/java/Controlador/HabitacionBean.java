@@ -55,9 +55,9 @@ public class HabitacionBean implements Serializable {
                 habitaciones = new ArrayList<>();
             }
 
-            habitacionesFiltradas = new ArrayList<>(habitaciones);
+            //habitacionesFiltradas = new ArrayList<>(habitaciones);
 
-            System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
+//            System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
 
         } catch (Exception e) {
             System.out.println("💥 Error en @PostConstruct: " + e.getMessage());

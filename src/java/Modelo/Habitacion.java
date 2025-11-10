@@ -12,11 +12,20 @@ public class Habitacion implements Serializable {
     private EnumEstadoHabitacion estado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
+    private String nombreTipoHabitacion;
    
     
     public int getIdHabitacion() {
         return idHabitacion;
     };
+    
+    public String getNombreTipoHabitacion(){
+        return nombreTipoHabitacion;
+    }
+    
+    public void setNombreTipoHabitacion(String tipoHabitacion){
+        nombreTipoHabitacion = tipoHabitacion;
+    }
     
      public void setIdHabitacion(int idHabitacion) {
         this.idHabitacion = idHabitacion;
