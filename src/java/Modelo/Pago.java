@@ -1,6 +1,7 @@
 
 package Modelo;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import Modelo.EnumPago;
 import Modelo.Reserva;
@@ -16,6 +17,7 @@ public class Pago {
     private LocalDate fechaVencimiento;
     private String codigoSeguridad;
     private LocalDateTime fechaCreacion;
+    private BigDecimal monto = BigDecimal.ZERO;
 
     public int getIdPago() {
         return idPago;
@@ -81,8 +83,16 @@ public class Pago {
         this.fechaCreacion = fechaCreacion;
     }
 
-       
-    
+    public BigDecimal getMonto() {
+        return monto;
+    }
+
+    public void setMonto(BigDecimal monto) {
+        this.monto = monto;
+    }
+
+
+
 }
     
 
