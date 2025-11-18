@@ -29,7 +29,6 @@ public class HabitacionDAO {
                 h.setIdHabitacion(rs.getInt("idHabitacion"));
                 h.setNumHabitacion(rs.getInt("numHabitacion"));
                 h.setNombreTipoHabitacion(rs.getString("nombre"));
-//                h.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
                 h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
 
                 // Manejo seguro de timestamps que pueden ser NULL
@@ -70,7 +69,7 @@ public class HabitacionDAO {
                     habitacion.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
                     habitacion.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
                     habitacion.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-                    habitacion.setTipoHabitacion(tipoDAO.buscar(idTipoHabitacion));
+                    habitacion.setTipoHabitacion(tipoDAO.buscarPorId(idTipoHabitacion));
                     listaHabitaciones.add(habitacion);
                 }
             }
@@ -95,7 +94,7 @@ public class HabitacionDAO {
                     habitacion.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
                     habitacion.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
                     habitacion.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-                    habitacion.setTipoHabitacion(tipoDAO.buscar(rs.getInt("idTipoHabitacion")));
+                    habitacion.setTipoHabitacion(tipoDAO.buscarPorId(rs.getInt("idTipoHabitacion")));
                 }
             }
         }
@@ -142,11 +141,12 @@ public class HabitacionDAO {
     public void eliminar(Habitacion h) throws SQLException {
         String sql = "DELETE FROM habitacion WHERE idHabitacion = ?";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        try(PreparedStatement ps = Conexion.conectar().prepareStatement(sql)){
             ps.setInt(1, h.getIdHabitacion());
             ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar habitación: " + e.getMessage());
+            
+        }catch(SQLException e){
+            System.out.println("Error al eliminar habitacion");
             throw e;
         }
     }

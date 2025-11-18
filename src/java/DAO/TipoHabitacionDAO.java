@@ -1,4 +1,3 @@
-
 package DAO;
 
 import Controlador.Conexion;
@@ -10,15 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import Modelo.TipoHabitacion;
 
-
 public class TipoHabitacionDAO {
 
     public List<TipoHabitacion> listar() throws SQLException {
         List<TipoHabitacion> listaTipoHabitaciones = new ArrayList<>();
         String sql = "SELECT * FROM tipohabitacion";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 TipoHabitacion t = new TipoHabitacion();
@@ -37,30 +34,30 @@ public class TipoHabitacionDAO {
 
         return listaTipoHabitaciones;
     }
-    
-public void agregar(TipoHabitacion t) throws SQLException {
-    String sql = "INSERT INTO tipohabitacion(nombre, descripcion, capacidad, precio, imagen) VALUES(?,?,?,?,?)";
 
-    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql) ){
+    public void agregar(TipoHabitacion t) throws SQLException {
+        String sql = "INSERT INTO tipohabitacion(nombre, descripcion, capacidad, precio, imagen) VALUES(?,?,?,?,?)";
 
-        ps.setString(1, t.getNombre());
-        ps.setString(2, t.getDescripcion());
-        ps.setInt(3, t.getCapacidad());
-        ps.setFloat(4, t.getPrecio());
-        ps.setString(5, t.getImagen());
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
 
-        int filas = ps.executeUpdate();
-        if(filas == 0){
-            throw new SQLException("No se pudo insertar el tipo de habitación");
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getDescripcion());
+            ps.setInt(3, t.getCapacidad());
+            ps.setFloat(4, t.getPrecio());
+            ps.setString(5, t.getImagen());
+
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                throw new SQLException("No se pudo insertar el tipo de habitación");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al registrar tipo: " + e.getMessage());
+            throw e;
         }
-
-    } catch (SQLException e) {
-        System.out.println("Error al registrar tipo: " + e.getMessage());
-        throw e; 
     }
-}
-    
-    public TipoHabitacion buscar(int idTipoHabitacion) throws SQLException {
+
+    public TipoHabitacion buscarPorId(int idTipoHabitacion) throws SQLException {
         TipoHabitacion t = null;
         String sql = "SELECT * FROM tipohabitacion WHERE idTipoHabitacion = ?";
 
@@ -85,5 +82,34 @@ public void agregar(TipoHabitacion t) throws SQLException {
 
         return t;
     }
-    
+
+    public void eliminar(TipoHabitacion t) throws SQLException {
+        String sql = "DELETE FROM tipohabitacion WHERE idTipoHabitacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, t.getIdTipoHabitacion());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro al eliminar el tipo");
+            throw e;
+        }
+
+    }
+
+    public void actualizar(TipoHabitacion t) throws SQLException {
+        String sql = "UPDATE tipohabitacion SET nombre = ?, descripcion = ?, capacidad = ?, precio = ?, imagen = ? WHERE idTipoHabitacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, t.getNombre());
+            ps.setString(2, t.getDescripcion());
+            ps.setInt(3, t.getCapacidad());
+            ps.setFloat(4, t.getPrecio());
+            ps.setString(5, t.getImagen());
+            ps.setInt(6, t.getIdTipoHabitacion());
+
+            ps.executeUpdate();
+            System.out.println("Tipo de habitación actualizado correctamente.");
+
+        }
+    }
 }

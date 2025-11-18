@@ -69,7 +69,7 @@
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
-                     .main-content {
+            .main-content {
                 margin-left: 260px;
                 padding: 2rem;
             }
@@ -350,25 +350,22 @@
                             <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
 
                                 <!-- ✏️ Botón Editar -->
-                                <h:link outcome="/editarTipoHabitacion.xhtml" styleClass="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil-square"></i> Editar
+                                <h:link outcome="/crudCatalogoHabitaciones/editarTipo.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i>
                                     <f:param name="id" value="#{t.idTipoHabitacion}" />
                                 </h:link>
 
-                                <!-- 🗑️ Botón Eliminar -->
-                                <h:form styleClass="d-inline">
-                                    <button type="submit" 
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('¿Seguro que deseas eliminar esta habitación?');">
-                                        <i class="bi bi-trash"></i> Eliminar
-
-                                    </button>
-                                </h:form>
-                                
-                                <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml" styleClass="btn btn-primary btn-sm">
-                                    <i class="bi bi-eye"></i> ver
+                                <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml"  styleClass="btn btn-outline-primary btn-sm"
+                                        title="Ver detalles">
+                                    <i class="bi bi-eye"></i>
                                     <f:param name="id" value="#{t.idTipoHabitacion}" />
                                 </h:link>
+
+                                <h:commandLink action="#{tipoHabitacionBean.eliminar(t)}"
+                                               styleClass="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('¿Desea eliminar la habitación?');">
+                                    <i class="bi bi-trash"></i>
+                                </h:commandLink>
 
                             </div>
 

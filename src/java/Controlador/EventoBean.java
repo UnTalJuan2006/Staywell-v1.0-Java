@@ -1,195 +1,538 @@
-
 package Controlador;
 
+import DAO.EspacioDAO;
 import DAO.EventoDAO;
+import DAO.UsuarioDAO;
 import Modelo.Espacio;
 import Modelo.Evento;
 import Modelo.Usuario;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
-import javax.faces.context.FacesContext;
+import Modelo.EnumRoles;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-
+import Modelo.EnumEstadoEspacio;
+import Modelo.EnumEstadoEvento;
+import java.util.Date;
 
 @ManagedBean
 @ViewScoped
 
-public class EventoBean {
+public class EventoBean implements Serializable {
+
+    private final EventoDAO eventoDAO = new EventoDAO();
+    private final EspacioDAO espacioDAO = new EspacioDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private List<Espacio> listaEspacios;
+
     private Evento evento = new Evento();
-    private EventoDAO eventoDAO = new EventoDAO();
-    private List<Evento> listaEvento;
-    private List<Espacio> listaEspacios = new ArrayList<>(); 
-    private Espacio espacioSeleccionado;
-     
-    public Evento getEvento() {
-    return evento;
-}
+    private List<Evento> listaEventos = new ArrayList<>();
+    private List<Usuario> listaUsuarios = new ArrayList<>();
 
-    public void setEvento(Evento evento) {
-    this.evento = evento;
-}
-     public Espacio getEspacioSeleccionado() {
-        return espacioSeleccionado;
-    }
+    private Integer espacioIdSeleccionado;
+    private Integer usuarioIdSeleccionado;
+    private String fechasOcupadasJson = "[]";
 
-    public void setEspacioSeleccionado(Espacio espacioSeleccionado) {
-        this.espacioSeleccionado = espacioSeleccionado;
-    }
-    
+    private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private Usuario usuarioLogueado;
 
-    
-    public List<Evento> getListaEventos(){
-        try{
-            return eventoDAO.listar();
-            
-        }catch(SQLException e){
-            System.out.println("Error al listar habitaciones");
-            return null;
-        }
-    }
-    
-      // 👉 Método para seleccionar el espacio al que se le hace reserva
-    public void seleccionarEspacio(Espacio espacio) {
-        this.espacioSeleccionado = espacio;
-        evento = new Evento(); 
-        evento.setEspacio(espacio);
-    }
-    
-     public void agregarEventoHuesped() {
+    private List<Espacio> espacios;
+    public List<Evento> listarPorUsuario = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
         try {
-           
-            Usuario usuarioLogueado = (Usuario) FacesContext.getCurrentInstance()
-                    .getExternalContext().getSessionMap().get("usuarioLogueado");
-
-            if (usuarioLogueado == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Debe iniciar sesión para reservar."));
+            if (context == null) {
+                System.out.println("⚠ No hay FacesContext activo. Posible navegación directa o refresco fuera del ciclo JSF.");
+                inicializarListasVacias();
                 return;
             }
 
-            // Asignar datos al evento
-            evento.setNombreCliente(usuarioLogueado.getNombre()); 
-            evento.setFechaCreacion(LocalDateTime.now());
-            evento.setFechaActualizacion(LocalDateTime.now());
-            evento.setEspacio(espacioSeleccionado);
+            usuarioLogueado = (Usuario) context.getExternalContext()
+                    .getSessionMap().get("usuarioLogueado");
 
-            // Guardar en la BD
-            eventoDAO.agregarEventoHuesped(evento);
+            if (usuarioLogueado == null) {
+                System.out.println("⚠ No hay usuario logueado en sesión. Se detiene la carga de datos.");
+                inicializarListasVacias();
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Reserva exitosa",
-                            "Has reservado el espacio: " + espacioSeleccionado.getNombre()));
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe iniciar sesión para acceder a las reservas."));
+                return;
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar la reserva: " + e.getMessage()));
+            try {
+                espacios = espacioDAO.listar();
+                listaUsuarios = usuarioDAO.listar();
+            } catch (SQLException e) {
+                System.out.println("❌ Error al cargar espacios o usuarios: " + e.getMessage());
+                inicializarListasVacias();
+            }
+
+            try {
+                if (usuarioLogueado.getRol() == EnumRoles.ADMIN) {
+                    cargarEventos();
+                } else if (usuarioLogueado.getRol() == EnumRoles.HUESPED) {
+                    listarEventosDelUsuario();
+                } else {
+                    listaEventos = new ArrayList<>();
+                }
+            } catch (Exception e) {
+                System.out.println("Error al cargar eventos " + e.getMessage());
+                listaEventos = new ArrayList<>();
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar los eventos."));
+            }
+            System.out.println("EventoBean inicializado correctamente" + usuarioLogueado.getNombre());
+
+        } catch (Exception ex) {
+            System.out.println("❌ Error inesperado en init(): " + ex.getMessage());
+            ex.printStackTrace();
+            inicializarListasVacias();
         }
     }
 
-   
+    private void inicializarListasVacias() {
+        listaEventos = new ArrayList<>();
+        listaEspacios = new ArrayList<>();
+        listaUsuarios = new ArrayList<>();
+    }
+
+    public void cargarEventos() {
+        try {
+            listaEventos = eventoDAO.listar();
+        } catch (SQLException e) {
+            listaEventos = new ArrayList<>();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar los eventos."));
+        }
+    }
+
+    public void listarEventosDelUsuario() {
+        try {
+            if (usuarioLogueado != null) {
+                listarPorUsuario = eventoDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
+
+            } else {
+                listarPorUsuario = new ArrayList<>();
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No hay un usuario logueado."));
+            }
+        } catch (SQLException e) {
+            listarPorUsuario = new ArrayList<>();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas del usuario."));
+            e.printStackTrace();
+        }
+    }
+
+    public String guardarComoCliente() {
+        try {
+            if (!validarFechaBasica(true)) {
+                return null;
+            }
+            evento.setUsuario(usuarioLogueado);
+
+            Espacio espacio = obtenerEspacioPorId(espacioIdSeleccionado);
+            if (espacio == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un espacio."));
+                return null;
+            }
+            evento.setEspacio(espacio);
+
+            if (evento.getNombreCliente() == null || evento.getNombreCliente().isEmpty()) {
+                evento.setNombreCliente(usuarioLogueado.getNombre());
+            }
+
+            evento.setEstado(EnumEstadoEvento.Activa);
+            eventoDAO.eventoHuesped(evento);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento regitrado correctamente."));
+            limpiarFormulario();
+            return "HomeHuesped?faces-redirect=true";
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar el evento."));
+            return null;
+        }
+    }
+
+    public void CargarEventoPorId() {
+        String idParam = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("id");
+
+        if (idParam != null) {
+            try {
+                int id = Integer.parseInt(idParam);
+                Evento eventoEncontrado = eventoDAO.buscar(id);
+                if (eventoEncontrado != null) {
+                    this.evento = eventoEncontrado;
+                    espacioIdSeleccionado = (evento.getEspacio() != null)
+                            ? evento.getEspacio().getIdEspacio() : null;
+                    usuarioIdSeleccionado = (evento.getUsuario() != null)
+                            ? evento.getUsuario().getIdUsuario() : null;
+                    refrescarOcupacionesEspacio();
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "El evento no existe."));
+                }
+
+            } catch (NumberFormatException | SQLException e) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo cargar el evento."));
+            }
+        }
+
+    }
+
+    public String guardar() {
+        try {
+            if (!validarFechaBasica(true)) {
+                return null;
+            }
+
+            if (!asignarRelaciones()) {
+                return null;
+            }
+
+            if (!validarDisponibilidadFechas(true)) {
+                return null;
+            }
+            eventoDAO.agregarEvento(evento);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento registrado correctamente."));
+            limpiarFormulario();
+            return "Eventos?faces-redirect=true";
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar el evento."));
+            return null;
+        }
+    }
+
+    //Eliminar aca
+    public String actualizar() {
+        try {
+            if (!validarFechaBasica(true)) {
+                return null;
+            }
+
+            if (!asignarRelaciones()) {
+                return null;
+            }
+
+            if (!validarDisponibilidadFechas(true)) {
+                return null;
+            }
+            eventoDAO.actualizar(evento);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento actualizado correctamente."));
+            limpiarFormulario();
+            return "Eventos?faces-redirect=true";
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el evento."));
+            return null;
+        }
+    }
+
+    private boolean asignarRelaciones() {
+        Espacio espacio = obtenerEspacioPorId(espacioIdSeleccionado);
+        Usuario usuario = obtenerUsuarioPorId(usuarioIdSeleccionado);
+
+        if (espacio == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un espacio."));
+            return false;
+        }
+
+        if (usuario == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un huésped."));
+            return false;
+        }
+
+        evento.setEspacio(espacio);
+        evento.setUsuario(usuario);
+
+        if (evento.getNombreCliente() == null || evento.getNombreCliente().isEmpty()) {
+            evento.setNombreCliente(usuario.getNombre());
+        }
+
+        return true;
+
+    }
+
+    public void validarFechasAjax() {
+        refrescarOcupacionesEspacio();
+
+        if (evento.getFechaEvento() == null || espacioIdSeleccionado == null) {
+            return;
+        }
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (!validarFechaBasica(false)) {
+            context.validationFailed();
+            return;
+        }
+
+        if (!validarDisponibilidadFechas(false)) {
+            context.validationFailed();
+            return;
+        }
+    }
+
+    private boolean validarFechaBasica(boolean mostrarMensajeCamposIncompletos) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        // Verifica si la fecha está vacía
+        if (evento.getFechaEvento() == null) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(
+                        FacesMessage.SEVERITY_WARN,
+                        "Información incompleta",
+                        "Debe indicar la fecha del evento"
+                ));
+            }
+            return false;
+        }
+        Date hoy = new Date();
+
+        if (evento.getFechaEvento().before(hoy)) {
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Fecha inválida",
+                    "La fecha del evento no puede ser anterior a la fecha actual"
+            ));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarDisponibilidadFechas(boolean mostrarMensajeCamposIncompletos) {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        Integer espacioId = espacioIdSeleccionado;
+
+        if (espacioId == null || espacioId == 0) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "espacio requerido", "Seleccione un espacio para verificar disponibilidad."));
+            }
+            return false;
+        }
+        if (evento.getFechaEvento() == null) {
+            if (mostrarMensajeCamposIncompletos) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Información incompleta", "Debe indicar las fecha del evento."));
+            }
+            return false;
+        }
+
+        try {
+            Integer eventoId = evento != null && evento.getIdEvento() > 0 ? evento.getIdEvento() : null;
+            boolean disponible = eventoDAO.espacioDisponible(espacioId, evento.getFechaEvento(), eventoId);
+
+            if (!disponible) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                        "Fecha no disponibles", "El espacio ya está reservado en el rango seleccionado."));
+                return false;
+            }
+        } catch (SQLException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Error", "No se pudo verificar la disponibilidad del espacio."));
+            return false;
+        }
+        return false;
+    }
+
+    private Espacio obtenerEspacioPorId(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        return listaEspacios.stream()
+                .filter(e -> e.getIdEspacio() == id)
+                .findFirst()
+                .orElseGet(() -> {
+                    Espacio espacio = new Espacio();
+                    espacio.setIdEspacio(id);
+                    return espacio;
+                });
+    }
+
+    private Usuario obtenerUsuarioPorId(Integer id) {
+        if (id == null) {
+            return null;
+        }
+
+        return listaUsuarios.stream()
+                .filter(u -> u.getIdUsuario() == id)
+                .findFirst()
+                .orElseGet(() -> {
+                    Usuario usuario = new Usuario();
+                    usuario.setIdUsuario(id);
+                    return usuario;
+                });
+    }
+
+    private void limpiarFormulario() {
+        evento = new Evento();
+        espacioIdSeleccionado = null;
+        usuarioIdSeleccionado = null;
+        fechasOcupadasJson = "[]";
+    }
+
+    public String formatearFecha(LocalDateTime fecha) {
+        return fecha != null ? fecha.format(DISPLAY_FORMATTER) : "";
+    }
+
+    public String obtenerNombreEspacio(Evento evento) {
+        if (evento == null || evento.getEspacio() == null) {
+            return "Si asignar";
+        }
+        return "Espacio" + evento.getEspacio().getNombre();
+    }
+
+    public EnumEstadoEvento[] getEstados() {
+        return EnumEstadoEvento.values();
+    }
+
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public void setEvento(Evento evento) {
+        this.evento = evento;
+    }
+
+    public List<Evento> getListaEventos() {
+        return listaEventos;
+    }
+
+    public List<Espacio> getListaEspacios() {
+        return listaEspacios;
+    }
+
+    public List<Usuario> getListaUsuarios() {
+        return listaUsuarios;
+    }
+
+    public Integer getUsuarioIdSeleccionado() {
+        return usuarioIdSeleccionado;
+    }
+
+    public void setUsuarioIdSeleccionado(Integer usuarioIdSeleccionado) {
+        this.usuarioIdSeleccionado = usuarioIdSeleccionado;
+    }
+
+    public String getFechasOcupadasJson() {
+        return fechasOcupadasJson;
+    }
+
+    public void setEspacioIdSeleccionado(Integer espacioIdSeleccionado) {
+        this.espacioIdSeleccionado = espacioIdSeleccionado;
+        refrescarOcupacionesEspacio();
+    }
+
+    public Usuario getUsuarioLogueado() {
+        return usuarioLogueado;
+    }
+
+    public void setUsuarioLogueado(Usuario usuarioLogueado) {
+        this.usuarioLogueado = usuarioLogueado;
+    }
+
+    public List<Evento> getListarPorUsuario() {
+        return listarPorUsuario;
+    }
+
+    public void setListarPorUsuario(List<Evento> listarPorUsuario) {
+        this.listarPorUsuario = listarPorUsuario;
+    }
     
-//    public String agregar(){
-//        try{
-//            evento.setFechaCreacion(LocalDateTime.now());
-//            evento.setFechaActualizacion(LocalDateTime.now());
-//            eventoDAO.agregar(evento);
-//            evento = new Evento();
-//            
-//            FacesContext.getCurrentInstance().addMessage(null,
-//            new FacesMessage(FacesMessage.SEVERITY_INFO, 
-//            "Éxito", "Evento registrado correctamente."));
-//            
-//        }catch(SQLException e){
-//             FacesContext.getCurrentInstance().addMessage(null,
-//            new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-//            "Error", "No se pudo registrar el evento."));
-//             return null;
-//        }
-//        return "Eventos?faces-redirect=true";
-//    }
-//    
-//    
-//    public String editar(Evento v){
-//        this.evento = v;
-//        return "editarEvento?faces-redirect=true";
-//    }
-//    
-//    
-//    public String actualizar(){
-//      try{
-//       evento.setFechaActualizacion(LocalDateTime.now());
-//       eventoDAO.actualizar(evento);
-//       evento = new Evento();
-//         FacesContext.getCurrentInstance().addMessage(null,
-//            new FacesMessage(FacesMessage.SEVERITY_INFO, " Éxito", "Evento actualizado correctamente"));
-//    } catch (Exception e) {
-//        System.out.println("Error al actualizar habitación: " + e.getMessage());
-//        FacesContext.getCurrentInstance().addMessage(null,
-//            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el evento"));
-//    }
-//    return "Eventos?faces-redirect=true";
-//
-//    }
-//    
-//    public String eliminar (Evento v){
-//        try{
-//            eventoDAO.eliminar(v);
-//            FacesContext.getCurrentInstance().addMessage(null,
-//                new FacesMessage(FacesMessage.SEVERITY_INFO,
-//                "Evento eliminado correctamente", null));
-//        }catch (Exception e) {
-//        FacesContext.getCurrentInstance().addMessage(null,
-//                new FacesMessage(FacesMessage.SEVERITY_ERROR,
-//                "Error al eliminar evento: " + e.getMessage(), null));
-//    }
-//    return "Eventos?faces-redirect=true"; 
-//    }
-//    
-//    
-//    public String ver (Evento v){
-//        try{
-//            Evento eventoEncontrado = eventoDAO.buscar(v.getIdEvento());
-//            if(eventoEncontrado != null){
-//                this.evento = eventoEncontrado;
-//                return "verEvento";
-//            }else {
-//              FacesContext.getCurrentInstance().addMessage(null,
-//                new FacesMessage(FacesMessage.SEVERITY_WARN, "No encontrado", "Evento no existe"));
-//            return "Eventos";
-//            }
-//        }catch(Exception e){
-//             FacesContext.getCurrentInstance().addMessage(null,
-//            new FacesMessage(FacesMessage.SEVERITY_ERROR, " Error", "No se pudo cargar el evento"));
-//        return "Eventos";
-//        }
-//    }
-       
+    public List<Espacio> getEspacios(){
+        return espacios;
+    }
+    
+    public void setEspacios(List<Espacio> espacios){
+        this.espacios = espacios;
+    }
+
+    private void refrescarOcupacionesEspacio() {
+    // Si no hay espacio seleccionado → no hay ocupaciones
+    if (espacioIdSeleccionado == null) {
+        fechasOcupadasJson = "[]";
+        return;
+    }
+
+    try {
+        // Si estás editando un evento, se debe excluir su propia fecha
+        Integer eventoId = (evento != null && evento.getIdEvento() > 0)
+                ? evento.getIdEvento()
+                : null;
+
+        // Obtener ocupaciones
+        List<Evento> ocupaciones = eventoDAO.listarOcupacionesEspacio(espacioIdSeleccionado, eventoId);
+
+        if (ocupaciones.isEmpty()) {
+            fechasOcupadasJson = "[]";
+            return;
+        }
+
+        // Construir el JSON manualmente
+        StringBuilder jsonBuilder = new StringBuilder("[");
         
-        // Total de eventos
-public int getTotalEventos() {
-    List<Evento> eventos = getListaEventos();
-    return (eventos != null) ? eventos.size() : 0;
+        for (Evento ocupacion : ocupaciones) {
+            if (ocupacion.getFechaEvento() == null) {
+                continue;
+            }
+
+            // Formatear fecha a ISO (yyyy-MM-dd)
+            String fecha = new java.text.SimpleDateFormat("yyyy-MM-dd")
+                    .format(ocupacion.getFechaEvento());
+
+            if (jsonBuilder.length() > 1) {
+                jsonBuilder.append(',');
+            }
+
+            jsonBuilder.append("{")
+                       .append("\"from\":\"").append(fecha).append("\",")
+                       .append("\"to\":\"").append(fecha).append("\"")
+                       .append("}");
+        }
+
+        jsonBuilder.append("]");
+
+        fechasOcupadasJson = jsonBuilder.toString();
+
+    } catch (SQLException e) {
+        fechasOcupadasJson = "[]";
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                        "No se pudo consultar la disponibilidad del espacio."));
+    }
 }
 
+        
+        
+    }
+    
+    
+  
 
-}
+

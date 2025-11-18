@@ -183,6 +183,21 @@ public class HabitacionBean implements Serializable {
             }
         }
     }
+     
+public String eliminar(Habitacion h) {
+    try {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        habitacionDAO.eliminar(h);
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_INFO,
+            "Habitación eliminada correctamente", null));
+    } catch (Exception e) {
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Error al eliminar habitación: " + e.getMessage(), null));
+    }
+    return "Habitaciones?faces-redirect=true";
+}
 
     // --- CONTADORES POR TIPO ---
     public int totalHabitacionesEstandar() throws SQLException {

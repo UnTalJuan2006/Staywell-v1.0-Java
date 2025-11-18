@@ -4,8 +4,11 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       lang="es">
+    <f:metadata>
+        <f:viewAction action="#{empleadoBean.cargarEmpleadoPorId()}" />
+    </f:metadata>
     <h:head>
-        <title>Nueva Reserva</title>
+        <title>Editar Empleado</title>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -24,8 +27,8 @@
                 top: 0;
                 left: 0;
                 height: 100vh;
-                width: 260px;
-                background: #1a7c8f;
+                width: 270px;
+                background: #131318;
                 color: white;
                 z-index: 1000;
                 overflow-y: auto;
@@ -115,8 +118,8 @@
 
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
-                <h2><i class="bi bi-plus-circle"></i> Nueva Reserva</h2>
-                <h:link outcome="/Reservas.xhtml" styleClass="btn btn-outline-secondary">
+                <h2><i class="bi bi-pencil-square"></i> Editar Empleado</h2>
+                <h:link outcome="/Empleados.xhtml" styleClass="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Volver
                 </h:link>
             </div>
@@ -126,99 +129,78 @@
 
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title mb-3">Datos de la reserva</h5>
+                        <h5 class="card-title mb-3">Actualizar datos</h5>
 
-                        <h:form id="formReserva" styleClass="reserva-form">
-                            <h:outputText id="ocupacionesJson" value="#{reservaBean.fechasOcupadasJson}"
-                                          styleClass="d-none reserva-ocupaciones-json" />
+                        <h:form id="formEmpleado" enctype="multipart/form-data" styleClass="habitacion-form">
+
                             <div class="row g-3">
+
                                 <div class="col-md-6">
-                                    <label for="habitacion" class="form-label">Habitación</label>
-                                    <h:selectOneMenu id="habitacion" value="#{reservaBean.habitacionIdSeleccionada}"
-                                                     styleClass="form-select" required="true"
-                                                     requiredMessage="Debe seleccionar una habitación.">
-                                        <f:selectItem itemLabel="Seleccione una habitación" itemValue="" noSelectionOption="true" />
-                                        <f:selectItems value="#{reservaBean.listaHabitaciones}" var="habitacion"
-                                                       itemValue="#{habitacion.idHabitacion}"
-                                                       itemLabel="Habitación #{habitacion.numHabitacion}" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <h:inputText id="nombre" value="#{empleadoBean.empleado.nombre}" 
+                                                 styleClass="form-control" required="true" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="documento" class="form-label">Documento</label>
+                                    <h:inputText id="documento" value="#{empleadoBean.empleado.documento}" 
+                                                 styleClass="form-control" required="true" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <h:inputText id="email" value="#{empleadoBean.empleado.email}" 
+                                                 styleClass="form-control" required="true" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cargo" class="form-label">Cargo</label>
+                                    <h:selectOneMenu id="cargo" value="#{empleadoBean.empleado.cargo}" styleClass="form-select">
+                                        <f:selectItems value="#{empleadoBean.cargos}" />
                                     </h:selectOneMenu>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="usuario" class="form-label">Huésped</label>
-                                    <h:selectOneMenu id="usuario" value="#{reservaBean.usuarioIdSeleccionado}" styleClass="form-select">
-                                        <f:selectItem itemLabel="Seleccione un huésped" itemValue="" noSelectionOption="true" />
-                                        <f:selectItems value="#{reservaBean.listaUsuarios}" var="usuario"
-                                                       itemValue="#{usuario.idUsuario}"
-                                                       itemLabel="#{usuario.nombre} - #{usuario.email}" />
-                                    </h:selectOneMenu>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="nombreCliente" class="form-label">Nombre del cliente</label>
-                                    <h:inputText id="nombreCliente" value="#{reservaBean.reserva.nombreCliente}" styleClass="form-control" />
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="email" class="form-label">Correo electrónico</label>
-                                    <h:inputText id="email" value="#{reservaBean.reserva.email}" styleClass="form-control" />
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="telefono" class="form-label">Teléfono</label>
-                                    <h:inputText id="telefono" value="#{reservaBean.reserva.telefono}" styleClass="form-control" />
-                                </div>
 
                                 <div class="col-md-6">
                                     <label for="estado" class="form-label">Estado</label>
-                                    <h:selectOneMenu id="estado" value="#{reservaBean.reserva.estado}" styleClass="form-select">
-                                        <f:selectItems value="#{reservaBean.estados}" />
+                                    <h:selectOneMenu id="estado" value="#{empleadoBean.empleado.estado}" styleClass="form-select">
+                                        <f:selectItems value="#{empleadoBean.estados}" />
                                     </h:selectOneMenu>
                                 </div>
 
-<!--                                <div class="col-md-6">
-                                    <label for="fechaReserva" class="form-label">Fecha de reserva</label>
-                                    <h:inputText id="fechaReserva" value="#{reservaBean.reserva.fechaReserva}" converter="localDateTimeConverter" styleClass="form-control">
-                                        <f:passThroughAttribute name="type" value="datetime-local" />
+                                <div class="mb-3">
+                                    <label class="form-label text-gold">Hora de Entrada</label>
+                                    <h:inputText value="#{empleadoBean.empleado.horarioEntrada}"
+                                                 styleClass="form-control"
+                                                 required="false">
+                                        <f:converter converterId="localTimeConverter" />
                                     </h:inputText>
-                                </div>-->
-
-                                <div class="col-md-6">
-                                    <label for="checkin" class="form-label">Check-in</label>
-                                    <h:inputText id="checkin" value="#{reservaBean.reserva.checkin}"
-                                                 converter="localDateTimeConverter" styleClass="form-control"
-                                                 required="true" requiredMessage="Debe indicar la fecha de check-in.">
-                                        <f:passThroughAttribute name="type" value="text" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
-                                    </h:inputText>
+                                    <small class="text-muted">Formato: HH:mm (ej: 08:00)</small>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="checkout" class="form-label">Check-out</label>
-                                    <h:inputText id="checkout" value="#{reservaBean.reserva.checkout}"
-                                                 converter="localDateTimeConverter" styleClass="form-control"
-                                                 required="true" requiredMessage="Debe indicar la fecha de check-out.">
-                                        <f:passThroughAttribute name="type" value="text" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
+                                <div class="mb-3">
+                                    <label class="form-label text-gold">Hora de Salida</label>
+                                    <h:inputText value="#{empleadoBean.empleado.horarioSalida}"
+                                                 styleClass="form-control"
+                                                 required="false">
+                                        <f:converter converterId="localTimeConverter" />
                                     </h:inputText>
-                                </div>
-
-                                <div class="col-12">
-                                    <label for="observaciones" class="form-label">Observaciones</label>
-                                    <h:inputTextarea id="observaciones" value="#{reservaBean.reserva.observaciones}" styleClass="form-control" rows="3" />
+                                    <small class="text-muted">Formato: HH:mm (ej: 16:30)</small>
                                 </div>
 
                                 <div class="col-12 d-flex justify-content-end mt-3">
-                                    <h:commandButton value="Guardar" action="#{reservaBean.guardar()}" styleClass="btn btn-primary me-2" />
-                                    <h:link outcome="/Reservas.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
+                                    <h:commandButton value="Actualizar" action="#{empleadoBean.actualizar()}" 
+                                                     styleClass="btn btn-primary me-2" />
+                                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="btn btn-secondary">
+                                        Cancelar
+                                    </h:link>
                                 </div>
+
                             </div>
                         </h:form>
                     </div>
                 </div>
             </div>
         </div>
-        <script src="js/reservaForm.js"></script>
+
     </h:body>
 </html>

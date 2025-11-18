@@ -3,18 +3,22 @@ package Modelo;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import Modelo.EnumEstadoEvento;
+import Modelo.Usuario;
 
 public class Evento {
     private int idEvento;
     private String nombreEvento;
     private String descripcion;
-    private LocalDateTime fechaActualizacion;
+    private Date fechaEvento; 
+    private LocalDateTime fechaActualizacion; 
     private LocalDateTime fechaCreacion;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-    private String nombreCliente;
-    private Date fechaEvento;
+    private String nombreCliente; 
     private Espacio espacio;
+     private Usuario usuario; //Crear este 
+    private EnumEstadoEvento estado; // y este 
 
     public Evento() {
     }
@@ -100,5 +104,23 @@ public class Evento {
     public void setEspacio(Espacio espacio) {
         this.espacio = espacio;
     }
+
+    public EnumEstadoEvento getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EnumEstadoEvento estado) {
+        this.estado = estado;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+    
+    
     
 }

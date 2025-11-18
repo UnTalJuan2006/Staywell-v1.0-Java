@@ -137,7 +137,7 @@
                     <h:link outcome="/CalendarioReservas.xhtml" styleClass="btn btn-outline-secondary">
                         <i class="bi bi-calendar-event"></i> Ver calendario
                     </h:link>
-                    <h:link outcome="/crearReserva.xhtml" styleClass="btn btn-primary">
+                    <h:link outcome="/crudReserva/crearReserva.xhtml" styleClass="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Nueva Reserva
                     </h:link>
                 </div>
@@ -196,11 +196,11 @@
                                                     <span class="badge bg-secondary">#{reserva.estado}</span>
                                                 </td>
                                                 <td class="table-actions">
-                                                    <h:link outcome="/verReserva.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                    <h:link outcome="/crudReserva/verReserva.xhtml" styleClass="btn btn-outline-info btn-sm">
                                                         <i class="bi bi-eye"></i>
                                                         <f:param name="id" value="#{reserva.idReserva}" />
                                                     </h:link>
-                                                    <h:link outcome="/editarReserva.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                    <h:link outcome="/crudReserva/editarReserva.xhtml" styleClass="btn btn-outline-warning btn-sm">
                                                         <i class="bi bi-pencil-square"></i>
                                                         <f:param name="id" value="#{reserva.idReserva}" />
                                                     </h:link>

@@ -379,12 +379,20 @@
                                                         <f:param name="id" value="#{habitacion.idHabitacion}" />
                                                     </h:link>
 
-                                                    <h:link outcome="/editarHabitacion.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                    <h:link outcome="/crudHabitaciones/editarHabitacion.xhtml" styleClass="btn btn-outline-warning btn-sm">
                                                         <i class="bi bi-pencil-square"></i>
                                                         <f:param name="id" value="#{habitacion.idHabitacion}" />
                                                     </h:link>
+                                                    <h:form styleClass="d-inline">
+                                                        <h:commandLink action="#{habitacionBean.eliminar(habitacion)}"
+                                                                       styleClass="btn btn-outline-danger btn-sm"
+                                                                       onclick="return confirm('¿Desea eliminar la habitación?');">
+                                                            <i class="bi bi-trash"></i>
+                                                        </h:commandLink>
+                                                    </h:form>
 
-                                    
+
+
                                                 </td>
                                             </tr>
                                         </ui:repeat>

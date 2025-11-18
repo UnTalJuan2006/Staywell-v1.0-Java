@@ -66,36 +66,31 @@ public class EmpleadoDAO {
             ps.setString(4, m.getTelefono());
             ps.setTimestamp(5, Timestamp.valueOf(m.getFechaCreacion()));
             ps.setTimestamp(6, Timestamp.valueOf(m.getFechaActualizacion()));
-
-          
             ps.setString(7, m.getCargo().name());
-
-            // Horario de entrada (manejo de null)
             if (m.getHorarioEntrada() != null) {
                 ps.setTime(8, Time.valueOf(m.getHorarioEntrada()));
             } else {
                 ps.setNull(8, java.sql.Types.TIME);
             }
 
-            // Horario de salida (manejo de null)
             if (m.getHorarioSalida() != null) {
                 ps.setTime(9, Time.valueOf(m.getHorarioSalida()));
             } else {
                 ps.setNull(9, java.sql.Types.TIME);
             }
-
-            // Enum estado
             ps.setString(10, m.getEstado().name());
 
             ps.executeUpdate();
 
-            System.out.println("✅ Empleado agregado con éxito: " + m.getNombre());
+            System.out.println(" Empleado agregado con éxito: " + m.getNombre());
 
         } catch (SQLException e) {
-            System.out.println("❌ Error al registrar empleado: " + e.getMessage());
+            System.out.println(" Error al registrar empleado: " + e.getMessage());
             throw e;
         }
     }
+    
+    
 public void actualizar(Empleado m) throws SQLException {
         String sql = "UPDATE empleado SET nombre = ?, documento = ?, email = ?, telefono = ?, "
                + "fechaActualizacion = ?, cargo = ?, horarioEntrada = ?, horarioSalida = ?, estado = ? "
@@ -110,14 +105,14 @@ public void actualizar(Empleado m) throws SQLException {
             ps.setTimestamp(5, Timestamp.valueOf(m.getFechaActualizacion()));
             ps.setString(6, m.getCargo().name());
 
-            // Horario de entrada (manejo de null)
+            
             if (m.getHorarioEntrada() != null) {
                 ps.setTime(7, Time.valueOf(m.getHorarioEntrada()));
             } else {
                 ps.setNull(7, java.sql.Types.TIME);
             }
 
-            // Horario de salida (manejo de null)
+            
             if (m.getHorarioSalida() != null) {
                 ps.setTime(8, Time.valueOf(m.getHorarioSalida()));
             } else {
@@ -135,14 +130,15 @@ public void actualizar(Empleado m) throws SQLException {
         }
     }
 
-    public Empleado buscar(int id) throws SQLException {
-        Empleado m = null;
-        String sql = "SELECT * FROM empleado WHERE idEmpleado = ?";
+   
+    public Empleado buscarPorId(int idEmpleado) throws SQLException {
+    Empleado m = null;
+    String sql = "SELECT * FROM empleado WHERE idEmpleado = ?";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
-            ps.setInt(1, id);
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        ps.setInt(1, idEmpleado);
 
-            try (ResultSet rs = ps.executeQuery()) {
+        try (ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 m = new Empleado();
@@ -154,15 +150,16 @@ public void actualizar(Empleado m) throws SQLException {
                 m.setTelefono(rs.getString("telefono"));
                 m.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
                 m.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
-               
 
-                // Cargo (enum)
+           
                 String cargoStr = rs.getString("cargo");
                 if (cargoStr != null) {
-                    m.setCargo(EnumCargoEmpleado.valueOf(cargoStr.toUpperCase()));
+                    String normalizado = cargoStr.substring(0, 1).toUpperCase()
+                                       + cargoStr.substring(1).toLowerCase();
+                    m.setCargo(EnumCargoEmpleado.valueOf(normalizado));
                 }
 
-                // Horarios (manejo de null)
+               
                 Time horaEntrada = rs.getTime("horarioEntrada");
                 if (horaEntrada != null) {
                     m.setHorarioEntrada(horaEntrada.toLocalTime());
@@ -172,19 +169,35 @@ public void actualizar(Empleado m) throws SQLException {
                 if (horaSalida != null) {
                     m.setHorarioSalida(horaSalida.toLocalTime());
                 }
-                
+
+               
                 String estadoStr = rs.getString("estado");
                 if (estadoStr != null) {
-                    m.setEstado(EnumEstadoEmpleado.valueOf(estadoStr.toUpperCase()));
+                    String normalizadoEstado = estadoStr.substring(0, 1).toUpperCase()
+                                             + estadoStr.substring(1).toLowerCase();
+                    m.setEstado(EnumEstadoEmpleado.valueOf(normalizadoEstado));
                 }
             }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al buscar empleado: " + e.getMessage());
+        }
+    } catch (SQLException e) {
+        System.out.println("Error al buscar empleado: " + e.getMessage());
+        throw e;
+    }
+
+    return m;
+}
+
+    
+    public void eliminar(Empleado m) throws SQLException{
+        String sql = "DELETE FROM empleado WHERE idEmpleado = ?";
+        
+        try(PreparedStatement ps = Conexion.conectar().prepareStatement(sql)){
+            ps.setInt(1, m.getIdEmpleado());
+            ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("Error al eliminar el empleado");
             throw e;
         }
-
-        return m;
     }
 
 

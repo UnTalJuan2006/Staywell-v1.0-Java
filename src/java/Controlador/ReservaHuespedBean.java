@@ -321,17 +321,17 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
-        try {
-            if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
-                        "La habitación no está disponible en el rango seleccionado."));
-                return null;
-            }
-        } catch (SQLException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo verificar la disponibilidad de la habitación."));
-            return null;
-        }
+//        try {
+//            if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+//                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
+//                        "La habitación no está disponible en el rango seleccionado."));
+//                return null;
+//            }
+//        } catch (SQLException ex) {
+//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+//                    "No se pudo verificar la disponibilidad de la habitación."));
+//            return null;
+//        }
 
         if (!validarDatosPago(context)) {
             return null;

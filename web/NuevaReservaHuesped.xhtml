@@ -754,9 +754,9 @@
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <h:outputLabel for="tipoPago" styleClass="form-label"
-                                                          value="<i class='bi bi-credit-card' style='color: #1a9b8e;'></i> Tipo de tarjeta"
-                                                          escape="false" />
+                                            <h:outputLabel for="tipoPago" styleClass="form-label"/>
+<!--                                                          value="<i class='bi bi-credit-card' style='color: #1a9b8e;'></i> Tipo de tarjeta"-->
+                                                          
                                             <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
                                                              styleClass="form-select" required="true"
                                                              requiredMessage="Selecciona el tipo de tarjeta.">
@@ -768,8 +768,7 @@
 
                                         <div class="col-md-6">
                                             <h:outputLabel for="numeroTarjeta" styleClass="form-label"
-                                                          value="<i class='bi bi-123' style='color: #1a9b8e;'></i> Número de tarjeta"
-                                                          escape="false" />
+                                                          />
                                             <h:inputText id="numeroTarjeta" value="#{reservaHuespedBean.numeroTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Ingresa el número de la tarjeta.">
@@ -782,8 +781,7 @@
 
                                         <div class="col-md-6">
                                             <h:outputLabel for="titularTarjeta" styleClass="form-label"
-                                                          value="<i class='bi bi-person-vcard' style='color: #1a9b8e;'></i> Titular de la tarjeta"
-                                                          escape="false" />
+                                                         />
                                             <h:inputText id="titularTarjeta" value="#{reservaHuespedBean.titularTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Ingresa el nombre del titular." />
@@ -791,8 +789,7 @@
 
                                         <div class="col-md-6">
                                             <h:outputLabel for="fechaVencimiento" styleClass="form-label"
-                                                          value="<i class='bi bi-calendar-event' style='color: #1a9b8e;'></i> Vencimiento"
-                                                          escape="false" />
+                                                          />
                                             <h:inputText id="fechaVencimiento" value="#{reservaHuespedBean.fechaVencimientoTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Selecciona el vencimiento de la tarjeta.">
@@ -802,8 +799,7 @@
 
                                         <div class="col-md-6">
                                             <h:outputLabel for="codigoSeguridad" styleClass="form-label"
-                                                          value="<i class='bi bi-shield-check' style='color: #1a9b8e;'></i> Código de seguridad"
-                                                          escape="false" />
+                                                           />
                                             <h:inputText id="codigoSeguridad" value="#{reservaHuespedBean.codigoSeguridadTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Ingresa el código de seguridad.">

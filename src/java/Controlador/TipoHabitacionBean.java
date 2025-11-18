@@ -25,7 +25,6 @@ public class TipoHabitacionBean {
     private Part imagen;
     private List<TipoHabitacion> listaTipoHabitaciones;
 
-
     public TipoHabitacion getTipoHabitacion() {
         return tipoHabitacion;
     }
@@ -41,21 +40,17 @@ public class TipoHabitacionBean {
     public void setImagen(Part imagen) {
         this.imagen = imagen;
     }
-       // Getter
-  
-
-    // Setter
+    
     public void setListaTipoHabitaciones(List<TipoHabitacion> listaTipoHabitaciones) {
         this.listaTipoHabitaciones = listaTipoHabitaciones;
     }
-    
+
     @PostConstruct
-    public void init(){
+    public void init() {
         tipoHabitacion = new TipoHabitacion();
         tipoHabitacionDAO = new TipoHabitacionDAO();
         getListaTipoHabitaciones();
     }
-
 
     public List<TipoHabitacion> getListaTipoHabitaciones() {
         try {
@@ -66,97 +61,159 @@ public class TipoHabitacionBean {
         }
     }
 
-   
+    public String agregar() throws IOException {
+        try {
+            // Verificamos si se subió una imagen
+            if (imagen != null) {
+                ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
+                        .getExternalContext().getContext();
 
-   public String agregar() throws IOException {
-    try {
-        // Verificamos si se subió una imagen
-        if (imagen != null) {
-            ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
-                    .getExternalContext().getContext();
-
-            // Carpeta donde se guardarán las imágenes dentro del proyecto
-            String rutaCarpeta = sc.getRealPath("/img/");
-            File carpeta = new File(rutaCarpeta);
-            if (!carpeta.exists()) {
-                carpeta.mkdirs();
-            }
-
-            // Nombre único para el archivo
-            String nombreArchivo = tipoHabitacion.getNombre().replaceAll("\\s+", "_")
-                    + "_" + System.currentTimeMillis() + ".png";
-
-            // Guardar físicamente la imagen
-            File archivoDestino = new File(carpeta, nombreArchivo);
-            try (InputStream in = imagen.getInputStream();
-                 FileOutputStream out = new FileOutputStream(archivoDestino)) {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
+                // Carpeta donde se guardarán las imágenes dentro del proyecto
+                String rutaCarpeta = sc.getRealPath("/img/");
+                File carpeta = new File(rutaCarpeta);
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
                 }
+
+                // Nombre único para el archivo
+                String nombreArchivo = tipoHabitacion.getNombre().replaceAll("\\s+", "_")
+                        + "_" + System.currentTimeMillis() + ".png";
+
+                // Guardar físicamente la imagen
+                File archivoDestino = new File(carpeta, nombreArchivo);
+                try (InputStream in = imagen.getInputStream(); FileOutputStream out = new FileOutputStream(archivoDestino)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                }
+
+                // Guardamos el nombre del archivo en el modelo
+                tipoHabitacion.setImagen(nombreArchivo);
             }
 
-            // Guardamos el nombre del archivo en el modelo
-            tipoHabitacion.setImagen(nombreArchivo);
+            // Llamamos al DAO para insertar el registro
+            tipoHabitacionDAO.agregar(tipoHabitacion);
+
+            // Mensaje de éxito en la interfaz
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new javax.faces.application.FacesMessage("Tipo de habitación agregado correctamente."));
+
+            // Limpiamos el formulario
+            tipoHabitacion = new TipoHabitacion();
+            imagen = null;
+
+            // Redirigir a la lista (opcional)
+            return "TipoHabitacion.xhtml?faces-redirect=true";
+
+        } catch (SQLException e) {
+            System.out.println("Error al registrar tipo: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new javax.faces.application.FacesMessage(
+                            javax.faces.application.FacesMessage.SEVERITY_ERROR,
+                            "Error al registrar tipo de habitación",
+                            e.getMessage()
+                    ));
+            return null;
         }
-
-        // Llamamos al DAO para insertar el registro
-        tipoHabitacionDAO.agregar(tipoHabitacion);
-
-        // Mensaje de éxito en la interfaz
-        FacesContext.getCurrentInstance().addMessage(null,
-                new javax.faces.application.FacesMessage("Tipo de habitación agregado correctamente."));
-
-        // Limpiamos el formulario
-        tipoHabitacion = new TipoHabitacion();
-        imagen = null;
-
-        // Redirigir a la lista (opcional)
-        return "TipoHabitacion.xhtml?faces-redirect=true";
-
-    } catch (SQLException e) {
-        System.out.println("Error al registrar tipo: " + e.getMessage());
-        FacesContext.getCurrentInstance().addMessage(null,
-                new javax.faces.application.FacesMessage(
-                        javax.faces.application.FacesMessage.SEVERITY_ERROR,
-                        "Error al registrar tipo de habitación",
-                        e.getMessage()
-                ));
-        return null;
     }
-}
 
-   public void cargarTipoPorId() {
-       String idParam = FacesContext.getCurrentInstance().getExternalContext()
+    public void cargarTipoPorId() {
+        String idParam = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap().get("id");
-       
-       if (idParam != null) {
-           try{
-               int id = Integer.parseInt(idParam);
-               TipoHabitacion tipoHabitacionEncontrada = tipoHabitacionDAO.buscar(id);
-               
-               if(tipoHabitacionEncontrada != null){
-                   this.tipoHabitacion = tipoHabitacionEncontrada;
-                   
-                   FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "TipoHabitación cargada correctamente",
-                            "Se cargó el tipo  con ID: " + id));
-               }else {
-                      FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "Advertencia",
-                            "El Tipohabitación no existe."));
-               }
-           }catch(NumberFormatException | SQLException e){
+
+        if (idParam != null) {
+            try {
+                int id = Integer.parseInt(idParam);
+                TipoHabitacion tipoHabitacionEncontrada = tipoHabitacionDAO.buscarPorId(id);
+
+                if (tipoHabitacionEncontrada != null) {
+                    this.tipoHabitacion = tipoHabitacionEncontrada;
+
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                    "TipoHabitación cargada correctamente",
+                                    "Se cargó el tipo  con ID: " + id));
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                    "Advertencia",
+                                    "El Tipohabitación no existe."));
+                }
+            } catch (NumberFormatException | SQLException e) {
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Error",
-                        "No se pudo cargar el tipohabitación."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Error",
+                                "No se pudo cargar el tipohabitación."));
                 e.printStackTrace();
-           }
-       }
-   }
+            }
+        }
+    }
+
+    public String eliminar(TipoHabitacion t) {
+        try {
+
+            TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
+            tipoHabitacionDAO.eliminar(t);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Tipo eliminado correctamente", null));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al eliminar habitación: " + e.getMessage(), null));
+        }
+        return "TipoHabitacion?faces-redirect=true";
+    }
+
+    public String actualizar() {
+        try {
+            // Verificamos si el usuario subió una nueva imagen
+            if (imagen != null && imagen.getSize() > 0) {
+                ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
+                        .getExternalContext().getContext();
+
+                String rutaCarpeta = sc.getRealPath("/img/");
+                File carpeta = new File(rutaCarpeta);
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
+                }
+
+                // Crear un nombre único para la nueva imagen
+                String nombreArchivo = tipoHabitacion.getNombre().replaceAll("\\s+", "_")
+                        + "_" + System.currentTimeMillis() + ".png";
+
+                // Guardar físicamente la nueva imagen
+                File archivoDestino = new File(carpeta, nombreArchivo);
+                try (InputStream in = imagen.getInputStream(); FileOutputStream out = new FileOutputStream(archivoDestino)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                }
+
+                // Actualizamos el nombre de la imagen en el objeto
+                tipoHabitacion.setImagen(nombreArchivo);
+            }
+
+            // Llamamos al DAO para actualizar los datos (nombre, descripción, etc.)
+            tipoHabitacionDAO.actualizar(tipoHabitacion);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Tipo de habitación actualizado correctamente", null));
+
+            return "TipoHabitacion.xhtml?faces-redirect=true";
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al actualizar tipo de habitación: " + e.getMessage(), null));
+            return null;
+        }
+    }
 
 }
