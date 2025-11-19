@@ -245,7 +245,7 @@
             </div>
 
             <div class="mt-5">
-                <h:messages styleClass="alert alert-info" layout="table" />
+                <h:messages id="msgEventos" styleClass="alert alert-info" layout="list" />
 
                 <div class="mb-4">
 
@@ -292,61 +292,70 @@
                             </div>
                         </h:panelGroup>
 
-                        <h:panelGroup rendered="#{not empty eventoBean.listaEventos}">
-                            <div class="table-responsive">
-                                <table class="table table-striped align-middle" id="tblEventos">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>nombreEvento</th>
-                                            <th>Fecha Evento</th>
-                                            <th>Hora Inicio</th>
-                                            <th>Hora Fin</th>
-                                            <th>Espacio</th>
-                                            <th>Cliente</th>
-                                            <th>Estado</th>
-                                            <th>Acciones</th>
-
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <ui:repeat value="#{eventoBean.listaEventos}" var="evento" varStatus="loop">
+                        <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.listaEventos}">
+                            <h:form id="formEventos">
+                                <div class="table-responsive">
+                                    <table class="table table-striped align-middle" id="tblEventos">
+                                        <thead>
                                             <tr>
-                                                <td>#{loop.index + 1}</td>
-                                                <td>#{evento.nombreEvento}</td>
-                                                <td>#{evento.fechaEvento}</td>
-                                                <td>#{evento.horaInicio}</td>
-                                                <td>#{evento.horaFin}</td>
-                                                <td>#{evento.espacio.nombre}</td>
-                                                <td>#{evento.usuario.nombre}</td>
-                                                <td>
-                                                    <span class="badge bg-secondary">#{evento.estado}</span>
-                                                </td>
-                                                <td class="table-actions">
-                                                    <h:link outcome="/" styleClass="btn btn-outline-info btn-sm">
-                                                        <i class="bi bi-eye"></i>
-                                                        <f:param name="id" value="#{evento.idEvento}" />
-                                                    </h:link>
-                                                    <h:link outcome="/" styleClass="btn btn-outline-warning btn-sm">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                        <f:param name="id" value="#{evento.idEvento}" />
-                                                    </h:link>
-                                                    <h:form styleClass="d-inline">
+                                                <th>#</th>
+                                                <th>Nombre del evento</th>
+                                                <th>Fecha Evento</th>
+                                                <th>Hora Inicio</th>
+                                                <th>Hora Fin</th>
+                                                <th>Espacio</th>
+                                                <th>Cliente</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ui:repeat value="#{eventoBean.listaEventos}" var="evento" varStatus="loop">
+                                                <tr>
+                                                    <td>#{loop.index + 1}</td>
+                                                    <td>#{evento.nombreEvento}</td>
+                                                    <td>
+                                                        <h:outputText value="#{evento.fechaEvento}">
+                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                        </h:outputText>
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{evento.horaInicio}" />
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{evento.horaFin}" />
+                                                    </td>
+                                                    <td>#{empty evento.espacio ? 'Sin asignar' : evento.espacio.nombre}</td>
+                                                    <td>#{empty evento.usuario ? 'Sin asignar' : evento.usuario.nombre}</td>
+                                                    <td>
+                                                        <span class="badge bg-secondary">#{empty evento.estado ? 'Sin estado' : evento.estado}</span>
+                                                    </td>
+                                                    <td class="table-actions">
+                                                        <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                            <i class="bi bi-eye"></i>
+                                                            <f:param name="id" value="#{evento.idEvento}" />
+                                                        </h:link>
+                                                        <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                            <f:param name="id" value="#{evento.idEvento}" />
+                                                        </h:link>
+                                                        <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
+                                                            <i class="bi bi-credit-card"></i>
+                                                            <f:param name="idEvento" value="#{evento.idEvento}" />
+                                                        </h:link>
                                                         <h:commandLink action="#{eventoBean.eliminar(evento)}"
                                                                        styleClass="btn btn-outline-danger btn-sm"
                                                                        onclick="return confirm('¿Desea eliminar el evento?');">
                                                             <i class="bi bi-trash"></i>
+                                                            <f:ajax execute="@this" render="@form :msgEventos :panelListaEventos" />
                                                         </h:commandLink>
-                                                    </h:form>
-                                                </td>
-
-                                            </tr>
-                                        </ui:repeat>
-                                    </tbody>
-                                </table>
-
-                            </div>
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </h:form>
                         </h:panelGroup>
                     </div>
                 </div>

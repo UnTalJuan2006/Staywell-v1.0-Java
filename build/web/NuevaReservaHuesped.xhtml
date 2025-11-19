@@ -514,8 +514,8 @@
                 <a href="HomeHuesped.xhtml" class="nav-link active"><i class="bi bi-house-door"></i>Inicio</a>
                 <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
                 <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
-                <a href="#" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
-                <a href="#" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
+                <a href="NuevoEventoHuesped.xhtml" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
+                <a href="MisEventos.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
                 <a href="#" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
 
                 <h:form>
@@ -624,7 +624,7 @@
                                         <f:passThroughAttribute name="type" value="text" />
                                         <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
-                                                render="panelResumen montoPago" />
+                                                render="habitacion ocupacionesJson panelResumen montoPago" />
                                     </h:inputText>
                                 </div>
 
@@ -638,7 +638,7 @@
                                         <f:passThroughAttribute name="type" value="text" />
                                         <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
                                         <f:ajax event="change" listener="#{reservaHuespedBean.onFechasChange}"
-                                                render="panelResumen montoPago" />
+                                                render="habitacion ocupacionesJson panelResumen montoPago" />
                                     </h:inputText>
                                 </div>
                             </div>
@@ -829,6 +829,6 @@
                 </h:form>
             </div>
         </div>
-        <script src="js/reservaForm.js"></script>
+        <script src="#{request.contextPath}/js/reservaForm.js"></script>
     </h:body>
 </html>
