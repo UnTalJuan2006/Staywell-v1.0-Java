@@ -12,7 +12,9 @@ import Modelo.Usuario;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -189,11 +191,32 @@ public class EventoHuespedBean implements Serializable {
     }
 
     private void recalcularTotal() {
-        totalEvento = BigDecimal.ZERO;
-        if (precioDia == null) precioDia = BigDecimal.ZERO;
-        if (fechaEvento == null) return;
-        // evento de un solo día: total = precioDia
-        totalEvento = precioDia;
+        if (precioDia == null) {
+            precioDia = BigDecimal.ZERO;
+        }
+
+        if (espacioSeleccionado == null || precioDia.compareTo(BigDecimal.ZERO) <= 0) {
+            totalEvento = BigDecimal.ZERO;
+            return;
+        }
+
+        BigDecimal totalCalculado = precioDia;
+
+        if (horaInicio != null && horaFin != null && horaFin.isAfter(horaInicio)) {
+            long minutos = Duration.between(horaInicio, horaFin).toMinutes();
+            if (minutos > 0) {
+                BigDecimal horas = BigDecimal.valueOf(minutos)
+                        .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+
+                if (horas.compareTo(BigDecimal.ONE) < 0) {
+                    horas = BigDecimal.ONE;
+                }
+
+                totalCalculado = precioDia.multiply(horas);
+            }
+        }
+
+        totalEvento = totalCalculado.setScale(2, RoundingMode.HALF_UP);
     }
 
     // -------------------------
@@ -511,6 +534,18 @@ public class EventoHuespedBean implements Serializable {
 
     public BigDecimal getTotalEvento() {
         return totalEvento;
+    }
+
+    public String getNombreEspacioSeleccionado() {
+        if (espacioSeleccionado == null) {
+            return null;
+        }
+
+        return espacios.stream()
+                .filter(e -> e.getIdEspacio() == espacioSeleccionado)
+                .map(Espacio::getNombre)
+                .findFirst()
+                .orElse(null);
     }
 
     public EnumPago[] getTiposPago() {
