@@ -68,6 +68,15 @@
     let calendario;
     let crearReservaModalInstance;
 
+    const actualizarIndicadorTipoSeleccionado = (nombre) => {
+        const indicador = document.getElementById('crear-tipo-seleccionado');
+        if (!indicador) {
+            return;
+        }
+        const texto = nombre && nombre.trim() !== '' ? nombre : 'Sin seleccionar';
+        indicador.textContent = texto;
+    };
+
     const mostrarDetalleReserva = (evento) => {
         const detalleModalEl = document.getElementById('detalleReservaModal');
         if (!detalleModalEl || !window.bootstrap) {
@@ -136,12 +145,24 @@
         }
     };
 
+    const normalizarEntero = (valor) => {
+        if (typeof valor === 'number' && !Number.isNaN(valor)) {
+            return valor;
+        }
+        if (typeof valor === 'string' && valor.trim() !== '') {
+            const numero = parseInt(valor, 10);
+            return Number.isNaN(numero) ? null : numero;
+        }
+        return null;
+    };
+
     const prepararSelectHabitaciones = (tipoId) => {
         const selectHabitacion = document.getElementById('crear-habitacion');
         if (!selectHabitacion) {
             return;
         }
 
+        const tipoIdNormalizado = normalizarEntero(tipoId);
         const valorActual = selectHabitacion.value;
         selectHabitacion.innerHTML = '';
 
@@ -151,7 +172,7 @@
         selectHabitacion.appendChild(opcionDefault);
 
         habitacionesData
-            .filter((habitacion) => !tipoId || habitacion.tipoId === tipoId)
+            .filter((habitacion) => !tipoIdNormalizado || habitacion.tipoId === tipoIdNormalizado)
             .forEach((habitacion) => {
                 const option = document.createElement('option');
                 option.value = habitacion.id;
@@ -162,6 +183,80 @@
         if (valorActual) {
             selectHabitacion.value = valorActual;
         }
+    };
+
+    const actualizarTipoSeleccionado = (tipoId, tipoNombre) => {
+        const tipoIdNormalizado = normalizarEntero(tipoId);
+        const inputTipoId = document.getElementById('crear-tipo-id');
+        if (inputTipoId) {
+            inputTipoId.value = tipoIdNormalizado || '';
+        }
+
+        const nombreDesdeCatalogo = (() => {
+            if (!tipoIdNormalizado) {
+                return '';
+            }
+            const tipoEncontrado = tiposHabitacionData.find((tipo) => tipo.id === tipoIdNormalizado);
+            return tipoEncontrado ? tipoEncontrado.nombre : '';
+        })();
+
+        const nombreFinal = nombreDesdeCatalogo || tipoNombre || '';
+        const inputTipoNombre = document.getElementById('crear-tipo-nombre');
+        if (inputTipoNombre) {
+            inputTipoNombre.value = nombreFinal;
+        }
+        actualizarIndicadorTipoSeleccionado(nombreFinal);
+        prepararSelectHabitaciones(tipoIdNormalizado);
+    };
+
+    const prepararSelectTipos = (tipoId, tipoNombre) => {
+        const selectTipo = document.getElementById('crear-tipo');
+        if (!selectTipo) {
+            return;
+        }
+
+        const valorDeseado = (() => {
+            const idNormalizado = normalizarEntero(tipoId);
+            if (idNormalizado) {
+                return `${idNormalizado}`;
+            }
+            if (tipoNombre) {
+                const encontrado = tiposHabitacionData.find((tipo) => tipo.nombre === tipoNombre);
+                if (encontrado) {
+                    return `${encontrado.id}`;
+                }
+            }
+            return selectTipo.value || '';
+        })();
+
+        selectTipo.innerHTML = '';
+
+        const opcionDefault = document.createElement('option');
+        opcionDefault.value = '';
+        opcionDefault.textContent = 'Selecciona un tipo de habitación';
+        selectTipo.appendChild(opcionDefault);
+
+        tiposHabitacionData.forEach((tipo) => {
+            const option = document.createElement('option');
+            option.value = tipo.id;
+            option.textContent = `${tipo.nombre} • Capacidad: ${tipo.capacidad} • $${tipo.precio}`;
+            selectTipo.appendChild(option);
+        });
+
+        if (valorDeseado) {
+            selectTipo.value = valorDeseado;
+            if (selectTipo.value !== valorDeseado) {
+                selectTipo.value = '';
+            }
+        } else {
+            selectTipo.value = '';
+        }
+
+        actualizarTipoSeleccionado(selectTipo.value);
+
+        selectTipo.onchange = (event) => {
+            actualizarTipoSeleccionado(event.target.value);
+        };
     };
 
     const prepararSelectUsuarios = () => {
@@ -217,6 +312,7 @@
         asignarValor('crear-tipo-nombre', tipoNombre || '');
         asignarValor('crear-start', inicio || '');
         asignarValor('crear-end', fin || '');
+        actualizarIndicadorTipoSeleccionado(tipoNombre || '');
 
         const resumenFechas = document.getElementById('crear-resumen-fechas');
         if (resumenFechas) {
@@ -235,7 +331,7 @@
             estado.value = 'ACTIVA';
         }
 
-        prepararSelectHabitaciones(tipoId);
+        prepararSelectTipos(tipoId, tipoNombre);
         prepararSelectUsuarios();
 
         if (crearReservaModalInstance) {
@@ -368,6 +464,8 @@
             {name: 'end', value: fin},
             {name: 'habitacionId', value: habitacionId},
             {name: 'usuarioId', value: usuarioId},
+            {name: 'tipoId', value: document.getElementById('crear-tipo-id')?.value},
+            {name: 'tipoNombre', value: document.getElementById('crear-tipo-nombre')?.value},
             {name: 'estado', value: document.getElementById('crear-estado')?.value},
             {name: 'clienteNombre', value: document.getElementById('crear-nombre')?.value},
             {name: 'email', value: document.getElementById('crear-email')?.value},
@@ -400,6 +498,7 @@
         inicializarCalendario();
         inicializarDraggables();
         inicializarModal();
+        prepararSelectTipos();
         prepararSelectUsuarios();
     });
 })();

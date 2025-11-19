@@ -221,9 +221,13 @@
         </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.es) {
-            window.flatpickr.localize(window.flatpickr.l10ns.es);
+if (window.jsf &amp;&amp; jsf.ajax) {
+    jsf.ajax.addOnEvent(function(data) {
+        if (data.status === 'success') {
+            inicializarPickersEvento();
         }
+    });
+}
         const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
         const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
         let ocupaciones = [];

@@ -335,10 +335,23 @@
                         <div class="row g-3">
                             <input type="hidden" id="crear-start" />
                             <input type="hidden" id="crear-end" />
-                            <input type="hidden" id="crear-tipo-id" />
+                            <input type="hidden" id="crear-tipo-id" value="#{reservaCalendarioBean.tipoHabitacionSeleccionadoId}" />
+                            <input type="hidden" id="crear-tipo-nombre" value="#{reservaCalendarioBean.tipoHabitacionSeleccionadoNombre}" />
+                            <div class="col-12">
+                                <div class="alert alert-secondary d-flex align-items-center gap-2 py-2 mb-0">
+                                    <i class="bi bi-info-circle text-primary"></i>
+                                    <div>
+                                        <small class="text-muted d-block">Tipo seleccionado</small>
+                                        <strong id="crear-tipo-seleccionado">
+                                            <h:outputText value="#{empty reservaCalendarioBean.tipoHabitacionSeleccionadoNombre ? 'Sin seleccionar' : reservaCalendarioBean.tipoHabitacionSeleccionadoNombre}" />
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Tipo de habitación</label>
-                                <input type="text" class="form-control" id="crear-tipo-nombre" readonly="readonly" />
+                                <select class="form-select" id="crear-tipo"></select>
+                                <small class="text-muted">Selecciona el tipo de habitación para filtrar las opciones disponibles.</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Habitación</label>
