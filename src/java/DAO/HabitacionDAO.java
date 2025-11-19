@@ -18,8 +18,13 @@ public class HabitacionDAO {
 
     public List<Habitacion> listar() throws SQLException {
         List<Habitacion> listaHabitaciones = new ArrayList<>();
-        //TipoHabitacionDAO tipoDAO = new TipoHabitacionDAO();
-        String sql = "SELECT * FROM habitacion h inner join tipohabitacion th on th.idTipoHabitacion = h.idTipoHabitacion order by numHabitacion";
+        String sql = "SELECT "
+                + "h.idHabitacion, h.numHabitacion, h.estado, h.fechaCreacion, h.fechaActualizacion, h.idTipoHabitacion, "
+                + "th.idTipoHabitacion AS tipoId, th.nombre AS tipoNombre, th.descripcion AS tipoDescripcion, "
+                + "th.capacidad AS tipoCapacidad, th.precio AS tipoPrecio "
+                + "FROM habitacion h "
+                + "INNER JOIN tipohabitacion th ON th.idTipoHabitacion = h.idTipoHabitacion "
+                + "ORDER BY h.numHabitacion";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -28,8 +33,16 @@ public class HabitacionDAO {
                 Habitacion h = new Habitacion();
                 h.setIdHabitacion(rs.getInt("idHabitacion"));
                 h.setNumHabitacion(rs.getInt("numHabitacion"));
-                h.setNombreTipoHabitacion(rs.getString("nombre"));
+                h.setNombreTipoHabitacion(rs.getString("tipoNombre"));
                 h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estado")));
+
+                TipoHabitacion tipo = new TipoHabitacion();
+                tipo.setIdTipoHabitacion(rs.getInt("tipoId"));
+                tipo.setNombre(rs.getString("tipoNombre"));
+                tipo.setDescripcion(rs.getString("tipoDescripcion"));
+                tipo.setCapacidad(rs.getInt("tipoCapacidad"));
+                tipo.setPrecio(rs.getFloat("tipoPrecio"));
+                h.setTipoHabitacion(tipo);
 
                 // Manejo seguro de timestamps que pueden ser NULL
                 java.sql.Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
