@@ -84,11 +84,14 @@
                                         </h:selectOneMenu>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Fecha</label>
-                                        <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" readonly="true" required="true">
+                                        <label class="form-label" for="fechaEvento">Fecha</label>
+                                        <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" required="true"
+                                                     requiredMessage="Selecciona la fecha del evento.">
+                                            <f:passThroughAttribute name="type" value="text" />
                                             <f:convertDateTime pattern="yyyy-MM-dd" />
                                             <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
+                                        <h:message for="fechaEvento" styleClass="text-danger small" />
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora inicio</label>
@@ -220,35 +223,93 @@
             </div>
         </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-if (window.jsf &amp;&amp; jsf.ajax) {
-    jsf.ajax.addOnEvent(function(data) {
-        if (data.status === 'success') {
-            inicializarPickersEvento();
-        }
-    });
-}
-        const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-        const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-        let ocupaciones = [];
-        if (rawJson) {
+    (function () {
+        function parseOcupaciones() {
+            const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+            const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+            if (!rawJson) {
+                return [];
+            }
+
             try {
-                ocupaciones = JSON.parse(rawJson);
+                const datos = JSON.parse(rawJson);
+                if (!Array.isArray(datos)) {
+                    return [];
+                }
+                return datos.map(rango => {
+                    if (!rango || !rango.from) {
+                        return null;
+                    }
+                    const from = new Date(rango.from);
+                    const to = new Date(rango.to || rango.from);
+                    if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                        return null;
+                    }
+                    return { from, to };
+                }).filter(Boolean);
             } catch (e) {
                 console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-                ocupaciones = [];
+                return [];
             }
         }
-        const rangosDeshabilitados = Array.isArray(ocupaciones) ? ocupaciones.map(f => ({ from: f.from, to: f.to })) : [];
-        flatpickr("#formEvento\\:fechaEvento", {
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            allowInput: true,
-            disable: rangosDeshabilitados
-        });
-        flatpickr("#formEvento\\:horaInicio", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
-        flatpickr("#formEvento\\:horaFin", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
-    });
+
+        function initHoraPicker(componenteId) {
+            const input = document.getElementById("formEvento:" + componenteId);
+            if (!input || !window.flatpickr) {
+                return;
+            }
+            if (input._flatpickr) {
+                input._flatpickr.destroy();
+            }
+            window.flatpickr(input, {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                allowInput: true
+            });
+        }
+
+        function initFechaPicker(disabledRanges) {
+            const input = document.getElementById("formEvento:fechaEvento");
+            if (!input || !window.flatpickr) {
+                return;
+            }
+            if (input._flatpickr) {
+                input._flatpickr.destroy();
+            }
+            window.flatpickr(input, {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d/m/Y",
+                minDate: "today",
+                allowInput: false,
+                disable: disabledRanges
+            });
+        }
+
+        function inicializarCalendarios() {
+            if (!window.flatpickr) {
+                return;
+            }
+            if (window.flatpickr.l10ns && window.flatpickr.l10ns.es) {
+                window.flatpickr.localize(window.flatpickr.l10ns.es);
+            }
+            const rangosDeshabilitados = parseOcupaciones();
+            initFechaPicker(rangosDeshabilitados);
+            initHoraPicker("horaInicio");
+            initHoraPicker("horaFin");
+        }
+
+        document.addEventListener("DOMContentLoaded", inicializarCalendarios);
+        if (window.jsf && window.jsf.ajax) {
+            window.jsf.ajax.addOnEvent(function (event) {
+                if (event && event.status === "success") {
+                    inicializarCalendarios();
+                }
+            });
+        }
+    })();
 </script>
 </h:body>
 </html>
