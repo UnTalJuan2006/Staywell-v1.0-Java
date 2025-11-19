@@ -67,25 +67,27 @@
                                         <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
                                             <f:selectItem itemLabel="Seleccione un espacio" itemValue="" noSelectionOption="true" />
                                             <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
-                                            <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="@form resumen" />
+                                            <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard" />
                                         </h:selectOneMenu>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Fecha</label>
                                         <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" readonly="true" required="true">
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumen" />
+                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+        
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
                                         </h:inputText>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora inicio</label>
-                                        <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" readonly="true" required="true">
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumen" />
+                                        <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
                                         </h:inputText>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora fin</label>
-                                        <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" readonly="true" required="true">
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumen" />
+                                        <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
                                         </h:inputText>
                                     </div>
                                 </div>
@@ -123,13 +125,19 @@
                         </div>
                     </div>
                     <div class="col-lg-5">
-                        <div class="summary-card" id="resumen">
+                        <h:panelGroup id="resumenCard" layout="block" styleClass="summary-card">
                             <h4 class="mb-3">Resumen</h4>
-                            <p class="mb-1">Espacio seleccionado: <strong>#{eventoHuespedBean.espacioSeleccionado}</strong></p>
+                            <p class="mb-1">Nombre: <strong>#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}</strong></p>
+                            <p class="mb-1">Espacio: <strong>#{empty eventoHuespedBean.nombreEspacioSeleccionado ? 'Sin seleccionar' : eventoHuespedBean.nombreEspacioSeleccionado}</strong></p>
                             <p class="mb-1">Fecha: <strong>
                                 <h:outputText value="#{eventoHuespedBean.fechaEvento}">
                                     <f:convertDateTime pattern="dd/MM/yyyy" />
                                 </h:outputText>
+                            </strong></p>
+                            <p class="mb-1">Horario: <strong>
+                                <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
+                                <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
+                                <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
                             </strong></p>
                             <p class="mb-1">Costo estimado: <strong>$
                                 <h:outputText value="#{eventoHuespedBean.totalEvento}">
@@ -137,7 +145,7 @@
                                 </h:outputText>
                             </strong></p>
                             <small>El valor puede variar según la duración del evento.</small>
-                        </div>
+                        </h:panelGroup>
                     </div>
                 </div>
             </div>
