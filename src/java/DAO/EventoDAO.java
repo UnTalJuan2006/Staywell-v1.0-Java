@@ -172,7 +172,10 @@ public class EventoDAO {
             ps.setInt(10, evento.getUsuario().getIdUsuario());
             ps.setString(11, evento.getEstado() != null ? evento.getEstado().name() : null);
 
-            ps.executeUpdate();
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                throw new SQLException("No se insertó ningún registro para el evento.");
+            }
 
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -208,9 +211,12 @@ public class EventoDAO {
             ps.setInt(9, evento.getEspacio().getIdEspacio());
             ps.setInt(10, usuarioLogueado.getIdUsuario());
             ps.setString(11, "Activa");
-            
-            ps.executeUpdate();
-            
+
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+                throw new SQLException("No se insertó ningún registro para el evento.");
+            }
+
              try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);

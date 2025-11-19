@@ -260,6 +260,14 @@ public class EventoBean implements Serializable {
     }
 
     public String guardar() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (usuarioLogueado == null || usuarioLogueado.getRol() != EnumRoles.ADMIN) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Acceso denegado", "Solo los administradores pueden crear eventos."));
+            return null;
+        }
+
         try {
             if (!validarFechaBasica(true)) {
                 return null;
@@ -279,19 +287,27 @@ public class EventoBean implements Serializable {
 
             prepararAuditoria(true);
 
-            eventoDAO.agregarEvento(evento);
-            FacesContext.getCurrentInstance().addMessage(null,
+            int idGenerado = eventoDAO.agregarEvento(evento);
+            if (idGenerado <= 0) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error", "No se pudo registrar el evento."));
+                return null;
+            }
+
+            evento.setIdEvento(idGenerado);
+            context.getExternalContext().getFlash().setKeepMessages(true);
+            context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
-                    "Evento registrado correctamente."));
+                            "Evento registrado correctamente."));
             limpiarFormulario();
             cargarEventos();
-            return "Eventos?faces-redirect=true";
+            return "/Eventos.xhtml?faces-redirect=true";
 
         } catch (SQLException e) {
             System.out.println("❌ Error al guardar evento: " + e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                    "No se pudo registrar el evento."));
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo registrar el evento."));
             return null;
         }
     }
