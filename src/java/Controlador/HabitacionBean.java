@@ -32,7 +32,20 @@ public class HabitacionBean implements Serializable {
     private List<Habitacion> habitacionesFiltradas;
     private List<TipoHabitacion> listaTipos;
 
-    private Integer idTipoSeleccionado; // ✅ Solo manejamos el ID
+    private Integer idTipoSeleccionado;
+    private String filtro;
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
+
+    public List<Habitacion> getHabitacionesFiltradas() {
+        return habitacionesFiltradas;
+    }
 
     @PostConstruct
     public void init() {
@@ -56,18 +69,17 @@ public class HabitacionBean implements Serializable {
             }
 
             //habitacionesFiltradas = new ArrayList<>(habitaciones);
-
 //            System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
-
         } catch (Exception e) {
             System.out.println("💥 Error en @PostConstruct: " + e.getMessage());
             e.printStackTrace();
             listaTipos = new ArrayList<>();
             habitaciones = new ArrayList<>();
             habitacionesFiltradas = new ArrayList<>();
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
+
         }
     }
-
 
     public List<Habitacion> getListaHabitaciones() {
         try {
@@ -86,8 +98,8 @@ public class HabitacionBean implements Serializable {
         }
         habitacionesFiltradas.clear();
         for (Habitacion h : habitaciones) {
-            if (h.getTipoHabitacion() != null &&
-                h.getTipoHabitacion().getIdTipoHabitacion() == idTipoSeleccionado) {
+            if (h.getTipoHabitacion() != null
+                    && h.getTipoHabitacion().getIdTipoHabitacion() == idTipoSeleccionado) {
                 habitacionesFiltradas.add(h);
             }
         }
@@ -133,24 +145,24 @@ public class HabitacionBean implements Serializable {
             return null;
         }
     }
-    
-    public String actualizar(){
-        try{
+
+    public String actualizar() {
+        try {
             habitacion.setFechaActualizacion(LocalDateTime.now());
             getHabitacionDAO().actualizar(habitacion);
             habitacion = new Habitacion();
-            
-             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Habitacion actualizada correctamente."));
-             return "Habitaciones?faces-redirect=true";
-        }catch(SQLException e){
+
             FacesContext.getCurrentInstance().addMessage(null,
-                   new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar la Habitacion."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Habitacion actualizada correctamente."));
+            return "Habitaciones?faces-redirect=true";
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar la Habitacion."));
             return null;
         }
     }
-    
-     public void cargarHabitacionPorId() {
+
+    public void cargarHabitacionPorId() {
         String idParam = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap().get("id");
 
@@ -163,41 +175,93 @@ public class HabitacionBean implements Serializable {
                     this.habitacion = habitacionEncontrada;
 
                     FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Habitación cargada correctamente",
-                            "Se cargó la habitación con ID: " + id));
+                            new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                    "Habitación cargada correctamente",
+                                    "Se cargó la habitación con ID: " + id));
 
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "Advertencia",
-                            "La habitación no existe."));
+                            new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                    "Advertencia",
+                                    "La habitación no existe."));
                 }
 
             } catch (NumberFormatException | SQLException e) {
                 FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Error",
-                        "No se pudo cargar la habitación."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Error",
+                                "No se pudo cargar la habitación."));
                 e.printStackTrace();
             }
         }
     }
-     
-public String eliminar(Habitacion h) {
-    try {
-        HabitacionDAO habitacionDAO = new HabitacionDAO();
-        habitacionDAO.eliminar(h);
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_INFO,
-            "Habitación eliminada correctamente", null));
-    } catch (Exception e) {
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-            "Error al eliminar habitación: " + e.getMessage(), null));
+
+    public String eliminar(Habitacion h) {
+        try {
+            HabitacionDAO habitacionDAO = new HabitacionDAO();
+            habitacionDAO.eliminar(h);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Habitación eliminada correctamente", null));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al eliminar habitación: " + e.getMessage(), null));
+        }
+        return "Habitaciones?faces-redirect=true";
     }
-    return "Habitaciones?faces-redirect=true";
+
+  public void buscar() {
+    try {
+        // Asegurar listas no nulas
+        if (habitaciones == null) {
+            habitaciones = getHabitacionDAO().listar();
+        }
+        if (habitacionesFiltradas == null) {
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
+        }
+
+        // Si el filtro está vacío, restaurar la lista completa
+        if (filtro == null || filtro.trim().isEmpty()) {
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
+            return;
+        }
+
+        String txt = filtro.trim().toLowerCase();
+        List<Habitacion> resultados = new ArrayList<>();
+
+        for (Habitacion h : habitaciones) {
+            // numHabitacion es int -> convertir a String
+            String numStr = String.valueOf(h.getNumHabitacion());
+
+            String tipo = h.getNombreTipoHabitacion() != null
+                    ? h.getNombreTipoHabitacion().toLowerCase()
+                    : "";
+
+            String estado = h.getEstado() != null
+                    ? h.getEstado().name().toLowerCase()
+                    : "";
+
+            boolean coincideNumero = numStr.toLowerCase().contains(txt);
+            boolean coincideTipo = tipo.contains(txt);
+            boolean coincideEstado = estado.contains(txt);
+
+            if (coincideNumero || coincideTipo || coincideEstado) {
+                resultados.add(h);
+            }
+        }
+
+        habitacionesFiltradas = resultados;
+
+    } catch (SQLException ex) {
+        System.out.println("ERROR filtrando habitaciones: " + ex.getMessage());
+        // en caso de error, no dejar la lista nula
+        if (habitacionesFiltradas == null) {
+            habitacionesFiltradas = new ArrayList<>();
+        }
+    }
 }
+
 
     // --- CONTADORES POR TIPO ---
     public int totalHabitacionesEstandar() throws SQLException {
@@ -229,10 +293,7 @@ public String eliminar(Habitacion h) {
         this.habitacion = habitacion;
     }
 
-    public List<Habitacion> getHabitacionesFiltradas() {
-        return habitacionesFiltradas;
-    }
-
+  
     public List<TipoHabitacion> getListaTipos() {
         return listaTipos;
     }

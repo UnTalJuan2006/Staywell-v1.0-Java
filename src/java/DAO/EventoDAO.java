@@ -326,6 +326,8 @@ public class EventoDAO {
         return true;
     }
     
+    
+    
   public List<Evento> listarOcupacionesEspacio(int espacioId, Integer eventoExcluirId) throws SQLException {
     List<Evento> ocupaciones = new ArrayList<>();
     StringBuilder sql = new StringBuilder("SELECT idEvento, fechaEvento FROM evento WHERE idEspacio = ? ");

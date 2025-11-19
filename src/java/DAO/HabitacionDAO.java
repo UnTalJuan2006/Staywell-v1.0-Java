@@ -164,7 +164,41 @@ public class HabitacionDAO {
         }
     }
     
+    public List<Habitacion> buscar(String filtro) throws SQLException {
+
+    List<Habitacion> lista = new ArrayList<>();
+
+    String sql = "SELECT h.*, t.nombreTipoHabitacion "
+               + "FROM habitacion h "
+               + "JOIN tipohabitacion t ON h.idTipoHabitacion = t.idTipoHabitacion "
+               + "WHERE h.numHabitacion LIKE ? OR t.nombreTipoHabitacion LIKE ? "
+               + "ORDER BY h.numHabitacion ASC";
+
+     PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+
+    ps.setString(1, "%" + filtro + "%");
+    ps.setString(2, "%" + filtro + "%");
+
+    ResultSet rs = ps.executeQuery();
+
+    while (rs.next()) {
+
+        Habitacion h = new Habitacion();
+        h.setIdHabitacion(rs.getInt("idHabitacion"));
+        h.setNumHabitacion(rs.getInt("numHabitacion"));
+        h.setEstado(EnumEstadoHabitacion.valueOf(rs.getString("estadoHabitacion")));
+        h.setFechaCreacion(rs.getTimestamp("fechaCreacion").toLocalDateTime());
+        h.setNombreTipoHabitacion(rs.getString("nombreTipoHabitacion"));
+
+        lista.add(h);
+    }
+
+    rs.close();
+    ps.close();
     
+
+    return lista;
+}
     
         public int contarPorTipo(int idTipoHabitacion) throws SQLException {
         int total = 0;

@@ -292,14 +292,18 @@
                                style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
 
                             <p:inputText id="globalFilter"
-                                         onkeyup="PF('dtEventos').filter()"
+                                        value="#{habitacionBean.filtro}"
                                          placeholder="Buscar habitación..."
                                          styleClass="form-control ps-5 shadow-sm"
                                          style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
                                          onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
                                          onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+                            <f:ajax event="keyup" 
+                                        listener="#{habitacionBean.buscar}" 
+                                        render="tblHabitaciones" />
                         </div>
 
+               
                         <!-- 📊 Botones de exportar -->
                         <!--                        <div class="d-flex gap-2 mb-2">
                                                     <h:form>
@@ -349,7 +353,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <ui:repeat value="#{habitacionBean.listaHabitaciones}" var="habitacion" varStatus="loop">
+                                        <ui:repeat value="#{  habitacionBean.listaHabitaciones}" var="habitacion">
+
                                             <tr>
                                                 <td>#{loop.index + 1}</td>
                                                 <td>#{habitacion.numHabitacion}</td>
