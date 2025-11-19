@@ -68,6 +68,15 @@
     let calendario;
     let crearReservaModalInstance;
 
+    const actualizarIndicadorTipoSeleccionado = (nombre) => {
+        const indicador = document.getElementById('crear-tipo-seleccionado');
+        if (!indicador) {
+            return;
+        }
+        const texto = nombre && nombre.trim() !== '' ? nombre : 'Sin seleccionar';
+        indicador.textContent = texto;
+    };
+
     const mostrarDetalleReserva = (evento) => {
         const detalleModalEl = document.getElementById('detalleReservaModal');
         if (!detalleModalEl || !window.bootstrap) {
@@ -176,12 +185,27 @@
         }
     };
 
-    const actualizarTipoSeleccionado = (tipoId) => {
+    const actualizarTipoSeleccionado = (tipoId, tipoNombre) => {
         const tipoIdNormalizado = normalizarEntero(tipoId);
         const inputTipoId = document.getElementById('crear-tipo-id');
         if (inputTipoId) {
             inputTipoId.value = tipoIdNormalizado || '';
         }
+
+        const nombreDesdeCatalogo = (() => {
+            if (!tipoIdNormalizado) {
+                return '';
+            }
+            const tipoEncontrado = tiposHabitacionData.find((tipo) => tipo.id === tipoIdNormalizado);
+            return tipoEncontrado ? tipoEncontrado.nombre : '';
+        })();
+
+        const nombreFinal = nombreDesdeCatalogo || tipoNombre || '';
+        const inputTipoNombre = document.getElementById('crear-tipo-nombre');
+        if (inputTipoNombre) {
+            inputTipoNombre.value = nombreFinal;
+        }
+        actualizarIndicadorTipoSeleccionado(nombreFinal);
         prepararSelectHabitaciones(tipoIdNormalizado);
     };
 
@@ -285,8 +309,10 @@
         };
 
         asignarValor('crear-tipo-id', tipoId || '');
+        asignarValor('crear-tipo-nombre', tipoNombre || '');
         asignarValor('crear-start', inicio || '');
         asignarValor('crear-end', fin || '');
+        actualizarIndicadorTipoSeleccionado(tipoNombre || '');
 
         const resumenFechas = document.getElementById('crear-resumen-fechas');
         if (resumenFechas) {
@@ -438,6 +464,8 @@
             {name: 'end', value: fin},
             {name: 'habitacionId', value: habitacionId},
             {name: 'usuarioId', value: usuarioId},
+            {name: 'tipoId', value: document.getElementById('crear-tipo-id')?.value},
+            {name: 'tipoNombre', value: document.getElementById('crear-tipo-nombre')?.value},
             {name: 'estado', value: document.getElementById('crear-estado')?.value},
             {name: 'clienteNombre', value: document.getElementById('crear-nombre')?.value},
             {name: 'email', value: document.getElementById('crear-email')?.value},
