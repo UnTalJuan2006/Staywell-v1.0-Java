@@ -312,21 +312,7 @@ public class EventoHuespedBean implements Serializable {
 
     private boolean registrarPagoParaEvento(FacesContext context, Evento evento) {
         Pago pago = new Pago();
-
-        // Intentar asignar el evento al pago (si Pago tiene setEvento)
-        try {
-            // reflection usado por compatibilidad si la clase Pago no define setEvento
-            try {
-                pago.getClass().getMethod("setEvento", Evento.class).invoke(pago, evento);
-            } catch (NoSuchMethodException nsme) {
-                // método no existe; no es fatal — solo informar
-                System.err.println("Pago.setEvento(Evento) no existe, se omite asociación directa.");
-            }
-        } catch (Exception ex) {
-            // No bloqueamos el flujo por esto, solo lo registramos
-            System.err.println("Error intentando asociar evento al pago: " + ex.getMessage());
-        }
-
+        pago.setEvento(evento);
         pago.setMonto(totalEvento != null ? totalEvento : BigDecimal.ZERO);
         pago.setTipoTarjeta(tipoPagoSeleccionado);
         pago.setNumeroTarjeta(numeroTarjeta);
