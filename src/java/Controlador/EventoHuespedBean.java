@@ -284,7 +284,7 @@ public class EventoHuespedBean implements Serializable {
             return null;
         }
 
-        // Validar horas
+        // Validar horaszzz
         if (horaInicio == null || horaFin == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
                     "Debe seleccionar hora de inicio y hora de fin."));

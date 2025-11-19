@@ -234,6 +234,7 @@ public class EventoDAO {
             ps.setInt(9, evento.getEspacio().getIdEspacio());
             ps.setInt(10, usuarioLogueado.getIdUsuario());
             ps.setString(11, "Activa");
+            
 
             int filas = ps.executeUpdate();
             if (filas == 0) {
