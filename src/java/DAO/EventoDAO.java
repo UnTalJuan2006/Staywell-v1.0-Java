@@ -23,6 +23,7 @@ public class EventoDAO {
 
         String sql = "SELECT e.*, "
                 + "es.nombre AS nombreEspacio, es.descripcion AS descripcionEspacio, es.capacidad AS capacidadEspacio, "
+                + "es.costoHora AS costoHoraEspacio, es.estado AS estadoEspacio, "
                 + "u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
                 + "FROM evento e "
                 + "LEFT JOIN espacio es ON e.idEspacio = es.idEspacio "
@@ -45,9 +46,11 @@ public class EventoDAO {
                 + "es.nombre AS nombreEspacio, es.tipo AS tipoEspacio, "
                 + "es.descripcion AS descripcionEspacio, es.capacidad AS capacidadEspacio, "
                 + "es.costoHora AS costoHoraEspacio, es.fechaActualizacion AS fechaActualizacionEspacio, "
-                + "es.estado AS estadoEspacio, es.imagen AS imagenEspacio "
+                + "es.estado AS estadoEspacio, es.imagen AS imagenEspacio, "
+                + "u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
                 + "FROM evento e "
                 + "LEFT JOIN espacio es ON e.idEspacio = es.idEspacio "
+                + "LEFT JOIN usuario u ON e.idUsuario = u.idUsuario "
                 + "WHERE e.idUsuario = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
@@ -101,10 +104,23 @@ public class EventoDAO {
                     espacio.setNombre(rs.getString("nombreEspacio"));
                     espacio.setDescripcion(rs.getString("descripcionEspacio"));
                     espacio.setCapacidad(rs.getInt("capacidadEspacio"));
-                    espacio.setCostoHora(rs.getFloat("costoHoraEspacio"));
+                    float costoHora = rs.getFloat("costoHoraEspacio");
+                    if (!rs.wasNull()) {
+                        espacio.setCostoHora(costoHora);
+                    }
                     espacio.setImagen(rs.getString("imagenEspacio"));
-                    espacio.setEstado(EnumEstadoEspacio.valueOf("estado"));
+                    String estadoEspacio = rs.getString("estadoEspacio");
+                    if (estadoEspacio != null) {
+                        espacio.setEstado(EnumEstadoEspacio.valueOf(estadoEspacio));
+                    }
                     evento.setEspacio(espacio);
+
+                    Usuario usuario = new Usuario();
+                    usuario.setIdUsuario(rs.getInt("idUsuario"));
+                    usuario.setNombre(rs.getString("nombreUsuario"));
+                    usuario.setEmail(rs.getString("correoUsuario"));
+                    usuario.setTelefono(rs.getString("telefonoUsuario"));
+                    evento.setUsuario(usuario);
 
                     eventos.add(evento);
                 }
@@ -361,6 +377,14 @@ public class EventoDAO {
         espacio.setNombre(rs.getString("nombreEspacio"));
         espacio.setDescripcion(rs.getString("descripcionEspacio"));
         espacio.setCapacidad(rs.getInt("capacidadEspacio"));
+        float costoHora = rs.getFloat("costoHoraEspacio");
+        if (!rs.wasNull()) {
+            espacio.setCostoHora(costoHora);
+        }
+        String estadoEspacio = rs.getString("estadoEspacio");
+        if (estadoEspacio != null) {
+            espacio.setEstado(EnumEstadoEspacio.valueOf(estadoEspacio));
+        }
         evento.setEspacio(espacio);
 
         // Usuario relacionado

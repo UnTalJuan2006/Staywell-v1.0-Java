@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Detalle de Evento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { max-width: 900px; margin: 2rem auto; }
+    </style>
+</h:head>
+<h:body>
+<f:event type="preRenderView" listener="#{eventoBean.cargarEventoPorId}" />
+<h:link outcome="/Eventos.xhtml" styleClass="btn btn-link ms-4"><i class="bi bi-arrow-left"></i> Volver</h:link>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title mb-4"><i class="bi bi-eye"></i> Información del Evento</h3>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Nombre</label>
+                <p class="form-control">#{eventoBean.evento.nombreEvento}</p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Estado</label>
+                <p class="form-control">#{eventoBean.evento.estado}</p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Fecha</label>
+                <p class="form-control">
+                    <h:outputText value="#{eventoBean.evento.fechaEvento}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Horario</label>
+                <p class="form-control">#{eventoBean.evento.horaInicio} - #{eventoBean.evento.horaFin}</p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Espacio</label>
+                <p class="form-control">#{eventoBean.evento.espacio != null ? eventoBean.evento.espacio.nombre : 'Sin asignar'}</p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Huésped</label>
+                <p class="form-control">#{eventoBean.evento.usuario != null ? eventoBean.evento.usuario.nombre : 'Sin asignar'}</p>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Cliente</label>
+                <p class="form-control">#{eventoBean.evento.nombreCliente}</p>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Descripción</label>
+                <p class="form-control">#{eventoBean.evento.descripcion}</p>
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Editar
+                <f:param name="id" value="#{eventoBean.evento.idEvento}" />
+            </h:link>
+        </div>
+    </div>
+</div>
+</h:body>
+</html>

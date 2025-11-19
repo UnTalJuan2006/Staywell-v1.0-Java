@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
-    <title>Pago de Reserva</title>
+    <title>Pago de #{pagoBean.descripcionContexto}</title>
     <style>
         body {
             background-color: #f7f7f7;
@@ -42,11 +42,11 @@
 
     <!-- Formulario principal de pago -->
     <h:form id="formPago" class="card">
-        <h2 style="text-align:center;">Confirmar Pago</h2>
+        <h2 style="text-align:center;">Confirmar pago de #{pagoBean.descripcionContexto}</h2>
 
-        <ui:fragment rendered="#{pagoBean.reserva == null}">
+        <ui:fragment rendered="#{not pagoBean.contextoDisponible}">
             <div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:1rem; border-radius:10px; margin-bottom:1.5rem; text-align:center;">
-                No se encontró la información de la reserva. Regresa a <a href="MisReservas.xhtml" style="color:#b91c1c; font-weight:600;">Mis Reservas</a> para intentarlo de nuevo.
+                No se encontró información de la reserva o del evento. Regresa a tu panel para intentarlo nuevamente.
             </div>
         </ui:fragment>
 
@@ -61,6 +61,26 @@
                     <span><strong>Cliente:</strong> #{pagoBean.reserva.nombreCliente}</span>
                     <span><strong>Correo:</strong> #{pagoBean.reserva.email}</span>
                     <span><strong>Teléfono:</strong> #{pagoBean.reserva.telefono}</span>
+                </div>
+            </div>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{not empty pagoBean.evento}">
+            <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:1rem; margin-bottom:1.5rem;">
+                <div style="font-weight:600; color:#d97706; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                    <i class="pi pi-bell" style="font-size:1.2rem;"></i>
+                    Detalles del evento
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:1rem; color:#7c2d12;">
+                    <span><strong>ID:</strong> EVT-#{pagoBean.evento.idEvento}</span>
+                    <span><strong>Nombre:</strong> #{pagoBean.evento.nombreEvento}</span>
+                    <span><strong>Espacio:</strong> #{pagoBean.evento.espacio != null ? pagoBean.evento.espacio.nombre : 'Sin asignar'}</span>
+                    <span><strong>Fecha:</strong>
+                        <h:outputText value="#{pagoBean.evento.fechaEvento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </span>
+                    <span><strong>Cliente:</strong> #{pagoBean.evento.nombreCliente}</span>
                 </div>
             </div>
         </ui:fragment>
@@ -104,6 +124,12 @@
             </p:password>
 
             <!-- Monto -->
+            <h:outputLabel value="Monto a pagar:" for="monto" />
+            <p:inputText id="monto" value="#{pagoBean.pago.monto}" required="true" label="Monto a pagar"
+                         placeholder="0.00">
+                <f:convertNumber type="number" maxFractionDigits="2" minFractionDigits="0" />
+                <p:ajax event="blur" update=":growl" />
+            </p:inputText>
 
         </h:panelGrid>
 
@@ -123,7 +149,7 @@
                              update="@form :growl formPago:pagoExitoDialog"
                              icon="pi pi-check"
                              styleClass="p-button-success"
-                             disabled="#{pagoBean.reserva == null}"
+                             disabled="#{not pagoBean.contextoDisponible}"
                              oncomplete="onPagoCompletado(args)" />
             <p:commandButton value="Cancelar" type="reset"
                              icon="pi pi-times"
@@ -144,7 +170,7 @@
                 Código de pago: <strong>#{pagoBean.codigoPagoGenerado}</strong>
             </p>
             <div style="display:flex; justify-content:center; gap:1rem; margin-top:2rem;">
-                <p:commandButton value="Ver mis reservas" action="#{pagoBean.irMisReservas}"
+                <p:commandButton value="#{pagoBean.etiquetaBotonDestino}" action="#{pagoBean.irMisReservas}"
                                  icon="pi pi-arrow-right" ajax="false"
                                  styleClass="p-button-rounded p-button-success" />
                 <p:commandButton type="button" value="Cerrar" icon="pi pi-times" onclick="PF('pagoExitoDialog').hide();"

@@ -315,22 +315,34 @@
                                             <tr>
                                                 <td>#{loop.index + 1}</td>
                                                 <td>#{evento.nombreEvento}</td>
-                                                <td>#{evento.fechaEvento}</td>
-                                                <td>#{evento.horaInicio}</td>
-                                                <td>#{evento.horaFin}</td>
+                                                <td>
+                                                    <h:outputText value="#{evento.fechaEvento}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </td>
+                                                <td>
+                                                    <h:outputText value="#{evento.horaInicio}" />
+                                                </td>
+                                                <td>
+                                                    <h:outputText value="#{evento.horaFin}" />
+                                                </td>
                                                 <td>#{evento.espacio.nombre}</td>
                                                 <td>#{evento.usuario.nombre}</td>
                                                 <td>
                                                     <span class="badge bg-secondary">#{evento.estado}</span>
                                                 </td>
                                                 <td class="table-actions">
-                                                    <h:link outcome="/" styleClass="btn btn-outline-info btn-sm">
+                                                    <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
                                                         <i class="bi bi-eye"></i>
                                                         <f:param name="id" value="#{evento.idEvento}" />
                                                     </h:link>
-                                                    <h:link outcome="/" styleClass="btn btn-outline-warning btn-sm">
+                                                    <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
                                                         <i class="bi bi-pencil-square"></i>
                                                         <f:param name="id" value="#{evento.idEvento}" />
+                                                    </h:link>
+                                                    <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
+                                                        <i class="bi bi-credit-card"></i>
+                                                        <f:param name="idEvento" value="#{evento.idEvento}" />
                                                     </h:link>
                                                     <h:form styleClass="d-inline">
                                                         <h:commandLink action="#{eventoBean.eliminar(evento)}"

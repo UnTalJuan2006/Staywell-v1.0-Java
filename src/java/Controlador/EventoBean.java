@@ -209,6 +209,7 @@ public class EventoBean implements Serializable {
                 evento.setNombreCliente(usuarioLogueado.getNombre());
             }
 
+            prepararAuditoria(true);
             evento.setEstado(EnumEstadoEvento.Activa);
             eventoDAO.eventoHuesped(evento);
 
@@ -270,12 +271,19 @@ public class EventoBean implements Serializable {
             if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
-            
+
+            if (evento.getEstado() == null) {
+                evento.setEstado(EnumEstadoEvento.Activa);
+            }
+
+            prepararAuditoria(true);
+
             eventoDAO.agregarEvento(evento);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
                     "Evento registrado correctamente."));
             limpiarFormulario();
+            cargarEventos();
             return "Eventos?faces-redirect=true";
 
         } catch (SQLException e) {
@@ -300,12 +308,19 @@ public class EventoBean implements Serializable {
             if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
-            
+
+            if (evento.getEstado() == null) {
+                evento.setEstado(EnumEstadoEvento.Activa);
+            }
+
+            prepararAuditoria(false);
+
             eventoDAO.actualizar(evento);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
                     "Evento actualizado correctamente."));
             limpiarFormulario();
+            cargarEventos();
             return "Eventos?faces-redirect=true";
             
         } catch (SQLException e) {
@@ -392,6 +407,27 @@ public class EventoBean implements Serializable {
         return true;
     }
 
+    public void eliminar(Evento eventoSeleccionado) {
+        if (eventoSeleccionado == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                            "No se pudo identificar el evento a eliminar."));
+            return;
+        }
+
+        try {
+            eventoDAO.eliminar(eventoSeleccionado.getIdEvento());
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
+                            "Evento eliminado correctamente."));
+            cargarEventos();
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo eliminar el evento."));
+        }
+    }
+
     private boolean validarDisponibilidadFechas(boolean mostrarMensajeCamposIncompletos) {
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -463,9 +499,18 @@ public class EventoBean implements Serializable {
 
     private void limpiarFormulario() {
         evento = new Evento();
+        evento.setEstado(EnumEstadoEvento.Activa);
         espacioIdSeleccionado = null;
         usuarioIdSeleccionado = null;
         fechasOcupadasJson = "[]";
+    }
+
+    private void prepararAuditoria(boolean esNuevo) {
+        LocalDateTime ahora = LocalDateTime.now();
+        evento.setFechaActualizacion(ahora);
+        if (esNuevo || evento.getFechaCreacion() == null) {
+            evento.setFechaCreacion(ahora);
+        }
     }
 
     public String formatearFecha(LocalDateTime fecha) {
