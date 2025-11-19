@@ -122,7 +122,7 @@
             </div>
 
             <div class="mt-4 form-card">
-                <h:messages styleClass="alert alert-warning" layout="table" />
+                <h:messages id="mensajesReserva" styleClass="alert alert-warning" layout="table" />
 
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -141,7 +141,8 @@
                                         <f:selectItems value="#{reservaBean.listaHabitaciones}" var="habitacion"
                                                        itemValue="#{habitacion.idHabitacion}"
                                                        itemLabel="Habitación #{habitacion.numHabitacion}" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
+                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}"
+                                                render="formReserva:checkin formReserva:checkout formReserva:ocupacionesJson mensajesReserva" />
                                     </h:selectOneMenu>
                                 </div>
 
@@ -190,7 +191,8 @@
                                                  converter="localDateTimeConverter" styleClass="form-control"
                                                  required="true" requiredMessage="Debe indicar la fecha de check-in.">
                                         <f:passThroughAttribute name="type" value="text" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
+                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}"
+                                                render="formReserva:checkin formReserva:checkout mensajesReserva" />
                                     </h:inputText>
                                 </div>
 
@@ -200,7 +202,8 @@
                                                  converter="localDateTimeConverter" styleClass="form-control"
                                                  required="true" requiredMessage="Debe indicar la fecha de check-out.">
                                         <f:passThroughAttribute name="type" value="text" />
-                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}" render="@form" />
+                                        <f:ajax event="change" listener="#{reservaBean.validarFechasAjax}"
+                                                render="formReserva:checkin formReserva:checkout mensajesReserva" />
                                     </h:inputText>
                                 </div>
 
