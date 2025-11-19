@@ -224,7 +224,7 @@ function inicializarPickersEvento() {
 
 document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
 
-if (window.jsf && jsf.ajax) {
+if (window.jsf &amp;&amp; jsf.ajax) {
     jsf.ajax.addOnEvent(function(data) {
         if (data.status === 'success') {
             inicializarPickersEvento();
