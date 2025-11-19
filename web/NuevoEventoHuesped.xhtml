@@ -21,7 +21,20 @@
         .nav-link.active, .nav-link:hover { background:#eefaf8; color:#1a9b8e; border-left-color:#1a9b8e; }
         .content { margin-left:220px; padding:100px 40px 40px; width:100%; }
         .card-form { background:#fff; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,0.08); padding:24px; }
-        .summary-card { background:#0f766e; color:#fff; border-radius:16px; padding:24px; }
+        .summary-card { background:#0f766e; color:#fff; border-radius:16px; padding:24px; margin-bottom: 1.5rem; }
+        .payment-card { background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); padding:1.8rem; }
+        .payment-card h5 { font-size:1.1rem; font-weight:700; color:#1a1a1a; margin-bottom:1.25rem; display:flex; align-items:center; gap:8px; }
+        .payment-card h5 i { color:#1a9b8e; font-size:1.2rem; }
+        .payment-summary { display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, rgba(26,155,142,0.1) 0%, rgba(13,122,111,0.15) 100%); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.5rem; }
+        .payment-summary .summary-label { display:flex; align-items:center; gap:12px; color:#0d7a6f; font-weight:600; }
+        .payment-summary .summary-label i { font-size:1.5rem; }
+        .payment-summary .summary-amount { font-size:1.4rem; font-weight:700; color:#0d7a6f; }
+        .payment-note { font-size:0.85rem; color:#6c757d; margin-top:0.5rem; line-height:1.4; }
+        .btn-confirm { width:100%; background:linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%); color:white; border:none; padding:1rem; border-radius:8px; font-weight:600; cursor:pointer; margin-top:1.5rem; transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .btn-confirm:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,155,142,0.3); }
+        .btn-confirm-modal { background:linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%); color:white; border:none; padding:0.75rem 1.5rem; border-radius:8px; font-weight:600; cursor:pointer; transition:all 0.3s ease; display:inline-flex; align-items:center; gap:8px; }
+        .btn-confirm-modal:hover { box-shadow:0 6px 20px rgba(26,155,142,0.3); }
+        .payment-resume { margin-top:1.2rem; font-size:0.9rem; color:#1a1a1a; background:#f4fafa; border-radius:8px; padding:0.75rem 1rem; }
     </style>
 </h:head>
 <h:body>
@@ -47,11 +60,11 @@
             </div>
             <div class="content">
                 <h:messages styleClass="alert alert-warning" layout="table" />
-                <div class="row g-4">
-                    <div class="col-lg-7">
-                        <div class="card-form">
-                            <h3 class="mb-3"><i class="bi bi-building"></i> Datos del evento</h3>
-                            <h:form id="formEvento">
+                <h:form id="formEvento">
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card-form">
+                                <h3 class="mb-3"><i class="bi bi-building"></i> Datos del evento</h3>
                                 <h:outputText id="ocupacionesJson" value="#{eventoHuespedBean.fechasOcupadasJson}" styleClass="d-none" />
                                 <div class="row g-3">
                                     <div class="col-12">
@@ -65,103 +78,172 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Espacio</label>
                                         <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
-                                            <f:selectItem itemLabel="Seleccione un espacio" itemValue="" noSelectionOption="true" />
+                                            <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
                                             <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
-                                            <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard" />
+                                            <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago" />
                                         </h:selectOneMenu>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Fecha</label>
                                         <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" readonly="true" required="true">
                                             <f:convertDateTime pattern="yyyy-MM-dd" />
-        
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora inicio</label>
                                         <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora fin</label>
                                         <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard" />
+                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
                                     </div>
                                 </div>
-                                <hr class="my-4" />
-                                <h4><i class="bi bi-credit-card"></i> Pago</h4>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Tipo de tarjeta</label>
-                                        <h:selectOneMenu value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true">
-                                            <f:selectItem itemLabel="Seleccione" itemValue="" noSelectionOption="true" />
-                                            <f:selectItems value="#{eventoHuespedBean.tiposPago}" />
-                                        </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <h:panelGroup id="resumenCard" layout="block" styleClass="summary-card">
+                                <h4 class="mb-3">Resumen</h4>
+                                <p class="mb-1">Nombre: <strong>#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}</strong></p>
+                                <p class="mb-1">Espacio: <strong>#{empty eventoHuespedBean.nombreEspacioSeleccionado ? 'Sin seleccionar' : eventoHuespedBean.nombreEspacioSeleccionado}</strong></p>
+                                <p class="mb-1">Fecha: <strong>
+                                    <h:outputText value="#{eventoHuespedBean.fechaEvento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </strong></p>
+                                <p class="mb-1">Horario: <strong>
+                                    <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
+                                    <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
+                                    <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
+                                </strong></p>
+                                <p class="mb-1">Costo estimado: <strong>$
+                                    <h:outputText value="#{eventoHuespedBean.totalEvento}">
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </h:outputText>
+                                </strong></p>
+                                <small>El valor puede variar según la duración del evento.</small>
+                            </h:panelGroup>
+                            <div class="payment-card">
+                                <h5><i class="bi bi-credit-card-2-front"></i> Método de pago</h5>
+                                <div class="payment-summary">
+                                    <div class="summary-label">
+                                        <i class="bi bi-shield-lock"></i>
+                                        <div>
+                                            <span>Total a pagar</span>
+                                            <div style="font-size:0.8rem; color:#0d7a6f;">Se confirma al registrar el evento</div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Número de tarjeta</label>
-                                        <h:inputText value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" maxlength="19" />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Titular</label>
-                                        <h:inputText value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Vencimiento</label>
-                                        <h:inputText value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control"  required="true" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">CVV</label>
-                                        <h:inputText value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" maxlength="4" required="true" />
-                                    </div>
+                                    <h:panelGroup id="montoPago">
+                                        <span class="summary-amount">
+                                            <h:outputText value="#{eventoHuespedBean.totalEvento}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </h:panelGroup>
                                 </div>
-                                <div class="text-end mt-4">
-                                    <h:commandButton value="Confirmar evento" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn btn-success" />
+                                <div class="payment-note">
+                                    Confirma tu evento ingresando los datos de tu tarjeta cuando estés listo.
                                 </div>
-                            </h:form>
+                                <button type="button" class="btn-confirm" data-bs-toggle="modal" data-bs-target="#modalPago">
+                                    Ingresar o editar datos de pago
+                                </button>
+                                <h:panelGroup id="resumenPago" layout="block" styleClass="payment-resume">
+                                    #{eventoHuespedBean.resumenMetodoPago}
+                                </h:panelGroup>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5">
-                        <h:panelGroup id="resumenCard" layout="block" styleClass="summary-card">
-                            <h4 class="mb-3">Resumen</h4>
-                            <p class="mb-1">Nombre: <strong>#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}</strong></p>
-                            <p class="mb-1">Espacio: <strong>#{empty eventoHuespedBean.nombreEspacioSeleccionado ? 'Sin seleccionar' : eventoHuespedBean.nombreEspacioSeleccionado}</strong></p>
-                            <p class="mb-1">Fecha: <strong>
-                                <h:outputText value="#{eventoHuespedBean.fechaEvento}">
-                                    <f:convertDateTime pattern="dd/MM/yyyy" />
-                                </h:outputText>
-                            </strong></p>
-                            <p class="mb-1">Horario: <strong>
-                                <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
-                                <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
-                                <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
-                            </strong></p>
-                            <p class="mb-1">Costo estimado: <strong>$
-                                <h:outputText value="#{eventoHuespedBean.totalEvento}">
-                                    <f:convertNumber pattern="#,##0.00" />
-                                </h:outputText>
-                            </strong></p>
-                            <small>El valor puede variar según la duración del evento.</small>
-                        </h:panelGroup>
+
+                    <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="modalPagoLabel">Confirmar método de pago</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="tipoPago" value="Tipo de tarjeta" styleClass="form-label" />
+                                            <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
+                                                <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="numeroTarjeta" value="Número de tarjeta" styleClass="form-label" />
+                                            <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
+                                                <f:passThroughAttribute name="maxlength" value="19" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
+                                            </h:inputText>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="titularTarjeta" value="Titular" styleClass="form-label" />
+                                            <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="fechaVencimiento" value="Vencimiento" styleClass="form-label" />
+                                            <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                                <f:passThroughAttribute name="type" value="month" />
+                                            </h:inputText>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="codigoSeguridad" value="CVV" styleClass="form-label" />
+                                            <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
+                                                <f:passThroughAttribute name="maxlength" value="4" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="CVV" />
+                                            </h:inputText>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="payment-note" style="margin:0;">
+                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-confirm-modal" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </h:form>
             </div>
         </div>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        flatpickr.localize(flatpickr.l10ns.es);
-        const fechas = document.getElementById("formEvento:ocupacionesJson").value;
-        const ocupaciones = fechas ? JSON.parse(fechas) : [];
+        if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.es) {
+            window.flatpickr.localize(window.flatpickr.l10ns.es);
+        }
+        const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+        const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+        let ocupaciones = [];
+        if (rawJson) {
+            try {
+                ocupaciones = JSON.parse(rawJson);
+            } catch (e) {
+                console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+                ocupaciones = [];
+            }
+        }
+        const rangosDeshabilitados = Array.isArray(ocupaciones) ? ocupaciones.map(f => ({ from: f.from, to: f.to })) : [];
         flatpickr("#formEvento\\:fechaEvento", {
             dateFormat: "Y-m-d",
             minDate: "today",
-            disable: ocupaciones.map(f => ({from: f.from, to: f.to}))
+            allowInput: true,
+            disable: rangosDeshabilitados
         });
-        flatpickr("#formEvento\\:horaInicio", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
-        flatpickr("#formEvento\\:horaFin", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true });
+        flatpickr("#formEvento\\:horaInicio", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
+        flatpickr("#formEvento\\:horaFin", { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
     });
 </script>
 </h:body>
