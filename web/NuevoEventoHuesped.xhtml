@@ -95,13 +95,15 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora inicio</label>
-                                        <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
+                                        <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" readonly="true" required="true" requiredMessage="Selecciona la hora de inicio.">
+                                            <f:converter converterId="localTimeConverter" />
                                             <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Hora fin</label>
-                                        <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" readonly="true" required="true" converter="localTimeConverter">
+                                        <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" readonly="true" required="true" requiredMessage="Selecciona la hora de fin.">
+                                            <f:converter converterId="localTimeConverter" />
                                             <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
                                         </h:inputText>
                                     </div>
@@ -288,17 +290,10 @@
             });
         }
 
-        function inicializarCalendarios() {
+        function inicializarPickersEvento() {
             if (!window.flatpickr) {
                 return;
             }
-if (window.jsf &amp;&amp; jsf.ajax) {
-    jsf.ajax.addOnEvent(function(data) {
-        if (data.status === 'success') {
-            inicializarPickersEvento();
-        }
-    });
-}
             const rangosDeshabilitados = parseOcupaciones();
             initFechaPicker(rangosDeshabilitados);
             initHoraPicker("horaInicio");
@@ -312,7 +307,7 @@ if (window.jsf &amp;&amp; jsf.ajax) {
             inicializarPickersEvento();
         }
     });
-    
+
         }
     })();
 </script>
