@@ -88,7 +88,10 @@
                                          required="true"
                                          requiredMessage="Debe indicar la fecha del evento.">
                                 <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
-                                <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" render="@form"/>
+                                <f:ajax event="change"
+                                        listener="#{eventoBean.validarFechasAjax}"
+                                        execute="@form"
+                                        render="@form"/>
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
@@ -123,7 +126,10 @@
                                 <f:selectItems value="#{eventoBean.listaEspacios}" var="espacio"
                                                itemValue="#{espacio.idEspacio}"
                                                itemLabel="#{espacio.nombre}" />
-                                <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" render="@form" />
+                                <f:ajax event="change"
+                                        listener="#{eventoBean.validarFechasAjax}"
+                                        execute="@form"
+                                        render="@form" />
                             </h:selectOneMenu>
                             <h:message for="espacio" styleClass="text-danger small" />
                         </div>
@@ -170,29 +176,61 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+function inicializarPickersEvento() {
+    if (!window.flatpickr) {
+        return;
+    }
+
     flatpickr.localize(flatpickr.l10ns.es);
 
-    flatpickr("#formEvento\\:fechaEvento", {
-        enableTime: true,
-        dateFormat: "Y-m-d H:i",
-        minDate: "today"
-    });
+    var fecha = document.getElementById("formEvento:fechaEvento");
+    if (fecha) {
+        if (fecha._flatpickr) {
+            fecha._flatpickr.destroy();
+        }
+        flatpickr(fecha, {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+            minDate: "today"
+        });
+    }
 
-    flatpickr("#formEvento\\:horaInicio", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        time_24hr: true
-    });
+    var horaInicio = document.getElementById("formEvento:horaInicio");
+    if (horaInicio) {
+        if (horaInicio._flatpickr) {
+            horaInicio._flatpickr.destroy();
+        }
+        flatpickr(horaInicio, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+    }
 
-    flatpickr("#formEvento\\:horaFin", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        time_24hr: true
+    var horaFin = document.getElementById("formEvento:horaFin");
+    if (horaFin) {
+        if (horaFin._flatpickr) {
+            horaFin._flatpickr.destroy();
+        }
+        flatpickr(horaFin, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+
+if (window.jsf && jsf.ajax) {
+    jsf.ajax.addOnEvent(function(data) {
+        if (data.status === 'success') {
+            inicializarPickersEvento();
+        }
     });
-});
+}
 </script>
 </h:body>
 </html>
