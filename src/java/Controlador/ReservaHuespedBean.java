@@ -120,6 +120,7 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public void onTipoHabitacionChange() {
+        setHabitacionSeleccionada(null);
         actualizarHabitacionesDisponibles();
         actualizarPrecioPorNoche();
         recalcularResumen();
@@ -132,19 +133,41 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public void onFechasChange() {
+        actualizarHabitacionesDisponibles();
         recalcularResumen();
     }
 
     private void actualizarHabitacionesDisponibles() {
         habitacionesDisponibles = new ArrayList<>();
-        setHabitacionSeleccionada(null);
 
         if (tipoHabitacionSeleccionada == null) {
             return;
         }
 
         try {
-            habitacionesDisponibles = habitacionDAO.listarPorTipo(tipoHabitacionSeleccionada);
+            List<Habitacion> habitacionesPorTipo = habitacionDAO.listarPorTipo(tipoHabitacionSeleccionada);
+            LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
+            LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
+
+            if (fechaEntrada != null && fechaSalida != null && fechaSalida.isAfter(fechaEntrada)) {
+                List<Habitacion> disponibles = new ArrayList<>();
+                for (Habitacion habitacion : habitacionesPorTipo) {
+                    if (reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                        disponibles.add(habitacion);
+                    }
+                }
+                habitacionesDisponibles = disponibles;
+            } else {
+                habitacionesDisponibles = habitacionesPorTipo;
+            }
+
+            if (habitacionSeleccionada != null) {
+                boolean sigueDisponible = habitacionesDisponibles.stream()
+                        .anyMatch(h -> h.getIdHabitacion() == habitacionSeleccionada);
+                if (!sigueDisponible) {
+                    setHabitacionSeleccionada(null);
+                }
+            }
         } catch (SQLException ex) {
             habitacionesDisponibles = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
