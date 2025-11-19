@@ -552,6 +552,24 @@ public class EventoHuespedBean implements Serializable {
         return EnumPago.values();
     }
 
+    public String getResumenMetodoPago() {
+        if (numeroTarjeta == null || numeroTarjeta.isEmpty()) {
+            return "Aún no has ingresado los datos de la tarjeta.";
+        }
+
+        String digitos = numeroTarjeta.replaceAll("\\D", "");
+        if (digitos.length() >= 4) {
+            String ultimos = digitos.substring(digitos.length() - 4);
+            String titularNormalizado = titularTarjeta != null ? titularTarjeta.trim() : null;
+            return "Tarjeta terminada en " + ultimos
+                    + (titularNormalizado != null && !titularNormalizado.isEmpty()
+                    ? " a nombre de " + titularNormalizado
+                    : "");
+        }
+
+        return "Datos de tarjeta registrados.";
+    }
+
     public EnumPago getTipoPagoSeleccionado() {
         return tipoPagoSeleccionado;
     }
