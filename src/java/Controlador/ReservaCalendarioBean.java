@@ -43,6 +43,9 @@ public class ReservaCalendarioBean implements Serializable {
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Usuario> usuarios = new ArrayList<>();
 
+    private Integer tipoHabitacionSeleccionadoId;
+    private String tipoHabitacionSeleccionadoNombre;
+
     @PostConstruct
     public void init() {
         recargarReservas();
@@ -226,6 +229,8 @@ public class ReservaCalendarioBean implements Serializable {
             int habitacionId = Integer.parseInt(params.get("habitacionId"));
             int usuarioId = Integer.parseInt(params.get("usuarioId"));
 
+            actualizarTipoSeleccionadoDesdeParametros(params.get("tipoId"), params.get("tipoNombre"));
+
             if (inicioOriginal == null || finOriginal == null) {
                 primeFaces.ajax().addCallbackParam("success", false);
                 agregarMensajeAdvertencia("Debe indicar las fechas de check-in y check-out para crear la reserva.");
@@ -259,6 +264,10 @@ public class ReservaCalendarioBean implements Serializable {
             reserva.setEstado(obtenerEstado(params.get("estado")));
             reserva.setHabitacion(habitacion);
             reserva.setUsuario(usuario);
+
+            if (habitacion.getTipoHabitacion() != null) {
+                actualizarTipoSeleccionado(habitacion.getTipoHabitacion());
+            }
 
             String nombreCliente = params.get("clienteNombre");
             String email = params.get("email");
@@ -473,5 +482,47 @@ public class ReservaCalendarioBean implements Serializable {
 
     public List<Usuario> getUsuarios() {
         return usuarios;
+    }
+
+    public Integer getTipoHabitacionSeleccionadoId() {
+        return tipoHabitacionSeleccionadoId;
+    }
+
+    public String getTipoHabitacionSeleccionadoNombre() {
+        return tipoHabitacionSeleccionadoNombre;
+    }
+
+    private void actualizarTipoSeleccionado(TipoHabitacion tipo) {
+        if (tipo == null) {
+            tipoHabitacionSeleccionadoId = null;
+            tipoHabitacionSeleccionadoNombre = null;
+            return;
+        }
+        tipoHabitacionSeleccionadoId = tipo.getIdTipoHabitacion();
+        tipoHabitacionSeleccionadoNombre = tipo.getNombre();
+    }
+
+    private void actualizarTipoSeleccionadoDesdeParametros(String tipoIdParam, String tipoNombreParam) {
+        tipoHabitacionSeleccionadoNombre = (tipoNombreParam != null && !tipoNombreParam.isEmpty())
+                ? tipoNombreParam
+                : null;
+
+        try {
+            tipoHabitacionSeleccionadoId = tipoIdParam != null && !tipoIdParam.isEmpty()
+                    ? Integer.parseInt(tipoIdParam)
+                    : null;
+        } catch (NumberFormatException ex) {
+            tipoHabitacionSeleccionadoId = null;
+        }
+
+        if (tipoHabitacionSeleccionadoNombre == null && tipoHabitacionSeleccionadoId != null) {
+            TipoHabitacion tipo = tiposHabitacion.stream()
+                    .filter(t -> t.getIdTipoHabitacion() == tipoHabitacionSeleccionadoId)
+                    .findFirst()
+                    .orElse(null);
+            if (tipo != null) {
+                actualizarTipoSeleccionado(tipo);
+            }
+        }
     }
 }
