@@ -9,47 +9,27 @@
     }
 
     function parseDisabledRanges(rawValue) {
-        if (!rawValue) {
-            return [];
-        }
+        if (!rawValue) return [];
 
         try {
             const parsed = JSON.parse(rawValue);
-            if (!Array.isArray(parsed)) {
-                return [];
-            }
+            if (!Array.isArray(parsed)) return [];
 
             return parsed
-                .map((range) => {
-                    if (!range || !range.from || !range.to) {
-                        return null;
-                    }
+                .map(range => {
+                    if (!range || !range.from || !range.to) return null;
 
                     const fromDate = new Date(range.from);
                     const toDate = new Date(range.to);
 
-                    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-                        return null;
-                    }
+                    if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) return null;
 
-                    if (fromDate.getTime() >= toDate.getTime()) {
-                        return {
-                            from: fromDate
-                        };
-                    }
+                    if (fromDate.getTime() >= toDate.getTime()) return { from: fromDate };
 
                     const adjustedTo = new Date(toDate.getTime() - 60000);
+                    if (adjustedTo.getTime() < fromDate.getTime()) return { from: fromDate };
 
-                    if (adjustedTo.getTime() < fromDate.getTime()) {
-                        return {
-                            from: fromDate
-                        };
-                    }
-
-                    return {
-                        from: fromDate,
-                        to: adjustedTo
-                    };
+                    return { from: fromDate, to: adjustedTo };
                 })
                 .filter(Boolean);
         } catch (error) {
@@ -60,50 +40,39 @@
 
     function readDisabledRanges(form) {
         const dataNode = form.querySelector('[id$="ocupacionesJson"]');
+        if (!dataNode) return [];
 
-        if (!dataNode) {
-            return [];
-        }
-
-        const rawValue = 'value' in dataNode
-            ? dataNode.value
-            : dataNode.textContent;
-
+        const rawValue = 'value' in dataNode ? dataNode.value : dataNode.textContent;
         return parseDisabledRanges(rawValue && rawValue.trim());
     }
 
     function ensurePickerDestroyed(input) {
-        if (input && input._flatpickr) {
-            input._flatpickr.destroy();
-        }
+        if (input && input._flatpickr) input._flatpickr.destroy();
     }
 
     function initForm(form) {
-        if (!window.flatpickr) {
-            return;
-        }
+        if (!window.flatpickr) return;
 
         const checkinInput = form.querySelector('input[id$="checkin"]');
         const checkoutInput = form.querySelector('input[id$="checkout"]');
-
-        if (!checkinInput || !checkoutInput) {
-            return;
-        }
+        if (!checkinInput || !checkoutInput) return;
 
         ensurePickerDestroyed(checkinInput);
         ensurePickerDestroyed(checkoutInput);
 
         const disabledRanges = readDisabledRanges(form);
-        let checkoutPicker = null;
+        const today = new Date();
 
-        checkoutPicker = window.flatpickr(checkoutInput, {
+        const blockPastDates = { from: null, to: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1) };
+
+        let checkoutPicker = window.flatpickr(checkoutInput, {
             enableTime: true,
             dateFormat: DATE_FORMAT,
             altInput: true,
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
-            disable: disabledRanges,
-            allowInput: true
+            allowInput: true,
+            disable: [...disabledRanges, blockPastDates]
         });
 
         window.flatpickr(checkinInput, {
@@ -112,18 +81,15 @@
             altInput: true,
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
-            disable: disabledRanges,
             allowInput: true,
+            disable: [...disabledRanges, blockPastDates],
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
                     checkoutPicker.set('minDate', selectedDates[0]);
                 }
             },
             onChange(selectedDates) {
-                if (!checkoutPicker) {
-                    return;
-                }
-
+                if (!checkoutPicker) return;
                 if (selectedDates && selectedDates.length) {
                     const checkinDate = selectedDates[0];
                     checkoutPicker.set('minDate', checkinDate);
@@ -137,10 +103,10 @@
             }
         });
 
+        // Si ya hay check-in seleccionado al cargar
         if (checkoutPicker && checkinInput._flatpickr && checkinInput._flatpickr.selectedDates.length) {
             const currentCheckin = checkinInput._flatpickr.selectedDates[0];
             checkoutPicker.set('minDate', currentCheckin);
-
             if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < currentCheckin) {
                 checkoutPicker.clear();
             }
@@ -148,10 +114,7 @@
     }
 
     function initializeForms() {
-        if (!window.flatpickr) {
-            return;
-        }
-
+        if (!window.flatpickr) return;
         localizeCalendar();
         const forms = document.querySelectorAll(FORM_SELECTOR);
         forms.forEach(initForm);

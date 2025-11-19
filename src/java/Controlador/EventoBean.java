@@ -25,18 +25,18 @@ import java.util.Date;
 
 @ManagedBean
 @ViewScoped
-
 public class EventoBean implements Serializable {
 
     private final EventoDAO eventoDAO = new EventoDAO();
     private final EspacioDAO espacioDAO = new EspacioDAO();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
-    private List<Espacio> listaEspacios;
-
-    private Evento evento = new Evento();
+    
+    private List<Espacio> listaEspacios = new ArrayList<>();
     private List<Evento> listaEventos = new ArrayList<>();
     private List<Usuario> listaUsuarios = new ArrayList<>();
+    private List<Evento> listarPorUsuario = new ArrayList<>();
 
+    private Evento evento = new Evento();
     private Integer espacioIdSeleccionado;
     private Integer usuarioIdSeleccionado;
     private String fechasOcupadasJson = "[]";
@@ -45,16 +45,14 @@ public class EventoBean implements Serializable {
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private Usuario usuarioLogueado;
 
-    private List<Espacio> espacios;
-    public List<Evento> listarPorUsuario = new ArrayList<>();
-
     @PostConstruct
     public void init() {
         FacesContext context = FacesContext.getCurrentInstance();
+        System.out.println("[DEBUG] Iniciando EventoBean.init()");
 
         try {
             if (context == null) {
-                System.out.println("⚠ No hay FacesContext activo. Posible navegación directa o refresco fuera del ciclo JSF.");
+                System.out.println("⚠ No hay FacesContext activo. Posible navegación directa.");
                 inicializarListasVacias();
                 return;
             }
@@ -62,38 +60,42 @@ public class EventoBean implements Serializable {
             usuarioLogueado = (Usuario) context.getExternalContext()
                     .getSessionMap().get("usuarioLogueado");
 
-            if (usuarioLogueado == null) {
-                System.out.println("⚠ No hay usuario logueado en sesión. Se detiene la carga de datos.");
-                inicializarListasVacias();
+            cargarListasBasicas();
 
+            if (usuarioLogueado == null) {
+                System.out.println("⚠ No hay usuario logueado en sesión.");
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe iniciar sesión para acceder a las reservas."));
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                        "Debe iniciar sesión para acceder a las reservas."));
                 return;
             }
 
-            try {
-                espacios = espacioDAO.listar();
-                listaUsuarios = usuarioDAO.listar();
-            } catch (SQLException e) {
-                System.out.println("❌ Error al cargar espacios o usuarios: " + e.getMessage());
-                inicializarListasVacias();
-            }
+            System.out.println("[DEBUG] Usuario logueado: " + usuarioLogueado.getNombre() 
+                    + " | Rol: " + usuarioLogueado.getRol());
 
             try {
                 if (usuarioLogueado.getRol() == EnumRoles.ADMIN) {
                     cargarEventos();
+                    System.out.println("[DEBUG] Eventos de ADMIN cargados: " + listaEventos.size());
                 } else if (usuarioLogueado.getRol() == EnumRoles.HUESPED) {
                     listarEventosDelUsuario();
+                    System.out.println("[DEBUG] Eventos del HUESPED cargados: " + listarPorUsuario.size());
                 } else {
                     listaEventos = new ArrayList<>();
+                    System.out.println("[DEBUG] Rol desconocido, sin eventos");
                 }
             } catch (Exception e) {
-                System.out.println("Error al cargar eventos " + e.getMessage());
+                System.out.println("❌ Error al cargar eventos: " + e.getMessage());
+                e.printStackTrace();
                 listaEventos = new ArrayList<>();
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar los eventos."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                        "No se pudieron cargar los eventos."));
             }
-            System.out.println("EventoBean inicializado correctamente" + usuarioLogueado.getNombre());
+
+            System.out.println("[DEBUG] EventoBean inicializado correctamente.");
+            System.out.println("[DEBUG] Resumen - Espacios: " + listaEspacios.size() 
+                    + ", Usuarios: " + listaUsuarios.size() + ", Eventos: " + listaEventos.size());
 
         } catch (Exception ex) {
             System.out.println("❌ Error inesperado en init(): " + ex.getMessage());
@@ -102,19 +104,65 @@ public class EventoBean implements Serializable {
         }
     }
 
+    private void cargarListasBasicas() {
+        System.out.println("[DEBUG] Iniciando carga de listas básicas...");
+        
+        // Load spaces
+        try {
+            listaEspacios = espacioDAO.listar();
+            if (listaEspacios == null) {
+                listaEspacios = new ArrayList<>();
+            }
+            System.out.println("[DEBUG] Espacios cargados exitosamente: " + listaEspacios.size());
+        } catch (SQLException e) {
+            System.out.println("❌ Error SQL al cargar espacios: " + e.getMessage());
+            e.printStackTrace();
+            listaEspacios = new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("❌ Error inesperado al cargar espacios: " + e.getMessage());
+            e.printStackTrace();
+            listaEspacios = new ArrayList<>();
+        }
+
+        // Load users
+        try {
+            listaUsuarios = usuarioDAO.listar();
+            if (listaUsuarios == null) {
+                listaUsuarios = new ArrayList<>();
+            }
+            System.out.println("[DEBUG] Usuarios cargados exitosamente: " + listaUsuarios.size());
+        } catch (SQLException e) {
+            System.out.println("❌ Error SQL al cargar usuarios: " + e.getMessage());
+            e.printStackTrace();
+            listaUsuarios = new ArrayList<>();
+        } catch (Exception e) {
+            System.out.println("❌ Error inesperado al cargar usuarios: " + e.getMessage());
+            e.printStackTrace();
+            listaUsuarios = new ArrayList<>();
+        }
+    }
+
     private void inicializarListasVacias() {
+        System.out.println("[DEBUG] Inicializando listas vacías");
         listaEventos = new ArrayList<>();
         listaEspacios = new ArrayList<>();
         listaUsuarios = new ArrayList<>();
+        listarPorUsuario = new ArrayList<>();
     }
 
     public void cargarEventos() {
         try {
             listaEventos = eventoDAO.listar();
+            if (listaEventos == null) {
+                listaEventos = new ArrayList<>();
+            }
+            System.out.println("[DEBUG] Eventos cargados: " + listaEventos.size());
         } catch (SQLException e) {
+            System.out.println("❌ Error al cargar eventos: " + e.getMessage());
             listaEventos = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar los eventos."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudieron cargar los eventos."));
         }
     }
 
@@ -122,17 +170,22 @@ public class EventoBean implements Serializable {
         try {
             if (usuarioLogueado != null) {
                 listarPorUsuario = eventoDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
-
+                if (listarPorUsuario == null) {
+                    listarPorUsuario = new ArrayList<>();
+                }
+                System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario() 
+                        + " cargados: " + listarPorUsuario.size());
             } else {
                 listarPorUsuario = new ArrayList<>();
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No hay un usuario logueado."));
+                System.out.println("⚠ No hay usuario logueado para listar eventos");
             }
         } catch (SQLException e) {
+            System.out.println("❌ Error al cargar eventos del usuario: " + e.getMessage());
+            e.printStackTrace();
             listarPorUsuario = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas del usuario."));
-            e.printStackTrace();
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudieron cargar las reservas del usuario."));
         }
     }
 
@@ -146,7 +199,8 @@ public class EventoBean implements Serializable {
             Espacio espacio = obtenerEspacioPorId(espacioIdSeleccionado);
             if (espacio == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un espacio."));
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                        "Debe seleccionar un espacio."));
                 return null;
             }
             evento.setEspacio(espacio);
@@ -159,18 +213,21 @@ public class EventoBean implements Serializable {
             eventoDAO.eventoHuesped(evento);
 
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento regitrado correctamente."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    "Evento registrado correctamente."));
             limpiarFormulario();
             return "HomeHuesped?faces-redirect=true";
 
         } catch (SQLException e) {
+            System.out.println("❌ Error al guardar evento: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar el evento."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudo registrar el evento."));
             return null;
         }
     }
 
-    public void CargarEventoPorId() {
+    public void cargarEventoPorId() {
         String idParam = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap().get("id");
 
@@ -185,17 +242,19 @@ public class EventoBean implements Serializable {
                     usuarioIdSeleccionado = (evento.getUsuario() != null)
                             ? evento.getUsuario().getIdUsuario() : null;
                     refrescarOcupacionesEspacio();
+                    System.out.println("[DEBUG] Evento cargado: " + id);
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "El evento no existe."));
+                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                            "El evento no existe."));
                 }
-
             } catch (NumberFormatException | SQLException e) {
+                System.out.println("❌ Error al cargar evento por ID: " + e.getMessage());
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo cargar el evento."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                        "No se pudo cargar el evento."));
             }
         }
-
     }
 
     public String guardar() {
@@ -211,20 +270,23 @@ public class EventoBean implements Serializable {
             if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
+            
             eventoDAO.agregarEvento(evento);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento registrado correctamente."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    "Evento registrado correctamente."));
             limpiarFormulario();
             return "Eventos?faces-redirect=true";
 
         } catch (SQLException e) {
+            System.out.println("❌ Error al guardar evento: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo registrar el evento."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudo registrar el evento."));
             return null;
         }
     }
 
-    //Eliminar aca
     public String actualizar() {
         try {
             if (!validarFechaBasica(true)) {
@@ -238,14 +300,19 @@ public class EventoBean implements Serializable {
             if (!validarDisponibilidadFechas(true)) {
                 return null;
             }
+            
             eventoDAO.actualizar(evento);
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Evento actualizado correctamente."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
+                    "Evento actualizado correctamente."));
             limpiarFormulario();
             return "Eventos?faces-redirect=true";
+            
         } catch (SQLException e) {
+            System.out.println("❌ Error al actualizar evento: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el evento."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    "No se pudo actualizar el evento."));
             return null;
         }
     }
@@ -256,13 +323,15 @@ public class EventoBean implements Serializable {
 
         if (espacio == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un espacio."));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                    "Debe seleccionar un espacio."));
             return false;
         }
 
         if (usuario == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "Debe seleccionar un huésped."));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                    "Debe seleccionar un huésped."));
             return false;
         }
 
@@ -274,7 +343,6 @@ public class EventoBean implements Serializable {
         }
 
         return true;
-
     }
 
     public void validarFechasAjax() {
@@ -300,7 +368,6 @@ public class EventoBean implements Serializable {
     private boolean validarFechaBasica(boolean mostrarMensajeCamposIncompletos) {
         FacesContext context = FacesContext.getCurrentInstance();
 
-        // Verifica si la fecha está vacía
         if (evento.getFechaEvento() == null) {
             if (mostrarMensajeCamposIncompletos) {
                 context.addMessage(null, new FacesMessage(
@@ -311,8 +378,8 @@ public class EventoBean implements Serializable {
             }
             return false;
         }
-        Date hoy = new Date();
 
+        Date hoy = new Date();
         if (evento.getFechaEvento().before(hoy)) {
             context.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR,
@@ -321,6 +388,7 @@ public class EventoBean implements Serializable {
             ));
             return false;
         }
+
         return true;
     }
 
@@ -332,14 +400,15 @@ public class EventoBean implements Serializable {
         if (espacioId == null || espacioId == 0) {
             if (mostrarMensajeCamposIncompletos) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "espacio requerido", "Seleccione un espacio para verificar disponibilidad."));
+                        "Espacio requerido", "Seleccione un espacio para verificar disponibilidad."));
             }
             return false;
         }
+
         if (evento.getFechaEvento() == null) {
             if (mostrarMensajeCamposIncompletos) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Información incompleta", "Debe indicar las fecha del evento."));
+                        "Información incompleta", "Debe indicar la fecha del evento."));
             }
             return false;
         }
@@ -350,15 +419,17 @@ public class EventoBean implements Serializable {
 
             if (!disponible) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                        "Fecha no disponibles", "El espacio ya está reservado en el rango seleccionado."));
+                        "Fechas no disponibles", "El espacio ya está reservado en el rango seleccionado."));
                 return false;
             }
         } catch (SQLException e) {
+            System.out.println("❌ Error al verificar disponibilidad: " + e.getMessage());
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Error", "No se pudo verificar la disponibilidad del espacio."));
             return false;
         }
-        return false;
+
+        return true;
     }
 
     private Espacio obtenerEspacioPorId(Integer id) {
@@ -403,15 +474,51 @@ public class EventoBean implements Serializable {
 
     public String obtenerNombreEspacio(Evento evento) {
         if (evento == null || evento.getEspacio() == null) {
-            return "Si asignar";
+            return "Sin asignar";
         }
-        return "Espacio" + evento.getEspacio().getNombre();
+        return evento.getEspacio().getNombre();
     }
 
     public EnumEstadoEvento[] getEstados() {
         return EnumEstadoEvento.values();
     }
 
+    private void refrescarOcupacionesEspacio() {
+        if (espacioIdSeleccionado == null) {
+            fechasOcupadasJson = "[]";
+            return;
+        }
+
+        try {
+            Integer eventoId = (evento != null && evento.getIdEvento() > 0)
+                    ? evento.getIdEvento()
+                    : null;
+
+            List<Evento> ocupaciones = eventoDAO.listarOcupacionesEspacio(espacioIdSeleccionado, eventoId);
+
+            if (ocupaciones == null || ocupaciones.isEmpty()) {
+                fechasOcupadasJson = "[]";
+                return;
+            }
+
+            StringBuilder json = new StringBuilder("[");
+            for (int i = 0; i < ocupaciones.size(); i++) {
+                Evento ocu = ocupaciones.get(i);
+                json.append("{\"start\":\"").append(ocu.getFechaEvento()).append("\"}");
+                if (i < ocupaciones.size() - 1) json.append(",");
+            }
+            json.append("]");
+
+            fechasOcupadasJson = json.toString();
+            System.out.println("[DEBUG] Ocupaciones refrescadas: " + fechasOcupadasJson);
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error al refrescar ocupaciones: " + e.getMessage());
+            fechasOcupadasJson = "[]";
+        }
+    }
+
+    // Getters and Setters
     public Evento getEvento() {
         return evento;
     }
@@ -464,75 +571,8 @@ public class EventoBean implements Serializable {
     public void setListarPorUsuario(List<Evento> listarPorUsuario) {
         this.listarPorUsuario = listarPorUsuario;
     }
-    
-    public List<Espacio> getEspacios(){
-        return espacios;
-    }
-    
-    public void setEspacios(List<Espacio> espacios){
-        this.espacios = espacios;
-    }
 
-    private void refrescarOcupacionesEspacio() {
-    // Si no hay espacio seleccionado → no hay ocupaciones
-    if (espacioIdSeleccionado == null) {
-        fechasOcupadasJson = "[]";
-        return;
-    }
-
-    try {
-        // Si estás editando un evento, se debe excluir su propia fecha
-        Integer eventoId = (evento != null && evento.getIdEvento() > 0)
-                ? evento.getIdEvento()
-                : null;
-
-        // Obtener ocupaciones
-        List<Evento> ocupaciones = eventoDAO.listarOcupacionesEspacio(espacioIdSeleccionado, eventoId);
-
-        if (ocupaciones.isEmpty()) {
-            fechasOcupadasJson = "[]";
-            return;
-        }
-
-        // Construir el JSON manualmente
-        StringBuilder jsonBuilder = new StringBuilder("[");
-        
-        for (Evento ocupacion : ocupaciones) {
-            if (ocupacion.getFechaEvento() == null) {
-                continue;
-            }
-
-            // Formatear fecha a ISO (yyyy-MM-dd)
-            String fecha = new java.text.SimpleDateFormat("yyyy-MM-dd")
-                    .format(ocupacion.getFechaEvento());
-
-            if (jsonBuilder.length() > 1) {
-                jsonBuilder.append(',');
-            }
-
-            jsonBuilder.append("{")
-                       .append("\"from\":\"").append(fecha).append("\",")
-                       .append("\"to\":\"").append(fecha).append("\"")
-                       .append("}");
-        }
-
-        jsonBuilder.append("]");
-
-        fechasOcupadasJson = jsonBuilder.toString();
-
-    } catch (SQLException e) {
-        fechasOcupadasJson = "[]";
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                        "No se pudo consultar la disponibilidad del espacio."));
+    public Integer getEspacioIdSeleccionado() {
+        return espacioIdSeleccionado;
     }
 }
-
-        
-        
-    }
-    
-    
-  
-
-
