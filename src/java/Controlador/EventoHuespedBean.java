@@ -76,6 +76,7 @@ public class EventoHuespedBean implements Serializable {
         }
 
         prepararNuevoEvento();
+        aplicarEspacioPreseleccionado();
     }
 
     // -------------------------
@@ -109,6 +110,30 @@ public class EventoHuespedBean implements Serializable {
         fechaVencimientoTarjeta = null;
         codigoSeguridadTarjeta = null;
         fechaVencimientoTarjetaParseada = null;
+    }
+
+    private void aplicarEspacioPreseleccionado() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null) {
+            return;
+        }
+
+        String idEspacioParam = context.getExternalContext()
+                .getRequestParameterMap().get("idEspacio");
+
+        if (idEspacioParam == null || idEspacioParam.isEmpty()) {
+            return;
+        }
+
+        try {
+            int idEspacio = Integer.parseInt(idEspacioParam);
+            if (idEspacio > 0) {
+                setEspacioSeleccionado(idEspacio);
+                recalcularTotal();
+            }
+        } catch (NumberFormatException ex) {
+            System.err.println("Id de espacio inválido: " + idEspacioParam);
+        }
     }
 
     // -------------------------
