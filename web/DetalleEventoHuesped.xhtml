@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Detalle del evento</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <style>
+        body { background:#f5f5f5; font-family:'Segoe UI',sans-serif; }
+        .header { position:fixed; top:0; left:0; right:0; height:70px; background:#fff; border-bottom:1px solid #e0e0e0; display:flex; align-items:center; justify-content:space-between; padding:0 24px; z-index:1000; }
+        .layout { display:flex; min-height:100vh; }
+        .sidebar { width:220px; background:#ffffff; border-right:1px solid #e0e0e0; padding-top:70px; position:fixed; top:0; bottom:0; }
+        .nav-link { display:flex; align-items:center; gap:10px; padding:12px 24px; color:#555; text-decoration:none; border-left:3px solid transparent; }
+        .nav-link.active, .nav-link:hover { background:#e8f5f3; color:#1a9b8e; border-left-color:#1a9b8e; }
+        .content { margin-left:220px; padding:100px 40px 40px; width:100%; }
+        .detalle-card { background:#fff; border-radius:20px; padding:32px; box-shadow:0 15px 35px rgba(0,0,0,0.08); }
+        .detalle-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+    </style>
+</h:head>
+<h:body>
+<f:event type="preRenderView" listener="#{eventoPortalBean.cargarEventoParaDetalle}" />
+    <div class="header">
+        <a href="HomeHuesped.xhtml" class="logo-text" style="text-decoration:none;color:#1a9b8e;font-weight:700;font-size:20px;">Great Viaggio</a>
+        <div class="d-flex gap-2">
+            <a href="EventosHuesped.xhtml" class="btn btn-outline-secondary"><i class="bi bi-stars"></i> Eventos disponibles</a>
+            <a href="NuevoEventoHuesped.xhtml" class="btn btn-primary"><i class="bi bi-calendar-plus"></i> Reservar espacio</a>
+        </div>
+    </div>
+    <div class="layout">
+        <div class="sidebar">
+            <a href="HomeHuesped.xhtml" class="nav-link"><i class="bi bi-house-door"></i>Inicio</a>
+            <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
+            <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
+            <a href="EventosHuesped.xhtml" class="nav-link"><i class="bi bi-stars"></i>Eventos disponibles</a>
+            <a href="NuevoEventoHuesped.xhtml" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
+            <a href="MisEventos.xhtml" class="nav-link"><i class="bi bi-calendar-event"></i>Mis Eventos</a>
+            <a href="MiPerfil.xhtml" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
+        </div>
+        <div class="content">
+            <h2 class="mb-4"><i class="bi bi-eye"></i> Detalle del evento</h2>
+            <h:messages styleClass="alert alert-warning" layout="table" />
+            <ui:fragment rendered="#{empty eventoPortalBean.eventoDetalle}">
+                <div class="alert alert-info">No se encontró la información del evento solicitado.</div>
+            </ui:fragment>
+            <ui:fragment rendered="#{not empty eventoPortalBean.eventoDetalle}">
+                <div class="detalle-card">
+                    <div class="d-flex justify-content-between flex-wrap mb-3">
+                        <div>
+                            <h3 class="mb-1">#{eventoPortalBean.eventoDetalle.nombreEvento}</h3>
+                            <small class="text-muted">#{eventoPortalBean.eventoDetalle.estado}</small>
+                        </div>
+                        <span class="badge text-bg-light">Huésped responsable: #{eventoPortalBean.eventoDetalle.usuario != null ? eventoPortalBean.eventoDetalle.usuario.nombre : 'Pendiente'}</span>
+                    </div>
+                    <p class="mb-4">#{empty eventoPortalBean.eventoDetalle.descripcion ? 'Sin descripción adicional.' : eventoPortalBean.eventoDetalle.descripcion}</p>
+                    <div class="detalle-grid">
+                        <div>
+                            <strong>Fecha</strong>
+                            <div>
+                                <h:outputText value="#{eventoPortalBean.eventoDetalle.fechaEvento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </div>
+                        </div>
+                        <div>
+                            <strong>Horario</strong>
+                            <div>#{eventoPortalBean.eventoDetalle.horaInicio} - #{eventoPortalBean.eventoDetalle.horaFin}</div>
+                        </div>
+                        <div>
+                            <strong>Espacio</strong>
+                            <div>#{eventoPortalBean.eventoDetalle.espacio != null ? eventoPortalBean.eventoDetalle.espacio.nombre : 'Sin asignar'}</div>
+                        </div>
+                        <div>
+                            <strong>Cliente</strong>
+                            <div>#{eventoPortalBean.eventoDetalle.nombreCliente}</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex flex-wrap gap-2">
+                        <h:link outcome="/Pagos.xhtml" styleClass="btn btn-success" rendered="#{eventoPortalBean.eventoDetallePropio}">
+                            <i class="bi bi-credit-card"></i> Pagar este evento
+                            <f:param name="idEvento" value="#{eventoPortalBean.eventoDetalle.idEvento}" />
+                        </h:link>
+                        <h:link outcome="/NuevoEventoHuesped.xhtml" styleClass="btn btn-outline-primary">
+                            <i class="bi bi-lightning"></i> Reservar un espacio similar
+                            <f:param name="idEspacio" value="#{eventoPortalBean.eventoDetalle.espacio != null ? eventoPortalBean.eventoDetalle.espacio.idEspacio : 0}" />
+                        </h:link>
+                        <h:link outcome="/MisEventos.xhtml" styleClass="btn btn-link">
+                            <i class="bi bi-arrow-left"></i> Volver
+                        </h:link>
+                    </div>
+                </div>
+            </ui:fragment>
+        </div>
+    </div>
+</h:body>
+</html>

@@ -39,6 +39,29 @@ public class EventoDAO {
         return listaEventos;
     }
 
+    public List<Evento> listarActivos() throws SQLException {
+        List<Evento> eventosActivos = new ArrayList<>();
+
+        String sql = "SELECT e.*, "
+                + "es.nombre AS nombreEspacio, es.descripcion AS descripcionEspacio, es.capacidad AS capacidadEspacio, "
+                + "es.costoHora AS costoHoraEspacio, es.estado AS estadoEspacio, es.imagen AS imagenEspacio, "
+                + "u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
+                + "FROM evento e "
+                + "LEFT JOIN espacio es ON e.idEspacio = es.idEspacio "
+                + "LEFT JOIN usuario u ON e.idUsuario = u.idUsuario "
+                + "WHERE e.estado = 'Activa' "
+                + "ORDER BY e.fechaEvento ASC, e.horaInicio ASC";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                eventosActivos.add(mapearEvento(rs));
+            }
+        }
+
+        return eventosActivos;
+    }
+
     public List<Evento> listarPorUsuario(int idUsuario) throws SQLException {
         List<Evento> eventos = new ArrayList<>();
 
