@@ -292,9 +292,13 @@
             if (!window.flatpickr) {
                 return;
             }
-            if (window.flatpickr.l10ns && window.flatpickr.l10ns.es) {
-                window.flatpickr.localize(window.flatpickr.l10ns.es);
-            }
+if (window.jsf &amp;&amp; jsf.ajax) {
+    jsf.ajax.addOnEvent(function(data) {
+        if (data.status === 'success') {
+            inicializarPickersEvento();
+        }
+    });
+}
             const rangosDeshabilitados = parseOcupaciones();
             initFechaPicker(rangosDeshabilitados);
             initHoraPicker("horaInicio");
@@ -302,12 +306,13 @@
         }
 
         document.addEventListener("DOMContentLoaded", inicializarCalendarios);
-        if (window.jsf && window.jsf.ajax) {
-            window.jsf.ajax.addOnEvent(function (event) {
-                if (event && event.status === "success") {
-                    inicializarCalendarios();
-                }
-            });
+        if (window.jsf &amp;&amp; jsf.ajax) {
+    jsf.ajax.addOnEvent(function(data) {
+        if (data.status === 'success') {
+            inicializarPickersEvento();
+        }
+    });
+
         }
     })();
 </script>
