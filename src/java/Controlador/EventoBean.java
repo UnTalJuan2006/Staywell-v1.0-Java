@@ -61,11 +61,12 @@ public class EventoBean implements Serializable {
                     .getSessionMap().get("usuarioLogueado");
 
             cargarListasBasicas();
+            limpiarFormulario();
 
             if (usuarioLogueado == null) {
                 System.out.println("⚠ No hay usuario logueado en sesión.");
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
                         "Debe iniciar sesión para acceder a las reservas."));
                 return;
             }

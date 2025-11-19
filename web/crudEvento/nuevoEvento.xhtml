@@ -73,56 +73,83 @@
 
                         <div class="col-md-6">
                             <label for="nombreEvento" class="form-label">Nombre del Evento</label>
-                            <h:inputText id="nombreEvento" value="#{eventoBean.evento.nombreEvento}" styleClass="form-control" />
+                            <h:inputText id="nombreEvento"
+                                         value="#{eventoBean.evento.nombreEvento}"
+                                         styleClass="form-control"
+                                         required="true"
+                                         requiredMessage="El nombre del evento es obligatorio." />
+                            <h:message for="nombreEvento" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="fechaEvento" class="form-label">Fecha del Evento</label>
-                            <h:inputText id="fechaEvento" value="#{eventoBean.evento.fechaEvento}" 
-                                         styleClass="form-control" readonly="true">
+                            <h:inputText id="fechaEvento" value="#{eventoBean.evento.fechaEvento}"
+                                         styleClass="form-control" readonly="true"
+                                         required="true"
+                                         requiredMessage="Debe indicar la fecha del evento.">
+                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
                                 <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" render="@form"/>
                             </h:inputText>
+                            <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="horaInicio" class="form-label">Hora Inicio</label>
-                            <h:inputText id="horaInicio" value="#{eventoBean.evento.horaInicio}" 
-                                         styleClass="form-control" readonly="true"/>
+                            <h:inputText id="horaInicio" value="#{eventoBean.evento.horaInicio}"
+                                         styleClass="form-control" readonly="true"
+                                         converter="localTimeConverter"
+                                         required="true"
+                                         requiredMessage="Debe indicar la hora de inicio."/>
+                            <h:message for="horaInicio" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="horaFin" class="form-label">Hora Fin</label>
-                            <h:inputText id="horaFin" value="#{eventoBean.evento.horaFin}" 
-                                         styleClass="form-control" readonly="true"/>
+                            <h:inputText id="horaFin" value="#{eventoBean.evento.horaFin}"
+                                         styleClass="form-control" readonly="true"
+                                         converter="localTimeConverter"
+                                         required="true"
+                                         requiredMessage="Debe indicar la hora de finalización."/>
+                            <h:message for="horaFin" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="espacio" class="form-label">Espacio</label>
                             <h:selectOneMenu id="espacio" value="#{eventoBean.espacioIdSeleccionado}"
-                                             styleClass="form-select" required="true" requiredMessage="Debe seleccionar un espacio.">
+                                             styleClass="form-select"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un espacio.">
                                 <f:selectItem itemLabel="Seleccione un espacio" itemValue="" noSelectionOption="true" />
                                 <f:selectItems value="#{eventoBean.listaEspacios}" var="espacio"
                                                itemValue="#{espacio.idEspacio}"
                                                itemLabel="#{espacio.nombre}" />
                                 <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" render="@form" />
                             </h:selectOneMenu>
+                            <h:message for="espacio" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="usuario" class="form-label">Huésped</label>
-                            <h:selectOneMenu id="usuario" value="#{eventoBean.usuarioIdSeleccionado}" styleClass="form-select">
+                            <h:selectOneMenu id="usuario" value="#{eventoBean.usuarioIdSeleccionado}"
+                                             styleClass="form-select"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un huésped.">
                                 <f:selectItem itemLabel="Seleccione un huésped" itemValue="" noSelectionOption="true" />
                                 <f:selectItems value="#{eventoBean.listaUsuarios}" var="usuario"
                                                itemValue="#{usuario.idUsuario}"
                                                itemLabel="#{usuario.nombre}" />
                             </h:selectOneMenu>
+                            <h:message for="usuario" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-md-6">
                             <label for="estado" class="form-label">Estado</label>
-                            <h:selectOneMenu id="estado" value="#{eventoBean.evento.estado}" styleClass="form-select">
+                            <h:selectOneMenu id="estado" value="#{eventoBean.evento.estado}" styleClass="form-select"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un estado.">
                                 <f:selectItems value="#{eventoBean.estados}" />
                             </h:selectOneMenu>
+                            <h:message for="estado" styleClass="text-danger small" />
                         </div>
 
                         <div class="col-12">
