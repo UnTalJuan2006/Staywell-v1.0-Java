@@ -84,24 +84,6 @@
                 margin-right: 0.5rem;
             }
 
-            .main-content {
-                margin-left: 280px;
-                padding: 2rem;
-            }
-
-            .top-bar {
-                background: white;
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .table-actions a,
-            .table-actions button {
-                margin-right: 0.5rem;
-            }
-
-
             .stats {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -122,15 +104,15 @@
                 transition: transform 0.2s;
             }
 
-
             .stat-card:hover {
                 transform: translateY(-5px);
             }
 
             .stat-icon {
                 font-size: 2em;
-                color: #007bff;
+                color: #007bff; /* Azul para todos los iconos */
             }
+
 
             .stat-info h3 {
                 margin: 0;
@@ -153,10 +135,10 @@
             .btn-exportar:hover {
                 background-color: #0056b3;
             }
+
             h3{
                 color:#000000;
                 font-size: unset;
-
             }
 
             .table-actions .btn {
@@ -167,9 +149,116 @@
                 margin-right: 0 !important;
             }
 
+            /* Reorganizado para que los iconos se mantengan visibles */
+            .export-buttons {
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+                z-index: 100;
+            }
 
+            /* Contenedor wrapper para mantener hover activo */
+            .export-container {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                padding: 8px;
+            }
 
+            .export-main-btn {
+                background: #0d6efd;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 20px;
+                z-index: 10;
+                border: none;
+                padding: 0;
+                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+            }
 
+            .export-main-btn:hover {
+                background: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+                transform: scale(1.05);
+            }
+
+            /* Excel option - positioned above */
+            .export-option-excel {
+                position: absolute;
+                bottom: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* PDF option - positioned below */
+            .export-option-pdf {
+                position: absolute;
+                top: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(-10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* Show options on container hover */
+            .export-container:hover .export-option-excel,
+            .export-container:hover .export-option-pdf {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+            }
+
+            .export-icon {
+                width: 28px;
+                height: 28px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .export-option-excel:hover,
+            .export-option-pdf:hover {
+                transform: scale(1.15);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
         </style>
 
     </h:head>
@@ -240,7 +329,7 @@
 
                 <div class="stats d-flex" style="gap: 5px;">
                     <div class="stat-card shadow-sm p-3" style="width: 200px; text-align: center;">
-                        <i class="fas fa-bed stat-icon" style="font-size: 24px; color: #131318;"></i>
+                        <i class="fas fa-bed stat-icon"></i>
                         <div class="stat-info">
                             <h3>#{habitacionBean.totalHabitacionesEstandar()}</h3>
                             <p>Habitaciones Estándar</p>
@@ -248,7 +337,7 @@
                     </div>
 
                     <div class="stat-card shadow-sm p-3" style="width: 200px; text-align: center;">
-                        <i class="fas fa-users stat-icon" style="font-size: 24px; color: #131318;"></i>
+                        <i class="fas fa-users stat-icon" ></i>
                         <div class="stat-info">
                             <h3>#{habitacionBean.totalHabitacionesFamiliar()}</h3>
                             <p>Habitaciones Familiar</p>
@@ -256,7 +345,7 @@
                     </div>
 
                     <div class="stat-card shadow-sm p-3" style="width: 200px; text-align: center;">
-                        <i  class="fas fa-gem stat-icon"  style="font-size: 24px; color: #131318;"></i>
+                        <i  class="fas fa-gem stat-icon" ></i>
                         <div class="stat-info">
                             <h3>#{habitacionBean.totalHabitacionesVip()}</h3>
                             <p>Habitaciones Vip</p>
@@ -264,14 +353,14 @@
                     </div>
 
                     <div class="stat-card shadow-sm p-3" style="width: 200px; text-align: center;">
-                        <i class="fas fa-house stat-icon"    style="font-size: 24px; color: #131318;"></i>
+                        <i class="fas fa-house stat-icon"   ></i>
                         <div class="stat-info">
                             <h3>#{habitacionBean.totalHabitacionesDuplex()}</h3>
                             <p>Habitaciones Duplex</p>
                         </div>
                     </div>
                     <div class="stat-card shadow-sm p-3" style="width: 200px; text-align: center;">
-                        <i class="fas fa-person-shelter stat-icon"     style="font-size: 24px; color: #131318;"></i>
+                        <i class="fas fa-person-shelter stat-icon"    ></i>
                         <div class="stat-info">
                             <h3>#{habitacionBean.totalHabitacionesIndividual()}</h3>
                             <p>Habitaciones Individual</p>
@@ -281,49 +370,61 @@
 
                 </div>
 
+                <!-- 🔵 Card de filtros + buscador + exportar (Sticky) -->
+                <!-- Card de filtros sin quedar flotando siempre -->
+                <div class="card shadow-sm mb-4"
+                     style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">
 
 
-                <div class="mb-4">
-                    <h:messages styleClass="alert alert-info" layout="table" />
-                    <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap">
-                        <!-- 🔍 Buscador -->
-                        <div class="position-relative mb-2" style="width: 100%; max-width: 350px;">
-                            <i class="bi bi-search text-secondary position-absolute"
-                               style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+                    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-                            <p:inputText id="globalFilter"
-                                        value="#{habitacionBean.filtro}"
-                                         placeholder="Buscar habitación..."
-                                         styleClass="form-control ps-5 shadow-sm"
-                                         style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
-                                         onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
-                                         onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
-                            <f:ajax event="keyup" 
-                                        listener="#{habitacionBean.buscar}" 
-                                        render="tblHabitaciones" />
+                        <!-- 🟦 IZQUIERDA: Buscador -->
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <h:form>
+                                <div class="position-relative" style="width: 260px;">
+                                    <i class="bi bi-search text-secondary position-absolute"
+                                       style="top: 50%; left: 12px; transform: translateY(-50%); font-size: 0.9rem;"></i>
+
+                                    <p:inputText id="globalFilter"
+                                                 value="#{habitacionBean.filtro}"
+                                                 placeholder="Buscar habitación..."
+                                                 styleClass="form-control ps-5 shadow-sm"
+                                                 style="border-radius: 10px; border: 1px solid #dee2e6;" />
+
+                                    <f:ajax event="keyup"
+                                            listener="#{habitacionBean.buscar}"
+                                            render="tblHabitaciones" />
+                                </div>
+                            </h:form>
                         </div>
 
-               
-                        <!-- 📊 Botones de exportar -->
-                        <!--                        <div class="d-flex gap-2 mb-2">
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/xls.png" width="35" />
-                                                            <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                        
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/pdf.png" width="30" />
-                                                            <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Productos"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                                                </div>-->
-                    </h:form>
+                        <!-- 🟦 DERECHA: Botón principal + Exportación -->
+                        <div class="export-buttons ms-auto">
+                            <div class="export-container">
+                                <button class="export-main-btn" type="button" title="Descargar">
+                                    <i class="bi bi-download"></i>
+                                </button>
+
+                                <!-- Excel -->
+                                <h:form styleClass="export-option-excel">
+                                    <h:commandLink title="Descargar Excel">
+                                        <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
+                                        <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones" />
+                                    </h:commandLink>
+                                </h:form>
+
+                                <!-- PDF -->
+                                <h:form styleClass="export-option-pdf">
+                                    <h:commandLink title="Descargar PDF">
+                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                                        <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Habitaciones" />
+                                    </h:commandLink>
+                                </h:form>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-
-
 
 
 
@@ -353,10 +454,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <ui:repeat value="#{  habitacionBean.listaHabitaciones}" var="habitacion">
+                                        <ui:repeat value="#{habitacionBean.habitacionesFiltradas}" var="habitacion">
 
                                             <tr>
-                                                <td>#{loop.index + 1}</td>
+                                                <td>#{habitacion.idHabitacion}</td>
                                                 <td>#{habitacion.numHabitacion}</td>
                                                 <td>
                                                     <!-- ✅ Llama al nombre real del tipo -->
@@ -406,6 +507,7 @@
                             </div>
                         </h:panelGroup>
                     </div>
+
                 </div>
 
             </div>   

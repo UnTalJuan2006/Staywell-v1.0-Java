@@ -40,7 +40,7 @@ public class TipoHabitacionBean {
     public void setImagen(Part imagen) {
         this.imagen = imagen;
     }
-    
+
     public void setListaTipoHabitaciones(List<TipoHabitacion> listaTipoHabitaciones) {
         this.listaTipoHabitaciones = listaTipoHabitaciones;
     }
@@ -216,4 +216,30 @@ public class TipoHabitacionBean {
         }
     }
 
+    public int getTotalTipos() {
+        try {
+            return tipoHabitacionDAO.totalTipos();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public int getCapacidadMaxima() {
+        try {
+            return tipoHabitacionDAO.capacidadMaxima();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public float getPrecioPromedio() {
+        try {
+            return tipoHabitacionDAO.precioPromedio();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0f;
+        }
+    }
 }

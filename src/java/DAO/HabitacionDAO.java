@@ -179,7 +179,7 @@ public class HabitacionDAO {
     ps.setString(1, "%" + filtro + "%");
     ps.setString(2, "%" + filtro + "%");
 
-    ResultSet rs = ps.executeQuery();
+        ResultSet rs = ps.executeQuery();
 
     while (rs.next()) {
 

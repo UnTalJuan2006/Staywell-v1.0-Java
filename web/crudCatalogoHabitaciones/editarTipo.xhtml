@@ -8,7 +8,7 @@
         <f:viewAction action="#{tipoHabitacionBean.cargarTipoPorId()}" />
     </f:metadata>
     <h:head>
-        <title>Editar Tipo</title>
+        <title>Editar Reserva</title>
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -118,8 +118,8 @@
 
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
-                <h2><i class="bi bi-pencil-square"></i> Editar el Tipo Habitacion</h2>
-                <h:link outcome="/tipoHabitaciones.xhtml" styleClass="btn btn-outline-secondary">
+                <h2><i class="bi bi-pencil-square"></i> Editar Reserva</h2>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Volver
                 </h:link>
             </div>
@@ -131,49 +131,66 @@
                     <div class="card-body">
                         <h5 class="card-title mb-3">Actualizar datos</h5>
 
-                        <h:form id="formHabitacion" styleClass="habitacion-form">
+                      <h:form id="formTipoHabitacion" enctype="multipart/form-data" styleClass="habitacion-form">
 
-                            <div class="row g-3">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <h:inputText id="nombre" value="#{tipoHabitacionBean.tipoHabitacion.nombre}" 
+                                         styleClass="form-control" required="true" />
+                        </div>
 
-                                <div class="col-md-6">
-                                    <label for="nombre" class="form-label">Nombre</label>
-                                    <h:inputText id="nombre" value="#{tipoHabitacionBean.tipoHabitacion.nombre}" styleClass="form-control" />
-                                </div>
+                        <div class="col-md-6">
+                            <label for="capacidad" class="form-label">Capacidad</label>
+                            <h:inputText id="capacidad" value="#{tipoHabitacionBean.tipoHabitacion.capacidad}" 
+                                         styleClass="form-control" required="true" />
+                        </div>
 
-                                <div class="col-12">
-                                    <label for="observaciones" class="form-label">Descripcion</label>
-                                    <h:inputTextarea id="observaciones" value="#{tipoHabitacionBean.tipoHabitacion.descripcion}" styleClass="form-control" rows="3" />
-                                </div>
+                        <div class="col-md-6">
+                            <label for="precio" class="form-label">Precio</label>
+                            <h:inputText id="precio" value="#{tipoHabitacionBean.tipoHabitacion.precio}" 
+                                         styleClass="form-control" required="true" />
+                        </div>
 
+                        <div class="col-md-6">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <h:inputTextarea id="descripcion" value="#{tipoHabitacionBean.tipoHabitacion.descripcion}" 
+                                             styleClass="form-control" rows="2" required="true" />
+                        </div>
 
-                                <div class="col-md-6">
-                                    <label for="capacidad" class="form-label">Capacidad</label>
-                                    <h:inputText id="capacidad" value="#{tipoHabitacionBean.tipoHabitacion.capacidad}" styleClass="form-control" />
-                                </div>
+                        <!-- Imagen actual -->
+                        <div class="col-md-6 text-center">
+                            <label class="form-label d-block">Imagen actual</label>
+                            <h:graphicImage value="#{'/img/' += tipoHabitacionBean.tipoHabitacion.imagen}" 
+                                            width="200" height="140" 
+                                            rendered="#{not empty tipoHabitacionBean.tipoHabitacion.imagen}" 
+                                            style="border-radius: 10px; border: 1px solid #ccc; padding: 5px;" />
+                            <h:outputText value="(Sin imagen)" 
+                                          rendered="#{empty tipoHabitacionBean.tipoHabitacion.imagen}" />
+                        </div>
 
-                                <div class="col-md-6">
-                                    <label for="precio" class="form-label">Precio</label>
-                                    <h:inputText id="precio" value="#{tipoHabitacionBean.tipoHabitacion.precio}" styleClass="form-control" />
-                                </div>
+                        <!-- Nueva imagen -->
+                        <div class="col-md-6">
+                            <label for="imagenNueva" class="form-label">Subir nueva imagen</label>
+                            <h:inputFile id="imagenNueva" value="#{tipoHabitacionBean.imagen}" styleClass="form-control" />
+                            <small class="text-muted">Opcional: selecciona una imagen para reemplazar la actual.</small>
+                        </div>
 
-                                <div class="col-md-6">
-                                    <label for="imagen" class="form-label">Imagen</label>
-                                    <h:inputFile id="imagen" value="#{tipoHabitacionBean.imagen}" styleClass="form-control" />
-                                </div>
+                        <div class="col-12 d-flex justify-content-end mt-3">
+                            <h:commandButton value="Actualizar" action="#{tipoHabitacionBean.actualizar()}" 
+                                             styleClass="btn btn-primary me-2" />
+                            <h:link outcome="/TipoHabitacion.xhtml" styleClass="btn btn-secondary">
+                                Cancelar
+                            </h:link>
+                        </div>
 
-
-
-                                <div class="col-12 d-flex justify-content-end mt-3">
-                                    <h:commandButton value="Actualizar" action="#{tipoHabitacionBean.actualizar()}" styleClass="btn btn-primary me-2" />
-                                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
-                                </div>
-
-                            </div>
-                        </h:form>
+                    </div>
+                </h:form>
                     </div>
                 </div>
             </div>
         </div>
-
+        
     </h:body>
 </html>

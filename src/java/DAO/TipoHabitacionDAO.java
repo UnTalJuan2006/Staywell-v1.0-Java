@@ -112,4 +112,116 @@ public class TipoHabitacionDAO {
 
         }
     }
+
+    public List<TipoHabitacion> buscar(String filtro) throws SQLException {
+        List<TipoHabitacion> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM tipohabitacion "
+                + "WHERE nombre LIKE ? "
+                + "OR precio = ? "
+                + "ORDER BY precio ASC";
+
+        PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+
+        ps.setString(1, "%" + filtro + "%");
+
+        try {
+            float precio = Float.parseFloat(filtro);
+            ps.setFloat(2, precio);
+        } catch (NumberFormatException e) {
+            ps.setFloat(2, -1); // ningún precio será -1
+        }
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            TipoHabitacion t = new TipoHabitacion();
+            t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
+            t.setNombre(rs.getString("nombre"));
+            t.setDescripcion(rs.getString("descripcion"));
+            t.setCapacidad(rs.getInt("capacidad"));
+            t.setPrecio(rs.getFloat("precio"));
+            t.setImagen(rs.getString("imagen"));
+            lista.add(t);
+        }
+
+        rs.close();
+        ps.close();
+
+        return lista;
+    }
+
+    public List<TipoHabitacion> listarPorPrecioAsc() throws SQLException {
+        String sql = "SELECT * FROM tipohabitacion ORDER BY precio ASC";
+        List<TipoHabitacion> lista = new ArrayList<>();
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                TipoHabitacion t = new TipoHabitacion();
+                t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
+                t.setNombre(rs.getString("nombre"));
+                t.setDescripcion(rs.getString("descripcion"));
+                t.setCapacidad(rs.getInt("capacidad"));
+                t.setPrecio(rs.getFloat("precio"));
+                t.setImagen(rs.getString("imagen"));
+                lista.add(t);
+            }
+        }
+        return lista;
+    }
+
+    public List<TipoHabitacion> listarPorPrecioDesc() throws SQLException {
+        String sql = "SELECT * FROM tipohabitacion ORDER BY precio DESC";
+        List<TipoHabitacion> lista = new ArrayList<>();
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                TipoHabitacion t = new TipoHabitacion();
+                t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
+                t.setNombre(rs.getString("nombre"));
+                t.setDescripcion(rs.getString("descripcion"));
+                t.setCapacidad(rs.getInt("capacidad"));
+                t.setPrecio(rs.getFloat("precio"));
+                t.setImagen(rs.getString("imagen"));
+                lista.add(t);
+            }
+        }
+        return lista;
+    }
+// 1. Total de tipos de habitación
+
+    public int totalTipos() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM tipohabitacion";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+        return 0;
+    }
+
+// 2. Capacidad máxima disponible
+    public int capacidadMaxima() throws SQLException {
+        String sql = "SELECT MAX(capacidad) AS maxCapacidad FROM tipohabitacion";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("maxCapacidad");
+            }
+        }
+        return 0;
+    }
+
+// 3. Precio promedio
+    public float precioPromedio() throws SQLException {
+        String sql = "SELECT AVG(precio) AS promedio FROM tipohabitacion";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getFloat("promedio");
+            }
+        }
+        return 0f;
+    }
+
 }

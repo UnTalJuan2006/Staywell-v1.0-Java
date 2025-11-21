@@ -47,39 +47,32 @@ public class HabitacionBean implements Serializable {
         return habitacionesFiltradas;
     }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
-        try {
-            habitacion = new Habitacion();
-            ensureDaos();
+   @PostConstruct
+public void init() {
+    System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
+    try {
+        habitacion = new Habitacion();
+        ensureDaos();
 
-            System.out.println("➡️  Cargando lista de tipos...");
-            listaTipos = getTipoHabitacionDAO().listar();
-            if (listaTipos == null) {
-                System.out.println("⚠️ tipoHabitacionDAO.listar() devolvió null, se crea lista vacía");
-                listaTipos = new ArrayList<>();
-            }
+        listaTipos = getTipoHabitacionDAO().listar();
+        if (listaTipos == null) listaTipos = new ArrayList<>();
 
-            System.out.println("➡️  Cargando lista de habitaciones...");
-            habitaciones = getHabitacionDAO().listar();
-            if (habitaciones == null) {
-                System.out.println("⚠️ habitacionDAO.listar() devolvió null, se crea lista vacía");
-                habitaciones = new ArrayList<>();
-            }
+        habitaciones = getHabitacionDAO().listar();
+        if (habitaciones == null) habitaciones = new ArrayList<>();
 
-            //habitacionesFiltradas = new ArrayList<>(habitaciones);
-//            System.out.println("✅ Datos iniciales cargados correctamente. Total habitaciones: " + habitaciones.size());
-        } catch (Exception e) {
-            System.out.println("💥 Error en @PostConstruct: " + e.getMessage());
-            e.printStackTrace();
-            listaTipos = new ArrayList<>();
-            habitaciones = new ArrayList<>();
-            habitacionesFiltradas = new ArrayList<>();
-            habitacionesFiltradas = new ArrayList<>(habitaciones);
+        // 🔥 NECESARIO PARA MOSTRAR HABITACIONES AL ENTRAR
+        habitacionesFiltradas = new ArrayList<>(habitaciones);
 
-        }
+        System.out.println("✅ Datos cargados. Total: " + habitacionesFiltradas.size());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        listaTipos = new ArrayList<>();
+        habitaciones = new ArrayList<>();
+        habitacionesFiltradas = new ArrayList<>();
     }
+}
+
 
     public List<Habitacion> getListaHabitaciones() {
         try {
@@ -215,7 +208,7 @@ public class HabitacionBean implements Serializable {
     try {
         // Asegurar listas no nulas
         if (habitaciones == null) {
-            habitaciones = getHabitacionDAO().listar();
+        habitaciones = getHabitacionDAO().listar();
         }
         if (habitacionesFiltradas == null) {
             habitacionesFiltradas = new ArrayList<>(habitaciones);
