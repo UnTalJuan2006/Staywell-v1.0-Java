@@ -6,7 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Dashboard Administrativo</title>
+        <title>Gestion de Usuarios </title>
 
         <!-- Tailwind y Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -104,46 +104,52 @@
 
 
             .stats {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 20px;
+                display: flex;
+                gap: 1.8rem;
                 margin: 30px 0;
-                margin-top: -8px;
+                flex-wrap: wrap; /* Opcional, para pantallas muy pequeñas se ajusta */
             }
 
             .stat-card {
-                background: #ffffff;
+                flex: 1; /* Ocupa el mismo espacio */
+                min-width: 250px; /* Tamaño mínimo para que no se rompa */
+                max-width: 350px; /* Tamaño máximo para que no crezca demasiado */
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 16px;
                 border: 3px solid #2196f3;
                 padding: 20px;
-                border-radius: 16px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
                 display: flex;
                 align-items: center;
                 gap: 15px;
-                transition: transform 0.2s;
+                transition: transform 0.2s, box-shadow 0.2s;
             }
-
 
             .stat-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-4px);
+                box-shadow: 0 6px 15px rgba(0,0,0,0.1);
             }
+
 
             .stat-icon {
-                font-size: 2em;
-                color: #007bff;
+                font-size: 2.5em;
+                color: #2196f3;
             }
 
-            .stat-info h3 {
+            .stat-info h4 {
                 margin: 0;
-                font-size: 1.4em;
-                color: #333;
+                font-size: 1.2rem;
+                color: #131318;
+                font-weight: 500;
             }
 
             .stat-info p {
                 margin: 0;
-                color: #666;
-                font-size: 0.9em;
+                font-size: 1rem;
+                color: #555;
             }
+
 
             .btn-exportar {
                 background-color: #007bff;
@@ -167,6 +173,119 @@
             .table-actions .btn:last-child {
                 margin-right: 0 !important;
             }
+
+            /* Reorganizado para que los iconos se mantengan visibles */
+            .export-buttons {
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+                z-index: 100;
+            }
+
+            /* Contenedor wrapper para mantener hover activo */
+            .export-container {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                padding: 8px;
+            }
+
+            .export-main-btn {
+                background: #0d6efd;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 20px;
+                z-index: 10;
+                border: none;
+                padding: 0;
+                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+            }
+
+            .export-main-btn:hover {
+                background: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+                transform: scale(1.05);
+            }
+
+            /* Excel option - positioned above */
+            .export-option-excel {
+                position: absolute;
+                bottom: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* PDF option - positioned below */
+            .export-option-pdf {
+                position: absolute;
+                top: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(-10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* Show options on container hover */
+            .export-container:hover .export-option-excel,
+            .export-container:hover .export-option-pdf {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+            }
+
+            .export-icon {
+                width: 28px;
+                height: 28px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .export-option-excel:hover,
+            .export-option-pdf:hover {
+                transform: scale(1.15);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
+
+
 
 
 
@@ -234,71 +353,96 @@
 
             <div class="mt-5">
                 <h:messages styleClass="alert alert-info" layout="table" />
-                <div class="stats grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-100 my-4">
+                <div class="stats">
                     <!-- 🟦 Total Usuarios Huéspedes -->
-                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
-                        <i class="bi bi-people-fill" style="font-size: 36px; color: #131318;"></i>
-                        <div class="mt-2">
-                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalUsuariosHuesped()}</h3>
-                            <p class="text-muted m-0">Total Usuarios Huéspedes</p>
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-people-fill stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Total Usuarios Huéspedes</h4>
+                            <p>#{usuarioBean.totalUsuariosHuesped()}</p>
                         </div>
                     </div>
 
                     <!-- ✅ Usuarios Activos -->
-                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
-                        <i class="bi bi-person-check" style="font-size: 36px; color: #131318;"></i>
-                        <div class="mt-2">
-                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalActivos()}</h3>
-                            <p class="text-muted m-0">Usuarios Activos</p>
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-person-check stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Usuarios Activos</h4>
+                            <p>#{usuarioBean.totalActivos()}</p>
                         </div>
                     </div>
 
                     <!-- 🚫 Usuarios Inactivos -->
-                    <div class="stat-card shadow-sm p-4 text-center rounded-2xl border-2 border-blue-500 bg-white hover:shadow-md transition-transform transform hover:-translate-y-1">
-                        <i class="bi bi-person-dash" style="font-size: 36px; color: #131318;"></i>
-                        <div class="mt-2">
-                            <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">#{usuarioBean.totalInactivos()}</h3>
-                            <p class="text-muted m-0">Usuarios Inactivos</p>
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-person-dash stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Usuarios Inactivos</h4>
+                            <p>#{usuarioBean.totalInactivos()}</p>
                         </div>
                     </div>
                 </div>
 
 
-                <div class="mb-4">
-                    <h:messages styleClass="alert alert-info" layout="table" />
-                    <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap">
-                        <!-- 🔍 Buscador -->
-                        <div class="position-relative mb-2" style="width: 100%; max-width: 350px;">
-                            <i class="bi bi-search text-secondary position-absolute"
-                               style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+                <div class="card shadow-sm mb-4"
+                     style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">
 
-                            <p:inputText id="globalFilter"
-                                         onkeyup="PF('dtEventos').filter()"
-                                         placeholder="Buscar Usuario..."
-                                         styleClass="form-control ps-5 shadow-sm"
-                                         style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
-                                         onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
-                                         onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+
+                    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                        <!-- 🟦 IZQUIERDA: Buscador -->
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <h:form>
+                                <div class="position-relative" style="width: 260px;">
+                                    <i class="bi bi-search text-secondary position-absolute"
+                                       style="top: 50%; left: 12px; transform: translateY(-50%); font-size: 0.9rem;"></i>
+
+                                    <p:inputText id="globalFilter"
+                                                 value="#{usuarioBean.filtro}"
+                                                 placeholder="Buscar Usuario..."
+                                                 styleClass="form-control ps-5 shadow-sm"
+                                                 style="border-radius: 10px; border: 1px solid #dee2e6;" />
+
+                                    <f:ajax event="keyup"
+                                            listener="#{usuarioBean.buscarUsuarios()}"
+                                            render="tblUsuarios" />
+                                </div>
+                            </h:form>
                         </div>
 
-                        <!-- 📊 Botones de exportar -->
-                        <!--                        <div class="d-flex gap-2 mb-2">
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/xls.png" width="35" />
-                                                            <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                        
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/pdf.png" width="30" />
-                                                            <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Productos"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                                                </div>-->
-                    </h:form>
+                        <!-- 🟦 DERECHA: Botón principal + Exportación -->
+                        <div class="export-buttons ms-auto">
+                            <div class="export-container">
+                                <button class="export-main-btn" type="button" title="Descargar">
+                                    <i class="bi bi-download"></i>
+                                </button>
+
+                                <!-- Excel -->
+                                <h:form styleClass="export-option-excel">
+
+                                    <h:commandLink 
+                                        title="Descargar Excel Personalizado"
+                                        actionListener="#{usuarioBean.exportarExcelUsuarios()}">
+
+                                        <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
+                                    </h:commandLink>
+                                </h:form>
+
+                                <!-- PDF -->
+                                <h:form styleClass="export-option-pdf">
+                                    <h:commandLink 
+                                        title="Descargar Pdf Personalizado"
+                                        actionListener="#{usuarioBean.exportarPdfUsuarios()}">
+
+                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                                    </h:commandLink>
+
+                                </h:form>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Usuario registrados</h5>
@@ -324,7 +468,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <ui:repeat value="#{usuarioBean.listaUsuarios}" var="usuario" varStatus="loop">
+                                        <ui:repeat value="#{usuarioBean.usuariosFiltrados}" var="usuario" varStatus="loop">
                                             <tr>
                                                 <td>#{loop.index + 1}</td>
                                                 <td>#{usuario.nombre}</td>

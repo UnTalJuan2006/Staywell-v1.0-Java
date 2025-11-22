@@ -5,31 +5,98 @@ import Modelo.CifradoAES;
 import Modelo.Usuario;
 import Modelo.EnumRoles;
 import Modelo.EnumEstadoUsuario;
+import Modelo.Habitacion;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import util.ExcelUtil;
+import util.PdfUtil;
 
-@ApplicationScoped
+@ViewScoped
 @ManagedBean
-public class UsuarioBean {
+public class UsuarioBean implements Serializable {
 
     private Usuario usuario = new Usuario();
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    // ========================== Getters y Setters ==========================
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-    // ========================== Listado de usuarios ==========================
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    private List<Usuario> usuariosFiltrados;
+    private String filtro;
+    private List<Usuario> usuarios;
+
+    public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
+
+    public List<Usuario> getUsuariosFiltrados() {
+        return usuariosFiltrados;
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            usuarios = usuarioDAO.listar(); 
+            if (usuarios == null) {
+                usuarios = new ArrayList<>();
+            }
+            usuariosFiltrados = new ArrayList<>(usuarios);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void buscarUsuarios() {
+        if (usuarios == null) {
+            return;
+        }
+
+        if (filtro == null || filtro.trim().isEmpty()) {
+            usuariosFiltrados = new ArrayList<>(usuarios);
+            return;
+        }
+
+        String txt = filtro.trim().toLowerCase();
+        List<Usuario> resultados = new ArrayList<>();
+
+        for (Usuario u : usuarios) {
+            boolean coincideNombre = u.getNombre() != null && u.getNombre().toLowerCase().contains(txt);
+            boolean coincideEmail = u.getEmail() != null && u.getEmail().toLowerCase().contains(txt);
+            boolean coincideRol = u.getRol() != null && u.getRol().name().toLowerCase().contains(txt);
+            boolean coincideEstado = u.getEstado() != null && u.getEstado().name().toLowerCase().contains(txt);
+
+            if (coincideNombre || coincideEmail || coincideRol || coincideEstado) {
+                resultados.add(u);
+            }
+        }
+
+        usuariosFiltrados = resultados;
+    }
+
     public List<Usuario> getListaUsuarios() {
         try {
             return usuarioDAO.listar();
@@ -39,7 +106,6 @@ public class UsuarioBean {
         }
     }
 
-    // ========================== Autenticación ==========================
     public void autenticar() throws SQLException, IOException {
         try (Connection con = Conexion.conectar()) {
             String sql = "SELECT * FROM usuario WHERE email = ? AND password = ? AND estado = 'Activo'";
@@ -79,7 +145,6 @@ public class UsuarioBean {
         }
     }
 
-    // ========================== Cerrar sesión ==========================
     public void cerrarSesion() {
         try {
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -90,7 +155,6 @@ public class UsuarioBean {
         }
     }
 
-    // ========================== Verificar sesión ==========================
     public void verifSesion() {
         Object usuarioLog = FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioLogueado");
         if (usuarioLog == null) {
@@ -102,7 +166,6 @@ public class UsuarioBean {
         }
     }
 
-    // ========================== Registro de usuario ==========================
     public void agregar() {
         try {
             usuario.setFechaCreacion(LocalDateTime.now());
@@ -130,44 +193,47 @@ public class UsuarioBean {
         }
     }
 
-    // ========================== Estadísticas de usuarios ==========================
     public int totalUsuarios() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM usuario";
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt("total");
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
         }
         return 0;
     }
 
     public int totalUsuariosHuesped() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM usuario WHERE rol = 'HUESPED'";
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt("total");
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
         }
         return 0;
     }
 
     public int totalActivos() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM usuario WHERE estado = 'Activo' AND rol='HUESPED'";
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt("total");
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
         }
         return 0;
     }
 
     public int totalInactivos() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM usuario WHERE estado = 'Inactivo' AND rol='HUESPED'";
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt("total");
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
         }
         return 0;
     }
 
-    // ========================== Eliminar usuario ==========================
+
     public String eliminar(Usuario u) {
         try {
             usuarioDAO.eliminar(u);
@@ -181,13 +247,12 @@ public class UsuarioBean {
         return "Usuarioss?faces-redirect=true";
     }
 
-    // ========================== Activar/Inactivar usuario ==========================
     public void toggleEstado(Usuario u) {
         try {
-            EnumEstadoUsuario nuevoEstado =
-                    (u.getEstado() == EnumEstadoUsuario.Activo)
-                            ? EnumEstadoUsuario.Inactivo
-                            : EnumEstadoUsuario.Activo;
+            EnumEstadoUsuario nuevoEstado
+                    = (u.getEstado() == EnumEstadoUsuario.Activo)
+                    ? EnumEstadoUsuario.Inactivo
+                    : EnumEstadoUsuario.Activo;
 
             usuarioDAO.cambiarEstado(u.getIdUsuario(), nuevoEstado);
             u.setEstado(nuevoEstado);
@@ -201,6 +266,57 @@ public class UsuarioBean {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                             "No se pudo cambiar el estado: " + e.getMessage()));
+        }
+    }
+
+    public void exportarExcelUsuarios() {
+        try {
+            List<Usuario> lista = usuarioDAO.listar();
+            String[] headers = {
+                "Id", "nombre", "email", "fechaCreacion", "fechaActualizacion", "estado"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(u -> new Object[]{
+                u.getIdUsuario(),
+                u.getNombre(),
+                u.getEmail(),
+                u.getFechaCreacion(),
+                u.getFechaActualizacion(),
+                u.getEstado().name()
+
+            })
+                    .collect(java.util.stream.Collectors.toList());
+            
+            ExcelUtil.generarExcel("usuarios", "Usuarios", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfUsuarios() {
+        try {
+            List<Usuario> lista = usuarioDAO.listar();
+            String[] headers = {
+                "Id", "nombre", "email", "fechaCreacion", "fechaActualizacion", "estado"
+            };
+            List<Object[]> datos = lista.stream()
+                    .map(u -> new Object[]{
+                u.getIdUsuario(),
+                u.getNombre(),
+                u.getEmail(),
+                u.getFechaCreacion(),
+                u.getFechaActualizacion(),
+                u.getEstado().name()
+
+            })
+                    .collect(java.util.stream.Collectors.toList()); // <-- CORRECCIÓN
+
+            PdfUtil.generarPdf( "Usuarios", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

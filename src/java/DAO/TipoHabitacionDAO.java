@@ -223,5 +223,28 @@ public class TipoHabitacionDAO {
         }
         return 0f;
     }
+    
+    public List<TipoHabitacion> filtrarPorNombre(String nombre) throws SQLException {
+    List<TipoHabitacion> lista = new ArrayList<>();
+
+    String sql = "SELECT * FROM tipohabitacion WHERE nombre LIKE ?";
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        ps.setString(1, "%" + nombre + "%");
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                TipoHabitacion t = new TipoHabitacion();
+                t.setIdTipoHabitacion(rs.getInt("idTipoHabitacion"));
+                t.setNombre(rs.getString("nombre"));
+                t.setDescripcion(rs.getString("descripcion"));
+                t.setCapacidad(rs.getInt("capacidad"));
+                t.setPrecio(rs.getFloat("precio"));
+                t.setImagen(rs.getString("imagen"));
+                lista.add(t);
+            }
+        }
+    }
+    return lista;
+}
 
 }

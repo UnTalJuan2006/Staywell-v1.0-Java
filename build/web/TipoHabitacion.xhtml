@@ -429,11 +429,17 @@
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             }
             .card img {
-    width: 100%;
-    height: auto;
-    object-fit: contain; /* Mantiene toda la imagen dentro del contenedor */
-    border-radius: 12px 12px 0 0; /* Opcional: para que coincida con la card */
-}
+                width: 100%;
+                height: auto;
+                object-fit: contain; /* Mantiene toda la imagen dentro del contenedor */
+                border-radius: 12px 12px 0 0; /* Opcional: para que coincida con la card */
+            }
+
+            .no-hover:hover {
+                transform: none !important;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+            }
+
 
         </style>
     </h:head>
@@ -506,35 +512,32 @@
             </div>
 
             <!-- 🔵 Card pequeño de filtros + buscador + exportar -->
-            <div class="card shadow-sm mb-4 position-relative" style="overflow: visible;">
+            <div class="card shadow-sm mb-4 position-relative no-hover" style="overflow: visible;">
+
+
                 <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-                    <!-- 🟦 IZQUIERDA: Buscador -->
+
                     <div class="d-flex align-items-center gap-3 flex-wrap">
 
-                        <h:form>
-                            <div class="position-relative" style="width: 260px;">
-                                <i class="bi bi-search text-secondary position-absolute"
-                                   style="top: 50%; left: 12px; transform: translateY(-50%); font-size: 0.9rem;"></i>
+                        <p:selectOneMenu value="#{tipoHabitacionBean.filtroTipo}" style="width:250px">
+                            <f:selectItem itemLabel="Todos" itemValue="" />
 
-                                <p:inputText id="globalFilter"
-                                             value="#{habitacionBean.filtro}"
-                                             placeholder="Buscar habitación..."
-                                             styleClass="form-control ps-5 shadow-sm"
-                                             style="border-radius: 10px; border: 1px solid #dee2e6;" />
+                            <f:selectItems value="#{tipoHabitacionBean.listaTipos}" 
+                                           var="t"
+                                           itemLabel="#{t.nombre}" 
+                                           itemValue="#{t.nombre}" />
 
-                                <f:ajax event="keyup"
-                                        listener="#{habitacionBean.buscar}"
-                                        render="tblHabitaciones" />
-                            </div>
-                        </h:form>
+                            <p:ajax update=":formHabitaciones" 
+                                    listener="#{tipoHabitacionBean.aplicarFiltro}" />
+                        </p:selectOneMenu>
 
                     </div>
 
-                    <!-- 🟦 DERECHA: BOTÓN PRINCIPAL + EXPORTACIÓN DESPLEGABLE -->
+
                 </div>
 
-                <!-- Reorganizado con contenedor wrapper para mantener hover -->
+
                 <div class="export-buttons">
                     <div class="export-container">
                         <button class="export-main-btn" type="button" title="Descargar">
@@ -543,18 +546,23 @@
 
                         <!-- Excel -->
                         <h:form styleClass="export-option-excel">
-                            <h:commandLink title="Descargar Excel">
+
+                            <h:commandLink 
+                                title="Descargar Excel Personalizado"
+                                actionListener="#{tipoHabitacionBean.exportarExcelTipoHabitaciones()}">
+
                                 <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
-                                <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones" />
                             </h:commandLink>
                         </h:form>
 
                         <!-- PDF -->
                         <h:form styleClass="export-option-pdf">
-                            <h:commandLink title="Descargar PDF">
-                                <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
-                                <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Habitaciones" />
-                            </h:commandLink>
+                            <h:commandLink 
+                                        title="Descargar Pdf Personalizado"
+                                        actionListener="#{tipoHabitacionBean.exportarPdfHabitaciones()}">
+
+                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                                    </h:commandLink>
                         </h:form>
                     </div>
                 </div>

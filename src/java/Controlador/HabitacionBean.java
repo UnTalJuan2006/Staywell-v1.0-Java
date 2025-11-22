@@ -17,6 +17,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -47,32 +49,35 @@ public class HabitacionBean implements Serializable {
         return habitacionesFiltradas;
     }
 
-   @PostConstruct
-public void init() {
-    System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
-    try {
-        habitacion = new Habitacion();
-        ensureDaos();
+    @PostConstruct
+    public void init() {
+        System.out.println("⏳ Iniciando PostConstruct de HabitacionBean...");
+        try {
+            habitacion = new Habitacion();
+            ensureDaos();
 
-        listaTipos = getTipoHabitacionDAO().listar();
-        if (listaTipos == null) listaTipos = new ArrayList<>();
+            listaTipos = getTipoHabitacionDAO().listar();
+            if (listaTipos == null) {
+                listaTipos = new ArrayList<>();
+            }
 
-        habitaciones = getHabitacionDAO().listar();
-        if (habitaciones == null) habitaciones = new ArrayList<>();
+            habitaciones = getHabitacionDAO().listar();
+            if (habitaciones == null) {
+                habitaciones = new ArrayList<>();
+            }
 
-        // 🔥 NECESARIO PARA MOSTRAR HABITACIONES AL ENTRAR
-        habitacionesFiltradas = new ArrayList<>(habitaciones);
+            // 🔥 NECESARIO PARA MOSTRAR HABITACIONES AL ENTRAR
+            habitacionesFiltradas = new ArrayList<>(habitaciones);
 
-        System.out.println("✅ Datos cargados. Total: " + habitacionesFiltradas.size());
+            System.out.println("✅ Datos cargados. Total: " + habitacionesFiltradas.size());
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        listaTipos = new ArrayList<>();
-        habitaciones = new ArrayList<>();
-        habitacionesFiltradas = new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            listaTipos = new ArrayList<>();
+            habitaciones = new ArrayList<>();
+            habitacionesFiltradas = new ArrayList<>();
+        }
     }
-}
-
 
     public List<Habitacion> getListaHabitaciones() {
         try {
@@ -204,57 +209,56 @@ public void init() {
         return "Habitaciones?faces-redirect=true";
     }
 
-  public void buscar() {
-    try {
-        // Asegurar listas no nulas
-        if (habitaciones == null) {
-        habitaciones = getHabitacionDAO().listar();
-        }
-        if (habitacionesFiltradas == null) {
-            habitacionesFiltradas = new ArrayList<>(habitaciones);
-        }
+    public void buscar() {
+        try {
+            // Asegurar listas no nulas
+            if (habitaciones == null) {
+                habitaciones = getHabitacionDAO().listar();
+            }
+            if (habitacionesFiltradas == null) {
+                habitacionesFiltradas = new ArrayList<>(habitaciones);
+            }
 
-        // Si el filtro está vacío, restaurar la lista completa
-        if (filtro == null || filtro.trim().isEmpty()) {
-            habitacionesFiltradas = new ArrayList<>(habitaciones);
-            return;
-        }
+            // Si el filtro está vacío, restaurar la lista completa
+            if (filtro == null || filtro.trim().isEmpty()) {
+                habitacionesFiltradas = new ArrayList<>(habitaciones);
+                return;
+            }
 
-        String txt = filtro.trim().toLowerCase();
-        List<Habitacion> resultados = new ArrayList<>();
+            String txt = filtro.trim().toLowerCase();
+            List<Habitacion> resultados = new ArrayList<>();
 
-        for (Habitacion h : habitaciones) {
-            // numHabitacion es int -> convertir a String
-            String numStr = String.valueOf(h.getNumHabitacion());
+            for (Habitacion h : habitaciones) {
+                // numHabitacion es int -> convertir a String
+                String numStr = String.valueOf(h.getNumHabitacion());
 
-            String tipo = h.getNombreTipoHabitacion() != null
-                    ? h.getNombreTipoHabitacion().toLowerCase()
-                    : "";
+                String tipo = h.getNombreTipoHabitacion() != null
+                        ? h.getNombreTipoHabitacion().toLowerCase()
+                        : "";
 
-            String estado = h.getEstado() != null
-                    ? h.getEstado().name().toLowerCase()
-                    : "";
+                String estado = h.getEstado() != null
+                        ? h.getEstado().name().toLowerCase()
+                        : "";
 
-            boolean coincideNumero = numStr.toLowerCase().contains(txt);
-            boolean coincideTipo = tipo.contains(txt);
-            boolean coincideEstado = estado.contains(txt);
+                boolean coincideNumero = numStr.toLowerCase().contains(txt);
+                boolean coincideTipo = tipo.contains(txt);
+                boolean coincideEstado = estado.contains(txt);
 
-            if (coincideNumero || coincideTipo || coincideEstado) {
-                resultados.add(h);
+                if (coincideNumero || coincideTipo || coincideEstado) {
+                    resultados.add(h);
+                }
+            }
+
+            habitacionesFiltradas = resultados;
+
+        } catch (SQLException ex) {
+            System.out.println("ERROR filtrando habitaciones: " + ex.getMessage());
+            // en caso de error, no dejar la lista nula
+            if (habitacionesFiltradas == null) {
+                habitacionesFiltradas = new ArrayList<>();
             }
         }
-
-        habitacionesFiltradas = resultados;
-
-    } catch (SQLException ex) {
-        System.out.println("ERROR filtrando habitaciones: " + ex.getMessage());
-        // en caso de error, no dejar la lista nula
-        if (habitacionesFiltradas == null) {
-            habitacionesFiltradas = new ArrayList<>();
-        }
     }
-}
-
 
     // --- CONTADORES POR TIPO ---
     public int totalHabitacionesEstandar() throws SQLException {
@@ -286,7 +290,6 @@ public void init() {
         this.habitacion = habitacion;
     }
 
-  
     public List<TipoHabitacion> getListaTipos() {
         return listaTipos;
     }
@@ -329,4 +332,57 @@ public void init() {
         }
         return tipoHabitacionDAO;
     }
+
+    public void exportarExcelHabitaciones() {
+        try {
+            List<Habitacion> lista = habitacionDAO.listar();
+            String[] headers = {
+                "ID", "Número", "Estado", "Tipo", "Fecha Creación", "Fecha Actualización"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(h -> new Object[]{
+                h.getIdHabitacion(),
+                h.getNumHabitacion(),
+                h.getEstado().name(),
+                h.getTipoHabitacion().getNombre(),
+                h.getFechaCreacion(),
+                h.getFechaActualizacion()
+            })
+                    .collect(java.util.stream.Collectors.toList()); // <-- CORRECCIÓN
+
+            ExcelUtil.generarExcel("habitaciones", "Habitaciones", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfHabitaciones() {
+        try {
+            List<Habitacion> lista = habitacionDAO.listar();
+
+            String[] headers = {
+                "ID", "Número", "Estado", "Tipo",
+                "Fecha Creación", "Fecha Actualización"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(h -> new Object[]{
+                h.getIdHabitacion(),
+                h.getNumHabitacion(),
+                h.getEstado().name(),
+                h.getTipoHabitacion().getNombre(),
+                h.getFechaCreacion(),
+                h.getFechaActualizacion()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            PdfUtil.generarPdf("habitaciones", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

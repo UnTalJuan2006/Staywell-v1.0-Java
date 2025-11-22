@@ -17,8 +17,7 @@ public class UsuarioDAO {
         List<Usuario> listaUsuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuario WHERE LOWER(rol) = 'huesped'";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Usuario u = new Usuario();
@@ -86,9 +85,7 @@ public class UsuarioDAO {
             throw e;
         }
     }
-    
-    
-    
+
     public Usuario buscar(int id) throws SQLException {
         Usuario u = null;
         String sql = "SELECT * FROM usuario WHERE idUsuario = ?";
@@ -129,8 +126,7 @@ public class UsuarioDAO {
 
         return u;
     }
-    
-    
+
     public void cambiarEstado(int idUsuario, EnumEstadoUsuario nuevoEstado) throws SQLException {
         String sql = "UPDATE usuario SET estado = ?, fechaActualizacion = ? WHERE idUsuario = ?";
 
@@ -147,5 +143,60 @@ public class UsuarioDAO {
         }
     }
 
+    public List<Usuario> buscar(String filtro) throws SQLException {
+        List<Usuario> lista = new ArrayList<>();
+        String sql = "SELECT * FROM usuario "
+                + "WHERE nombre LIKE ? OR email LIKE ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, "%" + filtro + "%");
+            ps.setString(2, "%" + filtro + "%");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("idUsuario"));
+                    u.setNombre(rs.getString("nombre"));
+                    u.setEmail(rs.getString("email"));
+
+           
+                    Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
+                    if (fechaCreacion != null) {
+                        u.setFechaCreacion(fechaCreacion.toLocalDateTime());
+                    }
+                    Timestamp fechaActualizacion = rs.getTimestamp("fechaActualizacion");
+                    if (fechaActualizacion != null) {
+                        u.setFechaActualizacion(fechaActualizacion.toLocalDateTime());
+                    }
+
+                    // Rol y estado
+                    String rol = rs.getString("rol");
+                    if (rol != null && rol.equalsIgnoreCase("huesped")) {
+                        u.setRol(EnumRoles.HUESPED);
+                    } else {
+                        u.setRol(EnumRoles.ADMIN); // o el valor que corresponda según tu modelo
+                    }
+
+                    String estado = rs.getString("estado");
+                    if (estado != null) {
+                        u.setEstado(EnumEstadoUsuario.valueOf(estado));
+                    }
+
+                    u.setDireccion(rs.getString("direccion"));
+                    u.setTelefono(rs.getString("telefono"));
+
+                    lista.add(u);
+                }
+                rs.close();
+                ps.close();
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al buscar usuarios: " + e.getMessage());
+            throw e;
+        }
+
+        return lista;
+    }
 
 }

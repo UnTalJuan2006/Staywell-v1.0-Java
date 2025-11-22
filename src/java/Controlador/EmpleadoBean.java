@@ -38,7 +38,22 @@ public class EmpleadoBean {
   private Empleado empleado = new Empleado();
   private EmpleadoDAO empleadoDAO = new EmpleadoDAO();
   private List<Empleado> listaEmpleados;
+  private List<Empleado> empleadosFiltrados;
+  private String filtro;
+  private List<Empleado> empleados;
   
+  public String getFiltro() {
+        return filtro;
+    }
+
+    public void setFiltro(String filtro) {
+        this.filtro = filtro;
+    }
+    
+    public List<Empleado> getEmpleadosFiltrados(){
+        return empleadosFiltrados;
+    }
+    
   
   public Empleado getEmpleado(){
       return empleado;
@@ -58,12 +73,33 @@ public class EmpleadoBean {
   public EnumEstadoEmpleado[] getEstados(){
       return EnumEstadoEmpleado.values();
   }
+  
+  
    @PostConstruct 
     public void init(){
+        try{
+        empleados =  empleadoDAO.listar();
+        if(empleados == null){
+            empleados = new ArrayList<>();
+        }
+        empleadosFiltrados = new ArrayList<>();
+        
         empleado = new Empleado();
         empleadoDAO = new EmpleadoDAO();
         getListaEmpleados(); 
-    } 
+       }catch(SQLException e){
+         e.printStackTrace();
+       } 
+    }
+    
+//    public void buscarEmpleados(){
+//        if(empleados == null){
+//            return;
+//        }
+//        
+//    }
+    
+    
     
     public List<Empleado> getListaEmpleados(){
         try {

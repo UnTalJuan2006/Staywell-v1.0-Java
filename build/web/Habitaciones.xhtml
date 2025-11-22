@@ -370,7 +370,7 @@
 
                 </div>
 
-                <!-- 🔵 Card de filtros + buscador + exportar (Sticky) -->
+                
                 <!-- Card de filtros sin quedar flotando siempre -->
                 <div class="card shadow-sm mb-4"
                      style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">
@@ -407,18 +407,24 @@
 
                                 <!-- Excel -->
                                 <h:form styleClass="export-option-excel">
-                                    <h:commandLink title="Descargar Excel">
+
+                                    <h:commandLink 
+                                        title="Descargar Excel Personalizado"
+                                        actionListener="#{habitacionBean.exportarExcelHabitaciones()}">
+
                                         <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
-                                        <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones" />
                                     </h:commandLink>
                                 </h:form>
 
                                 <!-- PDF -->
                                 <h:form styleClass="export-option-pdf">
-                                    <h:commandLink title="Descargar PDF">
+                                    <h:commandLink 
+                                        title="Descargar Pdf Personalizado"
+                                        actionListener="#{habitacionBean.exportarPdfHabitaciones()}">
+
                                         <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
-                                        <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Habitaciones" />
                                     </h:commandLink>
+
                                 </h:form>
                             </div>
                         </div>

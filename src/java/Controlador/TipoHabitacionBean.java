@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -15,6 +16,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
+import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -24,9 +27,60 @@ public class TipoHabitacionBean {
     private TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private Part imagen;
     private List<TipoHabitacion> listaTipoHabitaciones;
+    private String filtroNombre;
+
+    public String getFiltroNombre() {
+        return filtroNombre;
+    }
+
+    public void setFiltroNombre(String filtroNombre) {
+        this.filtroNombre = filtroNombre;
+    }
 
     public TipoHabitacion getTipoHabitacion() {
         return tipoHabitacion;
+    }
+    private List<TipoHabitacion> listaOriginal; // NUEVO: lista completa
+
+    // --- FILTRO CON SELECT ---
+    private String filtroTipo; // ← este lo usará el <p:selectOneMenu>
+
+    public String getFiltroTipo() {
+        return filtroTipo;
+    }
+
+    public void setFiltroTipo(String filtroTipo) {
+        this.filtroTipo = filtroTipo;
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            listaOriginal = tipoHabitacionDAO.listar();       // carga completa
+            listaTipoHabitaciones = new ArrayList<>(listaOriginal); // copia para mostrar
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<TipoHabitacion> getListaTipoHabitaciones() {
+        return listaTipoHabitaciones;
+    }
+
+    public void aplicarFiltro() {
+        if (filtroTipo == null || filtroTipo.trim().isEmpty()) {
+            listaTipoHabitaciones = new ArrayList<>(listaOriginal);
+        } else {
+            listaTipoHabitaciones = listaOriginal.stream()
+                    .filter(t -> t.getNombre() != null
+                    && t.getNombre().equalsIgnoreCase(filtroTipo))
+                    .toList();
+        }
+    }
+
+    // === SELECT ITEMS ===
+    public List<TipoHabitacion> getListaTipos() {
+        return listaOriginal; // usa todos los tipos para llenar el select
     }
 
     public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
@@ -45,22 +99,13 @@ public class TipoHabitacionBean {
         this.listaTipoHabitaciones = listaTipoHabitaciones;
     }
 
-    @PostConstruct
-    public void init() {
-        tipoHabitacion = new TipoHabitacion();
-        tipoHabitacionDAO = new TipoHabitacionDAO();
-        getListaTipoHabitaciones();
-    }
-
-    public List<TipoHabitacion> getListaTipoHabitaciones() {
-        try {
-            return tipoHabitacionDAO.listar();
-        } catch (SQLException e) {
-            System.out.println("Erro al listar tipos");
-            return null;
-        }
-    }
-
+//    public List<TipoHabitacion> getListaTipoHabitaciones() {
+//        try {
+//            return tipoHabitacionDAO.listar();
+//        } catch (SQLException e) {
+//            System.out.println("Erro al listar tipos");
+//            return null;
+//        }
     public String agregar() throws IOException {
         try {
             // Verificamos si se subió una imagen
@@ -240,6 +285,52 @@ public class TipoHabitacionBean {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0f;
+        }
+    }
+
+    public void exportarExcelTipoHabitaciones() {
+        try {
+            List<TipoHabitacion> lista = tipoHabitacionDAO.listar();
+            String[] headers = {
+                "ID", "Nombre", "Capacidad", "Precio"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(t -> new Object[]{
+                t.getIdTipoHabitacion(),
+                t.getNombre(),
+                t.getCapacidad(),
+                t.getPrecio()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            ExcelUtil.generarExcel("Catalogohabitaciones", "TipoHabitaciones", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfHabitaciones() {
+        try {
+            List<TipoHabitacion> lista = tipoHabitacionDAO.listar();
+            String[] headers = {
+                "ID", "Nombre", "Capacidad", "Precio"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(t -> new Object[]{
+                 t.getIdTipoHabitacion(),
+                t.getNombre(),
+                t.getCapacidad(),
+                t.getPrecio()
+            })
+                    .collect(java.util.stream.Collectors.toList()); 
+
+               PdfUtil.generarPdf("habitaciones", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
