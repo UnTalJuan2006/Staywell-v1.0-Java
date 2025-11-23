@@ -18,9 +18,9 @@
 
             html, body {
                 height: 100%;
-                overflow: hidden; /* evita scroll en body */
-                font-family: 'Segoe UI', Roboto, sans-serif;
-                background: #f5f5f5;
+                overflow: hidden;
+                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
             }
 
             /* HEADER FIJO */
@@ -35,62 +35,82 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 24px;
+                padding: 0 30px;
                 z-index: 1000;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             }
 
             .header-left .logo-text {
-                font-weight: bold;
-                font-size: 22px;
-                color: #1a9b8e;
+                font-weight: 700;
+                font-size: 24px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
                 text-decoration: none;
+                letter-spacing: -0.5px;
             }
+
             .header-right {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 12px;
             }
 
             .btn-crear-reserva {
-                background-color: #1a9b8e;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: white;
                 border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
+                padding: 10px 18px;
+                border-radius: 8px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 6px;
+                gap: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-size: 0.9rem;
             }
 
             .btn-crear-reserva:hover {
-                background-color: #158076;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(26, 124, 143, 0.4);
             }
+
             .icon-btn {
                 background: none;
                 border: none;
-                font-size: 20px;
+                font-size: 22px;
                 cursor: pointer;
                 color: #666;
+                transition: color 0.2s;
+                padding: 8px;
+            }
+
+            .icon-btn:hover {
+                color: #1a7c8f;
             }
 
             .user-profile {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                border-left: 1px solid #e0e0e0;
-                padding-left: 10px;
+                gap: 12px;
+                border-left: 2px solid #e0e0e0;
+                padding-left: 20px;
+                margin-left: 8px;
             }
+
             .user-avatar {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
-                background: #e0e0e0;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #555;
+                color: white;
+                font-size: 18px;
             }
 
             /* LAYOUT */
@@ -100,10 +120,10 @@
                 padding-top: 70px;
             }
 
-            /* SIDEBAR FIJA */
+            /* SIDEBAR MEJORADA */
             .sidebar {
-                width: 220px;
-                background: #f9f9f9;
+                width: 260px;
+                background: #fff;
                 border-right: 1px solid #e0e0e0;
                 position: fixed;
                 top: 70px;
@@ -112,216 +132,346 @@
                 display: flex;
                 flex-direction: column;
                 overflow-y: auto;
-                padding-top: 20px;
+                padding: 24px 0;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+            }
+
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #999;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
             }
 
             .nav-link {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                padding: 12px 20px;
+                gap: 12px;
+                padding: 12px 16px;
                 color: #555;
                 text-decoration: none;
-                margin: 10px;
-                border-left: 3px solid transparent;
-                transition: all 0.2s;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
             }
+
+            .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
+            }
+
             .nav-link:hover {
-                background: #eefaf8;
-                color: #1a9b8e;
+                background: #e8f4f6;
+                color: #1a7c8f;
             }
+
             .nav-link.active {
-                background: #e8f5f3;
-                border-left-color: #1a9b8e;
-                color: #1a9b8e;
+                background: linear-gradient(135deg, rgba(26, 124, 143, 0.1) 0%, rgba(26, 124, 143, 0.15) 100%);
+                color: #1a7c8f;
                 font-weight: 600;
+                border-left: 3px solid #1a7c8f;
+            }
+
+            .sidebar-footer {
+                margin-top: auto;
+                padding: 20px 16px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .btn-logout {
+                width: 100%;
+                background: #f5f5f5;
+                color: #666;
+                border: 1px solid #e0e0e0;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .btn-logout:hover {
+                background: #fff0f0;
+                border-color: #ff5252;
+                color: #ff5252;
             }
 
             /* CONTENIDO SCROLLABLE */
             .content {
-                margin-left: 220px;
-                padding: 30px 40px;
+                margin-left: 260px;
+                padding: 32px 48px;
                 height: calc(100vh - 70px);
                 overflow-y: auto;
-                background: #f5f5f5;
+                width: calc(100% - 260px);
             }
 
-            /* TARJETA BIENVENIDA (contenido restaurado) */
+            /* TARJETA BIENVENIDA MEJORADA */
             .welcome-card {
-                background: #f3fdfa;
-                border: 1px solid #d9f3ee;
-                border-radius: 14px;
-                padding: 40px;
+                background: linear-gradient(135deg, #ffffff 0%, #f0f9fb 100%);
+                border: 2px solid #b2dce4;
+                border-radius: 16px;
+                padding: 48px;
                 margin-bottom: 40px;
                 text-align: center;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-                max-width: 1050px;
+                box-shadow: 0 4px 20px rgba(26, 124, 143, 0.08);
+                max-width: 1200px;
                 margin-left: auto;
                 margin-right: auto;
-                /* ajuste visual: subir ligeramente sin cambiar tamaño */
-                margin-top: 6px;
-            }
-
-            .welcome-top {
-                margin-bottom: 22px;
             }
 
             .welcome-icon {
-                width: 75px;
-                height: 75px;
-                background: #c9f1ec;
-                color: #1a9b8e;
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 35px;
-                margin: 0 auto 12px;
+                font-size: 36px;
+                margin: 0 auto 20px;
+                box-shadow: 0 4px 16px rgba(26, 124, 143, 0.3);
+            }
+
+            .welcome-title {
+                font-size: 32px;
+                font-weight: 700;
+                color: #156b7d;
+                margin-bottom: 12px;
+            }
+
+            .welcome-text {
+                color: #666;
+                font-size: 1.05rem;
+                max-width: 750px;
+                margin: 0 auto 28px;
+                line-height: 1.6;
             }
 
             .welcome-actions {
                 display: flex;
                 justify-content: center;
                 flex-wrap: wrap;
-                gap: 30px;
+                gap: 24px;
+                margin-top: 24px;
             }
 
             .welcome-link {
                 display: flex;
                 align-items: center;
-                gap: 8px;
-                color: #1a9b8e;
+                gap: 10px;
+                color: #1a7c8f;
                 font-weight: 600;
                 text-decoration: none;
-                transition: color 0.2s ease, transform 0.2s ease;
+                padding: 12px 20px;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                background: rgba(26, 124, 143, 0.05);
             }
 
             .welcome-link:hover {
-                color: #0c6f67;
+                background: rgba(26, 124, 143, 0.15);
                 transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(26, 124, 143, 0.2);
             }
 
             .welcome-link i {
-                font-size: 18px;
+                font-size: 20px;
             }
 
-            .welcome-title {
-                font-size: 26px;
-                font-weight: 700;
-                color: #002d2b;
-                margin-bottom: 10px;
-            }
-
-            .welcome-text {
-                color: #555;
-                font-size: 1rem;
-                max-width: 700px;
-                margin: 0 auto 18px;
-                line-height: 1.5;
-            }
-
-            .welcome-actions {
-                display: flex;
-                justify-content: center;
-                gap: 12px;
-                flex-wrap: wrap;
-            }
-
-            .btn-primary,
-            .btn-outline {
-                padding: 10px 18px;
-                font-size: 0.95rem;
-                border-radius: 6px;
-                cursor: pointer;
-                transition: 0.2s ease;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .btn-primary {
-                background-color: #1a9b8e;
-                color: #fff;
-                border: none;
-            }
-            .btn-primary:hover {
-                background-color: #158076;
-            }
-
-            .btn-outline {
-                border: 1px solid #1a9b8e;
-                background: transparent;
-                color: #1a9b8e;
-            }
-            .btn-outline:hover {
-                background: #e9f8f6;
-            }
-
-            /* SECCIÓN HABITACIONES */
+            /* SECCIÓN HABITACIONES MEJORADA */
             .habitaciones-section {
                 background: #fff;
-                border-radius: 14px;
-                padding: 30px 40px;
-                box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-                max-width: 1100px;
+                border-radius: 16px;
+                padding: 36px 40px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+                max-width: 1200px;
                 margin: 0 auto 40px auto;
             }
+
             .habitaciones-header {
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:18px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 28px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #e8f4f6;
             }
+
+            .habitaciones-header h3 {
+                font-size: 24px;
+                font-weight: 700;
+                color: #156b7d;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .habitaciones-header h3::before {
+                content: '';
+                width: 4px;
+                height: 28px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                border-radius: 4px;
+            }
+
+            .habitaciones-header span {
+                color: #1a7c8f;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
             .habitaciones-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                gap: 22px;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 28px;
             }
 
             .habitacion-card {
-                background:#fff;
-                border:1px solid #eaeaea;
-                border-radius:12px;
-                overflow:hidden;
-                box-shadow:0 3px 10px rgba(0,0,0,0.05);
+                background: #fff;
+                border: 1px solid #e0e0e0;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+                transition: all 0.3s ease;
             }
+
+            .habitacion-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 24px rgba(26, 124, 143, 0.15);
+                border-color: #1a7c8f;
+            }
+
             .habitacion-img {
-                height:160px;
-                overflow:hidden;
+                height: 180px;
+                overflow: hidden;
+                position: relative;
             }
+
+            .habitacion-img::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%);
+            }
+
             .habitacion-img img {
-                width:100%;
-                height:100%;
-                object-fit:cover;
-                display:block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease;
             }
+
+            .habitacion-card:hover .habitacion-img img {
+                transform: scale(1.05);
+            }
+
             .habitacion-body {
-                padding:14px 16px;
+                padding: 20px;
             }
+
+            .habitacion-body h4 {
+                font-size: 18px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .habitacion-body p {
+                color: #666;
+                font-size: 0.9rem;
+                margin-bottom: 16px;
+                line-height: 1.5;
+            }
+
             .precio {
-                color:#1a9b8e;
-                font-weight:700;
+                color: #1a7c8f;
+                font-weight: 700;
+                font-size: 1.3rem;
             }
+
             .personas {
-                color:#777;
-                font-size:.9rem;
+                color: #777;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: 8px;
+            }
+
+            /* Scrollbar personalizada */
+            .content::-webkit-scrollbar,
+            .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .content::-webkit-scrollbar-track,
+            .sidebar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .content::-webkit-scrollbar-thumb,
+            .sidebar::-webkit-scrollbar-thumb {
+                background: #1a7c8f;
+                border-radius: 4px;
+            }
+
+            .content::-webkit-scrollbar-thumb:hover,
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: #156b7d;
             }
 
             /* Responsive */
-            @media (max-width: 900px) {
+            @media (max-width: 1200px) {
+                .sidebar {
+                    width: 240px;
+                }
                 .content {
-                    padding: 20px;
+                    margin-left: 240px;
+                    width: calc(100% - 240px);
+                }
+            }
+
+            @media (max-width: 900px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s ease;
+                }
+                .content {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 24px 20px;
                 }
                 .welcome-card {
-                    padding: 28px;
-                    margin-top: 8px;
+                    padding: 32px 24px;
                 }
                 .habitaciones-section {
-                    padding: 20px;
-                    width: 100%;
+                    padding: 24px 20px;
                 }
                 .habitaciones-grid {
-                    gap: 16px;
+                    grid-template-columns: 1fr;
+                    gap: 20px;
                 }
             }
         </style>
@@ -330,14 +480,15 @@
     <h:body>
         <div class="header">
             <div class="header-left">
-                <a href="#" class="logo-text">Great Viaggio</a>
+                <a href="HomeHuesped.xhtml" class="logo-text">Great Viaggio</a>
             </div>
             <div class="header-right">
                 <a href="NuevaReservaHuesped.xhtml" class="btn-crear-reserva">
-                    <i class="bi bi-plus-circle"></i> Crear Reserva
+                    <i class="bi bi-plus-circle"></i> Nueva Reserva
                 </a>
-                <a href="EventosHuesped.xhtml" class="btn-crear-reserva"><i class="bi bi-stars"></i> Eventos disponibles</a>
-                <a href="NuevoEventoHuesped.xhtml" class="btn-crear-reserva"><i class="bi bi-plus-circle"></i> Crear Evento</a>
+                <a href="NuevoEventoHuesped.xhtml" class="btn-crear-reserva">
+                    <i class="bi bi-plus-circle"></i> Nuevo Evento
+                </a>
                 <button class="icon-btn"><i class="bi bi-bell"></i></button>
                 <div class="user-profile">
                     <span><strong>#{usuarioLogueado.nombre}</strong></span>
@@ -347,52 +498,95 @@
         </div>
 
         <div class="layout">
-            <!-- SIDEBAR -->
+            <!-- SIDEBAR MEJORADA -->
             <div class="sidebar">
-                <a href="HomeHuesped.xhtml" class="nav-link active"><i class="bi bi-house-door"></i>Inicio</a>
-                <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
-                <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
-                <a href="EventosHuesped.xhtml" class="nav-link"><i class="bi bi-stars"></i>Eventos disponibles</a>
-                <a href="NuevoEventoHuesped.xhtml" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
-                <a href="MisEventos.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
-                <a href="MiPerfil.xhtml" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación</div>
+                    <a href="HomeHuesped.xhtml" class="nav-link active">
+                        <i class="bi bi-house-door"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="MiPerfil.xhtml" class="nav-link">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Reservas</div>
+                    <a href="NuevaReservaHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Nueva Reserva</span>
+                    </a>
+                    <a href="MisReservas.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Reservas</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Eventos</div>
+                    <a href="EventosHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-stars"></i>
+                        <span>Eventos Disponibles</span>
+                    </a>
+                    <a href="NuevoEventoHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Nuevo Evento</span>
+                    </a>
+                    <a href="MisEventos.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Eventos</span>
+                    </a>
+                </div>
 
                 <h:form>
                     <div class="sidebar-footer">
-                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn-logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
                         </h:commandLink>
                     </div>
                 </h:form>
             </div>
 
-
-
             <!-- CONTENIDO -->
             <div class="content">
-                <!-- Welcome card con contenido RESTAURADO -->
+                <!-- Tarjeta de bienvenida -->
                 <div class="welcome-card">
                     <div class="welcome-icon">
                         <i class="bi bi-building"></i>
                     </div>
-                    <h2 class="welcome-title">¡Bienvenido a Great Viggio!</h2>
+                    <h2 class="welcome-title">¡Bienvenido a Great Viaggio!</h2>
                     <p class="welcome-text">
                         Gestiona todas tus reservas de forma fácil y rápida. Desde aquí puedes crear nuevas
                         reservas, consultar tus estancias actuales, reservar espacios para eventos y actualizar
                         tu perfil.
                     </p>
                     <div class="welcome-actions">
-                        <a href="#" class="welcome-link"><i class="bi bi-calendar2-check"></i> Reservas Rápidas</a>
-                        <a href="#espacios" class="welcome-link"><i class="bi bi-building"></i> Espacios para Eventos</a>
-                        <a href="#" class="welcome-link"><i class="bi bi-person-gear"></i> Gestión de Perfil</a>
+                        <a href="NuevaReservaHuesped.xhtml" class="welcome-link">
+                            <i class="bi bi-calendar2-check"></i>
+                            Reservar Habitación
+                        </a>
+                        <a href="#espacios" class="welcome-link">
+                            <i class="bi bi-building"></i>
+                            Ver Espacios
+                        </a>
+                        <a href="MiPerfil.xhtml" class="welcome-link">
+                            <i class="bi bi-person-gear"></i>
+                            Mi Perfil
+                        </a>
                     </div>
                 </div>
 
-                <!-- Sección de habitaciones (dinámica) -->
+                <!-- Sección de habitaciones -->
                 <div class="habitaciones-section">
                     <div class="habitaciones-header">
                         <h3>Nuestras Habitaciones</h3>
-                        <span>WiFi gratuito y desayuno incluido</span>
+                        <span>
+                            <i class="bi bi-wifi"></i>
+                            WiFi gratuito y desayuno incluido
+                        </span>
                     </div>
 
                     <div class="habitaciones-grid">
@@ -410,8 +604,10 @@
                                                 <f:convertNumber pattern="#,##0.00" />
                                             </h:outputText>
                                         </span>
-                                        <br/>
-                                        <span class="personas"><i class="bi bi-people"></i> #{t.capacidad} personas</span>
+                                        <div class="personas">
+                                            <i class="bi bi-people-fill"></i>
+                                            <span>Hasta #{t.capacidad} personas</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -419,10 +615,14 @@
                     </div>
                 </div>
 
+                <!-- Sección de espacios -->
                 <div class="habitaciones-section" id="espacios">
                     <div class="habitaciones-header">
-                        <h3>Nuestros Espacios</h3>
-                        <span></span>
+                        <h3>Espacios para Eventos</h3>
+                        <span>
+                            <i class="bi bi-star-fill"></i>
+                            Equipamiento completo incluido
+                        </span>
                     </div>
 
                     <div class="habitaciones-grid">
@@ -439,16 +639,18 @@
                                             <h:outputText value="#{p.costoHora}">
                                                 <f:convertNumber pattern="#,##0.00" />
                                             </h:outputText>
+                                            <span style="font-size: 0.8rem; font-weight: 400; color: #666;">/hora</span>
                                         </span>
-                                        <br/>
-                                        <span class="personas"><i class="bi bi-people"></i> #{p.capacidad} personas</span>
+                                        <div class="personas">
+                                            <i class="bi bi-people-fill"></i>
+                                            <span>Capacidad: #{p.capacidad} personas</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </p:repeat>
                     </div>
                 </div>
-
             </div>
         </div>
     </h:body>

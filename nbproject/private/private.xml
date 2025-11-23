@@ -3,9 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/UsuarioBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/UsuarioDAO.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Usuarios.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Espacios.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumEstadoEspacio.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudHabitaciones/nuevaHabitacion.xhtml</file>
@@ -41,6 +38,10 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/util/ExcelUtil.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/util/PdfUtil.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/TipoHabitacionBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/EventosHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Habitaciones.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/perfil.xhtml</file>
         </group>
     </open-files>
 </project-private>
