@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
@@ -35,7 +36,7 @@ public class PagoDAO {
                 throw new SQLException("No se pudo establecer conexión con la base de datos.");
             }
 
-            try (PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
                 if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
                     ps.setInt(1, pago.getReserva().getIdReserva());
@@ -75,7 +76,7 @@ public class PagoDAO {
 
                 int filas = ps.executeUpdate();
                 if (filas == 0) {
-                    return -1;
+                    throw new SQLException("El pago no se pudo insertar en la base de datos.");
                 }
 
                 try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -84,8 +85,8 @@ public class PagoDAO {
                     }
                 }
 
-                // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
-                return filas;
+                // Si no se devolvió una clave generada, consideramos que el insert falló para evitar estados inconsistentes
+                throw new SQLException("El pago se insertó pero no se pudo obtener su identificador generado.");
             }
         }
     }
