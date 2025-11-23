@@ -1,70 +1,90 @@
-
 package DAO;
 
 import Controlador.Conexion;
 import Modelo.Pago;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 
 public class PagoDAO {
 
-    public int agregarPago(Pago p) throws SQLException {
-        if (p.getTipoTarjeta() == null) {
-            throw new SQLException("El tipo de tarjeta es requerido para registrar el pago");
+    public int agregarPago(Pago pago) throws SQLException {
+        if (pago == null) {
+            throw new SQLException("No se proporcionaron datos de pago.");
         }
 
-        if (p.getFechaCreacion() == null) {
-            p.setFechaCreacion(java.time.LocalDateTime.now());
+        if ((pago.getReserva() == null || pago.getReserva().getIdReserva() <= 0)
+                && (pago.getEvento() == null || pago.getEvento().getIdEvento() <= 0)) {
+            throw new SQLException("El pago debe estar asociado a una reserva o un evento válido.");
+        }
+
+        if (pago.getFechaCreacion() == null) {
+            pago.setFechaCreacion(LocalDateTime.now());
         }
 
         String sql = "INSERT INTO pago (idReserva, idEvento, monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        var conn = Conexion.conectar();
-        if (conn == null) {
-            throw new SQLException("No se pudo obtener conexión a la base de datos para registrar el pago");
-        }
+        try (Connection conexion = Conexion.conectar()) {
 
-        try (conn; PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-            // idReserva
-            if (p.getReserva() != null && p.getReserva().getIdReserva() > 0) {
-                ps.setInt(1, p.getReserva().getIdReserva());
-            } else {
-                ps.setNull(1, Types.INTEGER);
+            if (conexion == null) {
+                throw new SQLException("No se pudo establecer conexión con la base de datos.");
             }
 
-            // idEvento
-            if (p.getEvento() != null && p.getEvento().getIdEvento() > 0) {
-                ps.setInt(2, p.getEvento().getIdEvento());
-            } else {
-                ps.setNull(2, Types.INTEGER);
-            }
+            try (PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            // Monto
-            if (p.getMonto() != null) {
-                ps.setBigDecimal(3, p.getMonto());
-            } else {
-                ps.setNull(3, Types.NUMERIC);
-            }
+                if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
+                    ps.setInt(1, pago.getReserva().getIdReserva());
+                } else {
+                    ps.setNull(1, Types.INTEGER);
+                }
 
-            // Enum tipo tarjeta
-            ps.setString(4, p.getTipoTarjeta().name());
+                if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
+                    ps.setInt(2, pago.getEvento().getIdEvento());
+                } else {
+                    ps.setNull(2, Types.INTEGER);
+                }
 
-            // Número tarjeta (asegúrate que la columna sea >= 19)
-            ps.setString(5, p.getNumeroTarjeta());
+                if (pago.getMonto() != null) {
+                    ps.setBigDecimal(3, pago.getMonto());
+                } else {
+                    ps.setNull(3, Types.NUMERIC);
+                }
 
-            // Titular
-            ps.setString(6, p.getTitular());
+                if (pago.getTipoTarjeta() != null) {
+                    ps.setString(4, pago.getTipoTarjeta().name());
+                } else {
+                    ps.setNull(4, Types.VARCHAR);
+                }
 
-            // Fecha vencimiento
-            if (p.getFechaVencimiento() != null) {
-                ps.setDate(7, java.sql.Date.valueOf(p.getFechaVencimiento())); // Debe ser DATE en MySQL
-            } else {
-                ps.setNull(7, Types.DATE);
+                ps.setString(5, pago.getNumeroTarjeta());
+                ps.setString(6, pago.getTitular());
+
+                if (pago.getFechaVencimiento() != null) {
+                    ps.setDate(7, java.sql.Date.valueOf(pago.getFechaVencimiento()));
+                } else {
+                    ps.setNull(7, Types.DATE);
+                }
+
+                ps.setString(8, pago.getCodigoSeguridad());
+                ps.setTimestamp(9, Timestamp.valueOf(pago.getFechaCreacion()));
+
+                int filas = ps.executeUpdate();
+                if (filas == 0) {
+                    return -1;
+                }
+
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+
+                return filas;
             }
 
             ps.setString(8, p.getCodigoSeguridad());
@@ -84,8 +104,5 @@ public class PagoDAO {
             // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
             return filas;
         }
-
     }
-
-
 }
