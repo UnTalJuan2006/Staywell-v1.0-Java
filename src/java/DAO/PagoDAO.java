@@ -84,25 +84,9 @@ public class PagoDAO {
                     }
                 }
 
+                // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
                 return filas;
             }
-
-            ps.setString(8, p.getCodigoSeguridad());
-            ps.setTimestamp(9, Timestamp.valueOf(p.getFechaCreacion()));
-
-            int filas = ps.executeUpdate();
-
-            if (filas == 0) {
-                return -1;
-            }
-
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                }
-            }
-            // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
-            return filas;
         }
     }
 }

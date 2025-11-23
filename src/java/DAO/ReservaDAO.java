@@ -6,6 +6,7 @@ import Modelo.Habitacion;
 import Modelo.Reserva;
 import Modelo.TipoHabitacion;
 import Modelo.Usuario;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -107,20 +108,22 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
     }
 
     public int agregarReserva(Reserva reserva) throws SQLException {
-        String sql = "INSERT INTO reserva (checkin, checkout,  estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
-                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (Connection conexion = Conexion.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
             ps.setTimestamp(2, reserva.getCheckout() != null ? Timestamp.valueOf(reserva.getCheckout()) : null);
-//            ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : null);
-            ps.setString(3, reserva.getEstado() != null ? reserva.getEstado().name() : null);
-            ps.setString(4, reserva.getNombreCliente());
-            ps.setString(5, reserva.getEmail());
-            ps.setString(6, reserva.getTelefono());
-            ps.setString(7, reserva.getObservaciones());
-            ps.setInt(8, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(9, reserva.getUsuario().getIdUsuario());
+            ps.setTimestamp(3, reserva.getFechaReserva() != null ? Timestamp.valueOf(reserva.getFechaReserva()) : Timestamp.valueOf(LocalDateTime.now()));
+            ps.setString(4, reserva.getEstado() != null ? reserva.getEstado().name() : null);
+            ps.setString(5, reserva.getNombreCliente());
+            ps.setString(6, reserva.getEmail());
+            ps.setString(7, reserva.getTelefono());
+            ps.setString(8, reserva.getObservaciones());
+            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
+            ps.setInt(10, reserva.getUsuario().getIdUsuario());
 
             ps.executeUpdate();
 
@@ -142,31 +145,36 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
         if (usuarioLogueado == null) {
             throw new SQLException("No hay usuario logueado en la sesión.");
         }
-        String sql = "INSERT INTO reserva (checkin, checkout,  estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
-                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conexion = Conexion.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            LocalDateTime fechaReserva = reserva.getFechaReserva() != null ? reserva.getFechaReserva() : LocalDateTime.now();
+
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
             ps.setTimestamp(2, reserva.getCheckout() != null ? Timestamp.valueOf(reserva.getCheckout()) : null);
-            ps.setString(3, "ACTIVA");
-            ps.setString(4, reserva.getNombreCliente());
-            ps.setString(5, reserva.getEmail());
-            ps.setString(6, reserva.getTelefono());
-            ps.setString(7, reserva.getObservaciones());
-            ps.setInt(8, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(9, usuarioLogueado.getIdUsuario());
-            
-             ps.executeUpdate();
-             
-              try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            ps.setTimestamp(3, Timestamp.valueOf(fechaReserva));
+            ps.setString(4, "ACTIVA");
+            ps.setString(5, reserva.getNombreCliente());
+            ps.setString(6, reserva.getEmail());
+            ps.setString(7, reserva.getTelefono());
+            ps.setString(8, reserva.getObservaciones());
+            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
+            ps.setInt(10, usuarioLogueado.getIdUsuario());
+
+            ps.executeUpdate();
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     return generatedKeys.getInt(1);
                 }
             }
         }
-        
-        return -1;
 
+        return -1;
     }
     
     
