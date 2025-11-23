@@ -11,11 +11,13 @@ import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -33,12 +35,15 @@ public class ReservaBean implements Serializable {
 
     private Reserva reserva = new Reserva();
     private List<Reserva> listaReservas = new ArrayList<>();
+    private List<Reserva> listaReservasFiltradas = new ArrayList<>();
     private List<Habitacion> listaHabitaciones = new ArrayList<>();
     private List<Usuario> listaUsuarios = new ArrayList<>();
 
     private Integer habitacionIdSeleccionada;
     private Integer usuarioIdSeleccionado;
     private String fechasOcupadasJson = "[]";
+    private LocalDate fechaInicioFiltro;
+    private LocalDate fechaFinFiltro;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -113,20 +118,23 @@ public void init() {
 }
 
 
-private void inicializarListasVacias() {
-    listaReservas = new ArrayList<>();
-    listaHabitaciones = new ArrayList<>();
-    habitaciones = new ArrayList<>();
-    habitacionesFiltradas = new ArrayList<>();
-    listaUsuarios = new ArrayList<>();
-}
+    private void inicializarListasVacias() {
+        listaReservas = new ArrayList<>();
+        listaReservasFiltradas = new ArrayList<>();
+        listaHabitaciones = new ArrayList<>();
+        habitaciones = new ArrayList<>();
+        habitacionesFiltradas = new ArrayList<>();
+        listaUsuarios = new ArrayList<>();
+    }
 
 
     public void cargarReservas() {
         try {
             listaReservas = reservaDAO.listar();
+            listaReservasFiltradas = new ArrayList<>(listaReservas);
         } catch (SQLException e) {
             listaReservas = new ArrayList<>();
+            listaReservasFiltradas = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
         }
@@ -147,6 +155,40 @@ private void inicializarListasVacias() {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas del usuario."));
             e.printStackTrace();
         }
+    }
+
+    public void aplicarFiltroFechas() {
+        if (fechaInicioFiltro != null && fechaFinFiltro != null && fechaFinFiltro.isBefore(fechaInicioFiltro)) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "La fecha de inicio no puede ser posterior a la fecha fin."));
+            return;
+        }
+
+        listaReservasFiltradas = listaReservas.stream()
+                .filter(reservaFiltrada -> {
+                    LocalDate checkin = reservaFiltrada.getCheckin() != null
+                            ? reservaFiltrada.getCheckin().toLocalDate()
+                            : null;
+                    LocalDate checkout = reservaFiltrada.getCheckout() != null
+                            ? reservaFiltrada.getCheckout().toLocalDate()
+                            : null;
+
+                    if (checkin == null || checkout == null) {
+                        return false;
+                    }
+
+                    boolean cumpleInicio = fechaInicioFiltro == null || !checkin.isBefore(fechaInicioFiltro);
+                    boolean cumpleFin = fechaFinFiltro == null || !checkout.isAfter(fechaFinFiltro);
+
+                    return cumpleInicio && cumpleFin;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public void limpiarFiltroFechas() {
+        fechaInicioFiltro = null;
+        fechaFinFiltro = null;
+        listaReservasFiltradas = new ArrayList<>(listaReservas);
     }
 
     public String guardarComoCliente() {
@@ -474,6 +516,10 @@ private void inicializarListasVacias() {
         return listaReservas;
     }
 
+    public List<Reserva> getListaReservasFiltradas() {
+        return listaReservasFiltradas;
+    }
+
     public List<Habitacion> getListaHabitaciones() {
         return listaHabitaciones;
     }
@@ -517,6 +563,22 @@ private void inicializarListasVacias() {
 
     public void setListarPorUsuario(List<Reserva> listarPorUsuario) {
         this.listarPorUsuario = listarPorUsuario;
+    }
+
+    public LocalDate getFechaInicioFiltro() {
+        return fechaInicioFiltro;
+    }
+
+    public void setFechaInicioFiltro(LocalDate fechaInicioFiltro) {
+        this.fechaInicioFiltro = fechaInicioFiltro;
+    }
+
+    public LocalDate getFechaFinFiltro() {
+        return fechaFinFiltro;
+    }
+
+    public void setFechaFinFiltro(LocalDate fechaFinFiltro) {
+        this.fechaFinFiltro = fechaFinFiltro;
     }
 
     private void refrescarOcupacionesHabitacion() {
