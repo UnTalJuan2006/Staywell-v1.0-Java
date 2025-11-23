@@ -68,6 +68,8 @@ public class PagoDAO {
                 return generatedKeys.getInt(1);
             }
         }
+        // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
+        return filas;
     }
     return -1;
 }
