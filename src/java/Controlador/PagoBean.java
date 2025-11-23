@@ -10,6 +10,7 @@ import Modelo.Reserva;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -39,6 +40,7 @@ public class PagoBean implements Serializable {
     private String descripcionContexto;
     private String destinoRedireccion;
     private String etiquetaBotonDestino;
+    private final LocalDate hoy = LocalDate.now();
 
     @PostConstruct
     public void init() {
@@ -223,6 +225,23 @@ public class PagoBean implements Serializable {
             return false;
         }
 
+        LocalDate fechaVencimiento = pago.getFechaVencimiento();
+        if (fechaVencimiento == null) {
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Vencimiento requerido",
+                            "Seleccione la fecha de vencimiento de la tarjeta."));
+            return false;
+        }
+
+        if (fechaVencimiento.isBefore(LocalDate.now())) {
+            context.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Vencimiento inválido",
+                            "La tarjeta debe tener una fecha de vencimiento vigente."));
+            return false;
+        }
+
         if (pago.getMonto() == null || pago.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -364,5 +383,9 @@ public class PagoBean implements Serializable {
 
     public String getEtiquetaBotonDestino() {
         return etiquetaBotonDestino;
+    }
+
+    public LocalDate getHoy() {
+        return hoy;
     }
 }

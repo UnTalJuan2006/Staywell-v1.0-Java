@@ -107,6 +107,16 @@
                 <p:ajax event="blur" update=":growl" />
             </p:inputText>
 
+            <!-- Fecha de vencimiento -->
+            <h:outputLabel value="Fecha de Vencimiento:" for="vencimiento" />
+            <p:datePicker id="vencimiento"
+                          value="#{pagoBean.pago.fechaVencimiento}"
+                          pattern="yyyy-MM-dd"
+                          showIcon="true"
+                          required="true"
+                          requiredMessage="Seleccione la fecha de vencimiento"
+                          minDate="#{pagoBean.hoy}" />
+
             <!-- Titular -->
             <h:outputLabel value="Titular:" for="titular" />
             <p:inputText id="titular" value="#{pagoBean.pago.titular}" required="true">
