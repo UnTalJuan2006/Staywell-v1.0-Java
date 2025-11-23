@@ -1,6 +1,4 @@
-
 package Controlador;
-
 
 import Modelo.Empleado;
 import Modelo.EnumCargoEmpleado;
@@ -13,7 +11,6 @@ import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -29,181 +26,275 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-  
+import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
 
 public class EmpleadoBean {
-  private Empleado empleado = new Empleado();
-  private EmpleadoDAO empleadoDAO = new EmpleadoDAO();
-  private List<Empleado> listaEmpleados;
-  private List<Empleado> empleadosFiltrados;
-  private String filtro;
-  private List<Empleado> empleados;
-  
-  public String getFiltro() {
+
+    private Empleado empleado = new Empleado();
+    private EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+    private List<Empleado> listaEmpleados;
+    private List<Empleado> empleadosFiltrados;
+    private String filtro;
+    private List<Empleado> empleados;
+
+    public String getFiltro() {
         return filtro;
     }
 
     public void setFiltro(String filtro) {
         this.filtro = filtro;
     }
-    
-    public List<Empleado> getEmpleadosFiltrados(){
+
+    public List<Empleado> getEmpleadosFiltrados() {
         return empleadosFiltrados;
     }
-    
-  
-  public Empleado getEmpleado(){
-      return empleado;
-  }
-  
-  public void setEmpleado(Empleado empleado){
-      this.empleado = empleado;
-  }
-  
-  public void setListaEmpleados(List<Empleado> listaEmpleados){
-      this.listaEmpleados = listaEmpleados;
-  }
-  public EnumCargoEmpleado[] getCargos() {
+
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
+    }
+
+    public void setListaEmpleados(List<Empleado> listaEmpleados) {
+        this.listaEmpleados = listaEmpleados;
+    }
+
+    public EnumCargoEmpleado[] getCargos() {
         return EnumCargoEmpleado.values();
     }
-  
-  public EnumEstadoEmpleado[] getEstados(){
-      return EnumEstadoEmpleado.values();
-  }
-  
-  
-   @PostConstruct 
-    public void init(){
-        try{
-        empleados =  empleadoDAO.listar();
-        if(empleados == null){
-            empleados = new ArrayList<>();
-        }
-        empleadosFiltrados = new ArrayList<>();
-        
-        empleado = new Empleado();
-        empleadoDAO = new EmpleadoDAO();
-        getListaEmpleados(); 
-       }catch(SQLException e){
-         e.printStackTrace();
-       } 
+
+    public EnumEstadoEmpleado[] getEstados() {
+        return EnumEstadoEmpleado.values();
     }
-    
-//    public void buscarEmpleados(){
-//        if(empleados == null){
-//            return;
-//        }
-//        
-//    }
-    
-    
-    
-    public List<Empleado> getListaEmpleados(){
+
+    @PostConstruct
+    public void init() {
+        try {
+            empleados = empleadoDAO.listar();
+            if (empleados == null) {
+                empleados = new ArrayList<>();
+            }
+            empleadosFiltrados = new ArrayList<>();
+            empleadosFiltrados = new ArrayList<>(empleados);
+
+            empleado = new Empleado();
+            empleadoDAO = new EmpleadoDAO();
+            getListaEmpleados();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void buscarEmpleados() {
+        if (empleados == null) {
+            return;
+        }
+
+        if (filtro == null || filtro.trim().isEmpty()) {
+            empleadosFiltrados = new ArrayList<>(empleados);
+            return;
+        }
+
+        String txt = filtro.trim().toLowerCase();
+        List<Empleado> resultados = new ArrayList<>();
+
+        for (Empleado m : empleados) {
+            boolean coincideNombre = m.getNombre() != null && m.getNombre().toLowerCase().contains(txt);
+            boolean coincideEmail = m.getEmail() != null && m.getEmail().toLowerCase().contains(txt);
+            boolean coincideDocumento = m.getDocumento() != null && m.getDocumento().toLowerCase().contains(txt);
+
+            if (coincideNombre || coincideEmail || coincideDocumento) {
+                resultados.add(m);
+            }
+
+        }
+
+        empleadosFiltrados = resultados;
+
+    }
+
+    public List<Empleado> getListaEmpleados() {
         try {
             return empleadoDAO.listar();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al listar los empleados");
             return null;
         }
     }
-  
-     public String agregar(){
-        try{
-           empleado.setFechaCreacion(LocalDateTime.now());
-           empleado.setFechaActualizacion(LocalDateTime.now());
-            empleado.setEstado(EnumEstadoEmpleado.Activo); 
-           empleadoDAO.agregar(empleado);
-           empleado = new Empleado();
-           
-           FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_INFO, 
-            "Éxito", "Empleado registrado correctamente."));
-        }catch(SQLException e){
+
+    public String agregar() {
+        try {
+            empleado.setFechaCreacion(LocalDateTime.now());
+            empleado.setFechaActualizacion(LocalDateTime.now());
+            empleado.setEstado(EnumEstadoEmpleado.Activo);
+            empleadoDAO.agregar(empleado);
+            empleado = new Empleado();
+
             FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-            "Error", "No se pudo registrar el Empleado."));
-             return null;
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Éxito", "Empleado registrado correctamente."));
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error", "No se pudo registrar el Empleado."));
+            return null;
         }
         return "Empleados?faces-redirect=true";
     }
-     
-     public void cargarEmpleadoPorId(){
-         String idParam = FacesContext.getCurrentInstance().getExternalContext()
+
+    public void cargarEmpleadoPorId() {
+        String idParam = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap().get("id");
-         
-         if(idParam != null){
-             try{
-                 int id = Integer.parseInt(idParam);
-                 Empleado empleadoEncontrado = empleadoDAO.buscarPorId(id);
-                 
-                 if(empleadoEncontrado != null){
-                     this.empleado = empleadoEncontrado;
-                     
-                     
+
+        if (idParam != null) {
+            try {
+                int id = Integer.parseInt(idParam);
+                Empleado empleadoEncontrado = empleadoDAO.buscarPorId(id);
+
+                if (empleadoEncontrado != null) {
+                    this.empleado = empleadoEncontrado;
+
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_INFO,
                                     "Empleado cargado correctamente",
                                     "Se cargó el tipo  con ID: " + id));
-                 }else{
-                     FacesContext.getCurrentInstance().addMessage(null,
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_WARN,
                                     "Advertencia",
                                     "El Empleado no existe."));
-                 }
-                 
-             }catch(NumberFormatException | SQLException e){
-                     FacesContext.getCurrentInstance().addMessage(null,
+                }
+
+            } catch (NumberFormatException | SQLException e) {
+                FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
                                 "Error",
                                 "No se pudo cargar el tipohabitación."));
                 e.printStackTrace();
-             }
-         }
-     }
-     
-     public String eliminar(Empleado m){
-         try{
-             EmpleadoDAO empleadoDAO = new EmpleadoDAO();
-             empleadoDAO.eliminar(m);
-              FacesContext.getCurrentInstance().addMessage(null,
+            }
+        }
+    }
+
+    public String eliminar(Empleado m) {
+        try {
+            EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+            empleadoDAO.eliminar(m);
+            FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Empleado eliminado correctamente", null));
-         }catch(Exception e){
-              FacesContext.getCurrentInstance().addMessage(null,
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Error al eliminar el empleado: " + e.getMessage(), null));
-         }
-         return "Empleados?faces-redirect=true";
-     }
-     
-     public String actualizar() {
-    try {
-        // Actualizamos la fecha de modificación
-        empleado.setFechaActualizacion(LocalDateTime.now());
-
-        // Ejecuta el DAO
-        empleadoDAO.actualizar(empleado);
-
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "Éxito", "Empleado actualizado correctamente."));
-
-        // Limpia el formulario
-        empleado = new Empleado();
-
-        // Redirección a la tabla
+        }
         return "Empleados?faces-redirect=true";
-
-    } catch (SQLException e) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                        "Error", "No se pudo actualizar el empleado: " + e.getMessage()));
-        return null;
     }
-}
 
-   
+    public String actualizar() {
+        try {
+            // Actualizamos la fecha de modificación
+            empleado.setFechaActualizacion(LocalDateTime.now());
+
+            // Ejecuta el DAO
+            empleadoDAO.actualizar(empleado);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Éxito", "Empleado actualizado correctamente."));
+
+            // Limpia el formulario
+            empleado = new Empleado();
+
+            // Redirección a la tabla
+            return "Empleados?faces-redirect=true";
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error", "No se pudo actualizar el empleado: " + e.getMessage()));
+            return null;
+        }
+    }
+
+    public void exportarExcelEmpleados() {
+        try {
+            List<Empleado> lista = empleadoDAO.listar();
+            String[] headers = {
+                "Id", "nombre", "documento", "email", "telefono", "fechaCreacion", "fechaActualizacion", "Cargo", "horarioEntrada", "horarioSalida", "estado"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(m -> new Object[]{
+                m.getIdEmpleado(),
+                m.getNombre(),
+                m.getDocumento(),
+                m.getEmail(),
+                m.getTelefono(),
+                m.getFechaCreacion(),
+                m.getFechaActualizacion(),
+                m.getCargo().name(),
+                m.getHorarioEntrada(),
+                m.getHorarioSalida(),
+                m.getEstado().name()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            ExcelUtil.generarExcel("empleados", "Empleados", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfEmpleados() {
+        try {
+            List<Empleado> lista = empleadoDAO.listar();
+            String[] headers = {
+                "Id", "nombre", "documento", "email", "telefono", "fechaCreacion", "fechaActualizacion", "Cargo", "horarioEntrada", "horarioSalida", "estado"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(m -> new Object[]{
+                m.getIdEmpleado(),
+                m.getNombre(),
+                m.getDocumento(),
+                m.getEmail(),
+                m.getTelefono(),
+                m.getFechaCreacion(),
+                m.getFechaActualizacion(),
+                m.getCargo().name(),
+                m.getHorarioEntrada(),
+                m.getHorarioSalida(),
+                m.getEstado().name()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            PdfUtil.generarPdf("Empleados", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int totalMantenimiento() throws SQLException {
+        return empleadoDAO.contarPorCargo(EnumCargoEmpleado.Mantenimiento);
+    }
+
+    public int totalLimpieza() throws SQLException {
+        return empleadoDAO.contarPorCargo(EnumCargoEmpleado.Limpieza);
+    }
+
+    public int totalSeguridad() throws SQLException {
+        return empleadoDAO.contarPorCargo(EnumCargoEmpleado.Seguridad);
+    }
+
+    public int totalRecepcionista() throws SQLException {
+        return empleadoDAO.contarPorCargo(EnumCargoEmpleado.Recepcionista);
+    }
 }

@@ -319,4 +319,53 @@ public class UsuarioBean implements Serializable {
             e.printStackTrace();
         }
     }
+    
+   public String actualizar() {
+    try {
+        usuario.setFechaActualizacion(LocalDateTime.now());
+        usuarioDAO.actualizar(usuario);
+
+        // 🔥 Actualizar los datos del usuario en sesión
+        FacesContext.getCurrentInstance().getExternalContext()
+                .getSessionMap().put("usuarioLogueado", usuario);
+
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Éxito", "Usuario actualizado correctamente."));
+
+        return "perfil?faces-redirect=true";
+
+    } catch (SQLException e) {
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Error", "No se pudo actualizar el usuario: " + e.getMessage()));
+        return null;
+    }
+}
+
+   
+    public void cargarUsuarioPorId() {
+    try {
+        String idParam = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("id");
+
+        if (idParam == null || idParam.isEmpty()) {
+            System.out.println("⚠ No llegó el parámetro ID");
+            return;
+        }
+
+        int id = Integer.parseInt(idParam);
+        Usuario u = usuarioDAO.obtenerPorId(id); // <-- NECESITAS ESTE MÉTODO EN EL DAO
+
+        if (u != null) {
+            this.usuario = u;   // <-- ASIGNARLO ES CLAVE
+        } else {
+            System.out.println("⚠ No se encontró el usuario con ID: " + id);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 }

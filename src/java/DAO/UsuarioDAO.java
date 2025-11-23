@@ -73,6 +73,28 @@ public class UsuarioDAO {
             throw e;
         }
     }
+    
+   public void actualizar(Usuario u) throws SQLException {
+    String sql = "UPDATE usuario SET nombre = ?, email = ?, fechaActualizacion = ?, direccion = ?, telefono = ? "
+               + "WHERE idUsuario = ?";
+
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+
+        ps.setString(1, u.getNombre());
+        ps.setString(2, u.getEmail());
+        ps.setTimestamp(3, Timestamp.valueOf(u.getFechaActualizacion()));
+        ps.setString(4, u.getDireccion());
+        ps.setString(5, u.getTelefono());
+        ps.setInt(6, u.getIdUsuario()); 
+
+        ps.executeUpdate();
+
+        System.out.println("Usuario actualizado correctamente");
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar usuario: " + e.getMessage());
+        throw e;
+    }
+}
 
     public void eliminar(Usuario u) throws SQLException {
         String sql = "DELETE FROM usuario WHERE idUsuario = ?";
@@ -126,6 +148,28 @@ public class UsuarioDAO {
 
         return u;
     }
+    
+    public Usuario obtenerPorId(int id) throws SQLException {
+    String sql = "SELECT * FROM usuario WHERE idUsuario = ?";
+    try(PreparedStatement ps = Conexion.conectar().prepareStatement(sql)){
+
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            Usuario u = new Usuario();
+            u.setIdUsuario(rs.getInt("idUsuario"));
+            u.setNombre(rs.getString("nombre"));
+            u.setEmail(rs.getString("email"));
+            u.setDireccion(rs.getString("direccion"));
+            u.setTelefono(rs.getString("telefono"));
+            return u;
+        }
+    }
+    return null;
+}
+
+
 
     public void cambiarEstado(int idUsuario, EnumEstadoUsuario nuevoEstado) throws SQLException {
         String sql = "UPDATE usuario SET estado = ?, fechaActualizacion = ? WHERE idUsuario = ?";
@@ -197,6 +241,8 @@ public class UsuarioDAO {
         }
 
         return lista;
-    }
+    } 
+    
+    
 
 }

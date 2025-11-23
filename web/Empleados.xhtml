@@ -98,13 +98,228 @@
                 margin-right: 0.5rem;
             }
 
-            .table-actions {
-                white-space: nowrap;
-                width: 1%;
-                text-align: center;
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.8rem;
+                margin: 30px 0;
             }
+
+
+            .stat-card {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 16px;
+                border: 3px solid #2196f3;
+                padding: 20px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            }
+
+
+            .stat-icon {
+                font-size: 2.5em;
+                color: #2196f3;
+            }
+
+            .stat-info h4 {
+                margin: 0;
+                font-size: 1.2rem;
+                color: #131318;
+                font-weight: 500;
+            }
+
+            .stat-info p {
+                margin: 0;
+                font-size: 1rem;
+                color: #555;
+            }
+
+
+            .btn-exportar {
+                background-color: #007bff;
+                color: white;
+                padding: 10px
+            }
+
+            .btn-exportar:hover {
+                background-color: #0056b3;
+            }
+            h3{
+                color:#000000;
+                font-size: unset;
+
+            }
+
             .table-actions .btn {
-                padding: 4px 8px;
+                margin-right: 0.4rem !important;
+            }
+
+            .table-actions .btn:last-child {
+                margin-right: 0 !important;
+            }
+
+            /* Reorganizado para que los iconos se mantengan visibles */
+            .export-buttons {
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+                z-index: 100;
+            }
+
+            /* Contenedor wrapper para mantener hover activo */
+            .export-container {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                padding: 8px;
+            }
+
+            .export-main-btn {
+                background: #0d6efd;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 20px;
+                z-index: 10;
+                border: none;
+                padding: 0;
+                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+            }
+
+            .export-main-btn:hover {
+                background: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+                transform: scale(1.05);
+            }
+
+            /* Excel option - positioned above */
+            .export-option-excel {
+                position: absolute;
+                bottom: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* PDF option - positioned below */
+            .export-option-pdf {
+                position: absolute;
+                top: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(-10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* Show options on container hover */
+            .export-container:hover .export-option-excel,
+            .export-container:hover .export-option-pdf {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+            }
+
+            .export-icon {
+                width: 28px;
+                height: 28px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .export-option-excel:hover,
+            .export-option-pdf:hover {
+                transform: scale(1.15);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
+
+
+            #tblEmpleados th:last-child,
+            #tblEmpleados td:last-child {
+                width: 150px; /* Ajusta según necesites */
+                white-space: nowrap; /* Evita que los botones se rompan en varias líneas */
+                text-align: center; /* Centra los botones */
+            }
+
+            .cargo-stats {
+                display: flex;
+                gap: 20px;
+                justify-content: space-between;
+                align-items: stretch;
+                flex-wrap: nowrap; /* 🔥 esto los obliga a estar en una sola línea */
+                padding: 20px 0;
+            }
+
+            .stat-card {
+                flex: 1; /* Para que todos ocupen el mismo ancho */
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                border: 2px solid #1e90ff;
+                border-radius: 12px;
+                padding: 20px;
+                background: white;
+            }
+
+            .stat-card .stat-icon {
+                font-size: 40px;
+                color: #1e90ff;
+            }
+
+            .stat-info h4 {
+                margin: 0;
+                font-size: 20px;
+            }
+
+            .stat-info p {
+                margin: 0;
+                font-size: 18px;
+                color: gray;
             }
 
 
@@ -131,6 +346,7 @@
                 <h:link outcome="/Empleados.xhtml" styleClass="nav-link active"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
                 <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
                 <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
+                <h:link outcome="/perfil.xhtml" styleClass="nav-link"><i class="bi bi-person-fill me-2"></i>Perfil</h:link>
             </nav>
 
             <h:form>
@@ -156,19 +372,103 @@
                 </div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-5">
                 <h:messages styleClass="alert alert-info" layout="table" />
-                <div class="position-relative mb-4" style="width: 100%; max-width: 350px; margin-bottom: 1.5rem;">
-                    <i class="bi bi-search text-secondary position-absolute"
-                       style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+                <div class="cargo-stats">
 
-                    <p:inputText id="globalFilter"
-                                 onkeyup="PF('dtEventos').filter()"
-                                 placeholder="Buscar Empleado..."
-                                 styleClass="form-control ps-5 shadow-sm"
-                                 style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
-                                 onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
-                                 onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-tools stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Mantenimiento</h4>
+                            <p>#{empleadoBean.totalMantenimiento()}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-brush stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Limpieza</h4>
+                            <p>#{empleadoBean.totalLimpieza()}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-shield-check stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Seguridad</h4>
+                            <p>#{empleadoBean.totalSeguridad()}</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card no-hover">
+                        <i class="bi bi-person-badge stat-icon"></i>
+                        <div class="stat-info">
+                            <h4>Recepcionista</h4>
+                            <p>#{empleadoBean.totalRecepcionista()}</p>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="card shadow-sm mb-4"
+                     style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">
+
+
+                    <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+                        <!-- 🟦 IZQUIERDA: Buscador -->
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <h:form>
+                                <div class="position-relative" style="width: 260px;">
+                                    <i class="bi bi-search text-secondary position-absolute"
+                                       style="top: 50%; left: 12px; transform: translateY(-50%); font-size: 0.9rem;"></i>
+
+                                    <p:inputText id="globalFilter"
+                                                 value="#{empleadoBean.filtro}"
+                                                 placeholder="Buscar Empleado..."
+                                                 styleClass="form-control ps-5 shadow-sm"
+                                                 style="border-radius: 10px; border: 1px solid #dee2e6;" />
+
+                                    <f:ajax event="keyup"
+                                            listener="#{empleadoBean.buscarEmpleados()}"
+                                            render="tblEmpleados" />
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <!-- 🟦 DERECHA: Botón principal + Exportación -->
+                        <div class="export-buttons ms-auto">
+                            <div class="export-container">
+                                <button class="export-main-btn" type="button" title="Descargar">
+                                    <i class="bi bi-download"></i>
+                                </button>
+
+                                <!-- Excel -->
+                                <h:form styleClass="export-option-excel">
+
+                                    <h:commandLink 
+                                        title="Descargar Excel Personalizado"
+                                        actionListener="#{empleadoBean.exportarExcelEmpleados()}">
+
+                                        <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
+                                    </h:commandLink>
+                                </h:form>
+
+                                <!-- PDF -->
+                                <h:form styleClass="export-option-pdf">
+                                    <h:commandLink 
+                                        title="Descargar Pdf Personalizado"
+                                        actionListener="#{empleadoBean.exportarPdfEmpleados()}">
+
+                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                                    </h:commandLink>
+
+                                </h:form>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
 
@@ -183,13 +483,13 @@
 
                         <h:panelGroup rendered="#{not empty empleadoBean.listaEmpleados}">
                             <div class="table-responsive">
-                                <table class="table table-striped align-middle">
+                                <table class="table table-striped align-middle" id="tblEmpleados">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Nombre</th>
-                                            <th>email</th>
-                                            <th>telefono</th>
+                                            <th>Email</th>
+                                            <th>Documento</th>
                                             <th>Cargo</th>
                                             <th>Entrada</th>
                                             <th>Salida</th>
@@ -199,12 +499,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <ui:repeat value="#{empleadoBean.listaEmpleados}" var="empleado" varStatus="loop">
+                                        <ui:repeat value="#{empleadoBean.empleadosFiltrados}" var="empleado" varStatus="loop">
                                             <tr>
                                                 <td>#{loop.index + 1}</td>
                                                 <td>#{empleado.nombre}</td>
                                                 <td>#{empleado.email}</td>
-                                                <td>#{empleado.telefono}</td>                                               
+                                                <td>#{empleado.documento}</td>                                               
                                                 <td>
                                                     <span class="badge bg-secondary">#{empleado.cargo}</span>
                                                 </td>
@@ -214,15 +514,17 @@
                                                     <span class="badge bg-secondary">#{empleado.estado}</span>
                                                 </td>
                                                 <td class="table-actions">
-                                                    <h:link outcome="/crudEmpleados/verEmpleado.xhtml" styleClass="btn btn-outline-info btn-sm">
-                                                        <i class="bi bi-eye"></i>
-                                                        <f:param name="id" value="#{empleado.idEmpleado}" />
-                                                    </h:link>
-                                                    <h:link outcome="/crudEmpleados/editarEmpleado.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                        <f:param name="id" value="#{empleado.idEmpleado}" />
-                                                    </h:link>
-                                                    <h:form styleClass="d-inline">
+                                                    <h:form>
+                                                        <h:link outcome="/crudEmpleados/verEmpleado.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                            <i class="bi bi-eye"></i>
+                                                            <f:param name="id" value="#{empleado.idEmpleado}" />
+                                                        </h:link>
+
+                                                        <h:link outcome="/crudEmpleados/editarEmpleado.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                            <f:param name="id" value="#{empleado.idEmpleado}" />
+                                                        </h:link>
+
                                                         <h:commandLink action="#{empleadoBean.eliminar(empleado)}"
                                                                        styleClass="btn btn-outline-danger btn-sm"
                                                                        onclick="return confirm('¿Desea eliminar el empleado?');">
@@ -230,6 +532,7 @@
                                                         </h:commandLink>
                                                     </h:form>
                                                 </td>
+
                                             </tr>
                                         </ui:repeat>
                                     </tbody>

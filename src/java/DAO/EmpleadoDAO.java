@@ -193,8 +193,9 @@ public class EmpleadoDAO {
 
     public List<Empleado> buscar(String filtro) throws SQLException {
         List<Empleado> lista = new ArrayList();
-        String sql = "SELECT * FROM empleado "
-                + "WHERE (nombre LIKE ? OR email LIKE ?) AND documento = ?";
+       String sql = "SELECT * FROM empleado "
+           + "WHERE nombre LIKE ? OR email LIKE ? OR documento LIKE ?";
+
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
 
@@ -250,5 +251,22 @@ public class EmpleadoDAO {
         return lista;
 
     }
+    
+    public int contarPorCargo(EnumCargoEmpleado cargo) throws SQLException {
+    String sql = "SELECT COUNT(*) AS total FROM empleado WHERE cargo = ?";
+    
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        ps.setString(1, cargo.name());
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) return rs.getInt("total");
+
+    } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        throw e;
+    }
+
+    return 0;
+}
 
 }
