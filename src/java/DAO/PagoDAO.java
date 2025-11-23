@@ -12,67 +12,80 @@ import java.sql.Types;
 public class PagoDAO {
 
     public int agregarPago(Pago p) throws SQLException {
-    String sql = "INSERT INTO pago (idReserva, idEvento, monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-        // idReserva
-        if (p.getReserva() != null && p.getReserva().getIdReserva() > 0) {
-            ps.setInt(1, p.getReserva().getIdReserva());
-        } else {
-            ps.setNull(1, Types.INTEGER);
+        if (p.getTipoTarjeta() == null) {
+            throw new SQLException("El tipo de tarjeta es requerido para registrar el pago");
         }
 
-        // idEvento
-        if (p.getEvento() != null && p.getEvento().getIdEvento() > 0) {
-            ps.setInt(2, p.getEvento().getIdEvento());
-        } else {
-            ps.setNull(2, Types.INTEGER);
+        if (p.getFechaCreacion() == null) {
+            p.setFechaCreacion(java.time.LocalDateTime.now());
         }
 
-        // Monto
-        if (p.getMonto() != null) {
-            ps.setBigDecimal(3, p.getMonto());
-        } else {
-            ps.setNull(3, Types.NUMERIC); // <-- CORREGIDO
+        String sql = "INSERT INTO pago (idReserva, idEvento, monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        var conn = Conexion.conectar();
+        if (conn == null) {
+            throw new SQLException("No se pudo obtener conexión a la base de datos para registrar el pago");
         }
 
-        // Enum tipo tarjeta
-        ps.setString(4, p.getTipoTarjeta().name());
+        try (conn; PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-        // Número tarjeta (asegúrate que la columna sea >= 19)
-        ps.setString(5, p.getNumeroTarjeta());
-
-        // Titular
-        ps.setString(6, p.getTitular());
-
-        // Fecha vencimiento
-        if (p.getFechaVencimiento() != null) {
-            ps.setDate(7, java.sql.Date.valueOf(p.getFechaVencimiento())); // Debe ser DATE en MySQL
-        } else {
-            ps.setNull(7, Types.DATE);
-        }
-
-        ps.setString(8, p.getCodigoSeguridad());
-        ps.setTimestamp(9, Timestamp.valueOf(p.getFechaCreacion()));
-
-        int filas = ps.executeUpdate();
-
-        if (filas == 0) {
-            return -1;
-        }
-
-        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-            if (generatedKeys.next()) {
-                return generatedKeys.getInt(1);
+            // idReserva
+            if (p.getReserva() != null && p.getReserva().getIdReserva() > 0) {
+                ps.setInt(1, p.getReserva().getIdReserva());
+            } else {
+                ps.setNull(1, Types.INTEGER);
             }
-        }
-        // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
-        return filas;
-    }
-    
-}
 
-    
+            // idEvento
+            if (p.getEvento() != null && p.getEvento().getIdEvento() > 0) {
+                ps.setInt(2, p.getEvento().getIdEvento());
+            } else {
+                ps.setNull(2, Types.INTEGER);
+            }
+
+            // Monto
+            if (p.getMonto() != null) {
+                ps.setBigDecimal(3, p.getMonto());
+            } else {
+                ps.setNull(3, Types.NUMERIC);
+            }
+
+            // Enum tipo tarjeta
+            ps.setString(4, p.getTipoTarjeta().name());
+
+            // Número tarjeta (asegúrate que la columna sea >= 19)
+            ps.setString(5, p.getNumeroTarjeta());
+
+            // Titular
+            ps.setString(6, p.getTitular());
+
+            // Fecha vencimiento
+            if (p.getFechaVencimiento() != null) {
+                ps.setDate(7, java.sql.Date.valueOf(p.getFechaVencimiento())); // Debe ser DATE en MySQL
+            } else {
+                ps.setNull(7, Types.DATE);
+            }
+
+            ps.setString(8, p.getCodigoSeguridad());
+            ps.setTimestamp(9, Timestamp.valueOf(p.getFechaCreacion()));
+
+            int filas = ps.executeUpdate();
+
+            if (filas == 0) {
+                return -1;
+            }
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+            // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
+            return filas;
+        }
+
+    }
+
+
 }
