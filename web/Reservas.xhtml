@@ -81,6 +81,25 @@
                 margin-right: 0.5rem;
             }
 
+            .filter-card {
+                background: white;
+                border: 1px solid #e9ecef;
+                border-radius: 12px;
+                padding: 1rem 1.25rem;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            }
+
+            .filter-label {
+                font-weight: 600;
+                color: #6c757d;
+                margin-bottom: 6px;
+            }
+
+            .filter-input:focus {
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+            }
+
             .main-content {
                 margin-left: 280px;
                 padding: 2rem;
@@ -159,65 +178,102 @@
                                  onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
                 </div>
 
+                <h:form id="filterForm" styleClass="mb-4">
+                    <div class="filter-card">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <label class="filter-label">Check-in desde</label>
+                                    <h:inputText value="#{reservaBean.filtroCheckin}" styleClass="form-control filter-input" >
+                                        <f:passThroughAttribute name="type" value="date" />
+                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                        <f:ajax event="change" render="reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column">
+                                    <label class="filter-label">Check-out hasta</label>
+                                    <h:inputText value="#{reservaBean.filtroCheckout}" styleClass="form-control filter-input" >
+                                        <f:passThroughAttribute name="type" value="date" />
+                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                        <f:ajax event="change" render="reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex gap-2 justify-content-md-end">
+                                <h:commandButton value="Aplicar filtros" actionListener="#{reservaBean.aplicarFiltroFechas}" styleClass="btn btn-primary px-3">
+                                    <f:ajax render="reservasTable" />
+                                </h:commandButton>
+                                <h:commandButton value="Limpiar" actionListener="#{reservaBean.limpiarFiltrosFechas}" styleClass="btn btn-outline-secondary px-3">
+                                    <f:ajax render="filterForm reservasTable" />
+                                </h:commandButton>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+
 
 
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Reservas registradas</h5>
 
-                        <h:panelGroup rendered="#{empty reservaBean.listaReservas}">
-                            <div class="alert alert-warning mb-0">No se encontraron reservas registradas.</div>
-                        </h:panelGroup>
+                        <h:panelGroup id="reservasTable">
+                            <h:panelGroup rendered="#{empty reservaBean.reservasFiltradas}">
+                                <div class="alert alert-warning mb-0">No se encontraron reservas registradas.</div>
+                            </h:panelGroup>
 
-                        <h:panelGroup rendered="#{not empty reservaBean.listaReservas}">
-                            <div class="table-responsive">
-                                <table class="table table-striped align-middle">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Habitación</th>
-                                            <th>Huésped</th>
-                                            <th>Check-in</th>
-                                            <th>Check-out</th>
-                                            <th>Estado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <ui:repeat value="#{reservaBean.listaReservas}" var="reserva" varStatus="loop">
+                            <h:panelGroup rendered="#{not empty reservaBean.reservasFiltradas}">
+                                <div class="table-responsive">
+                                    <table class="table table-striped align-middle">
+                                        <thead>
                                             <tr>
-                                                <td>#{loop.index + 1}</td>
-                                                <td>
-                                                    Habitación #{reserva.habitacion != null ? reserva.habitacion.numHabitacion : 'Sin asignar'}
-                                                </td>
-                                                <td>#{reserva.nombreCliente}</td>
-                                                <td>#{reservaBean.formatearFecha(reserva.checkin)}</td>
-                                                <td>#{reservaBean.formatearFecha(reserva.checkout)}</td>
-                                                <td>
-                                                    <span class="badge bg-secondary">#{reserva.estado}</span>
-                                                </td>
-                                                <td class="table-actions">
-                                                    <h:link outcome="/crudReserva/verReserva.xhtml" styleClass="btn btn-outline-info btn-sm">
-                                                        <i class="bi bi-eye"></i>
-                                                        <f:param name="id" value="#{reserva.idReserva}" />
-                                                    </h:link>
-                                                    <h:link outcome="/crudReserva/editarReserva.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                        <f:param name="id" value="#{reserva.idReserva}" />
-                                                    </h:link>
-                                                    <h:form styleClass="d-inline">
-                                                        <h:commandLink action="#{reservaBean.eliminar(reserva)}"
-                                                                       styleClass="btn btn-outline-danger btn-sm"
-                                                                       onclick="return confirm('¿Desea eliminar la reserva?');">
-                                                            <i class="bi bi-trash"></i>
-                                                        </h:commandLink>
-                                                    </h:form>
-                                                </td>
+                                                <th>#</th>
+                                                <th>Habitación</th>
+                                                <th>Huésped</th>
+                                                <th>Check-in</th>
+                                                <th>Check-out</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
                                             </tr>
-                                        </ui:repeat>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody>
+                                            <ui:repeat value="#{reservaBean.reservasFiltradas}" var="reserva" varStatus="loop">
+                                                <tr>
+                                                    <td>#{loop.index + 1}</td>
+                                                    <td>
+                                                        Habitación #{reserva.habitacion != null ? reserva.habitacion.numHabitacion : 'Sin asignar'}
+                                                    </td>
+                                                    <td>#{reserva.nombreCliente}</td>
+                                                    <td>#{reservaBean.formatearFecha(reserva.checkin)}</td>
+                                                    <td>#{reservaBean.formatearFecha(reserva.checkout)}</td>
+                                                    <td>
+                                                        <span class="badge bg-secondary">#{reserva.estado}</span>
+                                                    </td>
+                                                    <td class="table-actions">
+                                                        <h:link outcome="/crudReserva/verReserva.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                            <i class="bi bi-eye"></i>
+                                                            <f:param name="id" value="#{reserva.idReserva}" />
+                                                        </h:link>
+                                                        <h:link outcome="/crudReserva/editarReserva.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                            <f:param name="id" value="#{reserva.idReserva}" />
+                                                        </h:link>
+                                                        <h:form styleClass="d-inline">
+                                                            <h:commandLink action="#{reservaBean.eliminar(reserva)}"
+                                                                           styleClass="btn btn-outline-danger btn-sm"
+                                                                           onclick="return confirm('¿Desea eliminar la reserva?');">
+                                                                <i class="bi bi-trash"></i>
+                                                            </h:commandLink>
+                                                        </h:form>
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </h:panelGroup>
                         </h:panelGroup>
                     </div>
                 </div>
