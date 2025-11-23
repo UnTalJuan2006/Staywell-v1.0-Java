@@ -71,7 +71,7 @@ public class PagoDAO {
         // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
         return filas;
     }
-    return -1;
+    
 }
 
     
