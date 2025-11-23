@@ -85,8 +85,8 @@ public class PagoDAO {
                     }
                 }
 
-                // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
-                return filas;
+                // Si no se devolvió una clave generada, consideramos que el insert falló para evitar estados inconsistentes
+                throw new SQLException("El pago se insertó pero no se pudo obtener su identificador generado.");
             }
         }
     }
