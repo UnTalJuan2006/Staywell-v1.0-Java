@@ -90,8 +90,8 @@
                                 <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
-                                        execute="@form"
-                                        render="@form"/>
+                                        execute="fechaEvento espacio"
+                                        render="fechaEvento horaInicio horaFin ocupacionesJson @messages"/>
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
@@ -128,8 +128,8 @@
                                                itemLabel="#{espacio.nombre}" />
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
-                                        execute="@form"
-                                        render="@form" />
+                                        execute="espacio fechaEvento"
+                                        render="fechaEvento horaInicio horaFin ocupacionesJson @messages" />
                             </h:selectOneMenu>
                             <h:message for="espacio" styleClass="text-danger small" />
                         </div>
