@@ -493,7 +493,7 @@ public class ReservaHuespedBean implements Serializable {
             }
         } catch (SQLException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al registrar el pago",
-                    "No se pudo almacenar el pago de la reserva."));
+                    "No se pudo almacenar el pago de la reserva: " + ex.getMessage()));
             intentarRevertirReserva(reserva.getIdReserva());
             return false;
         }
