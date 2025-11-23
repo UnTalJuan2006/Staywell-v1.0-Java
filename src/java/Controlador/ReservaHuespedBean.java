@@ -1,7 +1,6 @@
 package Controlador;
 
 import DAO.HabitacionDAO;
-import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
 import Modelo.EnumEstadoReserva;
@@ -41,7 +40,6 @@ public class ReservaHuespedBean implements Serializable {
     private final TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final ReservaDAO reservaDAO = new ReservaDAO();
-    private final PagoDAO pagoDAO = new PagoDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
@@ -372,15 +370,20 @@ public class ReservaHuespedBean implements Serializable {
         reserva.setCheckout(fechaSalida);
         reserva.setFechaReserva(LocalDateTime.now());
 
+        Pago pago = new Pago();
+        pago.setMonto(totalReserva);
+        pago.setTipoTarjeta(tipoPagoSeleccionado);
+        pago.setNumeroTarjeta(numeroTarjeta);
+        pago.setTitular(titularTarjeta);
+        pago.setFechaVencimiento(fechaVencimientoTarjetaParseada);
+        pago.setCodigoSeguridad(codigoSeguridadTarjeta);
+        pago.setFechaCreacion(LocalDateTime.now());
+
         try {
-            int idGenerado = reservaDAO.reservaHuespd(reserva);
+            int idGenerado = reservaDAO.crearReservaConPago(reserva, pago);
 
             if (idGenerado > 0) {
                 reserva.setIdReserva(idGenerado);
-
-                if (!registrarPagoParaReserva(context, reserva)) {
-                    return null;
-                }
 
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
@@ -395,7 +398,7 @@ public class ReservaHuespedBean implements Serializable {
 
         } catch (SQLException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo registrar la reserva."));
+                    "No se pudo registrar la reserva y el pago."));
         }
 
         return null;
@@ -470,43 +473,6 @@ public class ReservaHuespedBean implements Serializable {
 
     private boolean isNullOrTrimmedEmpty(String value) {
         return value == null || value.trim().isEmpty();
-    }
-
-    private boolean registrarPagoParaReserva(FacesContext context, Reserva reserva) {
-        Pago pago = new Pago();
-        pago.setReserva(reserva);
-        pago.setMonto(totalReserva);
-        pago.setTipoTarjeta(tipoPagoSeleccionado);
-        pago.setNumeroTarjeta(numeroTarjeta);
-        pago.setTitular(titularTarjeta);
-        pago.setFechaVencimiento(fechaVencimientoTarjetaParseada);
-        pago.setCodigoSeguridad(codigoSeguridadTarjeta);
-        pago.setFechaCreacion(LocalDateTime.now());
-
-        try {
-            int idPago = pagoDAO.agregarPago(pago);
-            if (idPago <= 0) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pago no registrado",
-                        "No se pudo guardar el pago asociado a la reserva."));
-                intentarRevertirReserva(reserva.getIdReserva());
-                return false;
-            }
-        } catch (SQLException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al registrar el pago",
-                    "No se pudo almacenar el pago de la reserva: " + ex.getMessage()));
-            intentarRevertirReserva(reserva.getIdReserva());
-            return false;
-        }
-
-        return true;
-    }
-
-    private void intentarRevertirReserva(int idReserva) {
-        try {
-            reservaDAO.eliminar(idReserva);
-        } catch (SQLException ex) {
-            System.err.println("No se pudo revertir la reserva con ID " + idReserva + ": " + ex.getMessage());
-        }
     }
 
     public EnumPago[] getTiposPago() {

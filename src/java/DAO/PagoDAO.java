@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 public class PagoDAO {
 
     public int agregarPago(Pago pago) throws SQLException {
+        try (Connection conexion = Conexion.conectar()) {
+            return agregarPago(pago, conexion);
+        }
+    }
+
+    public int agregarPago(Pago pago, Connection conexion) throws SQLException {
         if (pago == null) {
             throw new SQLException("No se proporcionaron datos de pago.");
         }
@@ -26,72 +32,52 @@ public class PagoDAO {
             pago.setFechaCreacion(LocalDateTime.now());
         }
 
+        if (conexion == null) {
+            throw new SQLException("No se pudo establecer conexión con la base de datos.");
+        }
+
         String sql = "INSERT INTO pago (idReserva, idEvento, monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conexion = Conexion.conectar()) {
+        try (PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            if (conexion == null) {
-                throw new SQLException("No se pudo establecer conexión con la base de datos.");
+            if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
+                ps.setInt(1, pago.getReserva().getIdReserva());
+            } else {
+                ps.setNull(1, Types.INTEGER);
             }
 
-            try (PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
-                if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
-                    ps.setInt(1, pago.getReserva().getIdReserva());
-                } else {
-                    ps.setNull(1, Types.INTEGER);
-                }
-
-                if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
-                    ps.setInt(2, pago.getEvento().getIdEvento());
-                } else {
-                    ps.setNull(2, Types.INTEGER);
-                }
-
-                if (pago.getMonto() != null) {
-                    ps.setBigDecimal(3, pago.getMonto());
-                } else {
-                    ps.setNull(3, Types.NUMERIC);
-                }
-
-                if (pago.getTipoTarjeta() != null) {
-                    ps.setString(4, pago.getTipoTarjeta().name());
-                } else {
-                    ps.setNull(4, Types.VARCHAR);
-                }
-
-                ps.setString(5, pago.getNumeroTarjeta());
-                ps.setString(6, pago.getTitular());
-
-                if (pago.getFechaVencimiento() != null) {
-                    ps.setDate(7, java.sql.Date.valueOf(pago.getFechaVencimiento()));
-                } else {
-                    ps.setNull(7, Types.DATE);
-                }
-
-                ps.setString(8, pago.getCodigoSeguridad());
-                ps.setTimestamp(9, Timestamp.valueOf(pago.getFechaCreacion()));
-
-                int filas = ps.executeUpdate();
-                if (filas == 0) {
-                    return -1;
-                }
-
-                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1);
-                    }
-                }
-
-                return filas;
+            if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
+                ps.setInt(2, pago.getEvento().getIdEvento());
+            } else {
+                ps.setNull(2, Types.INTEGER);
             }
 
-            ps.setString(8, p.getCodigoSeguridad());
-            ps.setTimestamp(9, Timestamp.valueOf(p.getFechaCreacion()));
+            if (pago.getMonto() != null) {
+                ps.setBigDecimal(3, pago.getMonto());
+            } else {
+                ps.setNull(3, Types.NUMERIC);
+            }
+
+            if (pago.getTipoTarjeta() != null) {
+                ps.setString(4, pago.getTipoTarjeta().name());
+            } else {
+                ps.setNull(4, Types.VARCHAR);
+            }
+
+            ps.setString(5, pago.getNumeroTarjeta());
+            ps.setString(6, pago.getTitular());
+
+            if (pago.getFechaVencimiento() != null) {
+                ps.setDate(7, java.sql.Date.valueOf(pago.getFechaVencimiento()));
+            } else {
+                ps.setNull(7, Types.DATE);
+            }
+
+            ps.setString(8, pago.getCodigoSeguridad());
+            ps.setTimestamp(9, Timestamp.valueOf(pago.getFechaCreacion()));
 
             int filas = ps.executeUpdate();
-
             if (filas == 0) {
                 return -1;
             }
@@ -101,6 +87,7 @@ public class PagoDAO {
                     return generatedKeys.getInt(1);
                 }
             }
+
             // Algunos drivers pueden no retornar claves generadas; consideramos éxito si se insertó al menos un registro
             return filas;
         }
