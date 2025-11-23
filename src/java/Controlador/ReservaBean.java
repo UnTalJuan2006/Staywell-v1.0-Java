@@ -11,6 +11,7 @@ import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -48,6 +49,9 @@ public class ReservaBean implements Serializable {
     private List<Habitacion> habitacionesFiltradas;
     private TipoHabitacion tipoSeleccionado;
     public List<Reserva> listarPorUsuario = new ArrayList<>();
+
+    private LocalDate filtroCheckin;
+    private LocalDate filtroCheckout;
     
 
   @PostConstruct
@@ -130,6 +134,19 @@ private void inicializarListasVacias() {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
         }
+    }
+
+    public void aplicarFiltroFechas() {
+        if (filtroCheckin != null && filtroCheckout != null && filtroCheckout.isBefore(filtroCheckin)) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido", "La fecha de check-out debe ser posterior al check-in."));
+            filtroCheckout = null;
+        }
+    }
+
+    public void limpiarFiltrosFechas() {
+        filtroCheckin = null;
+        filtroCheckout = null;
     }
 
     public void listarReservasDelUsuarioLogueado() {
@@ -437,6 +454,45 @@ private void inicializarListasVacias() {
         return fecha != null ? fecha.format(DISPLAY_FORMATTER) : "";
     }
 
+    public List<Reserva> getReservasFiltradas() {
+        List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
+
+        if (filtroCheckin == null && filtroCheckout == null) {
+            return fuente;
+        }
+
+        List<Reserva> filtradas = new ArrayList<>();
+
+        for (Reserva reservaActual : fuente) {
+            if (reservaActual == null) {
+                continue;
+            }
+
+            LocalDateTime checkin = reservaActual.getCheckin();
+            LocalDateTime checkout = reservaActual.getCheckout();
+
+            if (checkin == null || checkout == null) {
+                continue;
+            }
+
+            boolean coincide = true;
+
+            if (filtroCheckin != null) {
+                coincide = coincide && !checkin.toLocalDate().isBefore(filtroCheckin);
+            }
+
+            if (filtroCheckout != null) {
+                coincide = coincide && !checkout.toLocalDate().isAfter(filtroCheckout);
+            }
+
+            if (coincide) {
+                filtradas.add(reservaActual);
+            }
+        }
+
+        return filtradas;
+    }
+
     public String obtenerNombreHabitacion(Reserva reserva) {
         if (reserva == null || reserva.getHabitacion() == null) {
             return "Sin asignar";
@@ -476,6 +532,22 @@ private void inicializarListasVacias() {
 
     public List<Habitacion> getListaHabitaciones() {
         return listaHabitaciones;
+    }
+
+    public LocalDate getFiltroCheckin() {
+        return filtroCheckin;
+    }
+
+    public void setFiltroCheckin(LocalDate filtroCheckin) {
+        this.filtroCheckin = filtroCheckin;
+    }
+
+    public LocalDate getFiltroCheckout() {
+        return filtroCheckout;
+    }
+
+    public void setFiltroCheckout(LocalDate filtroCheckout) {
+        this.filtroCheckout = filtroCheckout;
     }
 
     public List<Usuario> getListaUsuarios() {
