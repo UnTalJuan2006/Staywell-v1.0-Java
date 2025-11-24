@@ -728,8 +728,8 @@
                                 <div class="info-field">
                                     <label class="info-label">Fecha de Registro</label>
                                     <div class="info-value">
-                                        <h:outputText value="#{usuarioLogueado.fechaRegistro}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        <h:outputText value="#{usuarioLogueado.fechaCreacion}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" type="localDateTime" />
                                         </h:outputText>
                                     </div>
                                 </div>
