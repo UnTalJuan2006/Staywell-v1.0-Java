@@ -254,6 +254,119 @@
                 letter-spacing: 0.4px;
                 padding: 0.55rem 1.4rem;
             }
+            
+            /* Reorganizado para que los iconos se mantengan visibles */
+            .export-buttons {
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-50%);
+                z-index: 100;
+            }
+
+            /* Contenedor wrapper para mantener hover activo */
+            .export-container {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                padding: 8px;
+            }
+
+            .export-main-btn {
+                background: #0d6efd;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 20px;
+                z-index: 10;
+                border: none;
+                padding: 0;
+                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+            }
+
+            .export-main-btn:hover {
+                background: #0b5ed7;
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
+                transform: scale(1.05);
+            }
+
+            /* Excel option - positioned above */
+            .export-option-excel {
+                position: absolute;
+                bottom: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* PDF option - positioned below */
+            .export-option-pdf {
+                position: absolute;
+                top: 65px;
+                right: -8px;
+                opacity: 0;
+                transform: translateY(-10px) scale(0.8);
+                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+                pointer-events: none;
+                z-index: 5;
+                margin: 0;
+                padding: 6px;
+                border: none;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 45px;
+                height: 45px;
+            }
+
+            /* Show options on container hover */
+            .export-container:hover .export-option-excel,
+            .export-container:hover .export-option-pdf {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
+            }
+
+            .export-icon {
+                width: 28px;
+                height: 28px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+            .export-option-excel:hover,
+            .export-option-pdf:hover {
+                transform: scale(1.15);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            }
+            
+            
         </style>
     </h:head>
 
@@ -346,67 +459,110 @@
             <div class="mt-4">
                 <h:messages styleClass="alert alert-info" layout="table" />
 
-                <h:form id="filterForm" styleClass="mb-4">
-                    <div class="filter-card-custom">
+                <!-- 🔍 FORMULARIO DE FILTROS -->
+<h:form id="filterForm" styleClass="mb-4">
 
-                        <!-- Encabezado con icono -->
-                        <div class="filter-header">
-                            <div class="filter-icon-box">
-                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
-                            </div>
-                            <span class="filter-title">Opciones de filtrado</span>
-                        </div>
+    <div class="filter-card-custom position-relative">
 
-                        <!-- Buscador -->
-                        <div class="filter-search-wrapper mb-4">
-                            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+        <!-- Encabezado -->
+        <div class="filter-header">
+            <div class="filter-icon-box">
+                <i class="bi bi-funnel-fill"
+                   style="font-size: 1.4rem; color:#0d6efd;"></i>
+            </div>
+            <span class="filter-title">Opciones de filtrado</span>
+        </div>
 
-                            <p:inputText id="globalFilter"
-                                         value="#{reservaBean.filtroBusqueda}"
-                                         placeholder="Buscar por habitación o huésped"
-                                         styleClass="form-control filter-search-input shadow-sm">
-                                <f:ajax event="keyup" render=":reservasTable" listener="#{reservaBean.aplicarFiltroBusqueda}" />
-                            </p:inputText>
-                        </div>
+        <!-- Buscador global -->
+        <div class="filter-search-wrapper mb-4">
+            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
 
-                        <hr class="my-3" style="opacity: .15;"></hr>
+            <p:inputText id="globalFilter"
+                         value="#{reservaBean.filtroBusqueda}"
+                         placeholder="Buscar por habitación o huésped"
+                         styleClass="form-control filter-search-input shadow-sm">
+                <f:ajax event="keyup"
+                        render=":reservasTable"
+                        listener="#{reservaBean.aplicarFiltroBusqueda}" />
+            </p:inputText>
+        </div>
 
-                        <div class="row g-4 align-items-end">
-                            <!-- Check-in -->
-                            <div class="col-md-4">
-                                <label class="filter-label">Check-in desde</label>
-                                <h:inputText value="#{reservaBean.filtroCheckin}" 
-                                             styleClass="form-control filter-date-input">
-                                    <f:passThroughAttribute name="type" value="date" />
-                                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-                                </h:inputText>
-                            </div>
+        <hr class="my-3" style="opacity: .15;" />
 
-                            <!-- Check-out -->
-                            <div class="col-md-4">
-                                <label class="filter-label">Check-out hasta</label>
-                                <h:inputText value="#{reservaBean.filtroCheckout}" 
-                                             styleClass="form-control filter-date-input">
-                                    <f:passThroughAttribute name="type" value="date" />
-                                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-                                </h:inputText>
-                            </div>
+        <!-- Rango de fechas -->
+        <div class="row g-4 align-items-end">
 
-                            <!-- Limpiar -->
-                            <div class="col-md-4 d-flex justify-content-start">
-                                <h:commandButton value="Limpiar filtros"
-                                                 styleClass="btn btn-outline-secondary btn-clear"
-                                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
-                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
-                                </h:commandButton>
-                            </div>
-                        </div>
+            <!-- Check-in -->
+            <div class="col-md-4">
+                <label class="filter-label">Check-in desde</label>
+                <h:inputText value="#{reservaBean.filtroCheckin}"
+                             styleClass="form-control filter-date-input">
+                    <f:passThroughAttribute name="type" value="date" />
+                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                    <f:ajax event="change"
+                            render=":reservasTable"
+                            listener="#{reservaBean.aplicarFiltroFechas}" />
+                </h:inputText>
+            </div>
 
-                    </div>
+            <!-- Check-out -->
+            <div class="col-md-4">
+                <label class="filter-label">Check-out hasta</label>
+                <h:inputText value="#{reservaBean.filtroCheckout}"
+                             styleClass="form-control filter-date-input">
+                    <f:passThroughAttribute name="type" value="date" />
+                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                    <f:ajax event="change"
+                            render=":reservasTable"
+                            listener="#{reservaBean.aplicarFiltroFechas}" />
+                </h:inputText>
+            </div>
 
+            <!-- Limpiar -->
+            <div class="col-md-4 d-flex justify-content-start">
+                <h:commandButton value="Limpiar filtros"
+                                 styleClass="btn btn-outline-secondary btn-clear"
+                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
+                    <f:ajax execute="@form"
+                            render=":filterForm :reservasTable" />
+                </h:commandButton>
+            </div>
+
+        </div>
+
+        <!-- 📦 Botón exportar con opciones -->
+        <div class="export-buttons">
+            <div class="export-container">
+
+                <!-- Botón principal -->
+                <button class="export-main-btn" type="button" title="Descargar">
+                    <i class="bi bi-download"></i>
+                </button>
+
+                <!-- Excel -->
+                <h:form styleClass="export-option-excel">
+                    <h:commandLink title="Descargar Excel"
+                                   actionListener="#{habitacionBean.exportarExcelHabitaciones}">
+                        <p:graphicImage url="/img/xls.png"
+                                        styleClass="export-icon" />
+                    </h:commandLink>
                 </h:form>
+
+                <!-- PDF -->
+                <h:form styleClass="export-option-pdf">
+                    <h:commandLink title="Descargar PDF"
+                                   actionListener="#{habitacionBean.exportarPdfHabitaciones}">
+                        <p:graphicImage url="/img/pdf.png"
+                                        styleClass="export-icon" />
+                    </h:commandLink>
+                </h:form>
+
+            </div>
+        </div>
+
+    </div>
+
+</h:form>
 
 
 

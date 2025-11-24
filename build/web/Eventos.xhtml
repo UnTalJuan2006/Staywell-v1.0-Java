@@ -415,9 +415,14 @@
                     <div class="filter-search-wrapper mb-4">
                         <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
                         <p:inputText id="globalFilter"
-                                     onkeyup="PF('dtEventos').filter()"
-                                     placeholder="Buscar evento por nombre"
-                                     styleClass="form-control filter-search-input shadow-sm" />
+                                     value="#{eventoBean.filtroBusqueda}"
+                                     placeholder="Buscar evento o usuario"
+                                     styleClass="form-control filter-search-input shadow-sm">
+                            <p:ajax event="keyup"
+                                    process="@this"
+                                    update=":panelEventosWrapper"
+                                    listener="#{eventoBean.aplicarFiltroBusqueda}" />
+                        </p:inputText>
                     </div>
 
                     <hr class="my-3" style="opacity: .15;"></hr>
