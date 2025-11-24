@@ -187,7 +187,7 @@
                                     <h:inputText value="#{reservaBean.filtroCheckin}" styleClass="form-control filter-input" >
                                         <f:passThroughAttribute name="type" value="date" />
                                         <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
-                                        <f:ajax event="change" render="reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                        <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
                                     </h:inputText>
                                 </div>
                             </div>
@@ -197,16 +197,16 @@
                                     <h:inputText value="#{reservaBean.filtroCheckout}" styleClass="form-control filter-input" >
                                         <f:passThroughAttribute name="type" value="date" />
                                         <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
-                                        <f:ajax event="change" render="reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                        <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
                                     </h:inputText>
                                 </div>
                             </div>
                             <div class="col-md-4 d-flex gap-2 justify-content-md-end">
                                 <h:commandButton value="Aplicar filtros" actionListener="#{reservaBean.aplicarFiltroFechas}" styleClass="btn btn-primary px-3">
-                                    <f:ajax render="reservasTable" />
+                                    <f:ajax render=":reservasTable" />
                                 </h:commandButton>
                                 <h:commandButton value="Limpiar" actionListener="#{reservaBean.limpiarFiltrosFechas}" styleClass="btn btn-outline-secondary px-3">
-                                    <f:ajax render="filterForm reservasTable" />
+                                    <f:ajax render=":filterForm :reservasTable" />
                                 </h:commandButton>
                             </div>
                         </div>
