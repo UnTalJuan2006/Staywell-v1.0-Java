@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -51,8 +52,8 @@ public class ReservaBean implements Serializable {
     private TipoHabitacion tipoSeleccionado;
     public List<Reserva> listarPorUsuario = new ArrayList<>();
 
-    private LocalDate filtroCheckin;
-    private LocalDate filtroCheckout;
+    private Date filtroCheckin;
+    private Date filtroCheckout;
     
 
   @PostConstruct
@@ -141,7 +142,10 @@ public void init() {
     }
 
     public void aplicarFiltroFechas() {
-        if (filtroCheckin != null && filtroCheckout != null && filtroCheckout.isBefore(filtroCheckin)) {
+        LocalDate checkinLocal = convertirFecha(filtroCheckin);
+        LocalDate checkoutLocal = convertirFecha(filtroCheckout);
+
+        if (checkinLocal != null && checkoutLocal != null && checkoutLocal.isBefore(checkinLocal)) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido", "La fecha de check-out debe ser posterior al check-in."));
             filtroCheckout = null;
@@ -510,19 +514,19 @@ public void init() {
         return listaHabitaciones;
     }
 
-    public LocalDate getFiltroCheckin() {
+    public Date getFiltroCheckin() {
         return filtroCheckin;
     }
 
-    public void setFiltroCheckin(LocalDate filtroCheckin) {
+    public void setFiltroCheckin(Date filtroCheckin) {
         this.filtroCheckin = filtroCheckin;
     }
 
-    public LocalDate getFiltroCheckout() {
+    public Date getFiltroCheckout() {
         return filtroCheckout;
     }
 
-    public void setFiltroCheckout(LocalDate filtroCheckout) {
+    public void setFiltroCheckout(Date filtroCheckout) {
         this.filtroCheckout = filtroCheckout;
     }
 
@@ -703,10 +707,22 @@ public void init() {
         this.tipoSeleccionado = tipoSeleccionado;
     }
 
+    private LocalDate convertirFecha(Date fecha) {
+        if (fecha == null) {
+            return null;
+        }
+
+        return fecha.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
     private void actualizarReservasFiltradas() {
         List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
+        LocalDate checkinLocal = convertirFecha(filtroCheckin);
+        LocalDate checkoutLocal = convertirFecha(filtroCheckout);
 
-        if (filtroCheckin == null && filtroCheckout == null) {
+        if (checkinLocal == null && checkoutLocal == null) {
             reservasFiltradas = new ArrayList<>(fuente);
             return;
         }
@@ -727,12 +743,12 @@ public void init() {
 
             boolean coincide = true;
 
-            if (filtroCheckin != null) {
-                coincide = coincide && !checkin.toLocalDate().isBefore(filtroCheckin);
+            if (checkinLocal != null) {
+                coincide = coincide && !checkin.toLocalDate().isBefore(checkinLocal);
             }
 
-            if (filtroCheckout != null) {
-                coincide = coincide && !checkout.toLocalDate().isAfter(filtroCheckout);
+            if (checkoutLocal != null) {
+                coincide = coincide && !checkout.toLocalDate().isAfter(checkoutLocal);
             }
 
             if (coincide) {
