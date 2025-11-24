@@ -38,32 +38,27 @@ public class PagoDAO {
 
             try (PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
+                // Mantener coherencia en la base de datos: si la tabla no permite nulos
+                // en las columnas de relación, persistimos un 0 para el campo no usado.
+                // Esto evita fallos de integridad cuando solo se paga una reserva o un evento.
                 if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
                     ps.setInt(1, pago.getReserva().getIdReserva());
                 } else {
-                    ps.setNull(1, Types.INTEGER);
+                    ps.setInt(1, 0);
                 }
 
                 if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
                     ps.setInt(2, pago.getEvento().getIdEvento());
                 } else {
-                    ps.setNull(2, Types.INTEGER);
+                    ps.setInt(2, 0);
                 }
 
-                if (pago.getMonto() != null) {
-                    ps.setBigDecimal(3, pago.getMonto());
-                } else {
-                    ps.setNull(3, Types.NUMERIC);
-                }
+                // Evitar valores nulos en columnas obligatorias del esquema.
+                ps.setBigDecimal(3, pago.getMonto() != null ? pago.getMonto() : java.math.BigDecimal.ZERO);
+                ps.setString(4, pago.getTipoTarjeta() != null ? pago.getTipoTarjeta().name() : "Desconocido");
 
-                if (pago.getTipoTarjeta() != null) {
-                    ps.setString(4, pago.getTipoTarjeta().name());
-                } else {
-                    ps.setNull(4, Types.VARCHAR);
-                }
-
-                ps.setString(5, pago.getNumeroTarjeta());
-                ps.setString(6, pago.getTitular());
+                ps.setString(5, pago.getNumeroTarjeta() != null ? pago.getNumeroTarjeta() : "");
+                ps.setString(6, pago.getTitular() != null ? pago.getTitular() : "");
 
                 if (pago.getFechaVencimiento() != null) {
                     ps.setDate(7, java.sql.Date.valueOf(pago.getFechaVencimiento()));
@@ -71,7 +66,7 @@ public class PagoDAO {
                     ps.setNull(7, Types.DATE);
                 }
 
-                ps.setString(8, pago.getCodigoSeguridad());
+                ps.setString(8, pago.getCodigoSeguridad() != null ? pago.getCodigoSeguridad() : "");
                 ps.setTimestamp(9, Timestamp.valueOf(pago.getFechaCreacion()));
 
                 int filas = ps.executeUpdate();
