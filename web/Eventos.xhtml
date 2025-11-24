@@ -508,6 +508,26 @@
 
             <h:form id="filterForm">
                 <div class="filter-card-custom">
+                    <div class="export-buttons">
+                        <div class="export-container">
+                            <button class="export-main-btn" type="button" title="Descargar">
+                                <i class="bi bi-download"></i>
+                            </button>
+
+                            <h:commandLink styleClass="export-option-excel"
+                                           title="Descargar Excel"
+                                           actionListener="#{eventoBean.exportarExcelEventos()}">
+                                <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
+                            </h:commandLink>
+
+                            <h:commandLink styleClass="export-option-pdf"
+                                           title="Descargar PDF"
+                                           actionListener="#{eventoBean.exportarPdfEventos()}">
+                                <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                            </h:commandLink>
+                        </div>
+                    </div>
+
                     <div class="filter-header">
                         <div class="filter-icon-box">
                             <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
@@ -566,30 +586,6 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
                         <h5 class="card-title mb-0">Eventos registrados</h5>
-
-                        <div class="export-buttons ms-auto">
-                            <div class="export-container">
-                                <button class="export-main-btn" type="button" title="Descargar">
-                                    <i class="bi bi-download"></i>
-                                </button>
-
-                                <h:form styleClass="export-option-excel">
-                                    <h:commandLink
-                                        title="Descargar Excel"
-                                        actionListener="#{eventoBean.exportarExcelEventos()}">
-                                        <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
-                                    </h:commandLink>
-                                </h:form>
-
-                                <h:form styleClass="export-option-pdf">
-                                    <h:commandLink
-                                        title="Descargar PDF"
-                                        actionListener="#{eventoBean.exportarPdfEventos()}">
-                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
-                                    </h:commandLink>
-                                </h:form>
-                            </div>
-                        </div>
                     </div>
 
                     <h:panelGroup id="panelEventosWrapper">
