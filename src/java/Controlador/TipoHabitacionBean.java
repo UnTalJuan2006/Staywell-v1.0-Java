@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -74,7 +75,7 @@ public class TipoHabitacionBean {
             listaTipoHabitaciones = listaOriginal.stream()
                     .filter(t -> t.getNombre() != null
                     && t.getNombre().equalsIgnoreCase(filtroTipo))
-                    .toList();
+                    .collect(Collectors.toList());
         }
     }
 
