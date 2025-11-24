@@ -22,6 +22,8 @@ import javax.faces.context.FacesContext;
 import Modelo.EnumEstadoEspacio;
 import Modelo.EnumEstadoEvento;
 import java.util.Date;
+import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -770,6 +772,68 @@ public class EventoBean implements Serializable {
 
     public void setListarPorUsuario(List<Evento> listarPorUsuario) {
         this.listarPorUsuario = listarPorUsuario;
+    }
+
+    public void exportarExcelEventos() {
+        try {
+            List<Evento> lista = eventoDAO.listar();
+
+            String[] headers = {
+                "ID", "Nombre", "Fecha", "Hora Inicio", "Hora Fin",
+                "Espacio", "Cliente", "Estado", "Creado", "Actualizado"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(e -> new Object[]{
+                e.getIdEvento(),
+                e.getNombreEvento(),
+                e.getFechaEvento(),
+                e.getHoraInicio(),
+                e.getHoraFin(),
+                e.getEspacio() != null ? e.getEspacio().getNombre() : "",
+                e.getUsuario() != null ? e.getUsuario().getNombre() : e.getNombreCliente(),
+                e.getEstado() != null ? e.getEstado().name() : "",
+                e.getFechaCreacion(),
+                e.getFechaActualizacion()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            ExcelUtil.generarExcel("eventos", "Eventos", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfEventos() {
+        try {
+            List<Evento> lista = eventoDAO.listar();
+
+            String[] headers = {
+                "ID", "Nombre", "Fecha", "Hora Inicio", "Hora Fin",
+                "Espacio", "Cliente", "Estado", "Creado", "Actualizado"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(ev -> new Object[]{
+                ev.getIdEvento(),
+                ev.getNombreEvento(),
+                ev.getFechaEvento(),
+                ev.getHoraInicio(),
+                ev.getHoraFin(),
+                ev.getEspacio() != null ? ev.getEspacio().getNombre() : "",
+                ev.getUsuario() != null ? ev.getUsuario().getNombre() : ev.getNombreCliente(),
+                ev.getEstado() != null ? ev.getEstado().name() : "",
+                ev.getFechaCreacion(),
+                ev.getFechaActualizacion()
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            PdfUtil.generarPdf("Eventos", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Integer getEspacioIdSeleccionado() {
