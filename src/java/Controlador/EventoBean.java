@@ -298,6 +298,13 @@ public class EventoBean implements Serializable {
             return null;
         }
 
+        // Evitamos desfases por zona horaria cuando el valor proviene de java.sql.Date
+        // usando su conversión directa a LocalDate. Para otros tipos, conservamos la
+        // conversión habitual a través de Instant con la zona del sistema.
+        if (fecha instanceof java.sql.Date) {
+            return ((java.sql.Date) fecha).toLocalDate();
+        }
+
         return fecha.toInstant()
                 .atZone(java.time.ZoneId.systemDefault())
                 .toLocalDate();
