@@ -4,6 +4,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       lang="es">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{perfilHuespedBean.verificarSesion}" />
+    </f:metadata>
     <h:head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -700,7 +703,7 @@
                                 <h3 class="section-title">Información Personal</h3>
                                 <h:link outcome="editarPerfilHuesped.xhtml" styleClass="btn-primary">
                                     <i class="bi bi-pencil-square"></i> Editar Perfil
-                                <f:param name="id" value="#{usuarioLogueado.idUsuario}" />
+                                <f:param name="id" value="#{perfilHuespedBean.usuarioLogueado.idUsuario}" />
                                 </h:link>
                             </div>
 

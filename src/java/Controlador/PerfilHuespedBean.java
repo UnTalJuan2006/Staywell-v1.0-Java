@@ -50,4 +50,11 @@ public class PerfilHuespedBean implements Serializable {
         }
         return usuarioLogueado;
     }
+
+    public void verificarSesion() {
+        if (getUsuarioLogueado() == null) {
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            redirigirLogin(externalContext);
+        }
+    }
 }
