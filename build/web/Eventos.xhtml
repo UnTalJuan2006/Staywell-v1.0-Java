@@ -20,6 +20,7 @@
                 background-color: #f8f9fa;
             }
 
+            /* SIDEBAR REDISEÑADA */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -30,21 +31,64 @@
                 color: white;
                 z-index: 1000;
                 overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
             }
 
             .sidebar-header {
                 padding: 2rem 1.5rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 text-align: center;
-                padding-bottom: 10px;
+            }
+
+            .sidebar-header h4 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 24px;
+                letter-spacing: -0.5px;
+            }
+
+            .sidebar-header p {
+                margin: 8px 0 0 0;
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            /* Secciones del sidebar */
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
+                margin-top: 16px;
             }
 
             .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10.5px 18px;
+                gap: 12px;
+                padding: 12px 16px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .sidebar-nav .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
             }
 
             .sidebar-nav .nav-link:hover {
@@ -55,20 +99,58 @@
             .sidebar-nav .nav-link.active {
                 background: rgba(255, 255, 255, 0.2);
                 color: white;
-                border-right: 4px solid #ffd700;
+                font-weight: 600;
+                border-left: 3px solid #ffd700;
             }
 
             .sidebar-footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 1.5rem;
+                margin-top: auto;
+                padding: 20px 16px;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
+            .sidebar-footer .btn {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .sidebar-footer .btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            /* Scrollbar personalizada */
+            .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .sidebar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+            }
+
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.4);
+            }
+
             .main-content {
-                margin-left: 280px;
+                margin-left: 260px;
                 padding: 2rem;
             }
 
@@ -77,30 +159,14 @@
                 padding: 1.5rem 2rem;
                 border-bottom: 1px solid #e9ecef;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                margin-bottom: 2rem;
+                border-radius: 12px;
             }
 
             .table-actions a,
             .table-actions button {
                 margin-right: 0.5rem;
             }
-
-            .main-content {
-                margin-left: 280px;
-                padding: 2rem;
-            }
-
-            .top-bar {
-                background: white;
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .table-actions a,
-            .table-actions button {
-                margin-right: 0.5rem;
-            }
-
 
             .stats {
                 display: grid;
@@ -121,7 +187,6 @@
                 gap: 15px;
                 transition: transform 0.2s;
             }
-
 
             .stat-card:hover {
                 transform: translateY(-5px);
@@ -147,16 +212,16 @@
             .btn-exportar {
                 background-color: #007bff;
                 color: white;
-                padding: 10px
+                padding: 10px;
             }
 
             .btn-exportar:hover {
                 background-color: #0056b3;
             }
+
             h3{
                 color:#000000;
                 font-size: unset;
-
             }
 
             .table-actions .btn {
@@ -172,20 +237,91 @@
                 width: 1%;
                 text-align: center;
             }
+
             .table-actions .btn {
                 padding: 4px 8px;
             }
 
+            /* --- CARD FILTROS --- */
+            .filter-card-custom {
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(8px);
+                border-radius: 18px;
+                border: 1px solid rgba(200, 200, 200, 0.4);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
 
+            .filter-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 1rem;
+            }
 
+            .filter-icon-box {
+                background: #0d6efd15;
+                padding: 10px 14px;
+                border-radius: 12px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
+            .filter-title {
+                font-weight: 600;
+                color: #495057;
+                font-size: 1.15rem;
+            }
 
+            .filter-search-wrapper {
+                position: relative;
+                width: 100%;
+                max-width: 380px;
+            }
+
+            .filter-search-input {
+                border-radius: 12px !important;
+                border: 1px solid #d1d1d1 !important;
+                transition: all .3s ease !important;
+                padding-left: 2.5rem !important;
+            }
+
+            .filter-search-input:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25) !important;
+            }
+
+            .filter-search-icon {
+                top: 50%;
+                left: 14px;
+                transform: translateY(-50%);
+                font-size: 1rem;
+            }
+
+            .filter-date-input {
+                border-radius: 10px;
+            }
+
+            .filter-label {
+                font-weight: 600;
+                color: #6c757d;
+                margin-bottom: 6px;
+            }
+
+            .btn-clear {
+                border-radius: 12px;
+                font-weight: 500;
+                letter-spacing: 0.4px;
+                padding: 0.55rem 1.4rem;
+            }
         </style>
     </h:head>
 
     <h:body>
 
-        <!-- Sidebar -->
+        <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h4><i class="fas fa-hotel"></i> StayWell</h4>
@@ -193,40 +329,64 @@
             </div>
 
             <nav class="sidebar-nav">
-                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
-                    <i class="bi bi-speedometer2 me-2"> </i>  Dashboard
-                </h:link>
-                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
-                    <i class="bi bi-door-open me-2"></i> Habitaciones
-                </h:link>
-                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
-                <h:link outcome="/Eventos.xhtml" styleClass="nav-link active">
-                    <i class="bi bi-calendar-event me-2"></i> Eventos
-                </h:link>
-                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
-                    <i class="bi bi-people me-2"></i> Usuarios
-                </h:link>
-                <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
-                    <i class="bi bi-journal-bookmark me-2"></i> Reservas
-                </h:link>
-                <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
-                    <i class="bi bi-person-badge me-2"></i> Empleados
-                </h:link>
-                <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
-                    <i class="bi bi-building me-2"></i> Espacios
-                </h:link>
-                <h:link outcome="/Correos.xhtml" styleClass="nav-link">
-                    <i class="bi bi-envelope me-2"></i> Correos
-                </h:link>
-                
-                 <h:link outcome="/perfil.xhtml" styleClass="nav-link"><i class="bi bi-person-fill me-2"></i>Perfil</h:link>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación Principal</div>
+                    <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </h:link>
+                    <h:link outcome="/perfil.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Perfil</span>
+                    </h:link>
+                </div>
 
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión de Habitaciones</div>
+                    <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
+                        <i class="bi bi-door-open"></i>
+                        <span>Habitaciones</span>
+                    </h:link>
+                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>Catálogo Habitaciones</span>
+                    </h:link>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión General</div>
+                    <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Reservas</span>
+                    </h:link>
+                    <h:link outcome="/Eventos.xhtml" styleClass="nav-link active">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Eventos</span>
+                    </h:link>
+                    <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </h:link>
+                    <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Empleados</span>
+                    </h:link>
+                    <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-building"></i>
+                        <span>Espacios</span>
+                    </h:link>
+                    <h:link outcome="/Correos.xhtml" styleClass="nav-link">
+                        <i class="bi bi-envelope"></i>
+                        <span>Correos</span>
+                    </h:link>
+                </div>
             </nav>
 
             <h:form>
                 <div class="sidebar-footer">
-                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
                     </h:commandLink>
                 </div>
             </h:form>
@@ -235,66 +395,77 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
-                <h2><i class="bi bi-clock-history"></i>
-                    Gestión de Eventos</h2>
-
-                <div class="d-flex gap-2">
-
-                    <h:link outcome="/crudEvento/nuevoEvento.xhtml" styleClass="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> Nuevo Evento
-                    </h:link>
-                </div>
+                <h2><i class="bi bi-calendar-event"></i> Gestión de Eventos</h2>
+                <h:link outcome="/crudEvento/nuevoEvento.xhtml" styleClass="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nuevo Evento
+                </h:link>
             </div>
 
-            <div class="mt-5">
-                <h:messages id="msgEventos" styleClass="alert alert-info" layout="list" />
+            <h:messages id="msgEventos" styleClass="alert alert-info" layout="list" />
 
-                <div class="mb-4">
+            <h:form id="filterForm">
+                <div class="filter-card-custom">
+                    <div class="filter-header">
+                        <div class="filter-icon-box">
+                            <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                        </div>
+                        <span class="filter-title">Opciones de filtrado</span>
+                    </div>
 
-                    <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap">
-                        <!-- 🔍 Buscador -->
-                        <div class="position-relative mb-2" style="width: 100%; max-width: 350px;">
-                            <i class="bi bi-search text-secondary position-absolute"
-                               style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
+                    <div class="filter-search-wrapper mb-4">
+                        <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                        <p:inputText id="globalFilter"
+                                     onkeyup="PF('dtEventos').filter()"
+                                     placeholder="Buscar evento por nombre"
+                                     styleClass="form-control filter-search-input shadow-sm" />
+                    </div>
 
-                            <p:inputText id="globalFilter"
-                                         onkeyup="PF('dtEventos').filter()"
-                                         placeholder="Buscar Evento..."
-                                         styleClass="form-control ps-5 shadow-sm"
-                                         style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
-                                         onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
-                                         onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+                    <hr class="my-3" style="opacity: .15;"></hr>
+
+                    <div class="row g-4 align-items-end">
+                        <div class="col-md-4">
+                            <label class="filter-label">Fecha inicial</label>
+                            <h:inputText value="#{eventoBean.filtroFechaInicio}"
+                                         styleClass="form-control filter-date-input">
+                                <f:passThroughAttribute name="type" value="date" />
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
+                            </h:inputText>
                         </div>
 
-                        <!-- 📊 Botones de exportar -->
-                        <!--                        <div class="d-flex gap-2 mb-2">
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/xls.png" width="35" />
-                                                            <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                        
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/pdf.png" width="30" />
-                                                            <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Productos"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                                                </div>-->
-                    </h:form>
-                </div>
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Eventos registrados</h5>
+                        <div class="col-md-4">
+                            <label class="filter-label">Fecha final</label>
+                            <h:inputText value="#{eventoBean.filtroFechaFin}"
+                                         styleClass="form-control filter-date-input">
+                                <f:passThroughAttribute name="type" value="date" />
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                                <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
+                            </h:inputText>
+                        </div>
 
-                        <h:panelGroup rendered="#{empty eventoBean.listaEventos}">
+                        <div class="col-md-4 d-flex justify-content-start">
+                            <h:commandButton value="Limpiar filtros"
+                                             styleClass="btn btn-outline-secondary btn-clear"
+                                             actionListener="#{eventoBean.limpiarFiltrosFechas}">
+                                <f:ajax execute="@form" render=":filterForm :panelEventosWrapper" />
+                            </h:commandButton>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Eventos registrados</h5>
+
+                    <h:panelGroup id="panelEventosWrapper">
+                        <h:panelGroup rendered="#{empty eventoBean.eventosFiltrados}">
                             <div class="alert alert-warning mb-0">
                                 No se encontraron Eventos registrados.
                             </div>
                         </h:panelGroup>
 
-                        <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.listaEventos}">
+                        <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.eventosFiltrados}">
                             <h:form id="formEventos">
                                 <div class="table-responsive">
                                     <table class="table table-striped align-middle" id="tblEventos">
@@ -312,7 +483,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <ui:repeat value="#{eventoBean.listaEventos}" var="evento" varStatus="loop">
+                                            <ui:repeat value="#{eventoBean.eventosFiltrados}" var="evento" varStatus="loop">
                                                 <tr>
                                                     <td>#{loop.index + 1}</td>
                                                     <td>#{evento.nombreEvento}</td>
@@ -349,7 +520,7 @@
                                                                        styleClass="btn btn-outline-danger btn-sm"
                                                                        onclick="return confirm('¿Desea eliminar el evento?');">
                                                             <i class="bi bi-trash"></i>
-                                                            <f:ajax execute="@this" render="@form :msgEventos :panelListaEventos" />
+                                                            <f:ajax execute="@this" render="@form :msgEventos :panelEventosWrapper" />
                                                         </h:commandLink>
                                                     </td>
                                                 </tr>
@@ -359,11 +530,9 @@
                                 </div>
                             </h:form>
                         </h:panelGroup>
-                    </div>
+                    </h:panelGroup>
                 </div>
             </div>
         </div>
-
-
     </h:body>
 </html>

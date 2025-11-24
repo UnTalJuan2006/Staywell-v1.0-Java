@@ -17,6 +17,7 @@
                 background-color: #f8f9fa;
             }
 
+            /* SIDEBAR REDISEÑADA */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -27,21 +28,64 @@
                 color: white;
                 z-index: 1000;
                 overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
             }
 
             .sidebar-header {
                 padding: 2rem 1.5rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 text-align: center;
-                padding-bottom: 10px;
+            }
+
+            .sidebar-header h4 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 24px;
+                letter-spacing: -0.5px;
+            }
+
+            .sidebar-header p {
+                margin: 8px 0 0 0;
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            /* Secciones del sidebar */
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
+                margin-top: 16px;
             }
 
             .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10.5px 18px;
+                gap: 12px;
+                padding: 12px 16px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .sidebar-nav .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
             }
 
             .sidebar-nav .nav-link:hover {
@@ -52,37 +96,58 @@
             .sidebar-nav .nav-link.active {
                 background: rgba(255, 255, 255, 0.2);
                 color: white;
-                border-right: 4px solid #ffd700;
+                font-weight: 600;
+                border-left: 3px solid #ffd700;
             }
 
             .sidebar-footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 1.5rem;
+                margin-top: auto;
+                padding: 20px 16px;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
+            .sidebar-footer .btn {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .sidebar-footer .btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            /* Scrollbar personalizada */
+            .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .sidebar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+            }
+
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.4);
+            }
+
             .main-content {
-                margin-left: 280px;
-                padding: 2rem;
-            }
-
-            .top-bar {
-                background: white;
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .table-actions a,
-            .table-actions button {
-                margin-right: 0.5rem;
-            }
-
-            .main-content {
-                margin-left: 280px;
+                margin-left: 260px;
                 padding: 2rem;
             }
 
@@ -105,7 +170,6 @@
                 margin: 30px 0;
             }
 
-
             .stat-card {
                 background: rgba(255, 255, 255, 0.15);
                 backdrop-filter: blur(10px);
@@ -123,7 +187,6 @@
                 transform: translateY(-4px);
                 box-shadow: 0 6px 15px rgba(0,0,0,0.1);
             }
-
 
             .stat-icon {
                 font-size: 2.5em;
@@ -143,20 +206,19 @@
                 color: #555;
             }
 
-
             .btn-exportar {
                 background-color: #007bff;
                 color: white;
-                padding: 10px
+                padding: 10px;
             }
 
             .btn-exportar:hover {
                 background-color: #0056b3;
             }
+
             h3{
                 color:#000000;
                 font-size: unset;
-
             }
 
             .table-actions .btn {
@@ -278,12 +340,11 @@
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             }
 
-
             #tblEmpleados th:last-child,
             #tblEmpleados td:last-child {
-                width: 150px; /* Ajusta según necesites */
-                white-space: nowrap; /* Evita que los botones se rompan en varias líneas */
-                text-align: center; /* Centra los botones */
+                width: 150px;
+                white-space: nowrap;
+                text-align: center;
             }
 
             .cargo-stats {
@@ -291,12 +352,12 @@
                 gap: 20px;
                 justify-content: space-between;
                 align-items: stretch;
-                flex-wrap: nowrap; /* 🔥 esto los obliga a estar en una sola línea */
+                flex-wrap: nowrap;
                 padding: 20px 0;
             }
 
             .stat-card {
-                flex: 1; /* Para que todos ocupen el mismo ancho */
+                flex: 1;
                 display: flex;
                 align-items: center;
                 gap: 15px;
@@ -321,15 +382,12 @@
                 font-size: 18px;
                 color: gray;
             }
-
-
-
-
         </style>
     </h:head>
 
     <h:body>
 
+        <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h4><i class="fas fa-hotel"></i> StayWell</h4>
@@ -337,22 +395,64 @@
             </div>
 
             <nav class="sidebar-nav">
-                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
-                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
-                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
-                <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
-                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
-                <h:link outcome="/Reservas.xhtml" styleClass="nav-link "><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
-                <h:link outcome="/Empleados.xhtml" styleClass="nav-link active"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
-                <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
-                <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
-                <h:link outcome="/perfil.xhtml" styleClass="nav-link"><i class="bi bi-person-fill me-2"></i>Perfil</h:link>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación Principal</div>
+                    <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </h:link>
+                    <h:link outcome="/perfil.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Perfil</span>
+                    </h:link>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión de Habitaciones</div>
+                    <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
+                        <i class="bi bi-door-open"></i>
+                        <span>Habitaciones</span>
+                    </h:link>
+                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>Catálogo Habitaciones</span>
+                    </h:link>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión General</div>
+                    <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Reservas</span>
+                    </h:link>
+                    <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Eventos</span>
+                    </h:link>
+                    <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </h:link>
+                    <h:link outcome="/Empleados.xhtml" styleClass="nav-link active">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Empleados</span>
+                    </h:link>
+                    <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-building"></i>
+                        <span>Espacios</span>
+                    </h:link>
+                    <h:link outcome="/Correos.xhtml" styleClass="nav-link">
+                        <i class="bi bi-envelope"></i>
+                        <span>Correos</span>
+                    </h:link>
+                </div>
             </nav>
 
             <h:form>
                 <div class="sidebar-footer">
-                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
                     </h:commandLink>
                 </div>
             </h:form>
@@ -410,10 +510,8 @@
 
                 </div>
 
-
                 <div class="card shadow-sm mb-4"
                      style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">
-
 
                     <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
 
@@ -446,11 +544,9 @@
 
                                 <!-- Excel -->
                                 <h:form styleClass="export-option-excel">
-
                                     <h:commandLink 
                                         title="Descargar Excel Personalizado"
                                         actionListener="#{empleadoBean.exportarExcelEmpleados()}">
-
                                         <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
                                     </h:commandLink>
                                 </h:form>
@@ -460,18 +556,14 @@
                                     <h:commandLink 
                                         title="Descargar Pdf Personalizado"
                                         actionListener="#{empleadoBean.exportarPdfEmpleados()}">
-
                                         <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
                                     </h:commandLink>
-
                                 </h:form>
                             </div>
                         </div>
 
                     </div>
                 </div>
-
-
 
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -495,7 +587,6 @@
                                             <th>Salida</th>
                                             <th>Estado</th>
                                             <th>Acciones</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -532,7 +623,6 @@
                                                         </h:commandLink>
                                                     </h:form>
                                                 </td>
-
                                             </tr>
                                         </ui:repeat>
                                     </tbody>
