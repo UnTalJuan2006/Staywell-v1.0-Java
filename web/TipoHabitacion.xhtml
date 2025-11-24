@@ -624,21 +624,28 @@
                 <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
 
 
-                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <h:form id="filterForm" styleClass="d-flex align-items-center gap-3 flex-wrap">
+
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-funnel-fill" style="color:#1a7c8f;"></i>
+                            <span class="fw-bold text-secondary">Filtrar por tipo</span>
+                        </div>
 
                         <p:selectOneMenu value="#{tipoHabitacionBean.filtroTipo}" style="width:250px">
                             <f:selectItem itemLabel="Todos" itemValue="" />
 
-                            <f:selectItems value="#{tipoHabitacionBean.listaTipos}" 
+                            <f:selectItems value="#{tipoHabitacionBean.listaTipos}"
                                            var="t"
-                                           itemLabel="#{t.nombre}" 
+                                           itemLabel="#{t.nombre}"
                                            itemValue="#{t.nombre}" />
 
-                            <p:ajax update=":formHabitaciones" 
-                                    listener="#{tipoHabitacionBean.aplicarFiltro}" />
+                            <p:ajax event="change"
+                                    process="@this"
+                                    listener="#{tipoHabitacionBean.aplicarFiltro}"
+                                    update=":formHabitaciones:cardsContainer" />
                         </p:selectOneMenu>
 
-                    </div>
+                    </h:form>
 
 
                 </div>
@@ -677,47 +684,45 @@
 
             <!-- Cards -->
             <h:form id="formHabitaciones">
-                <div class="card-grid">
-                    <ui:repeat value="#{tipoHabitacionBean.listaTipoHabitaciones}" var="t">
-                        <div class="card">
-                            <img src="#{request.contextPath}/img/#{t.imagen}" alt="#{t.nombre}" />
+                <p:outputPanel id="cardsContainer" layout="block">
+                    <div class="card-grid">
+                        <ui:repeat value="#{tipoHabitacionBean.listaTipoHabitaciones}" var="t">
+                            <div class="card">
+                                <img src="#{request.contextPath}/img/#{t.imagen}" alt="#{t.nombre}" />
 
-                            <div class="card-body">
-                                <div class="card-title">#{t.nombre}</div>
-                                <div class="card-text">#{t.descripcion}</div>
-                                <div class="card-price">$#{t.precio} / noche</div>
-                                <div class="text-muted" style="font-size: 0.85rem;">
-                                    Capacidad: #{t.capacidad} personas
+                                <div class="card-body">
+                                    <div class="card-title">#{t.nombre}</div>
+                                    <div class="card-text">#{t.descripcion}</div>
+                                    <div class="card-price">$#{t.precio} / noche</div>
+                                    <div class="text-muted" style="font-size: 0.85rem;">
+                                        Capacidad: #{t.capacidad} personas
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
+
+                                    <!-- ✏️ Botón Editar -->
+                                    <h:link outcome="/crudCatalogoHabitaciones/editarTipo.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <f:param name="id" value="#{t.idTipoHabitacion}" />
+                                    </h:link>
+
+                                    <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml"  styleClass="btn btn-outline-primary btn-sm"
+                                            title="Ver detalles">
+                                        <i class="bi bi-eye"></i>
+                                        <f:param name="id" value="#{t.idTipoHabitacion}" />
+                                    </h:link>
+
+                                    <h:commandLink action="#{tipoHabitacionBean.eliminar(t)}"
+                                                   styleClass="btn btn-outline-danger btn-sm"
+                                                   onclick="return confirm('¿Desea eliminar la habitación?');">
+                                        <i class="bi bi-trash"></i>
+                                    </h:commandLink>
+
                                 </div>
                             </div>
-                            <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
-
-                                <!-- ✏️ Botón Editar -->
-                                <h:link outcome="/crudCatalogoHabitaciones/editarTipo.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                    <i class="bi bi-pencil-square"></i>
-                                    <f:param name="id" value="#{t.idTipoHabitacion}" />
-                                </h:link>
-
-                                <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml"  styleClass="btn btn-outline-primary btn-sm"
-                                        title="Ver detalles">
-                                    <i class="bi bi-eye"></i>
-                                    <f:param name="id" value="#{t.idTipoHabitacion}" />
-                                </h:link>
-
-                                <h:commandLink action="#{tipoHabitacionBean.eliminar(t)}"
-                                               styleClass="btn btn-outline-danger btn-sm"
-                                               onclick="return confirm('¿Desea eliminar la habitación?');">
-                                    <i class="bi bi-trash"></i>
-                                </h:commandLink>
-
-                            </div>
-
-
-
-
-                        </div>
-                    </ui:repeat>
-                </div>
+                        </ui:repeat>
+                    </div>
+                </p:outputPanel>
             </h:form>
         </div>
 
