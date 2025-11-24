@@ -45,6 +45,8 @@ public class EventoBean implements Serializable {
     private Date filtroFechaInicio;
     private Date filtroFechaFin;
 
+    private String filtroBusqueda = "";
+
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private Usuario usuarioLogueado;
@@ -314,8 +316,9 @@ public class EventoBean implements Serializable {
         List<Evento> fuente = listaEventos != null ? listaEventos : new ArrayList<>();
         LocalDate inicio = convertirFecha(filtroFechaInicio);
         LocalDate fin = convertirFecha(filtroFechaFin);
+        String terminoNormalizado = normalizarTexto(filtroBusqueda);
 
-        if (inicio == null && fin == null) {
+        if (inicio == null && fin == null && terminoNormalizado.isEmpty()) {
             eventosFiltrados = new ArrayList<>(fuente);
             return;
         }
@@ -340,11 +343,30 @@ public class EventoBean implements Serializable {
             }
 
             if (coincide) {
-                filtrados.add(eventoActual);
+                if (!terminoNormalizado.isEmpty()) {
+                    String nombreEvento = normalizarTexto(eventoActual.getNombreEvento());
+                    String nombreUsuario = normalizarTexto(
+                            eventoActual.getUsuario() != null ? eventoActual.getUsuario().getNombre() : null);
+
+                    coincide = nombreEvento.contains(terminoNormalizado)
+                            || nombreUsuario.contains(terminoNormalizado);
+                }
+
+                if (coincide) {
+                    filtrados.add(eventoActual);
+                }
             }
         }
 
         eventosFiltrados = filtrados;
+    }
+
+    private String normalizarTexto(String texto) {
+        return texto != null ? texto.toLowerCase().trim() : "";
+    }
+
+    public void aplicarFiltroBusqueda() {
+        actualizarEventosFiltrados();
     }
 
     public String guardar() {
@@ -728,6 +750,14 @@ public class EventoBean implements Serializable {
 
     public void setFiltroFechaFin(Date filtroFechaFin) {
         this.filtroFechaFin = filtroFechaFin;
+    }
+
+    public String getFiltroBusqueda() {
+        return filtroBusqueda;
+    }
+
+    public void setFiltroBusqueda(String filtroBusqueda) {
+        this.filtroBusqueda = filtroBusqueda;
     }
 
     public void setUsuarioLogueado(Usuario usuarioLogueado) {
