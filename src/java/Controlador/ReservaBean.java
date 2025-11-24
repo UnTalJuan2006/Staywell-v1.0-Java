@@ -34,6 +34,7 @@ public class ReservaBean implements Serializable {
 
     private Reserva reserva = new Reserva();
     private List<Reserva> listaReservas = new ArrayList<>();
+    private List<Reserva> reservasFiltradas = new ArrayList<>();
     private List<Habitacion> listaHabitaciones = new ArrayList<>();
     private List<Usuario> listaUsuarios = new ArrayList<>();
 
@@ -117,11 +118,12 @@ public void init() {
 }
 
 
-private void inicializarListasVacias() {
-    listaReservas = new ArrayList<>();
-    listaHabitaciones = new ArrayList<>();
-    habitaciones = new ArrayList<>();
-    habitacionesFiltradas = new ArrayList<>();
+    private void inicializarListasVacias() {
+        listaReservas = new ArrayList<>();
+        reservasFiltradas = new ArrayList<>();
+        listaHabitaciones = new ArrayList<>();
+        habitaciones = new ArrayList<>();
+        habitacionesFiltradas = new ArrayList<>();
     listaUsuarios = new ArrayList<>();
 }
 
@@ -129,8 +131,10 @@ private void inicializarListasVacias() {
     public void cargarReservas() {
         try {
             listaReservas = reservaDAO.listar();
+            actualizarReservasFiltradas();
         } catch (SQLException e) {
             listaReservas = new ArrayList<>();
+            reservasFiltradas = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
         }
@@ -141,18 +145,25 @@ private void inicializarListasVacias() {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido", "La fecha de check-out debe ser posterior al check-in."));
             filtroCheckout = null;
+            actualizarReservasFiltradas();
+            return;
         }
+
+        actualizarReservasFiltradas();
     }
 
     public void limpiarFiltrosFechas() {
         filtroCheckin = null;
         filtroCheckout = null;
+        actualizarReservasFiltradas();
     }
 
     public void listarReservasDelUsuarioLogueado() {
         try {
             if (usuarioLogueado != null) {
                 listarPorUsuario = reservaDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
+                listaReservas = new ArrayList<>(listarPorUsuario);
+                actualizarReservasFiltradas();
             } else {
                 listarPorUsuario = new ArrayList<>();
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -455,42 +466,7 @@ private void inicializarListasVacias() {
     }
 
     public List<Reserva> getReservasFiltradas() {
-        List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
-
-        if (filtroCheckin == null && filtroCheckout == null) {
-            return fuente;
-        }
-
-        List<Reserva> filtradas = new ArrayList<>();
-
-        for (Reserva reservaActual : fuente) {
-            if (reservaActual == null) {
-                continue;
-            }
-
-            LocalDateTime checkin = reservaActual.getCheckin();
-            LocalDateTime checkout = reservaActual.getCheckout();
-
-            if (checkin == null || checkout == null) {
-                continue;
-            }
-
-            boolean coincide = true;
-
-            if (filtroCheckin != null) {
-                coincide = coincide && !checkin.toLocalDate().isBefore(filtroCheckin);
-            }
-
-            if (filtroCheckout != null) {
-                coincide = coincide && !checkout.toLocalDate().isAfter(filtroCheckout);
-            }
-
-            if (coincide) {
-                filtradas.add(reservaActual);
-            }
-        }
-
-        return filtradas;
+        return reservasFiltradas != null ? reservasFiltradas : new ArrayList<>();
     }
 
     public String obtenerNombreHabitacion(Reserva reserva) {
@@ -725,6 +701,46 @@ private void inicializarListasVacias() {
 
     public void setTipoSeleccionado(TipoHabitacion tipoSeleccionado) {
         this.tipoSeleccionado = tipoSeleccionado;
+    }
+
+    private void actualizarReservasFiltradas() {
+        List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
+
+        if (filtroCheckin == null && filtroCheckout == null) {
+            reservasFiltradas = new ArrayList<>(fuente);
+            return;
+        }
+
+        List<Reserva> filtradas = new ArrayList<>();
+
+        for (Reserva reservaActual : fuente) {
+            if (reservaActual == null) {
+                continue;
+            }
+
+            LocalDateTime checkin = reservaActual.getCheckin();
+            LocalDateTime checkout = reservaActual.getCheckout();
+
+            if (checkin == null || checkout == null) {
+                continue;
+            }
+
+            boolean coincide = true;
+
+            if (filtroCheckin != null) {
+                coincide = coincide && !checkin.toLocalDate().isBefore(filtroCheckin);
+            }
+
+            if (filtroCheckout != null) {
+                coincide = coincide && !checkout.toLocalDate().isAfter(filtroCheckout);
+            }
+
+            if (coincide) {
+                filtradas.add(reservaActual);
+            }
+        }
+
+        reservasFiltradas = filtradas;
     }
 
 }
