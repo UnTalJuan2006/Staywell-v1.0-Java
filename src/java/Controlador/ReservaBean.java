@@ -24,6 +24,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -810,18 +811,18 @@ public void init() {
                 || nombreUsuario.toLowerCase().contains(termino);
     }
     
-    
-public void exportarExcelReservas() {
-    try {
-        List<Reserva> lista = reservaDAO.listar();
+ 
+    public void exportarExcelReservas() {
+        try {
+            List<Reserva> lista = reservaDAO.listar();
 
-        String[] headers = {
-            "ID", "Check-in", "Check-out", "Estado",
-            "Cliente", "Email", "Teléfono", "Observaciones", "ID Habitación"
-        };
+            String[] headers = {
+                "ID", "Check-in", "Check-out", "Estado",
+                "Cliente", "Email", "Teléfono", "Observaciones", "ID Habitación"
+            };
 
-        List<Object[]> datos = lista.stream()
-            .map(r -> new Object[]{
+            List<Object[]> datos = lista.stream()
+                    .map(r -> new Object[]{
                 r.getIdReserva(),
                 r.getCheckin(),   // LocalDateTime / Date
                 r.getCheckout(),  // LocalDateTime / Date
@@ -832,14 +833,43 @@ public void exportarExcelReservas() {
                 r.getObservaciones(),
                 r.getHabitacion().getIdHabitacion()
             })
-            .collect(java.util.stream.Collectors.toList());
+                    .collect(java.util.stream.Collectors.toList());
 
-        ExcelUtil.generarExcel("reservas", "Reservas", headers, datos);
+            ExcelUtil.generarExcel("reservas", "Reservas", headers, datos);
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
 
+    public void exportarPdfReservas() {
+        try {
+            List<Reserva> lista = reservaDAO.listar();
+
+            String[] headers = {
+                "ID", "Check-in", "Check-out", "Estado",
+                "Cliente", "Email", "Teléfono", "Observaciones", "ID Habitación"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(r -> new Object[]{
+                r.getIdReserva(),
+                r.getCheckin(),
+                r.getCheckout(),
+                r.getEstado() != null ? r.getEstado().name() : "",
+                r.getNombreCliente(),
+                r.getEmail(),
+                r.getTelefono(),
+                r.getObservaciones(),
+                r.getHabitacion() != null ? r.getHabitacion().getIdHabitacion() : ""
+            })
+                    .collect(java.util.stream.Collectors.toList());
+
+            PdfUtil.generarPdf("reservas", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
