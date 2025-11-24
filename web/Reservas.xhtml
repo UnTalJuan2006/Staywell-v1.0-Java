@@ -361,10 +361,12 @@
                         <div class="filter-search-wrapper mb-4">
                             <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
 
-                            <p:inputText id="globalFilter"
-                                         onkeyup="PF('dtEventos').filter()"
-                                         placeholder="Buscar reserva por nombre"
-                                         styleClass="form-control filter-search-input shadow-sm" />
+                            <h:inputText id="globalFilter"
+                                         value="#{reservaBean.filtroBusqueda}"
+                                         placeholder="Buscar por habitación o huésped"
+                                         styleClass="form-control filter-search-input shadow-sm">
+                                <f:ajax event="keyup" render=":reservasTable" listener="#{reservaBean.aplicarFiltroBusqueda}" />
+                            </h:inputText>
                         </div>
 
                         <hr class="my-3" style="opacity: .15;"></hr>

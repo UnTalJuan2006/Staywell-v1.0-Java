@@ -47,6 +47,8 @@ public class ReservaBean implements Serializable {
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private Usuario usuarioLogueado;
 
+    private String filtroBusqueda;
+
     private List<Habitacion> habitaciones;
     private List<Habitacion> habitacionesFiltradas;
     private TipoHabitacion tipoSeleccionado;
@@ -159,6 +161,10 @@ public void init() {
     public void limpiarFiltrosFechas() {
         filtroCheckin = null;
         filtroCheckout = null;
+        actualizarReservasFiltradas();
+    }
+
+    public void aplicarFiltroBusqueda() {
         actualizarReservasFiltradas();
     }
 
@@ -514,6 +520,14 @@ public void init() {
         return listaHabitaciones;
     }
 
+    public String getFiltroBusqueda() {
+        return filtroBusqueda;
+    }
+
+    public void setFiltroBusqueda(String filtroBusqueda) {
+        this.filtroBusqueda = filtroBusqueda;
+    }
+
     public Date getFiltroCheckin() {
         return filtroCheckin;
     }
@@ -721,10 +735,14 @@ public void init() {
         List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
         LocalDate checkinLocal = convertirFecha(filtroCheckin);
         LocalDate checkoutLocal = convertirFecha(filtroCheckout);
+        String termino = filtroBusqueda != null ? filtroBusqueda.trim().toLowerCase() : "";
+        boolean tieneBusqueda = !termino.isEmpty();
 
         if (checkinLocal == null && checkoutLocal == null) {
             reservasFiltradas = new ArrayList<>(fuente);
-            return;
+            if (!tieneBusqueda) {
+                return;
+            }
         }
 
         List<Reserva> filtradas = new ArrayList<>();
@@ -751,12 +769,44 @@ public void init() {
                 coincide = coincide && !checkout.toLocalDate().isAfter(checkoutLocal);
             }
 
+            if (tieneBusqueda) {
+                coincide = coincide && coincideConBusqueda(reservaActual, termino);
+            }
+
             if (coincide) {
                 filtradas.add(reservaActual);
             }
         }
 
         reservasFiltradas = filtradas;
+    }
+
+    private boolean coincideConBusqueda(Reserva reservaActual, String termino) {
+        if (termino == null || termino.isEmpty()) {
+            return true;
+        }
+
+        String numeroHabitacion = "";
+        String nombreHabitacion = "";
+
+        if (reservaActual.getHabitacion() != null) {
+            numeroHabitacion = String.valueOf(reservaActual.getHabitacion().getNumHabitacion());
+
+            if (reservaActual.getHabitacion().getTipoHabitacion() != null
+                    && reservaActual.getHabitacion().getTipoHabitacion().getNombre() != null) {
+                nombreHabitacion = reservaActual.getHabitacion().getTipoHabitacion().getNombre();
+            } else if (reservaActual.getHabitacion().getNombreTipoHabitacion() != null) {
+                nombreHabitacion = reservaActual.getHabitacion().getNombreTipoHabitacion();
+            }
+        }
+
+        String nombreUsuario = reservaActual.getNombreCliente() != null
+                ? reservaActual.getNombreCliente()
+                : (reservaActual.getUsuario() != null ? reservaActual.getUsuario().getNombre() : "");
+
+        return numeroHabitacion.toLowerCase().contains(termino)
+                || nombreHabitacion.toLowerCase().contains(termino)
+                || nombreUsuario.toLowerCase().contains(termino);
     }
 
 }
