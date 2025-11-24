@@ -365,8 +365,6 @@
                 transform: scale(1.15);
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
             }
-            
-            
         </style>
     </h:head>
 
@@ -459,110 +457,67 @@
             <div class="mt-4">
                 <h:messages styleClass="alert alert-info" layout="table" />
 
-                <!-- 🔍 FORMULARIO DE FILTROS -->
-<h:form id="filterForm" styleClass="mb-4">
+                <h:form id="filterForm" styleClass="mb-4">
+                    <div class="filter-card-custom">
 
-    <div class="filter-card-custom position-relative">
+                        <!-- Encabezado con icono -->
+                        <div class="filter-header">
+                            <div class="filter-icon-box">
+                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                            </div>
+                            <span class="filter-title">Opciones de filtrado</span>
+                        </div>
 
-        <!-- Encabezado -->
-        <div class="filter-header">
-            <div class="filter-icon-box">
-                <i class="bi bi-funnel-fill"
-                   style="font-size: 1.4rem; color:#0d6efd;"></i>
-            </div>
-            <span class="filter-title">Opciones de filtrado</span>
-        </div>
+                        <!-- Buscador -->
+                        <div class="filter-search-wrapper mb-4">
+                            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
 
-        <!-- Buscador global -->
-        <div class="filter-search-wrapper mb-4">
-            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                            <p:inputText id="globalFilter"
+                                         value="#{reservaBean.filtroBusqueda}"
+                                         placeholder="Buscar por habitación o huésped"
+                                         styleClass="form-control filter-search-input shadow-sm">
+                                <f:ajax event="keyup" render=":reservasTable" listener="#{reservaBean.aplicarFiltroBusqueda}" />
+                            </p:inputText>
+                        </div>
 
-            <p:inputText id="globalFilter"
-                         value="#{reservaBean.filtroBusqueda}"
-                         placeholder="Buscar por habitación o huésped"
-                         styleClass="form-control filter-search-input shadow-sm">
-                <f:ajax event="keyup"
-                        render=":reservasTable"
-                        listener="#{reservaBean.aplicarFiltroBusqueda}" />
-            </p:inputText>
-        </div>
+                        <hr class="my-3" style="opacity: .15;"></hr>
 
-        <hr class="my-3" style="opacity: .15;" />
+                        <div class="row g-4 align-items-end">
+                            <!-- Check-in -->
+                            <div class="col-md-4">
+                                <label class="filter-label">Check-in desde</label>
+                                <h:inputText value="#{reservaBean.filtroCheckin}" 
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
 
-        <!-- Rango de fechas -->
-        <div class="row g-4 align-items-end">
+                            <!-- Check-out -->
+                            <div class="col-md-4">
+                                <label class="filter-label">Check-out hasta</label>
+                                <h:inputText value="#{reservaBean.filtroCheckout}" 
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
 
-            <!-- Check-in -->
-            <div class="col-md-4">
-                <label class="filter-label">Check-in desde</label>
-                <h:inputText value="#{reservaBean.filtroCheckin}"
-                             styleClass="form-control filter-date-input">
-                    <f:passThroughAttribute name="type" value="date" />
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                    <f:ajax event="change"
-                            render=":reservasTable"
-                            listener="#{reservaBean.aplicarFiltroFechas}" />
-                </h:inputText>
-            </div>
+                            <!-- Limpiar -->
+                            <div class="col-md-4 d-flex justify-content-start">
+                                <h:commandButton value="Limpiar filtros"
+                                                 styleClass="btn btn-outline-secondary btn-clear"
+                                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
+                                </h:commandButton>
+                            </div>
+                        </div>
 
-            <!-- Check-out -->
-            <div class="col-md-4">
-                <label class="filter-label">Check-out hasta</label>
-                <h:inputText value="#{reservaBean.filtroCheckout}"
-                             styleClass="form-control filter-date-input">
-                    <f:passThroughAttribute name="type" value="date" />
-                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                    <f:ajax event="change"
-                            render=":reservasTable"
-                            listener="#{reservaBean.aplicarFiltroFechas}" />
-                </h:inputText>
-            </div>
+                    </div>
 
-            <!-- Limpiar -->
-            <div class="col-md-4 d-flex justify-content-start">
-                <h:commandButton value="Limpiar filtros"
-                                 styleClass="btn btn-outline-secondary btn-clear"
-                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
-                    <f:ajax execute="@form"
-                            render=":filterForm :reservasTable" />
-                </h:commandButton>
-            </div>
-
-        </div>
-
-        <!-- 📦 Botón exportar con opciones -->
-        <div class="export-buttons">
-            <div class="export-container">
-
-                <!-- Botón principal -->
-                <button class="export-main-btn" type="button" title="Descargar">
-                    <i class="bi bi-download"></i>
-                </button>
-
-                <!-- Excel -->
-                <h:form styleClass="export-option-excel">
-                    <h:commandLink title="Descargar Excel"
-                                   actionListener="#{habitacionBean.exportarExcelHabitaciones}">
-                        <p:graphicImage url="/img/xls.png"
-                                        styleClass="export-icon" />
-                    </h:commandLink>
                 </h:form>
-
-                <!-- PDF -->
-                <h:form styleClass="export-option-pdf">
-                    <h:commandLink title="Descargar PDF"
-                                   actionListener="#{habitacionBean.exportarPdfHabitaciones}">
-                        <p:graphicImage url="/img/pdf.png"
-                                        styleClass="export-icon" />
-                    </h:commandLink>
-                </h:form>
-
-            </div>
-        </div>
-
-    </div>
-
-</h:form>
 
 
 

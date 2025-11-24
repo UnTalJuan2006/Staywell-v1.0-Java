@@ -23,6 +23,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import util.ExcelUtil;
 
 @ManagedBean
 @ViewScoped
@@ -808,5 +809,37 @@ public void init() {
                 || nombreHabitacion.toLowerCase().contains(termino)
                 || nombreUsuario.toLowerCase().contains(termino);
     }
+    
+    
+public void exportarExcelReservas() {
+    try {
+        List<Reserva> lista = reservaDAO.listar();
+
+        String[] headers = {
+            "ID", "Check-in", "Check-out", "Estado",
+            "Cliente", "Email", "Teléfono", "Observaciones", "ID Habitación"
+        };
+
+        List<Object[]> datos = lista.stream()
+            .map(r -> new Object[]{
+                r.getIdReserva(),
+                r.getCheckin(),   // LocalDateTime / Date
+                r.getCheckout(),  // LocalDateTime / Date
+                r.getEstado() != null ? r.getEstado().name() : "",
+                r.getNombreCliente(),
+                r.getEmail(),
+                r.getTelefono(),
+                r.getObservaciones(),
+                r.getHabitacion().getIdHabitacion()
+            })
+            .collect(java.util.stream.Collectors.toList());
+
+        ExcelUtil.generarExcel("reservas", "Reservas", headers, datos);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 
 }
