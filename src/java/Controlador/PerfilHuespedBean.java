@@ -17,6 +17,18 @@ public class PerfilHuespedBean implements Serializable {
 
     @PostConstruct
     public void init() {
+        cargarUsuarioDeSesion();
+    }
+
+    private void redirigirLogin(ExternalContext externalContext) {
+        try {
+            externalContext.redirect("login.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarUsuarioDeSesion() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context == null) {
             return;
@@ -32,15 +44,10 @@ public class PerfilHuespedBean implements Serializable {
         }
     }
 
-    private void redirigirLogin(ExternalContext externalContext) {
-        try {
-            externalContext.redirect("login.xhtml");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public Usuario getUsuarioLogueado() {
+        if (usuarioLogueado == null) {
+            cargarUsuarioDeSesion();
+        }
         return usuarioLogueado;
     }
 }
