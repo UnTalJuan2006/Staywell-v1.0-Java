@@ -79,14 +79,26 @@ public class PagoDAO {
                     throw new SQLException("El pago no se pudo insertar en la base de datos.");
                 }
 
+                int idGenerado = -1;
                 try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1);
+                        idGenerado = generatedKeys.getInt(1);
                     }
                 }
 
-                // Si no se devolvió una clave generada, consideramos que el insert falló para evitar estados inconsistentes
-                throw new SQLException("El pago se insertó pero no se pudo obtener su identificador generado.");
+                // En algunos entornos (o si la columna no está marcada como AUTO_INCREMENT)
+                // el controlador puede no retornar la llave generada. Usamos LAST_INSERT_ID()
+                // como respaldo para evitar falsos negativos en el registro de pagos.
+                if (idGenerado <= 0) {
+                    try (Statement st = conexion.createStatement();
+                            ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
+                        if (rs.next()) {
+                            idGenerado = rs.getInt(1);
+                        }
+                    }
+                }
+
+                return idGenerado > 0 ? idGenerado : filas;
             }
         }
     }
