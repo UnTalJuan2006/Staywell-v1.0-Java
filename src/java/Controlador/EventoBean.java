@@ -181,7 +181,12 @@ public class EventoBean implements Serializable {
                 if (listarPorUsuario == null) {
                     listarPorUsuario = new ArrayList<>();
                 }
-                System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario() 
+
+                // Sincronizamos las listas base y filtrada para que el filtro funcione
+                // correctamente para usuarios huéspedes.
+                listaEventos = new ArrayList<>(listarPorUsuario);
+                actualizarEventosFiltrados();
+                System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario()
                         + " cargados: " + listarPorUsuario.size());
             } else {
                 listarPorUsuario = new ArrayList<>();

@@ -350,7 +350,7 @@
                                              styleClass="form-control filter-date-input">
                                     <f:passThroughAttribute name="type" value="date" />
                                     <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":panelListaEventos" listener="#{eventoBean.aplicarFiltroFechas}" />
+                                    <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
                                 </h:inputText>
                             </div>
 
@@ -360,7 +360,7 @@
                                              styleClass="form-control filter-date-input">
                                     <f:passThroughAttribute name="type" value="date" />
                                     <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":panelListaEventos" listener="#{eventoBean.aplicarFiltroFechas}" />
+                                    <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
                                 </h:inputText>
                             </div>
 
@@ -368,7 +368,7 @@
                                 <h:commandButton value="Limpiar filtros"
                                                  styleClass="btn btn-outline-secondary btn-clear"
                                                  actionListener="#{eventoBean.limpiarFiltrosFechas}">
-                                    <f:ajax execute="@form" render=":filterForm :panelListaEventos" />
+                                    <f:ajax execute="@form" render=":filterForm :panelEventosWrapper" />
                                 </h:commandButton>
                             </div>
                         </div>
@@ -379,76 +379,78 @@
                     <div class="card-body">
                         <h5 class="card-title mb-3">Eventos registrados</h5>
 
-                        <h:panelGroup rendered="#{empty eventoBean.eventosFiltrados}">
-                            <div class="alert alert-warning mb-0">
-                                No se encontraron Eventos registrados.
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.eventosFiltrados}">
-                            <h:form id="formEventos">
-                                <div class="table-responsive">
-                                    <table class="table table-striped align-middle" id="tblEventos">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Nombre del evento</th>
-                                                <th>Fecha Evento</th>
-                                                <th>Hora Inicio</th>
-                                                <th>Hora Fin</th>
-                                                <th>Espacio</th>
-                                                <th>Cliente</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <ui:repeat value="#{eventoBean.eventosFiltrados}" var="evento" varStatus="loop">
-                                                <tr>
-                                                    <td>#{loop.index + 1}</td>
-                                                    <td>#{evento.nombreEvento}</td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.fechaEvento}">
-                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                        </h:outputText>
-                                                    </td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.horaInicio}" />
-                                                    </td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.horaFin}" />
-                                                    </td>
-                                                    <td>#{empty evento.espacio ? 'Sin asignar' : evento.espacio.nombre}</td>
-                                                    <td>#{empty evento.usuario ? 'Sin asignar' : evento.usuario.nombre}</td>
-                                                    <td>
-                                                        <span class="badge bg-secondary">#{empty evento.estado ? 'Sin estado' : evento.estado}</span>
-                                                    </td>
-                                                    <td class="table-actions">
-                                                        <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
-                                                            <i class="bi bi-eye"></i>
-                                                            <f:param name="id" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                            <f:param name="id" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
-                                                            <i class="bi bi-credit-card"></i>
-                                                            <f:param name="idEvento" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:commandLink action="#{eventoBean.eliminar(evento)}"
-                                                                       styleClass="btn btn-outline-danger btn-sm"
-                                                                       onclick="return confirm('¿Desea eliminar el evento?');">
-                                                            <i class="bi bi-trash"></i>
-                                                            <f:ajax execute="@this" render="@form :msgEventos :panelListaEventos" />
-                                                        </h:commandLink>
-                                                    </td>
-                                                </tr>
-                                            </ui:repeat>
-                                        </tbody>
-                                    </table>
+                        <h:panelGroup id="panelEventosWrapper">
+                            <h:panelGroup rendered="#{empty eventoBean.eventosFiltrados}">
+                                <div class="alert alert-warning mb-0">
+                                    No se encontraron Eventos registrados.
                                 </div>
-                            </h:form>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.eventosFiltrados}">
+                                <h:form id="formEventos">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped align-middle" id="tblEventos">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nombre del evento</th>
+                                                    <th>Fecha Evento</th>
+                                                    <th>Hora Inicio</th>
+                                                    <th>Hora Fin</th>
+                                                    <th>Espacio</th>
+                                                    <th>Cliente</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{eventoBean.eventosFiltrados}" var="evento" varStatus="loop">
+                                                    <tr>
+                                                        <td>#{loop.index + 1}</td>
+                                                        <td>#{evento.nombreEvento}</td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.fechaEvento}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                            </h:outputText>
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.horaInicio}" />
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.horaFin}" />
+                                                        </td>
+                                                        <td>#{empty evento.espacio ? 'Sin asignar' : evento.espacio.nombre}</td>
+                                                        <td>#{empty evento.usuario ? 'Sin asignar' : evento.usuario.nombre}</td>
+                                                        <td>
+                                                            <span class="badge bg-secondary">#{empty evento.estado ? 'Sin estado' : evento.estado}</span>
+                                                        </td>
+                                                        <td class="table-actions">
+                                                            <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                                <i class="bi bi-eye"></i>
+                                                                <f:param name="id" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                                <f:param name="id" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
+                                                                <i class="bi bi-credit-card"></i>
+                                                                <f:param name="idEvento" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:commandLink action="#{eventoBean.eliminar(evento)}"
+                                                                           styleClass="btn btn-outline-danger btn-sm"
+                                                                           onclick="return confirm('¿Desea eliminar el evento?');">
+                                                                <i class="bi bi-trash"></i>
+                                                                <f:ajax execute="@this" render="@form :msgEventos :panelEventosWrapper" />
+                                                            </h:commandLink>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </h:form>
+                            </h:panelGroup>
                         </h:panelGroup>
                     </div>
                 </div>
