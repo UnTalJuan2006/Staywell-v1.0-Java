@@ -203,10 +203,10 @@
                             </div>
                             <div class="col-md-4 d-flex gap-2 justify-content-md-end">
                                 <h:commandButton value="Aplicar filtros" actionListener="#{reservaBean.aplicarFiltroFechas}" styleClass="btn btn-primary px-3">
-                                    <f:ajax render=":reservasTable" />
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
                                 </h:commandButton>
                                 <h:commandButton value="Limpiar" actionListener="#{reservaBean.limpiarFiltrosFechas}" styleClass="btn btn-outline-secondary px-3">
-                                    <f:ajax render=":filterForm :reservasTable" />
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
                                 </h:commandButton>
                             </div>
                         </div>
