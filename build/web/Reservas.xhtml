@@ -116,79 +116,79 @@
             .table-actions button {
                 margin-right: 0.5rem;
             }
-            
+
             /* --- CARD FILTROS --- */
-.filter-card-custom {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(8px);
-    border-radius: 18px;
-    border: 1px solid rgba(200, 200, 200, 0.4);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
-    padding: 1.5rem;
-}
+            .filter-card-custom {
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(8px);
+                border-radius: 18px;
+                border: 1px solid rgba(200, 200, 200, 0.4);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+                padding: 1.5rem;
+            }
 
-/* Encabezado (icono de filtros) */
-.filter-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 1rem;
-}
+            /* Encabezado (icono de filtros) */
+            .filter-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 1rem;
+            }
 
-.filter-icon-box {
-    background: #0d6efd15;
-    padding: 10px 14px;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+            .filter-icon-box {
+                background: #0d6efd15;
+                padding: 10px 14px;
+                border-radius: 12px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-.filter-title {
-    font-weight: 600;
-    color: #495057;
-    font-size: 1.15rem;
-}
+            .filter-title {
+                font-weight: 600;
+                color: #495057;
+                font-size: 1.15rem;
+            }
 
-/* Buscador general */
-.filter-search-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 380px;
-}
+            /* Buscador general */
+            .filter-search-wrapper {
+                position: relative;
+                width: 100%;
+                max-width: 380px;
+            }
 
-.filter-search-input {
-    border-radius: 12px !important;
-    border: 1px solid #d1d1d1 !important;
-    transition: all .3s ease !important;
-    padding-left: 2.5rem !important;
-}
+            .filter-search-input {
+                border-radius: 12px !important;
+                border: 1px solid #d1d1d1 !important;
+                transition: all .3s ease !important;
+                padding-left: 2.5rem !important;
+            }
 
-.filter-search-input:focus {
-    border-color: #0d6efd !important;
-    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25) !important;
-}
+            .filter-search-input:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25) !important;
+            }
 
-/* Icono del buscador */
-.filter-search-icon {
-    top: 50%;
-    left: 14px;
-    transform: translateY(-50%);
-    font-size: 1rem;
-}
+            /* Icono del buscador */
+            .filter-search-icon {
+                top: 50%;
+                left: 14px;
+                transform: translateY(-50%);
+                font-size: 1rem;
+            }
 
-/* Inputs de fecha */
-.filter-date-input {
-    border-radius: 10px;
-}
+            /* Inputs de fecha */
+            .filter-date-input {
+                border-radius: 10px;
+            }
 
-/* Botón limpiar */
-.btn-clear {
-    border-radius: 12px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-    padding: 0.55rem 1.4rem;
-}
+            /* Botón limpiar */
+            .btn-clear {
+                border-radius: 12px;
+                font-weight: 500;
+                letter-spacing: 0.4px;
+                padding: 0.55rem 1.4rem;
+            }
 
 
         </style>
@@ -241,62 +241,62 @@
                 <h:messages styleClass="alert alert-info" layout="table" />
 
                 <h:form id="filterForm" styleClass="mb-4">
-                   <div class="filter-card-custom">
+                    <div class="filter-card-custom">
 
-    <!-- Encabezado con icono -->
-    <div class="filter-header">
-        <div class="filter-icon-box">
-            <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
-        </div>
-        <span class="filter-title">Opciones de filtrado</span>
-    </div>
+                        <!-- Encabezado con icono -->
+                        <div class="filter-header">
+                            <div class="filter-icon-box">
+                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                            </div>
+                            <span class="filter-title">Opciones de filtrado</span>
+                        </div>
 
-    <!-- Buscador -->
-    <div class="filter-search-wrapper mb-4">
-        <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                        <!-- Buscador -->
+                        <div class="filter-search-wrapper mb-4">
+                            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
 
-        <p:inputText id="globalFilter"
-                     onkeyup="PF('dtEventos').filter()"
-                     placeholder="Buscar reserva por nombre"
-                     styleClass="form-control filter-search-input shadow-sm" />
-    </div>
+                            <p:inputText id="globalFilter"
+                                         onkeyup="PF('dtEventos').filter()"
+                                         placeholder="Buscar reserva por nombre"
+                                         styleClass="form-control filter-search-input shadow-sm" />
+                        </div>
 
-    <hr class="my-3" style="opacity: .15;"></hr>
+                        <hr class="my-3" style="opacity: .15;"></hr>
 
-    <div class="row g-4 align-items-end">
-        <!-- Check-in -->
-        <div class="col-md-4">
-            <label class="filter-label">Check-in desde</label>
-            <h:inputText value="#{reservaBean.filtroCheckin}" 
-                         styleClass="form-control filter-date-input">
-                <f:passThroughAttribute name="type" value="date" />
-                <f:convertDateTime pattern="yyyy-MM-dd" />
-                <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-            </h:inputText>
-        </div>
+                        <div class="row g-4 align-items-end">
+                            <!-- Check-in -->
+                            <div class="col-md-4">
+                                <label class="filter-label">Check-in desde</label>
+                                <h:inputText value="#{reservaBean.filtroCheckin}" 
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
 
-        <!-- Check-out -->
-        <div class="col-md-4">
-            <label class="filter-label">Check-out hasta</label>
-            <h:inputText value="#{reservaBean.filtroCheckout}" 
-                         styleClass="form-control filter-date-input">
-                <f:passThroughAttribute name="type" value="date" />
-                <f:convertDateTime pattern="yyyy-MM-dd" />
-                <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-            </h:inputText>
-        </div>
+                            <!-- Check-out -->
+                            <div class="col-md-4">
+                                <label class="filter-label">Check-out hasta</label>
+                                <h:inputText value="#{reservaBean.filtroCheckout}" 
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
 
-        <!-- Limpiar -->
-        <div class="col-md-4 d-flex justify-content-start">
-            <h:commandButton value="Limpiar filtros"
-                             styleClass="btn btn-outline-secondary btn-clear"
-                             actionListener="#{reservaBean.limpiarFiltrosFechas}">
-                <f:ajax execute="@form" render=":filterForm :reservasTable" />
-            </h:commandButton>
-        </div>
-    </div>
+                            <!-- Limpiar -->
+                            <div class="col-md-4 d-flex justify-content-start">
+                                <h:commandButton value="Limpiar filtros"
+                                                 styleClass="btn btn-outline-secondary btn-clear"
+                                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
+                                </h:commandButton>
+                            </div>
+                        </div>
 
-</div>
+                    </div>
 
                 </h:form>
 
