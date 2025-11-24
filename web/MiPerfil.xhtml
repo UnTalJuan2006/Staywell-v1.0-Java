@@ -18,11 +18,19 @@
             }
 
             html, body {
-                height: 100%;
-                overflow: hidden;
-                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
-            }
+    height: 100%;
+    overflow: hidden;
+}
+
+.content {
+    overflow-y: auto;
+}
+
+/* OPCIONAL: Si quieres sticky */
+.profile-sidebar {
+    position: sticky;
+    top: 20px;
+}
 
             /* HEADER FIJO */
             .header {
@@ -503,6 +511,15 @@
                     display: none;
                 }
             }
+            
+            .layout {
+    overflow-y: visible;
+}
+.profile-sidebar {
+    position: static;
+}
+
+
         </style>
     </h:head>
 
@@ -608,29 +625,11 @@
 
                             <div class="profile-info-item">
                                 <i class="bi bi-building"></i>
-                                <span>Gestión Hotelera</span>
+                                <span>Huesped</span>
                             </div>
                         </div>
 
-                        <!-- ESTADÍSTICAS -->
-                        <div class="stats-container">
-                            <h4 class="stats-title">Estadísticas</h4>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Reservas Gestionadas</span>
-                                <span class="stat-value">247</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Habitaciones Disponibles</span>
-                                <span class="stat-value">18</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Días Activo</span>
-                                <span class="stat-value">342</span>
-                            </div>
-                        </div>
+          
                     </div>
 
                     <!-- CONTENIDO PRINCIPAL -->
@@ -667,7 +666,7 @@
 
                                 <div class="info-field">
                                     <label class="info-label">Departamento</label>
-                                    <div class="info-value">Gestión Hotelera</div>
+                                    <div class="info-value">Huesped</div>
                                 </div>
 
                                 <div class="info-field">

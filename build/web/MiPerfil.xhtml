@@ -18,11 +18,19 @@
             }
 
             html, body {
-                height: 100%;
-                overflow: hidden;
-                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
-            }
+    height: 100%;
+    overflow: hidden;
+}
+
+.content {
+    overflow-y: auto;
+}
+
+/* OPCIONAL: Si quieres sticky */
+.profile-sidebar {
+    position: sticky;
+    top: 20px;
+}
 
             /* HEADER FIJO */
             .header {
@@ -503,6 +511,15 @@
                     display: none;
                 }
             }
+            
+            .layout {
+    overflow-y: visible;
+}
+.profile-sidebar {
+    position: static;
+}
+
+
         </style>
     </h:head>
 
@@ -539,28 +556,48 @@
                         <i class="bi bi-house-door"></i>
                         <span>Inicio</span>
                     </a>
-                    <a href="PerfilHuesped.xhtml" class="nav-link active">
+                    <a href="MiPerfil.xhtml" class="nav-link active">
                         <i class="bi bi-person-circle"></i>
                         <span>Mi Perfil</span>
                     </a>
-                    <a href="ReservasHuesped.xhtml" class="nav-link">
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Reservas</div>
+                    <a href="NuevaReservaHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Nueva Reserva</span>
+                    </a>
+                    <a href="MisReservas.xhtml" class="nav-link">
                         <i class="bi bi-calendar-check"></i>
                         <span>Mis Reservas</span>
                     </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Eventos</div>
                     <a href="EventosHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-stars"></i>
+                        <span>Eventos Disponibles</span>
+                    </a>
+                    <a href="NuevoEventoHuesped.xhtml" class="nav-link">
                         <i class="bi bi-calendar-event"></i>
+                        <span>Nuevo Evento</span>
+                    </a>
+                    <a href="MisEventos.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
                         <span>Mis Eventos</span>
                     </a>
                 </div>
 
-                <div class="sidebar-footer">
-                    <h:form>
+                <h:form>
+                    <div class="sidebar-footer">
                         <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn-logout">
                             <i class="bi bi-box-arrow-right"></i>
                             <span>Cerrar Sesión</span>
                         </h:commandLink>
-                    </h:form>
-                </div>
+                    </div>
+                </h:form>
             </div>
 
             <!-- CONTENIDO -->
@@ -588,29 +625,11 @@
 
                             <div class="profile-info-item">
                                 <i class="bi bi-building"></i>
-                                <span>Gestión Hotelera</span>
+                                <span>Huesped</span>
                             </div>
                         </div>
 
-                        <!-- ESTADÍSTICAS -->
-                        <div class="stats-container">
-                            <h4 class="stats-title">Estadísticas</h4>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Reservas Gestionadas</span>
-                                <span class="stat-value">247</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Habitaciones Disponibles</span>
-                                <span class="stat-value">18</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Días Activo</span>
-                                <span class="stat-value">342</span>
-                            </div>
-                        </div>
+          
                     </div>
 
                     <!-- CONTENIDO PRINCIPAL -->
@@ -647,7 +666,7 @@
 
                                 <div class="info-field">
                                     <label class="info-label">Departamento</label>
-                                    <div class="info-value">Gestión Hotelera</div>
+                                    <div class="info-value">Huesped</div>
                                 </div>
 
                                 <div class="info-field">
