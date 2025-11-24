@@ -176,6 +176,80 @@
                 padding: 4px 8px;
             }
 
+            /* --- CARD FILTROS (reutilizado de Reservas) --- */
+            .filter-card-custom {
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(8px);
+                border-radius: 18px;
+                border: 1px solid rgba(200, 200, 200, 0.4);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+                padding: 1.5rem;
+            }
+
+            .filter-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 1rem;
+            }
+
+            .filter-icon-box {
+                background: #0d6efd15;
+                padding: 10px 14px;
+                border-radius: 12px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                color: #495057;
+                font-size: 1.15rem;
+            }
+
+            .filter-search-wrapper {
+                position: relative;
+                width: 100%;
+                max-width: 380px;
+            }
+
+            .filter-search-input {
+                border-radius: 12px !important;
+                border: 1px solid #d1d1d1 !important;
+                transition: all .3s ease !important;
+                padding-left: 2.5rem !important;
+            }
+
+            .filter-search-input:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25) !important;
+            }
+
+            .filter-search-icon {
+                top: 50%;
+                left: 14px;
+                transform: translateY(-50%);
+                font-size: 1rem;
+            }
+
+            .filter-date-input {
+                border-radius: 10px;
+            }
+
+            .filter-label {
+                font-weight: 600;
+                color: #6c757d;
+                margin-bottom: 6px;
+            }
+
+            .btn-clear {
+                border-radius: 12px;
+                font-weight: 500;
+                letter-spacing: 0.4px;
+                padding: 0.55rem 1.4rem;
+            }
+
 
 
 
@@ -249,115 +323,134 @@
             <div class="mt-5">
                 <h:messages id="msgEventos" styleClass="alert alert-info" layout="list" />
 
-                <div class="mb-4">
+                <h:form id="filterForm" styleClass="mb-4">
+                    <div class="filter-card-custom">
 
-                    <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap">
-                        <!-- 🔍 Buscador -->
-                        <div class="position-relative mb-2" style="width: 100%; max-width: 350px;">
-                            <i class="bi bi-search text-secondary position-absolute"
-                               style="top: 50%; left: 14px; transform: translateY(-50%); font-size: 1rem;"></i>
-
-                            <p:inputText id="globalFilter"
-                                         onkeyup="PF('dtEventos').filter()"
-                                         placeholder="Buscar Evento..."
-                                         styleClass="form-control ps-5 shadow-sm"
-                                         style="border-radius: 10px; border: 1px solid #dee2e6; transition: all 0.3s ease;"
-                                         onfocus="this.style.borderColor = '#0d6efd'; this.style.boxShadow = '0 0 0 0.15rem rgba(13,110,253,.25)';"
-                                         onblur="this.style.borderColor = '#dee2e6'; this.style.boxShadow = 'none';" />
+                        <div class="filter-header">
+                            <div class="filter-icon-box">
+                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                            </div>
+                            <span class="filter-title">Opciones de filtrado</span>
                         </div>
 
-                        <!-- 📊 Botones de exportar -->
-                        <!--                        <div class="d-flex gap-2 mb-2">
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/xls.png" width="35" />
-                                                            <p:dataExporter type="xls" target="tblHabitaciones" fileName="Habitaciones"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                        
-                                                    <h:form>
-                                                        <h:commandLink>
-                                                            <p:graphicImage url="/img/pdf.png" width="30" />
-                                                            <p:dataExporter type="pdf" target="tblHabitaciones" fileName="Productos"/>
-                                                        </h:commandLink>
-                                                    </h:form>
-                                                </div>-->
-                    </h:form>
-                </div>
+                        <div class="filter-search-wrapper mb-4">
+                            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                            <p:inputText id="globalFilter"
+                                         onkeyup="PF('dtEventos').filter()"
+                                         placeholder="Buscar evento por nombre"
+                                         styleClass="form-control filter-search-input shadow-sm" />
+                        </div>
+
+                        <hr class="my-3" style="opacity: .15;"></hr>
+
+                        <div class="row g-4 align-items-end">
+                            <div class="col-md-4">
+                                <label class="filter-label">Fecha inicial</label>
+                                <h:inputText value="#{eventoBean.filtroFechaInicio}"
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="filter-label">Fecha final</label>
+                                <h:inputText value="#{eventoBean.filtroFechaFin}"
+                                             styleClass="form-control filter-date-input">
+                                    <f:passThroughAttribute name="type" value="date" />
+                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    <f:ajax event="change" render=":panelEventosWrapper" listener="#{eventoBean.aplicarFiltroFechas}" />
+                                </h:inputText>
+                            </div>
+
+                            <div class="col-md-4 d-flex justify-content-start">
+                                <h:commandButton value="Limpiar filtros"
+                                                 styleClass="btn btn-outline-secondary btn-clear"
+                                                 actionListener="#{eventoBean.limpiarFiltrosFechas}">
+                                    <f:ajax execute="@form" render=":filterForm :panelEventosWrapper" />
+                                </h:commandButton>
+                            </div>
+                        </div>
+
+                    </div>
+                </h:form>
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Eventos registrados</h5>
 
-                        <h:panelGroup rendered="#{empty eventoBean.listaEventos}">
-                            <div class="alert alert-warning mb-0">
-                                No se encontraron Eventos registrados.
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.listaEventos}">
-                            <h:form id="formEventos">
-                                <div class="table-responsive">
-                                    <table class="table table-striped align-middle" id="tblEventos">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Nombre del evento</th>
-                                                <th>Fecha Evento</th>
-                                                <th>Hora Inicio</th>
-                                                <th>Hora Fin</th>
-                                                <th>Espacio</th>
-                                                <th>Cliente</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <ui:repeat value="#{eventoBean.listaEventos}" var="evento" varStatus="loop">
-                                                <tr>
-                                                    <td>#{loop.index + 1}</td>
-                                                    <td>#{evento.nombreEvento}</td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.fechaEvento}">
-                                                            <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                        </h:outputText>
-                                                    </td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.horaInicio}" />
-                                                    </td>
-                                                    <td>
-                                                        <h:outputText value="#{evento.horaFin}" />
-                                                    </td>
-                                                    <td>#{empty evento.espacio ? 'Sin asignar' : evento.espacio.nombre}</td>
-                                                    <td>#{empty evento.usuario ? 'Sin asignar' : evento.usuario.nombre}</td>
-                                                    <td>
-                                                        <span class="badge bg-secondary">#{empty evento.estado ? 'Sin estado' : evento.estado}</span>
-                                                    </td>
-                                                    <td class="table-actions">
-                                                        <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
-                                                            <i class="bi bi-eye"></i>
-                                                            <f:param name="id" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                                            <i class="bi bi-pencil-square"></i>
-                                                            <f:param name="id" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
-                                                            <i class="bi bi-credit-card"></i>
-                                                            <f:param name="idEvento" value="#{evento.idEvento}" />
-                                                        </h:link>
-                                                        <h:commandLink action="#{eventoBean.eliminar(evento)}"
-                                                                       styleClass="btn btn-outline-danger btn-sm"
-                                                                       onclick="return confirm('¿Desea eliminar el evento?');">
-                                                            <i class="bi bi-trash"></i>
-                                                            <f:ajax execute="@this" render="@form :msgEventos :panelListaEventos" />
-                                                        </h:commandLink>
-                                                    </td>
-                                                </tr>
-                                            </ui:repeat>
-                                        </tbody>
-                                    </table>
+                        <h:panelGroup id="panelEventosWrapper">
+                            <h:panelGroup rendered="#{empty eventoBean.eventosFiltrados}">
+                                <div class="alert alert-warning mb-0">
+                                    No se encontraron Eventos registrados.
                                 </div>
-                            </h:form>
+                            </h:panelGroup>
+
+                            <h:panelGroup id="panelListaEventos" rendered="#{not empty eventoBean.eventosFiltrados}">
+                                <h:form id="formEventos">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped align-middle" id="tblEventos">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nombre del evento</th>
+                                                    <th>Fecha Evento</th>
+                                                    <th>Hora Inicio</th>
+                                                    <th>Hora Fin</th>
+                                                    <th>Espacio</th>
+                                                    <th>Cliente</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{eventoBean.eventosFiltrados}" var="evento" varStatus="loop">
+                                                    <tr>
+                                                        <td>#{loop.index + 1}</td>
+                                                        <td>#{evento.nombreEvento}</td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.fechaEvento}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                            </h:outputText>
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.horaInicio}" />
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{evento.horaFin}" />
+                                                        </td>
+                                                        <td>#{empty evento.espacio ? 'Sin asignar' : evento.espacio.nombre}</td>
+                                                        <td>#{empty evento.usuario ? 'Sin asignar' : evento.usuario.nombre}</td>
+                                                        <td>
+                                                            <span class="badge bg-secondary">#{empty evento.estado ? 'Sin estado' : evento.estado}</span>
+                                                        </td>
+                                                        <td class="table-actions">
+                                                            <h:link outcome="/crudEvento/verEvento.xhtml" styleClass="btn btn-outline-info btn-sm">
+                                                                <i class="bi bi-eye"></i>
+                                                                <f:param name="id" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:link outcome="/crudEvento/editarEvento.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                                <f:param name="id" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
+                                                                <i class="bi bi-credit-card"></i>
+                                                                <f:param name="idEvento" value="#{evento.idEvento}" />
+                                                            </h:link>
+                                                            <h:commandLink action="#{eventoBean.eliminar(evento)}"
+                                                                           styleClass="btn btn-outline-danger btn-sm"
+                                                                           onclick="return confirm('¿Desea eliminar el evento?');">
+                                                                <i class="bi bi-trash"></i>
+                                                                <f:ajax execute="@this" render="@form :msgEventos :panelEventosWrapper" />
+                                                            </h:commandLink>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </h:form>
+                            </h:panelGroup>
                         </h:panelGroup>
                     </div>
                 </div>

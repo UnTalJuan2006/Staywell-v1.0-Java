@@ -9,9 +9,9 @@ import Modelo.Usuario;
 import Modelo.EnumRoles;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -30,9 +30,10 @@ public class EventoBean implements Serializable {
     private final EventoDAO eventoDAO = new EventoDAO();
     private final EspacioDAO espacioDAO = new EspacioDAO();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
-    
+
     private List<Espacio> listaEspacios = new ArrayList<>();
     private List<Evento> listaEventos = new ArrayList<>();
+    private List<Evento> eventosFiltrados = new ArrayList<>();
     private List<Usuario> listaUsuarios = new ArrayList<>();
     private List<Evento> listarPorUsuario = new ArrayList<>();
 
@@ -40,6 +41,9 @@ public class EventoBean implements Serializable {
     private Integer espacioIdSeleccionado;
     private Integer usuarioIdSeleccionado;
     private String fechasOcupadasJson = "[]";
+
+    private Date filtroFechaInicio;
+    private Date filtroFechaFin;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -146,6 +150,7 @@ public class EventoBean implements Serializable {
     private void inicializarListasVacias() {
         System.out.println("[DEBUG] Inicializando listas vacías");
         listaEventos = new ArrayList<>();
+        eventosFiltrados = new ArrayList<>();
         listaEspacios = new ArrayList<>();
         listaUsuarios = new ArrayList<>();
         listarPorUsuario = new ArrayList<>();
@@ -157,12 +162,14 @@ public class EventoBean implements Serializable {
             if (listaEventos == null) {
                 listaEventos = new ArrayList<>();
             }
+            actualizarEventosFiltrados();
             System.out.println("[DEBUG] Eventos cargados: " + listaEventos.size());
         } catch (SQLException e) {
             System.out.println("❌ Error al cargar eventos: " + e.getMessage());
             listaEventos = new ArrayList<>();
+            eventosFiltrados = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                     "No se pudieron cargar los eventos."));
         }
     }
@@ -174,7 +181,12 @@ public class EventoBean implements Serializable {
                 if (listarPorUsuario == null) {
                     listarPorUsuario = new ArrayList<>();
                 }
-                System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario() 
+
+                // Sincronizamos las listas base y filtrada para que el filtro funcione
+                // correctamente para usuarios huéspedes.
+                listaEventos = new ArrayList<>(listarPorUsuario);
+                actualizarEventosFiltrados();
+                System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario()
                         + " cargados: " + listarPorUsuario.size());
             } else {
                 listarPorUsuario = new ArrayList<>();
@@ -257,6 +269,75 @@ public class EventoBean implements Serializable {
                         "No se pudo cargar el evento."));
             }
         }
+    }
+
+    public void aplicarFiltroFechas() {
+        LocalDate fechaInicioLocal = convertirFecha(filtroFechaInicio);
+        LocalDate fechaFinLocal = convertirFecha(filtroFechaFin);
+
+        if (fechaInicioLocal != null && fechaFinLocal != null && fechaFinLocal.isBefore(fechaInicioLocal)) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido",
+                    "La fecha final debe ser posterior a la inicial."));
+            filtroFechaFin = null;
+            actualizarEventosFiltrados();
+            return;
+        }
+
+        actualizarEventosFiltrados();
+    }
+
+    public void limpiarFiltrosFechas() {
+        filtroFechaInicio = null;
+        filtroFechaFin = null;
+        actualizarEventosFiltrados();
+    }
+
+    private LocalDate convertirFecha(Date fecha) {
+        if (fecha == null) {
+            return null;
+        }
+
+        return fecha.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    private void actualizarEventosFiltrados() {
+        List<Evento> fuente = listaEventos != null ? listaEventos : new ArrayList<>();
+        LocalDate inicio = convertirFecha(filtroFechaInicio);
+        LocalDate fin = convertirFecha(filtroFechaFin);
+
+        if (inicio == null && fin == null) {
+            eventosFiltrados = new ArrayList<>(fuente);
+            return;
+        }
+
+        List<Evento> filtrados = new ArrayList<>();
+
+        for (Evento eventoActual : fuente) {
+            if (eventoActual == null || eventoActual.getFechaEvento() == null) {
+                continue;
+            }
+
+            LocalDate fechaEventoLocal = convertirFecha(eventoActual.getFechaEvento());
+
+            boolean coincide = true;
+
+            if (inicio != null) {
+                coincide = coincide && (fechaEventoLocal != null && !fechaEventoLocal.isBefore(inicio));
+            }
+
+            if (fin != null) {
+                coincide = coincide && (fechaEventoLocal != null && !fechaEventoLocal.isAfter(fin));
+            }
+
+            if (coincide) {
+                filtrados.add(eventoActual);
+            }
+        }
+
+        eventosFiltrados = filtrados;
     }
 
     public String guardar() {
@@ -593,6 +674,10 @@ public class EventoBean implements Serializable {
         return listaEventos;
     }
 
+    public List<Evento> getEventosFiltrados() {
+        return eventosFiltrados != null ? eventosFiltrados : new ArrayList<>();
+    }
+
     public List<Espacio> getListaEspacios() {
         return listaEspacios;
     }
@@ -620,6 +705,22 @@ public class EventoBean implements Serializable {
 
     public Usuario getUsuarioLogueado() {
         return usuarioLogueado;
+    }
+
+    public Date getFiltroFechaInicio() {
+        return filtroFechaInicio;
+    }
+
+    public void setFiltroFechaInicio(Date filtroFechaInicio) {
+        this.filtroFechaInicio = filtroFechaInicio;
+    }
+
+    public Date getFiltroFechaFin() {
+        return filtroFechaFin;
+    }
+
+    public void setFiltroFechaFin(Date filtroFechaFin) {
+        this.filtroFechaFin = filtroFechaFin;
     }
 
     public void setUsuarioLogueado(Usuario usuarioLogueado) {
