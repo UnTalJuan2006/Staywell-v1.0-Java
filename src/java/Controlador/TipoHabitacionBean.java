@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 import util.ExcelUtil;
 import util.PdfUtil;
+import java.util.stream.Collectors;
 
 @ManagedBean
 @ViewScoped
-public class TipoHabitacionBean {
+public class TipoHabitacionBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private TipoHabitacion tipoHabitacion = new TipoHabitacion();
     private TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
@@ -68,18 +72,26 @@ public class TipoHabitacionBean {
     }
 
     public void aplicarFiltro() {
+        if (listaOriginal == null) {
+            listaOriginal = new ArrayList<>();
+        }
+
         if (filtroTipo == null || filtroTipo.trim().isEmpty()) {
             listaTipoHabitaciones = new ArrayList<>(listaOriginal);
-        } else {
-            listaTipoHabitaciones = listaOriginal.stream()
-                    .filter(t -> t.getNombre() != null
-                    && t.getNombre().equalsIgnoreCase(filtroTipo))
-                    .toList();
+            return;
         }
+
+        listaTipoHabitaciones = listaOriginal.stream()
+                .filter(t -> t.getNombre() != null
+                && t.getNombre().equalsIgnoreCase(filtroTipo))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     // === SELECT ITEMS ===
     public List<TipoHabitacion> getListaTipos() {
+        if (listaOriginal == null) {
+            listaOriginal = new ArrayList<>();
+        }
         return listaOriginal; // usa todos los tipos para llenar el select
     }
 
