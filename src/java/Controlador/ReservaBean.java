@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -34,6 +35,7 @@ public class ReservaBean implements Serializable {
 
     private Reserva reserva = new Reserva();
     private List<Reserva> listaReservas = new ArrayList<>();
+    private List<Reserva> reservasFiltradas = new ArrayList<>();
     private List<Habitacion> listaHabitaciones = new ArrayList<>();
     private List<Usuario> listaUsuarios = new ArrayList<>();
 
@@ -50,8 +52,8 @@ public class ReservaBean implements Serializable {
     private TipoHabitacion tipoSeleccionado;
     public List<Reserva> listarPorUsuario = new ArrayList<>();
 
-    private LocalDate filtroCheckin;
-    private LocalDate filtroCheckout;
+    private Date filtroCheckin;
+    private Date filtroCheckout;
     
 
   @PostConstruct
@@ -117,11 +119,12 @@ public void init() {
 }
 
 
-private void inicializarListasVacias() {
-    listaReservas = new ArrayList<>();
-    listaHabitaciones = new ArrayList<>();
-    habitaciones = new ArrayList<>();
-    habitacionesFiltradas = new ArrayList<>();
+    private void inicializarListasVacias() {
+        listaReservas = new ArrayList<>();
+        reservasFiltradas = new ArrayList<>();
+        listaHabitaciones = new ArrayList<>();
+        habitaciones = new ArrayList<>();
+        habitacionesFiltradas = new ArrayList<>();
     listaUsuarios = new ArrayList<>();
 }
 
@@ -129,30 +132,42 @@ private void inicializarListasVacias() {
     public void cargarReservas() {
         try {
             listaReservas = reservaDAO.listar();
+            actualizarReservasFiltradas();
         } catch (SQLException e) {
             listaReservas = new ArrayList<>();
+            reservasFiltradas = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las reservas."));
         }
     }
 
     public void aplicarFiltroFechas() {
-        if (filtroCheckin != null && filtroCheckout != null && filtroCheckout.isBefore(filtroCheckin)) {
+        LocalDate checkinLocal = convertirFecha(filtroCheckin);
+        LocalDate checkoutLocal = convertirFecha(filtroCheckout);
+
+        if (checkinLocal != null && checkoutLocal != null && checkoutLocal.isBefore(checkinLocal)) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido", "La fecha de check-out debe ser posterior al check-in."));
             filtroCheckout = null;
+            actualizarReservasFiltradas();
+            return;
         }
+
+        actualizarReservasFiltradas();
     }
 
     public void limpiarFiltrosFechas() {
         filtroCheckin = null;
         filtroCheckout = null;
+        actualizarReservasFiltradas();
     }
 
     public void listarReservasDelUsuarioLogueado() {
         try {
             if (usuarioLogueado != null) {
                 listarPorUsuario = reservaDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
+                listaReservas = new ArrayList<>(listarPorUsuario);
+                actualizarReservasFiltradas();
             } else {
                 listarPorUsuario = new ArrayList<>();
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -455,42 +470,7 @@ private void inicializarListasVacias() {
     }
 
     public List<Reserva> getReservasFiltradas() {
-        List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
-
-        if (filtroCheckin == null && filtroCheckout == null) {
-            return fuente;
-        }
-
-        List<Reserva> filtradas = new ArrayList<>();
-
-        for (Reserva reservaActual : fuente) {
-            if (reservaActual == null) {
-                continue;
-            }
-
-            LocalDateTime checkin = reservaActual.getCheckin();
-            LocalDateTime checkout = reservaActual.getCheckout();
-
-            if (checkin == null || checkout == null) {
-                continue;
-            }
-
-            boolean coincide = true;
-
-            if (filtroCheckin != null) {
-                coincide = coincide && !checkin.toLocalDate().isBefore(filtroCheckin);
-            }
-
-            if (filtroCheckout != null) {
-                coincide = coincide && !checkout.toLocalDate().isAfter(filtroCheckout);
-            }
-
-            if (coincide) {
-                filtradas.add(reservaActual);
-            }
-        }
-
-        return filtradas;
+        return reservasFiltradas != null ? reservasFiltradas : new ArrayList<>();
     }
 
     public String obtenerNombreHabitacion(Reserva reserva) {
@@ -534,19 +514,19 @@ private void inicializarListasVacias() {
         return listaHabitaciones;
     }
 
-    public LocalDate getFiltroCheckin() {
+    public Date getFiltroCheckin() {
         return filtroCheckin;
     }
 
-    public void setFiltroCheckin(LocalDate filtroCheckin) {
+    public void setFiltroCheckin(Date filtroCheckin) {
         this.filtroCheckin = filtroCheckin;
     }
 
-    public LocalDate getFiltroCheckout() {
+    public Date getFiltroCheckout() {
         return filtroCheckout;
     }
 
-    public void setFiltroCheckout(LocalDate filtroCheckout) {
+    public void setFiltroCheckout(Date filtroCheckout) {
         this.filtroCheckout = filtroCheckout;
     }
 
@@ -725,6 +705,58 @@ private void inicializarListasVacias() {
 
     public void setTipoSeleccionado(TipoHabitacion tipoSeleccionado) {
         this.tipoSeleccionado = tipoSeleccionado;
+    }
+
+    private LocalDate convertirFecha(Date fecha) {
+        if (fecha == null) {
+            return null;
+        }
+
+        return fecha.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    private void actualizarReservasFiltradas() {
+        List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
+        LocalDate checkinLocal = convertirFecha(filtroCheckin);
+        LocalDate checkoutLocal = convertirFecha(filtroCheckout);
+
+        if (checkinLocal == null && checkoutLocal == null) {
+            reservasFiltradas = new ArrayList<>(fuente);
+            return;
+        }
+
+        List<Reserva> filtradas = new ArrayList<>();
+
+        for (Reserva reservaActual : fuente) {
+            if (reservaActual == null) {
+                continue;
+            }
+
+            LocalDateTime checkin = reservaActual.getCheckin();
+            LocalDateTime checkout = reservaActual.getCheckout();
+
+            if (checkin == null || checkout == null) {
+                continue;
+            }
+
+            boolean coincide = true;
+
+            if (checkinLocal != null) {
+                coincide = coincide && !checkin.toLocalDate().isBefore(checkinLocal);
+            }
+
+            if (checkoutLocal != null) {
+                coincide = coincide && !checkout.toLocalDate().isAfter(checkoutLocal);
+            }
+
+            if (coincide) {
+                filtradas.add(reservaActual);
+            }
+        }
+
+        reservasFiltradas = filtradas;
     }
 
 }

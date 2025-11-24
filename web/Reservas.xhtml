@@ -184,9 +184,9 @@
                             <div class="col-md-4">
                                 <div class="d-flex flex-column">
                                     <label class="filter-label">Check-in desde</label>
-                                    <h:inputText value="#{reservaBean.filtroCheckin}" styleClass="form-control filter-input" >
+                                    <h:inputText value="#{reservaBean.filtroCheckin}" styleClass="form-control filter-input">
                                         <f:passThroughAttribute name="type" value="date" />
-                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
                                         <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
                                     </h:inputText>
                                 </div>
@@ -194,9 +194,9 @@
                             <div class="col-md-4">
                                 <div class="d-flex flex-column">
                                     <label class="filter-label">Check-out hasta</label>
-                                    <h:inputText value="#{reservaBean.filtroCheckout}" styleClass="form-control filter-input" >
+                                    <h:inputText value="#{reservaBean.filtroCheckout}" styleClass="form-control filter-input">
                                         <f:passThroughAttribute name="type" value="date" />
-                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
                                         <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
                                     </h:inputText>
                                 </div>
