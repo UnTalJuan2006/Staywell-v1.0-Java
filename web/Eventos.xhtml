@@ -512,10 +512,7 @@
                                                             <i class="bi bi-pencil-square"></i>
                                                             <f:param name="id" value="#{evento.idEvento}" />
                                                         </h:link>
-                                                        <h:link outcome="/Pagos.xhtml" styleClass="btn btn-outline-success btn-sm" title="Registrar pago">
-                                                            <i class="bi bi-credit-card"></i>
-                                                            <f:param name="idEvento" value="#{evento.idEvento}" />
-                                                        </h:link>
+                                                        
                                                         <h:commandLink action="#{eventoBean.eliminar(evento)}"
                                                                        styleClass="btn btn-outline-danger btn-sm"
                                                                        onclick="return confirm('¿Desea eliminar el evento?');">
