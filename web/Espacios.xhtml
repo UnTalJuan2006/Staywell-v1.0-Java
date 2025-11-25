@@ -465,12 +465,12 @@
                                      <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
 
                                     <!-- ✏️ Botón Editar -->
-                                    <h:link outcome="/crudCatalogoHabitaciones/editarTipo.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                    <h:link outcome="/crudEspacios/editarEspacio.xhtml" styleClass="btn btn-outline-warning btn-sm">
                                         <i class="bi bi-pencil-square"></i>
                                         <f:param name="id" value="#{p.idEspacio}" />
                                     </h:link>
 
-                                    <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml"  styleClass="btn btn-outline-primary btn-sm"
+                                    <h:link outcome="/crudEspacios/verEspacio.xhtml"  styleClass="btn btn-outline-primary btn-sm"
                                             title="Ver detalles">
                                         <i class="bi bi-eye"></i>
                                         <f:param name="id" value="#{p.idEspacio}" />
@@ -478,7 +478,7 @@
 
                                     <h:commandLink action="#{espacioBean.eliminar(p)}"
                                                    styleClass="btn btn-outline-danger btn-sm"
-                                                   onclick="return confirm('¿Desea eliminar la habitación?');">
+                                                   onclick="return confirm('¿Desea eliminar el espacio?');">
                                         <i class="bi bi-trash"></i>
                                     </h:commandLink>
 
