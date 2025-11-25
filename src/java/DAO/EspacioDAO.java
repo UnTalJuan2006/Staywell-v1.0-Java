@@ -120,5 +120,37 @@ public class EspacioDAO {
             throw e;
         }
     }
+    
+    public int totalEspacios()throws SQLException{
+        String sql = "SELECT COUNT(*) AS total from espacio";
+         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+             if(rs.next()){
+                  return rs.getInt("total");
+             }
+         }
+         return 0;
+    }
+    
+    public float totalPromedio() throws SQLException{
+        String sql = "SELECT AVG(costoHora) AS promedio from espacio";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if(rs.next()){
+                return rs.getFloat("promedio");
+            }
+        }
+        return 0;
+    }
+    
+    public int capacidadPromedio()throws SQLException{
+        String sql = "SELECT AVG(capacidad) AS promedioCapacidad from espacio";
+        try(PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if(rs.next()){
+                return rs.getInt("promedioCapacidad");
+            }
+        }
+        return 0;
+    }
+    
+    
 
 }

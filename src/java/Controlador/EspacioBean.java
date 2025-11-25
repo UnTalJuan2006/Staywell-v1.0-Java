@@ -74,6 +74,8 @@ public class EspacioBean implements Serializable {
     public EnumTipoEspacios[] getTipos() {
         return EnumTipoEspacios.values();
     }
+    
+    
 
     // ======= Agregar espacio =======
     public String agregar() throws IOException {
@@ -236,6 +238,33 @@ public class EspacioBean implements Serializable {
         }
 
         return nombreArchivo;
+    }
+    
+    public int getTotalEspacios(){
+        try{
+            return espacioDAO.totalEspacios();
+        }catch(SQLException e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+    
+    public float getPrecioPromedio(){
+        try{
+            return espacioDAO.totalPromedio();
+        }catch(SQLException e){
+             e.printStackTrace();
+            return 0;
+        }
+    }
+    
+    public int getPromedioCapacidad(){
+        try{
+            return espacioDAO.capacidadPromedio();
+        }catch(SQLException e){
+            e.printStackTrace();
+            return 0;
+        }
     }
 
 }
