@@ -81,6 +81,7 @@ public class EspacioDAO {
                 p.setCostoHora(rs.getFloat("costoHora")); // ← ojo con el nombre de columna
                 p.setFechaActualizacion(rs.getTimestamp("fechaActualizacion").toLocalDateTime());
                 p.setEstado(EnumEstadoEspacio.valueOf(rs.getString("estado")));
+                p.setImagen(rs.getString("imagen"));
             }
 
         } catch (SQLException e) {
@@ -89,9 +90,24 @@ public class EspacioDAO {
         return p;
     }
     
-//    public void actualiza(Espacio p) throws SQLException {
-//        String sql = "UPDATE espacio SET "
-//    }
+    public void actualizar(Espacio p) throws SQLException {
+        String sql = "UPDATE espacio SET nombre = ?, tipo = ?, descripcion = ?, capacidad = ?, costoHora = ?, fechaActualizacion = ?, estado = ?, imagen = ? "
+                + "WHERE idEspacio = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, p.getNombre());
+            ps.setString(2, p.getTipo() != null ? p.getTipo().name() : null);
+            ps.setString(3, p.getDescripcion());
+            ps.setInt(4, p.getCapacidad());
+            ps.setFloat(5, p.getCostoHora());
+            ps.setTimestamp(6, Timestamp.valueOf(p.getFechaActualizacion()));
+            ps.setString(7, p.getEstado() != null ? p.getEstado().name() : null);
+            ps.setString(8, p.getImagen());
+            ps.setInt(9, p.getIdEspacio());
+
+            ps.executeUpdate();
+        }
+    }
     
     public void eliminar(Espacio p) throws SQLException{
         String sql = "DELETE from espacio WHERE idEspacio = ?";

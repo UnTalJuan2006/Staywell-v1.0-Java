@@ -136,10 +136,63 @@ public class EspacioBean implements Serializable {
         return "Espacios?faces-redirect=true";
     }
 
+    public void cargarEspacioPorId() {
+        String idParam = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("id");
+
+        if (idParam != null && !idParam.isEmpty()) {
+            try {
+                int id = Integer.parseInt(idParam);
+                Espacio espacioEncontrado = espacioDAO.buscar(id);
+
+                if (espacioEncontrado != null) {
+                    this.espacio = espacioEncontrado;
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                    "Espacio cargado", "Se cargó el espacio con ID: " + id));
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                    "No encontrado", "El espacio solicitado no existe."));
+                }
+            } catch (NumberFormatException e) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Error", "Identificador de espacio inválido."));
+            }
+        }
+    }
+
+    public String actualizar() {
+        try {
+            espacio.setFechaActualizacion(LocalDateTime.now());
+
+            if (imagen != null) {
+                String nombreArchivo = guardarImagen(imagen, espacio.getNombre());
+                espacio.setImagen(nombreArchivo);
+            }
+
+            espacioDAO.actualizar(espacio);
+            cargarListaEspacios();
+            espacio = new Espacio();
+            imagen = null;
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Espacio actualizado correctamente."));
+            return "Espacios?faces-redirect=true";
+
+        } catch (SQLException | IOException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el espacio."));
+            return null;
+        }
+    }
+
     public String eliminar(Espacio p) {
         try{
             EspacioDAO espacioDAO = new EspacioDAO();
             espacioDAO.eliminar(p);
+            cargarListaEspacios();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Espacio eliminado correctamente", null));
@@ -148,8 +201,8 @@ public class EspacioBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Error al eliminar Espacio: " + e.getMessage(), null));
         }
-        
-        return "Espacio?faces-redirect=true";
+
+        return "Espacios?faces-redirect=true";
     }
 
     public void refrescarLista() {
@@ -158,6 +211,31 @@ public class EspacioBean implements Serializable {
 
     public EnumEstadoEspacio[] getEstados() {
         return EnumEstadoEspacio.values();
+    }
+
+    private String guardarImagen(Part archivo, String nombreBase) throws IOException {
+        ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
+                .getExternalContext().getContext();
+
+        String rutaCarpeta = sc.getRealPath("/img/");
+        File carpeta = new File(rutaCarpeta);
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+        }
+
+        String nombreArchivo = nombreBase.replaceAll("\\s+", "_")
+                + "_" + System.currentTimeMillis() + ".png";
+
+        File archivoDestino = new File(carpeta, nombreArchivo);
+        try (InputStream in = archivo.getInputStream(); FileOutputStream out = new FileOutputStream(archivoDestino)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        }
+
+        return nombreArchivo;
     }
 
 }
