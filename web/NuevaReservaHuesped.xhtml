@@ -682,6 +682,57 @@
                 background: #fff;
                 font-weight: 700;
             }
+            
+            @media (max-width: 768px) {
+                .content {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 24px 20px;
+                    height: auto;
+                }
+
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                    top: 0;
+                    border-right: none;
+                    border-bottom: 1px solid #e0e0e0;
+                    flex-direction: row;
+                    overflow-x: auto;
+                    padding: 0;
+                }
+
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+
+                .layout {
+                    flex-direction: column;
+                }
+            }
+
+            /* SCROLLBAR PERSONALIZADO */
+            .content::-webkit-scrollbar,
+            .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .content::-webkit-scrollbar-track,
+            .sidebar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            .content::-webkit-scrollbar-thumb,
+            .sidebar::-webkit-scrollbar-thumb {
+                background: #1a7c8f;
+                border-radius: 4px;
+            }
+
+            .content::-webkit-scrollbar-thumb:hover,
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: #156b7d;
+            }
         </style>
     </h:head>
 
