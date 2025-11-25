@@ -299,6 +299,22 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
         }
     }
 
+    public int contarReservasActivas() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM reserva WHERE estado = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, EnumEstadoReserva.ACTIVA.name());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+
+        return 0;
+    }
+
     private Reserva mapearReserva(ResultSet rs) throws SQLException {
         Reserva reserva = new Reserva();
 

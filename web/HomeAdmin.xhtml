@@ -429,6 +429,31 @@
                             <p>Habitaciones Disponibles</p>
                         </div>
                     </div>
+                    <div class="stat-card">
+                        <i class="fas fa-credit-card stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>
+                                <h:outputText value="#{dashboardBean.totalPagos}">
+                                    <f:convertNumber type="currency" currencySymbol="$" locale="es_CO" />
+                                </h:outputText>
+                            </h3>
+                            <p>Total Pagos Registrados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-tie stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>#{dashboardBean.totalEmpleados}</h3>
+                            <p>Empleados Totales</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-bell stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>#{dashboardBean.reservasActivas}</h3>
+                            <p>Reservas Activas</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Gráficas -->

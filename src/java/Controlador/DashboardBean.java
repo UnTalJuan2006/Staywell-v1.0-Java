@@ -2,8 +2,11 @@ package Controlador;
 
 import DAO.EventoDAO;
 import DAO.HabitacionDAO;
+import DAO.PagoDAO;
 import DAO.ReservaDAO;
+import DAO.EmpleadoDAO;
 import DAO.UsuarioDAO;
+import java.math.BigDecimal;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -26,6 +29,8 @@ public class DashboardBean implements Serializable {
     private final ReservaDAO reservaDAO = new ReservaDAO();
     private final EventoDAO eventoDAO = new EventoDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
+    private final PagoDAO pagoDAO = new PagoDAO();
+    private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     private List<String> etiquetasMeses = new ArrayList<>();
@@ -33,9 +38,12 @@ public class DashboardBean implements Serializable {
     private List<Integer> reservasEventos = new ArrayList<>();
     private List<Integer> ocupacionMensual = new ArrayList<>();
 
+    private BigDecimal totalPagos = BigDecimal.ZERO;
     private int totalUsuarios;
     private int eventosActivos;
     private int habitacionesDisponibles;
+    private int totalEmpleados;
+    private int reservasActivas;
 
     @PostConstruct
     public void init() {
@@ -46,6 +54,9 @@ public class DashboardBean implements Serializable {
             totalUsuarios = usuarioDAO.contarUsuarios();
             eventosActivos = eventoDAO.contarEventosActivos();
             habitacionesDisponibles = habitacionDAO.contarDisponibles();
+            totalPagos = pagoDAO.obtenerTotalPagos();
+            totalEmpleados = empleadoDAO.contarEmpleados();
+            reservasActivas = reservaDAO.contarReservasActivas();
 
             Map<String, Integer> reservasPorMes = reservaDAO.obtenerReservasPorMes(fechaInicio);
             Map<String, Integer> eventosPorMes = eventoDAO.obtenerEventosPorMes(fechaInicio);
@@ -55,9 +66,12 @@ public class DashboardBean implements Serializable {
             reservasEventos = alinearDatos(eventosPorMes);
             ocupacionMensual = alinearDatos(ocupacionPorMes);
         } catch (SQLException e) {
+            totalPagos = BigDecimal.ZERO;
             totalUsuarios = 0;
             eventosActivos = 0;
             habitacionesDisponibles = 0;
+            totalEmpleados = 0;
+            reservasActivas = 0;
             reservasHabitaciones = new ArrayList<>();
             reservasEventos = new ArrayList<>();
             ocupacionMensual = new ArrayList<>();
@@ -119,6 +133,10 @@ public class DashboardBean implements Serializable {
         return toJsonArray(ocupacionMensual);
     }
 
+    public BigDecimal getTotalPagos() {
+        return totalPagos;
+    }
+
     public int getTotalUsuarios() {
         return totalUsuarios;
     }
@@ -129,5 +147,13 @@ public class DashboardBean implements Serializable {
 
     public int getHabitacionesDisponibles() {
         return habitacionesDisponibles;
+    }
+
+    public int getTotalEmpleados() {
+        return totalEmpleados;
+    }
+
+    public int getReservasActivas() {
+        return reservasActivas;
     }
 }
