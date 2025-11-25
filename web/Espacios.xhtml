@@ -602,21 +602,21 @@
                             <span class="fw-bold text-secondary">Filtrar por tipo</span>
                         </div>
 
-                        <p:selectOneMenu value="#{tipoHabitacionBean.filtroTipo}" 
+                        <p:selectOneMenu value="#{espacioBean.filtroTipo}"
                                          styleClass="select-modern"
                                          panelStyleClass="select-modern-panel">
 
                             <f:selectItem itemLabel="Todos los espacios" itemValue="" />
 
-                            <f:selectItems value="#{tipoHabitacionBean.listaTipos}"
+                            <f:selectItems value="#{espacioBean.listaTipos}"
                                            var="t"
-                                           itemLabel="#{t.nombre}"
-                                           itemValue="#{t.nombre}" />
+                                           itemLabel="#{t}"
+                                           itemValue="#{t}" />
 
                             <p:ajax event="change"
                                     process="@this"
-                                    listener="#{tipoHabitacionBean.aplicarFiltro}"
-                                    update=":formHabitaciones:cardsContainer" />
+                                    listener="#{espacioBean.filtrar}"
+                                    update=":formEspacios:cardsContainer" />
                         </p:selectOneMenu>
 
 
@@ -635,9 +635,9 @@
                         <!-- Excel -->
                         <h:form styleClass="export-option-excel">
 
-                            <h:commandLink 
+                            <h:commandLink
                                 title="Descargar Excel Personalizado"
-                                actionListener="#{tipoHabitacionBean.exportarExcelTipoHabitaciones()}">
+                                actionListener="#{espacioBean.exportarExcelEspacios()}">
 
                                 <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
                             </h:commandLink>
@@ -645,9 +645,9 @@
 
                         <!-- PDF -->
                         <h:form styleClass="export-option-pdf">
-                            <h:commandLink 
+                            <h:commandLink
                                 title="Descargar Pdf Personalizado"
-                                actionListener="#{tipoHabitacionBean.exportarPdfHabitaciones()}">
+                                actionListener="#{espacioBean.exportarPdfEspacios()}">
 
                                 <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
                             </h:commandLink>
@@ -659,46 +659,48 @@
            
 
             <h:form id="formEspacios">
-                <div class="card-grid">
-                    <ui:repeat value="#{espacioBean.listaEspacios}" var="p">
-                        <div class="card">
-                            <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}"/>
-                            <div class="card-body">
-                                <div class="estado-badge #{p.estado eq 'Disponible' ? 'disponible' : 'mantenimiento'}">
-                                    #{p.estado}
+                <p:outputPanel id="cardsContainer" layout="block">
+                    <div class="card-grid">
+                        <ui:repeat value="#{espacioBean.listaEspacios}" var="p">
+                            <div class="card">
+                                <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}"/>
+                                <div class="card-body">
+                                    <div class="estado-badge #{p.estado eq 'Disponible' ? 'disponible' : 'mantenimiento'}">
+                                        #{p.estado}
+                                    </div>
+                                    <div class="card-title">#{p.nombre}</div>
+                                    <div class="card-text">#{p.descripcion}</div>
+                                    <div class="card-price">$#{p.costoHora} / hora</div>
+                                    <div class="text-muted" style="font-size: 0.85rem;">
+                                        Capacidad: #{p.capacidad} personas
+                                    </div>
                                 </div>
-                                <div class="card-title">#{p.nombre}</div>
-                                <div class="card-text">#{p.descripcion}</div>
-                                <div class="card-price">$#{p.costoHora} / hora</div>
-                                <div class="text-muted" style="font-size: 0.85rem;">
-                                    Capacidad: #{p.capacidad} personas
-                                </div>
+                                         <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
+
+                                        <!-- ✏️ Botón Editar -->
+                                        <h:link outcome="/crudEspacios/editarEspacio.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <f:param name="id" value="#{p.idEspacio}" />
+                                        </h:link>
+
+                                        <h:link outcome="/crudEspacios/verEspacio.xhtml"  styleClass="btn btn-outline-primary btn-sm"
+                                                title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                            <f:param name="id" value="#{p.idEspacio}" />
+                                        </h:link>
+
+                                        <h:commandLink action="#{espacioBean.eliminar(p)}"
+                                                       styleClass="btn btn-outline-danger btn-sm"
+                                                       onclick="return confirm('¿Desea eliminar el espacio?');">
+                                            <i class="bi bi-trash"></i>
+                                        </h:commandLink>
+
+                                    </div>
                             </div>
-                                     <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
-
-                                    <!-- ✏️ Botón Editar -->
-                                    <h:link outcome="/crudEspacios/editarEspacio.xhtml" styleClass="btn btn-outline-warning btn-sm">
-                                        <i class="bi bi-pencil-square"></i>
-                                        <f:param name="id" value="#{p.idEspacio}" />
-                                    </h:link>
-
-                                    <h:link outcome="/crudEspacios/verEspacio.xhtml"  styleClass="btn btn-outline-primary btn-sm"
-                                            title="Ver detalles">
-                                        <i class="bi bi-eye"></i>
-                                        <f:param name="id" value="#{p.idEspacio}" />
-                                    </h:link>
-
-                                    <h:commandLink action="#{espacioBean.eliminar(p)}"
-                                                   styleClass="btn btn-outline-danger btn-sm"
-                                                   onclick="return confirm('¿Desea eliminar el espacio?');">
-                                        <i class="bi bi-trash"></i>
-                                    </h:commandLink>
-
-                                </div>
-                        </div>
-                    </ui:repeat>
-                </div>
-            </h:form>         
+                        </ui:repeat>
+                    </div>
+                </p:outputPanel>
+            </h:form>
         </div>
 
     </h:body>
