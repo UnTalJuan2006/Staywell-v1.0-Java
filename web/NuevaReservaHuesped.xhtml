@@ -23,10 +23,9 @@
 
             html, body {
                 height: 100%;
-                overflow-x: hidden;
-                overflow-y: auto;
+                overflow: hidden;
                 font-family: 'Segoe UI', Roboto, sans-serif;
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
             }
 
             /* HEADER FIJO */
@@ -41,15 +40,15 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 24px;
+                padding: 0 30px;
                 z-index: 1000;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             }
 
             .header-left .logo-text {
                 font-weight: 700;
                 font-size: 22px;
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -59,46 +58,63 @@
             .header-right {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 12px;
             }
 
             .btn-crear-reserva {
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: white;
                 border: none;
-                padding: 8px 16px;
-                border-radius: 6px;
+                padding: 10px 18px;
+                border-radius: 8px;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 6px;
+                gap: 8px;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                text-decoration: none;
+                font-size: 0.9rem;
             }
 
             .btn-crear-reserva:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(26, 155, 142, 0.3);
+                box-shadow: 0 4px 12px rgba(26, 124, 143, 0.4);
+            }
+
+            .icon-btn {
+                background: none;
+                border: none;
+                font-size: 22px;
+                cursor: pointer;
+                color: #666;
+                transition: color 0.2s;
+                padding: 8px;
+            }
+
+            .icon-btn:hover {
+                color: #1a7c8f;
             }
 
             .user-profile {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                border-left: 1px solid #e0e0e0;
-                padding-left: 15px;
+                gap: 12px;
+                border-left: 2px solid #e0e0e0;
+                padding-left: 20px;
+                margin-left: 8px;
             }
 
             .user-avatar {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-weight: 600;
+                font-size: 18px;
             }
 
             /* LAYOUT */
@@ -108,9 +124,9 @@
                 padding-top: 70px;
             }
 
-            /* SIDEBAR FIJA */
+            /* SIDEBAR */
             .sidebar {
-                width: 220px;
+                width: 260px;
                 background: #fff;
                 border-right: 1px solid #e0e0e0;
                 position: fixed;
@@ -120,39 +136,92 @@
                 display: flex;
                 flex-direction: column;
                 overflow-y: auto;
-                padding-top: 20px;
+                padding: 24px 0;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+            }
+
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #999;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
             }
 
             .nav-link {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                padding: 12px 20px;
+                gap: 12px;
+                padding: 12px 16px;
                 color: #555;
                 text-decoration: none;
-                margin: 8px 10px;
-                border-left: 3px solid transparent;
-                border-radius: 4px;
-                transition: all 0.2s;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
             }
 
             .nav-link:hover {
-                background: #f0fffe;
-                color: #1a9b8e;
-                border-left-color: #1a9b8e;
+                background: #e8f4f6;
+                color: #1a7c8f;
             }
 
             .nav-link.active {
-                background: #e8f5f3;
-                border-left-color: #1a9b8e;
-                color: #1a9b8e;
+                background: linear-gradient(135deg, rgba(26, 124, 143, 0.1) 0%, rgba(26, 124, 143, 0.15) 100%);
+                color: #1a7c8f;
                 font-weight: 600;
+                border-left: 3px solid #1a7c8f;
             }
 
-            .main-content {
-                margin-left: 280px;
-                padding: 2.5rem;
-                flex: 1;
+            .sidebar-footer {
+                margin-top: auto;
+                padding: 20px 16px;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .btn-logout {
+                width: 100%;
+                background: #f5f5f5;
+                color: #666;
+                border: 1px solid #e0e0e0;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .btn-logout:hover {
+                background: #fff0f0;
+                border-color: #ff5252;
+                color: #ff5252;
+            }
+
+            /* CONTENIDO */
+            .content {
+                margin-left: 260px;
+                padding: 32px 48px;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                width: calc(100% - 260px);
             }
 
             /* FORMULARIO */
@@ -188,7 +257,7 @@
             }
 
             .form-card h5 i {
-                color: #1a9b8e;
+                color: #1a7c8f;
             }
 
             .form-group {
@@ -212,7 +281,7 @@
             }
 
             .form-control:focus, .form-select:focus {
-                border-color: #1a9b8e;
+                border-color: #1a7c8f;
                 box-shadow: 0 0 0 3px rgba(26, 155, 142, 0.1);
                 outline: none;
             }
@@ -235,7 +304,7 @@
             }
 
             .btn-primary-custom {
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: white;
                 border: none;
                 padding: 0.75rem 2rem;
@@ -298,7 +367,7 @@
             }
 
             .payment-card h5 i {
-                color: #1a9b8e;
+                color: #1a7c8f;
                 font-size: 1.2rem;
             }
 
@@ -316,7 +385,7 @@
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                color: #0d7a6f;
+                color: #156b7d;
                 font-weight: 600;
             }
 
@@ -327,7 +396,7 @@
             .payment-summary .summary-amount {
                 font-size: 1.4rem;
                 font-weight: 700;
-                color: #0d7a6f;
+                color: #156b7d;
             }
 
             .payment-note {
@@ -350,7 +419,7 @@
             }
 
             .summary-card h5 i {
-                color: #1a9b8e;
+                color: #1a7c8f;
                 font-size: 1.3rem;
             }
 
@@ -377,15 +446,15 @@
                 align-items: center;
                 padding: 1rem 0;
                 margin-top: 1rem;
-                border-top: 2px solid #1a9b8e;
+                border-top: 2px solid #1a7c8f;
                 font-size: 1.2rem;
                 font-weight: 700;
-                color: #1a9b8e;
+                color: #1a7c8f;
             }
 
             .btn-confirm {
                 width: 100%;
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: white;
                 border: none;
                 padding: 1rem;
@@ -406,7 +475,7 @@
             }
 
             .btn-confirm-modal {
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: white;
                 border: none;
                 padding: 0.75rem 1.5rem;
@@ -434,8 +503,8 @@
 
             .alert-info {
                 background: #e8f5f3;
-                border: 1px solid #1a9b8e;
-                color: #0d7a6f;
+                border: 1px solid #1a7c8f;
+                color: #156b7d;
                 border-radius: 8px;
                 padding: 1rem;
                 margin-bottom: 1.5rem;
@@ -454,15 +523,18 @@
                     position: static;
                 }
 
-                .main-content {
+                .content {
                     margin-left: 220px;
                     padding: 1.5rem;
                 }
             }
 
             @media (max-width: 768px) {
-                .main-content {
+                .content {
                     margin-left: 0;
+                    width: 100%;
+                    padding: 24px 20px;
+                    height: auto;
                 }
 
                 .sidebar {
@@ -500,7 +572,7 @@
                 align-items: center;
                 gap: 12px;
                 padding: 18px 22px;
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: #fff;
             }
 
@@ -527,7 +599,7 @@
 
             .receipt-number {
                 font-weight: 800;
-                color: #0d7a6f;
+                color: #156b7d;
                 letter-spacing: 0.5px;
             }
 
@@ -568,7 +640,7 @@
                 gap: 8px;
                 padding: 8px 12px;
                 background: #e8f5f3;
-                color: #0d7a6f;
+                color: #156b7d;
                 border-radius: 999px;
                 font-weight: 600;
                 font-size: 0.95rem;
@@ -582,7 +654,7 @@
                 border-radius: 999px;
                 font-weight: 700;
                 background: linear-gradient(135deg, #e6fbf5 0%, #d4f3e7 100%);
-                color: #0d7a6f;
+                color: #156b7d;
             }
 
             .confirmation-actions {
@@ -593,7 +665,7 @@
             }
 
             .btn-gradient {
-                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
                 color: #fff;
                 border: none;
                 padding: 10px 18px;
@@ -616,16 +688,16 @@
     <h:body>
         <div class="header">
             <div class="header-left">
-                <a href="#" class="logo-text">Great Viaggio</a>
+                <a href="HomeHuesped.xhtml" class="logo-text">Great Viaggio</a>
             </div>
             <div class="header-right">
                 <a href="NuevaReservaHuesped.xhtml" class="btn-crear-reserva">
-                    <i class="bi bi-plus-circle"></i> Crear Reserva
+                    <i class="bi bi-plus-circle"></i> Nueva Reserva
                 </a>
-                <button class="btn-crear-reserva"><i class="bi bi-plus-circle"></i> Crear Evento</button>
-                <button class="icon-btn" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #666;">
-                    <i class="bi bi-bell"></i>
-                </button>
+                <a href="NuevoEventoHuesped.xhtml" class="btn-crear-reserva">
+                    <i class="bi bi-plus-circle"></i> Nuevo Evento
+                </a>
+                <button class="icon-btn"><i class="bi bi-bell"></i></button>
                 <div class="user-profile">
                     <span><strong>#{usuarioLogueado.nombre}</strong></span>
                     <div class="user-avatar"><i class="bi bi-person"></i></div>
@@ -636,23 +708,57 @@
         <div class="layout">
             <!-- SIDEBAR -->
             <div class="sidebar">
-                <a href="HomeHuesped.xhtml" class="nav-link active"><i class="bi bi-house-door"></i>Inicio</a>
-                <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus"></i>Nueva Reserva</a>
-                <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Reservas</a>
-                <a href="NuevoEventoHuesped.xhtml" class="nav-link"><i class="bi bi-building"></i>Nuevo Evento</a>
-                <a href="MisEventos.xhtml" class="nav-link"><i class="bi bi-calendar-check"></i>Mis Eventos</a>
-                <a href="#" class="nav-link"><i class="bi bi-person-circle"></i>Perfil</a>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación</div>
+                    <a href="HomeHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-house-door"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="MiPerfil.xhtml" class="nav-link">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Reservas</div>
+                    <a href="NuevaReservaHuesped.xhtml" class="nav-link active">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Nueva Reserva</span>
+                    </a>
+                    <a href="MisReservas.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Reservas</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Eventos</div>
+                    <a href="EventosHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-stars"></i>
+                        <span>Eventos Disponibles</span>
+                    </a>
+                    <a href="NuevoEventoHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Nuevo Evento</span>
+                    </a>
+                    <a href="MisEventos.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Eventos</span>
+                    </a>
+                </div>
 
                 <h:form>
-                    <div class="sidebar-footer" style="padding: 20px;">
-                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <div class="sidebar-footer">
+                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn-logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
                         </h:commandLink>
                     </div>
                 </h:form>
             </div>
 
-            <div class="main-content">
+            <div class="content">
                 <h:form id="formReserva" styleClass="reserva-form">
                     <h:messages styleClass="alert-info" layout="table" />
 
@@ -668,7 +774,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="tipoHabitacion" class="form-label">
-                                        <i class="bi bi-door-closed" style="color: #1a9b8e;"></i> Tipo de Habitación
+                                        <i class="bi bi-door-closed" style="color: #1a7c8f;"></i> Tipo de Habitación
                                     </label>
                                     <h:selectOneMenu id="tipoHabitacion" value="#{reservaHuespedBean.tipoHabitacionSeleccionada}"
                                                      styleClass="form-select" required="true"
@@ -683,7 +789,7 @@
 
                                 <div class="form-group">
                                     <label for="habitacion" class="form-label">
-                                        <i class="bi bi-door-open" style="color: #1a9b8e;"></i> Habitación
+                                        <i class="bi bi-door-open" style="color: #1a7c8f;"></i> Habitación
                                     </label>
                                     <h:selectOneMenu id="habitacion" value="#{reservaHuespedBean.habitacionSeleccionada}"
                                                      styleClass="form-select" disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}"
@@ -702,7 +808,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="usuario" class="form-label">
-                                        <i class="bi bi-person" style="color: #1a9b8e;"></i> Huésped
+                                        <i class="bi bi-person" style="color: #1a7c8f;"></i> Huésped
                                     </label>
                                     <h:inputText id="usuario"
                                                  value="#{reservaHuespedBean.usuarioLogueado != null ? reservaHuespedBean.usuarioLogueado.nombre : ''}"
@@ -711,7 +817,7 @@
 
                                 <div class="form-group">
                                     <label for="nombreCliente" class="form-label">
-                                        <i class="bi bi-person-badge" style="color: #1a9b8e;"></i> Nombre del Cliente
+                                        <i class="bi bi-person-badge" style="color: #1a7c8f;"></i> Nombre del Cliente
                                     </label>
                                     <h:inputText id="nombreCliente" value="#{reservaHuespedBean.nombreCliente}"
                                                  styleClass="form-control" />
@@ -722,7 +828,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="email" class="form-label">
-                                        <i class="bi bi-envelope" style="color: #1a9b8e;"></i> Correo Electrónico
+                                        <i class="bi bi-envelope" style="color: #1a7c8f;"></i> Correo Electrónico
                                     </label>
                                     <h:inputText id="email" value="#{reservaHuespedBean.email}"
                                                  styleClass="form-control" />
@@ -730,7 +836,7 @@
 
                                 <div class="form-group">
                                     <label for="telefono" class="form-label">
-                                        <i class="bi bi-telephone" style="color: #1a9b8e;"></i> Teléfono
+                                        <i class="bi bi-telephone" style="color: #1a7c8f;"></i> Teléfono
                                     </label>
                                     <h:inputText id="telefono" value="#{reservaHuespedBean.telefono}"
                                                  styleClass="form-control" />
@@ -741,7 +847,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="checkin" class="form-label">
-                                        <i class="bi bi-calendar-check" style="color: #1a9b8e;"></i> Check-in
+                                        <i class="bi bi-calendar-check" style="color: #1a7c8f;"></i> Check-in
                                     </label>
                                     <h:inputText id="checkin" value="#{reservaHuespedBean.checkin}"
                                                  styleClass="form-control" required="true"
@@ -755,7 +861,7 @@
 
                                 <div class="form-group">
                                     <label for="checkout" class="form-label">
-                                        <i class="bi bi-calendar-x" style="color: #1a9b8e;"></i> Check-out
+                                        <i class="bi bi-calendar-x" style="color: #1a7c8f;"></i> Check-out
                                     </label>
                                     <h:inputText id="checkout" value="#{reservaHuespedBean.checkout}"
                                                  styleClass="form-control" required="true"
@@ -772,7 +878,7 @@
                             <div class="form-row full">
                                 <div class="form-group">
                                     <label for="observaciones" class="form-label">
-                                        <i class="bi bi-chat-left-text" style="color: #1a9b8e;"></i> Observaciones
+                                        <i class="bi bi-chat-left-text" style="color: #1a7c8f;"></i> Observaciones
                                     </label>
                                     <h:inputTextarea id="observaciones" value="#{reservaHuespedBean.observaciones}"
                                                      styleClass="form-control" rows="4" />
@@ -841,7 +947,7 @@
                                         <i class="bi bi-credit-card-2-front"></i>
                                         <div>
                                             <span>Total a pagar</span>
-                                            <div style="font-size:0.8rem; color:#0d7a6f; font-weight:400;">Se cargará al confirmar la reserva</div>
+                                            <div style="font-size:0.8rem; color:#156b7d; font-weight:400;">Se cargará al confirmar la reserva</div>
                                         </div>
                                     </div>
                                     <h:panelGroup id="montoPago">
@@ -880,7 +986,7 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <h:outputLabel for="tipoPago" styleClass="form-label"/>
-<!--                                                          value="<i class='bi bi-credit-card' style='color: #1a9b8e;'></i> Tipo de tarjeta"-->
+<!--                                                          value="<i class='bi bi-credit-card' style='color: #1a7c8f;'></i> Tipo de tarjeta"-->
                                                           
                                             <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
                                                              styleClass="form-select" required="true"
@@ -995,7 +1101,7 @@
                                                 </div>
                                                 <div>
                                                     <div class="detail-label"><i class="bi bi-wallet2"></i>Total</div>
-                                                    <div class="detail-value" style="font-size: 1.2rem; color:#0d7a6f;">
+                                                    <div class="detail-value" style="font-size: 1.2rem; color:#156b7d;">
                                                         <h:outputText value="#{reservaHuespedBean.totalConfirmadoFormateado}" />
                                                     </div>
                                                 </div>
