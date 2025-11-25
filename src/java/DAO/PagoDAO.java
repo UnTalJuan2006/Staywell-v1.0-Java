@@ -28,8 +28,8 @@ public class PagoDAO {
             pago.setFechaCreacion(LocalDateTime.now());
         }
 
-        String sql = "INSERT INTO pago (idReserva, idEvento, monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO pago (idReserva,  monto, tipoTarjeta, numeroTarjeta, titular, fechaVencimiento, codigoSeguridad, fechaCreacion) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, )";
 
         try (Connection conexion = Conexion.conectar()) {
 
@@ -39,20 +39,18 @@ public class PagoDAO {
 
             try (PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-                // Mantener coherencia en la base de datos: si la tabla no permite nulos
-                // en las columnas de relación, persistimos un 0 para el campo no usado.
-                // Esto evita fallos de integridad cuando solo se paga una reserva o un evento.
+               
                 if (pago.getReserva() != null && pago.getReserva().getIdReserva() > 0) {
                     ps.setInt(1, pago.getReserva().getIdReserva());
                 } else {
                     ps.setInt(1, 0);
                 }
 
-                if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
-                    ps.setInt(2, pago.getEvento().getIdEvento());
-                } else {
-                    ps.setInt(2, 0);
-                }
+//                if (pago.getEvento() != null && pago.getEvento().getIdEvento() > 0) {
+//                    ps.setInt(2, pago.getEvento().getIdEvento());
+//                } else {
+//                    ps.setInt(2, 0);
+//                }
 
                 // Evitar valores nulos en columnas obligatorias del esquema.
                 ps.setBigDecimal(3, pago.getMonto() != null ? pago.getMonto() : java.math.BigDecimal.ZERO);
