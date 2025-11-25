@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -20,6 +23,8 @@ import Modelo.Espacio;
 import Modelo.EnumEstadoEspacio;
 import Modelo.EnumTipoEspacios;
 import DAO.EspacioDAO;
+import util.ExcelUtil;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -29,6 +34,8 @@ public class EspacioBean implements Serializable {
     private EspacioDAO espacioDAO;
     private List<Espacio> listaEspacios;
     private Part imagen; // para subir foto temporal
+    private List<Espacio> listaOriginal;
+    private String filtroTipo;
 
     @PostConstruct
     public void init() {
@@ -40,7 +47,13 @@ public class EspacioBean implements Serializable {
     // Método para cargar la lista de espacios
     public void cargarListaEspacios() {
         try {
-            listaEspacios = espacioDAO.listar();
+            listaOriginal = espacioDAO.listar();
+
+            if (filtroTipo == null || filtroTipo.trim().isEmpty()) {
+                listaEspacios = new ArrayList<>(listaOriginal);
+            } else {
+                filtrar();
+            }
         } catch (SQLException e) {
             System.out.println("Error al listar espacios: " + e.getMessage());
         }
@@ -65,6 +78,26 @@ public class EspacioBean implements Serializable {
 
     public List<Espacio> getListaEspacios() {
         return listaEspacios;
+    }
+
+    public String getFiltroTipo() {
+        return filtroTipo;
+    }
+
+    public void setFiltroTipo(String filtroTipo) {
+        this.filtroTipo = filtroTipo;
+    }
+
+    public List<EnumTipoEspacios> getListaTipos() {
+        if (listaOriginal == null) {
+            listaOriginal = new ArrayList<>();
+        }
+
+        return listaOriginal.stream()
+                .map(Espacio::getTipo)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public EnumEstadoEspacio[] getEstado() {
@@ -211,6 +244,22 @@ public class EspacioBean implements Serializable {
         cargarListaEspacios();
     }
 
+    public void filtrar() {
+        if (listaOriginal == null) {
+            listaOriginal = new ArrayList<>();
+        }
+
+        if (filtroTipo == null || filtroTipo.trim().isEmpty()) {
+            listaEspacios = new ArrayList<>(listaOriginal);
+            return;
+        }
+
+        listaEspacios = listaOriginal.stream()
+                .filter(e -> e.getTipo() != null
+                && e.getTipo().name().equalsIgnoreCase(filtroTipo))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public EnumEstadoEspacio[] getEstados() {
         return EnumEstadoEspacio.values();
     }
@@ -264,6 +313,54 @@ public class EspacioBean implements Serializable {
         }catch(SQLException e){
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public void exportarExcelEspacios() {
+        try {
+            List<Espacio> lista = espacioDAO.listar();
+            String[] headers = {
+                "ID", "Nombre", "Tipo", "Capacidad", "Costo por hora"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(e -> new Object[]{
+                e.getIdEspacio(),
+                e.getNombre(),
+                e.getTipo(),
+                e.getCapacidad(),
+                e.getCostoHora()
+            })
+                    .collect(Collectors.toList());
+
+            ExcelUtil.generarExcel("catalogoEspacios", "Espacios", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exportarPdfEspacios() {
+        try {
+            List<Espacio> lista = espacioDAO.listar();
+            String[] headers = {
+                "ID", "Nombre", "Tipo", "Capacidad", "Costo por hora"
+            };
+
+            List<Object[]> datos = lista.stream()
+                    .map(e -> new Object[]{
+                e.getIdEspacio(),
+                e.getNombre(),
+                e.getTipo(),
+                e.getCapacidad(),
+                e.getCostoHora()
+            })
+                    .collect(Collectors.toList());
+
+            PdfUtil.generarPdf("espacios", headers, datos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
