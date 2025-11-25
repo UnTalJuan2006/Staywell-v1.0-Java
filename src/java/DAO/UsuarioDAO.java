@@ -241,8 +241,21 @@ public class UsuarioDAO {
         }
 
         return lista;
-    } 
-    
-    
+    }
+
+    public int contarUsuarios() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM usuario";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+
+        return 0;
+    }
+
+
 
 }
