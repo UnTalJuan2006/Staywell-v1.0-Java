@@ -88,5 +88,21 @@ public class EspacioDAO {
         }
         return p;
     }
+    
+//    public void actualiza(Espacio p) throws SQLException {
+//        String sql = "UPDATE espacio SET "
+//    }
+    
+    public void eliminar(Espacio p) throws SQLException{
+        String sql = "DELETE from espacio WHERE idEspacio = ?";
+        
+        try(PreparedStatement ps = Conexion.conectar().prepareStatement(sql)){
+           ps.setInt(1, p.getIdEspacio());
+           ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("Error al elimanar el Espacio ");
+            throw e;
+        }
+    }
 
 }

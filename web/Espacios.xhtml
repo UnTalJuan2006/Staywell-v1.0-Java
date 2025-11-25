@@ -439,23 +439,12 @@
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
                 <h2><i class="bi bi-building"></i> Catálogo de Espacios</h2>
-                <h:link outcome="crudEspacios.xhtml/nuevoEspacio.xhtml" styleClass="btn btn-primary">
+                <h:link outcome="crudEspacios/nuevoEspacio.xhtml" styleClass="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Nuevo Espacio
                 </h:link>
             </div>
 
-            <div class="mb-4">
-                <h:form styleClass="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div class="position-relative" style="width:100%; max-width:350px;">
-                        <i class="bi bi-search position-absolute text-secondary"
-                           style="top:50%; left:14px; transform:translateY(-50%); font-size:1rem;"></i>
-                        <p:inputText id="globalFilter"
-                                     onkeyup="PF('dtEventos').filter()"
-                                     placeholder="Buscar Espacio..."
-                                     styleClass="form-control ps-5 shadow-sm" />
-                    </div>
-                </h:form>
-            </div>
+           
 
             <h:form id="formEspacios">
                 <div class="card-grid">
@@ -468,23 +457,32 @@
                                 </div>
                                 <div class="card-title">#{p.nombre}</div>
                                 <div class="card-text">#{p.descripcion}</div>
-                                <div class="card-price">$#{p.costoHora} / dia</div>
+                                <div class="card-price">$#{p.costoHora} / hora</div>
                                 <div class="text-muted" style="font-size: 0.85rem;">
                                     Capacidad: #{p.capacidad} personas
                                 </div>
                             </div>
-                            <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
-                                <!-- ✏️ Botón Editar -->
-                                <h:link outcome="/editarTipoHabitacion.xhtml" styleClass="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil-square"></i> Editar
-                                    <f:param name="id" value="#{p.idEspacio}" />
-                                </h:link>
+                                     <div class="card-footer bg-transparent border-0 d-flex justify-content-start gap-2">
 
-                                <h:link outcome="/verTipoHabitacion.xhtml" styleClass="btn btn-primary btn-sm">
-                                    <i class="bi bi-eye"></i> ver
-                                    <f:param name="id" value="#{p.idEspacio}" />
-                                </h:link>
-                            </div>
+                                    <!-- ✏️ Botón Editar -->
+                                    <h:link outcome="/crudCatalogoHabitaciones/editarTipo.xhtml" styleClass="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <f:param name="id" value="#{p.idEspacio}" />
+                                    </h:link>
+
+                                    <h:link outcome="/crudCatalogoHabitaciones/verTipo.xhtml"  styleClass="btn btn-outline-primary btn-sm"
+                                            title="Ver detalles">
+                                        <i class="bi bi-eye"></i>
+                                        <f:param name="id" value="#{p.idEspacio}" />
+                                    </h:link>
+
+                                    <h:commandLink action="#{espacioBean.eliminar(p)}"
+                                                   styleClass="btn btn-outline-danger btn-sm"
+                                                   onclick="return confirm('¿Desea eliminar la habitación?');">
+                                        <i class="bi bi-trash"></i>
+                                    </h:commandLink>
+
+                                </div>
                         </div>
                     </ui:repeat>
                 </div>

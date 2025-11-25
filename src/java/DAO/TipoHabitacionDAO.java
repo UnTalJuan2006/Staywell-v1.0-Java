@@ -90,7 +90,7 @@ public class TipoHabitacionDAO {
             ps.setInt(1, t.getIdTipoHabitacion());
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Erro al eliminar el tipo");
+            System.out.println("Error al eliminar el tipo");
             throw e;
         }
 

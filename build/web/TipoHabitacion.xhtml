@@ -18,7 +18,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <style>
-           body {
+            body {
                 background-color: #f8f9fa;
             }
 
@@ -479,7 +479,7 @@
                 margin-top: 12px !important;
             }
 
-    
+
 
 
 
@@ -488,7 +488,7 @@
 
     <h:body>
 
-         <!-- Sidebar Rediseñada -->
+        <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h4><i class="fas fa-hotel"></i> StayWell</h4>
@@ -609,22 +609,22 @@
                             <span class="fw-bold text-secondary">Filtrar por tipo</span>
                         </div>
 
-                      <p:selectOneMenu value="#{tipoHabitacionBean.filtroTipo}" 
-                 styleClass="select-modern"
-                 panelStyleClass="select-modern-panel">
+                        <p:selectOneMenu value="#{tipoHabitacionBean.filtroTipo}" 
+                                         styleClass="select-modern"
+                                         panelStyleClass="select-modern-panel">
 
-    <f:selectItem itemLabel="Todos los tipos" itemValue="" />
+                            <f:selectItem itemLabel="Todos los tipos" itemValue="" />
 
-    <f:selectItems value="#{tipoHabitacionBean.listaTipos}"
-                   var="t"
-                   itemLabel="#{t.nombre}"
-                   itemValue="#{t.nombre}" />
+                            <f:selectItems value="#{tipoHabitacionBean.listaTipos}"
+                                           var="t"
+                                           itemLabel="#{t.nombre}"
+                                           itemValue="#{t.nombre}" />
 
-    <p:ajax event="change"
-            process="@this"
-            listener="#{tipoHabitacionBean.aplicarFiltro}"
-            update=":formHabitaciones:cardsContainer" />
-</p:selectOneMenu>
+                            <p:ajax event="change"
+                                    process="@this"
+                                    listener="#{tipoHabitacionBean.aplicarFiltro}"
+                                    update=":formHabitaciones:cardsContainer" />
+                        </p:selectOneMenu>
 
 
                     </h:form>
@@ -653,11 +653,11 @@
                         <!-- PDF -->
                         <h:form styleClass="export-option-pdf">
                             <h:commandLink 
-                                        title="Descargar Pdf Personalizado"
-                                        actionListener="#{tipoHabitacionBean.exportarPdfHabitaciones()}">
+                                title="Descargar Pdf Personalizado"
+                                actionListener="#{tipoHabitacionBean.exportarPdfHabitaciones()}">
 
-                                        <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
-                                    </h:commandLink>
+                                <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                            </h:commandLink>
                         </h:form>
                     </div>
                 </div>

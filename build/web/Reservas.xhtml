@@ -190,6 +190,7 @@
                 border: 1px solid rgba(200, 200, 200, 0.4);
                 box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
                 padding: 1.5rem;
+                position: relative;
             }
 
             /* Encabezado (icono de filtros) */
@@ -459,6 +460,26 @@
 
                 <h:form id="filterForm" styleClass="mb-4">
                     <div class="filter-card-custom">
+
+                        <div class="export-buttons">
+                            <div class="export-container">
+                                <button class="export-main-btn" type="button" title="Descargar">
+                                    <i class="bi bi-download"></i>
+                                </button>
+
+                                <h:commandLink styleClass="export-option-excel"
+                                               title="Descargar Excel"
+                                               actionListener="#{reservaBean.exportarExcelReservas()}">
+                                    <p:graphicImage url="/img/xls.png" styleClass="export-icon" />
+                                </h:commandLink>
+
+                                <h:commandLink styleClass="export-option-pdf"
+                                               title="Descargar PDF"
+                                               actionListener="#{reservaBean.exportarPdfReservas()}">
+                                    <p:graphicImage url="/img/pdf.png" styleClass="export-icon" />
+                                </h:commandLink>
+                            </div>
+                        </div>
 
                         <!-- Encabezado con icono -->
                         <div class="filter-header">

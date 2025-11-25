@@ -128,46 +128,46 @@
                     <div class="card-body">
                         <h5 class="card-title mb-3">Datos del tipo</h5>
 
-                        
+
                         <h:form id="formTipo" enctype="multipart/form-data" styleClass="tipo-form">
-    <div class="row g-3">
+                            <div class="row g-3">
 
-        <div class="col-md-6">
-            <label for="nombreTipo" class="form-label">Nombre del tipo</label>
-            <h:inputText id="nombreTipo" value="#{tipoHabitacionBean.tipoHabitacion.nombre}" styleClass="form-control" />
-        </div>
+                                <div class="col-md-6">
+                                    <label for="nombreTipo" class="form-label">Nombre del tipo</label>
+                                    <h:inputText id="nombreTipo" value="#{tipoHabitacionBean.tipoHabitacion.nombre}" styleClass="form-control" />
+                                </div>
 
-        <div class="col-12">
-            <label for="Descripcion" class="form-label">Descripción</label>
-            <h:inputTextarea id="Descripcion" value="#{tipoHabitacionBean.tipoHabitacion.descripcion}" styleClass="form-control" rows="3" />
-        </div>
+                                <div class="col-12">
+                                    <label for="Descripcion" class="form-label">Descripción</label>
+                                    <h:inputTextarea id="Descripcion" value="#{tipoHabitacionBean.tipoHabitacion.descripcion}" styleClass="form-control" rows="3" />
+                                </div>
 
-        <div class="col-md-6">
-            <label for="capacidad" class="form-label">Capacidad</label>
-            <h:inputText id="capacidad" value="#{tipoHabitacionBean.tipoHabitacion.capacidad}" styleClass="form-control" />
-        </div>
+                                <div class="col-md-6">
+                                    <label for="capacidad" class="form-label">Capacidad</label>
+                                    <h:inputText id="capacidad" value="#{tipoHabitacionBean.tipoHabitacion.capacidad}" styleClass="form-control" />
+                                </div>
 
-        <div class="col-md-6">
-            <label for="precio" class="form-label">Precio</label>
-            <h:inputText id="precio" value="#{tipoHabitacionBean.tipoHabitacion.precio}" styleClass="form-control" />
-        </div>
+                                <div class="col-md-6">
+                                    <label for="precio" class="form-label">Precio</label>
+                                    <h:inputText id="precio" value="#{tipoHabitacionBean.tipoHabitacion.precio}" styleClass="form-control" />
+                                </div>
 
-        <div class="col-md-6">
-            <label for="imagen" class="form-label">Imagen</label>
-            <h:inputFile id="imagen" value="#{tipoHabitacionBean.imagen}" styleClass="form-control" />
-        </div>
+                                <div class="col-md-6">
+                                    <label for="imagen" class="form-label">Imagen</label>
+                                    <h:inputFile id="imagen" value="#{tipoHabitacionBean.imagen}" styleClass="form-control" />
+                                </div>
 
-        <div class="col-12 d-flex justify-content-end mt-3">
-            <h:commandButton value="Guardar" action="#{tipoHabitacionBean.agregar}" styleClass="btn btn-primary me-2" />
-            <h:link outcome="/TipoHabitacion.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
-        </div>
-    </div>
-</h:form>
+                                <div class="col-12 d-flex justify-content-end mt-3">
+                                    <h:commandButton value="Guardar" action="#{tipoHabitacionBean.agregar}" styleClass="btn btn-primary me-2" />
+                                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
+                                </div>
+                            </div>
+                        </h:form>
 
                     </div>
                 </div>
             </div>
         </div>
-    
+
     </h:body>
 </html>

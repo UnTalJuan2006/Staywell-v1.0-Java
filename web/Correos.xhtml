@@ -5,7 +5,7 @@
       lang="es"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Dashboard Administrativo</title>
+        <title>Gestión de Correos</title>
 
         <!-- Bootstrap, Tailwind y FontAwesome -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -14,15 +14,20 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
 
-
         <style>
-            body {
-                font-family: 'Poppins', sans-serif;
-                background-color: #f4f6f9;
+            * {
                 margin: 0;
+                padding: 0;
+                box-sizing: border-box;
             }
 
-            /* Sidebar */
+            body {
+                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
+                min-height: 100vh;
+            }
+
+            /* SIDEBAR REDISEÑADA */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -33,27 +38,63 @@
                 color: white;
                 z-index: 1000;
                 overflow-y: auto;
-                transition: all 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.1);
             }
 
             .sidebar-header {
                 padding: 2rem 1.5rem;
-                padding-bottom: 10px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 text-align: center;
             }
 
             .sidebar-header h4 {
-                margin-bottom: 0.5rem;
+                margin: 0;
                 font-weight: 700;
+                font-size: 24px;
+                letter-spacing: -0.5px;
+            }
+
+            .sidebar-header p {
+                margin: 8px 0 0 0;
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.6);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
+                margin-top: 16px;
             }
 
             .sidebar-nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding: 10px 18px;
+                gap: 12px;
+                padding: 12px 16px;
                 color: rgba(255, 255, 255, 0.8);
                 text-decoration: none;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .sidebar-nav .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
             }
 
             .sidebar-nav .nav-link:hover {
@@ -64,417 +105,362 @@
             .sidebar-nav .nav-link.active {
                 background: rgba(255, 255, 255, 0.2);
                 color: white;
-                border-right: 4px solid #ffd700;
+                font-weight: 600;
+                border-left: 3px solid #ffd700;
             }
 
             .sidebar-footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 1.5rem;
+                margin-top: auto;
+                padding: 20px 16px;
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
 
-            /* Main content */
+            .sidebar-footer .btn {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .sidebar-footer .btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .sidebar::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+            }
+
+            /* MAIN CONTENT */
             .main-content {
                 margin-left: 260px;
                 padding: 2rem;
+                min-height: 100vh;
             }
 
             .top-bar {
                 background: white;
                 padding: 1.5rem 2rem;
-                border-bottom: 1px solid #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                margin-bottom: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
             .top-bar h2 {
                 margin: 0;
-                color: #495057;
-                font-weight: 600;
-            }
-
-            .user-info {
+                color: #1a7c8f;
+                font-weight: 700;
+                font-size: 1.8rem;
                 display: flex;
                 align-items: center;
+                gap: 12px;
             }
 
-            /* Métricas rápidas */
-            .stats {
+            /* DISEÑO DE CORREOS MEJORADO */
+            .email-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .email-layout {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 20px;
-                margin: 30px 0;
+                grid-template-columns: 380px 1fr;
+                gap: 2rem;
             }
 
-            .stat-card {
-                background: #fff;
-                padding: 20px;
+            /* PANEL DE DESTINATARIOS */
+            .recipients-panel {
+                background: white;
                 border-radius: 16px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                transition: transform 0.2s;
+                padding: 2rem;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                height: fit-content;
+                position: sticky;
+                top: 20px;
             }
 
-            .stat-card:hover {
-                transform: translateY(-5px);
+            .panel-header {
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid #e8f4f6;
             }
 
-            .stat-icon {
-                font-size: 2em;
-                color: #007bff;
-            }
-
-            .stat-info h3 {
-                margin: 0;
-                font-size: 1.4em;
-                color: #333;
-            }
-
-            .stat-info p {
-                margin: 0;
-                color: #666;
-                font-size: 0.9em;
-            }
-
-            /* Cards con gráficas */
-            .dashboard {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-                gap: 20px;
-            }
-
-            .card {
-                background: #fff;
-                border-radius: 16px;
-                box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-                padding: 20px;
-                transition: transform 0.2s;
-            }
-
-            .card:hover {
-                transform: translateY(-5px);
-            }
-
-            .card h3 {
-                font-size: 1.2em;
-                font-weight: bold;
-                color: #333;
-                margin-bottom: 15px;
+            .panel-title {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #1a7c8f;
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                margin-bottom: 0.5rem;
             }
 
-            .chart {
+            .panel-subtitle {
+                font-size: 0.9rem;
+                color: #666;
+                margin: 0;
+            }
+
+            .recipients-count {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: white;
+                padding: 1rem;
+                border-radius: 12px;
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+
+            .recipients-count .count-number {
+                font-size: 2rem;
+                font-weight: 700;
+                display: block;
+            }
+
+            .recipients-count .count-label {
+                font-size: 0.9rem;
+                opacity: 0.95;
+            }
+
+            .ui-selectmanymenu, 
+            .ui-selectlistbox, 
+            .ui-selectlistbox-listcontainer {
+                height: 400px !important;
+                max-height: 400px !important;
+                border-radius: 12px !important;
+                border: 2px solid #e2e8f0 !important;
+                width: 100% !important;
+            }
+
+            .ui-selectlistbox-list {
+                height: 90% !important;
+                overflow-y: auto !important;
+            }
+
+            .ui-selectlistbox-item {
+                padding: 12px !important;
+                border-radius: 6px !important;
+                transition: all 0.2s !important;
+                margin: 2px 4px !important;
+            }
+
+            .ui-selectlistbox-item:hover {
+                background: #e8f4f6 !important;
+                color: #1a7c8f !important;
+            }
+
+            .ui-state-highlight {
+                background: #1a7c8f !important;
+                color: white !important;
+            }
+
+            .recipients-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 1rem;
+            }
+
+            .recipients-actions .ui-button {
                 width: 100%;
-                height: 300px;
+                border-radius: 8px !important;
+                font-weight: 500 !important;
+                padding: 10px 16px !important;
+                transition: all 0.2s !important;
             }
-            
-                    h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
 
-        /* Panel principal */
-        .contenedor {
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+            /* PANEL DE MENSAJE */
+            .message-panel {
+                background: white;
+                border-radius: 16px;
+                padding: 2rem;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 80%;
-        }
+            .info-alert {
+                background: #e8f4f6;
+                border-left: 4px solid #1a7c8f;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                margin-bottom: 2rem;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
 
-        /* Botones superiores */
-        .plantillas {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+            .info-alert i {
+                color: #1a7c8f;
+                font-size: 1.3rem;
+                margin-top: 2px;
+            }
 
-        .plantillas .ui-button {
-            border-radius: 8px;
-            font-weight: bold;
-            padding: 10px 20px;
-        }
+            .info-alert-content {
+                flex: 1;
+            }
 
-        /* Layout horizontal */
-        .correo-layout {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
+            .info-alert-title {
+                font-weight: 600;
+                color: #1a7c8f;
+                margin-bottom: 4px;
+            }
 
-        /* Columna izquierda: destinatarios */
-        .destinatarios {
-            border-right: 2px solid #ecf0f1;
-            padding-right: 15px;
-        }
+            .info-alert-text {
+                margin: 0;
+                color: #555;
+                font-size: 0.9rem;
+            }
 
-        .destinatarios h3 {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
 
-        /* Columna derecha: asunto + mensaje */
-        .mensaje h3 {
-            margin: 10px 0 5px 0;
-        }
+            .form-label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.5rem;
+                display: block;
+                font-size: 0.95rem;
+            }
 
-        .mensaje input, .mensaje textarea {
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid #bdc3c7;
-            padding: 8px;
-            margin-bottom: 15px;
-        }
+            .form-label i {
+                color: #1a7c8f;
+                margin-right: 6px;
+            }
 
-        /* Botón enviar */
-        .acciones {
-            text-align: center;
-            margin-top: 20px;
-        }
+            .ui-inputfield, 
+            .ui-inputtextarea {
+                width: 100% !important;
+                border-radius: 10px !important;
+                border: 2px solid #e2e8f0 !important;
+                padding: 14px 16px !important;
+                font-size: 0.95rem !important;
+                transition: all 0.3s ease !important;
+                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif !important;
+            }
 
-        .acciones .ui-button {
-            border-radius: 8px;
-            font-weight: bold;
-            padding: 12px 25px;
-        }
-        
-        /* Hacer que ocupe casi toda la pantalla */
-.contenedor-full {
-    width: 100%;
-    margin: 0 auto;
-}
+            .ui-inputfield:focus, 
+            .ui-inputtextarea:focus {
+                border-color: #1a7c8f !important;
+                box-shadow: 0 0 0 4px rgba(26, 124, 143, 0.1) !important;
+                outline: none !important;
+            }
 
-/* Templates rápidos */
-.templates-rapidos {
-    margin-bottom: 25px;
-}
+            .ui-inputtextarea {
+                resize: vertical !important;
+                min-height: 200px !important;
+                line-height: 1.6 !important;
+            }
 
-.templates-rapidos h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    font-weight: 600;
-    color: #34495e;
-    border-left: 4px solid #3498db;
-    padding-left: 10px;
-}
+            .form-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                margin-top: 2rem;
+                padding-top: 2rem;
+                border-top: 2px solid #e8f4f6;
+            }
 
-.plantillas {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
+            .btn-send {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 14px 32px !important;
+                border-radius: 10px !important;
+                font-weight: 600 !important;
+                font-size: 1rem !important;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease !important;
+                box-shadow: 0 4px 12px rgba(26, 124, 143, 0.3) !important;
+            }
 
-/* Botones con estilos diferentes */
-.btn-plantilla {
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    padding: 10px 20px !important;
-    color: #fff !important;
-    transition: transform .2s, box-shadow .2s;
-    border: none !important;
-}
+            .btn-send:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 124, 143, 0.5) !important;
+            }
 
-.btn-plantilla:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
+            .btn-cancel {
+                background: #f8f9fa !important;
+                color: #666 !important;
+                border: 2px solid #e2e8f0 !important;
+                padding: 14px 32px !important;
+                border-radius: 10px !important;
+                font-weight: 600 !important;
+                font-size: 1rem !important;
+                cursor: pointer;
+                transition: all 0.3s ease !important;
+            }
 
-.btn-plantilla.success { background: #2ecc71 !important; }
-.btn-plantilla.info    { background: #3498db !important; }
-.btn-plantilla.warning { background: #e67e22 !important; }
+            .btn-cancel:hover {
+                background: #e2e8f0 !important;
+                border-color: #cbd5e0 !important;
+                transform: translateY(-2px);
+            }
 
-/* El contenedor ocupa todo el ancho disponible */
-.contenedor-full {
-    width: 100%;
-    margin: 0;
-}
+            /* Responsive */
+            @media (max-width: 1024px) {
+                .email-layout {
+                    grid-template-columns: 1fr;
+                }
 
-/* Card más grande */
-.card {
-    width: 100%;
-    padding: 25px;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
+                .recipients-panel {
+                    position: static;
+                }
+            }
 
-/* Sección templates */
-.templates-rapidos {
-    margin-bottom: 25px;
-}
+            @media (max-width: 768px) {
+                .main-content {
+                    margin-left: 0;
+                    padding: 1rem;
+                }
 
-.templates-rapidos h3 {
-    font-size: 18px;
-    margin-bottom: 20px;
-    font-weight: 700;
-    color: #2c3e50;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+                .sidebar {
+                    transform: translateX(-100%);
+                }
 
-.plantillas {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
+                .top-bar {
+                    padding: 1rem;
+                }
 
-/* Botones modernos tipo pill */
-.btn-plantilla {
-    border: none !important;
-    border-radius: 50px !important;
-    padding: 14px 28px !important;
-    font-weight: 600 !important;
-    font-size: 16px !important;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #fff !important;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
+                .top-bar h2 {
+                    font-size: 1.3rem;
+                }
 
-.btn-plantilla i {
-    font-size: 18px;
-}
-
-.btn-plantilla:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
-
-/* Gradientes por color */
-.btn-plantilla.success {
-    background: linear-gradient(135deg, #27ae60, #2ecc71);
-}
-.btn-plantilla.info {
-    background: linear-gradient(135deg, #2980b9, #3498db);
-}
-.btn-plantilla.warning {
-    background: linear-gradient(135deg, #d35400, #e67e22);
-}
-
-/* Layout de formulario */
-.correo-layout {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 25px;
-    margin-top: 20px;
-}
-
-.destinatarios, .mensaje {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
-}
-
-.destinatarios h3, .mensaje h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #34495e;
-}
-/* Forzar altura del selectManyMenu */
-.ui-selectmanymenu, 
-.ui-selectlistbox, 
-.ui-selectlistbox-listcontainer {
-    height: 400px !important;   /* mismo valor que le diste al componente */
-    max-height: 400px !important;
-}
-
-.ui-selectlistbox-list {
-    height: 90% !important;    /* para que la lista crezca dentro */
-    overflow-y: auto !important;
-}
-
-
-
-.card h2 {
-    font-size: 1.6rem;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #007bff;
-    color: #007bff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-
-input, textarea {
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input:focus, textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 6px rgba(0, 123, 255, 0.4);
-    outline: none;
-}
-.btn-enviar {
-    background: linear-gradient(90deg, #007bff, #00c6ff);
-    border: none;
-    color: white;
-    font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.btn-enviar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
-}
-
-.btn-cancelar {
-    background: #f0f0f0;
-    border: none;
-    color: #555;
-    font-weight: bold;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.btn-cancelar:hover {
-    background: #ddd;
-}
-
-.correo-layout h3 {
-    color: #007bff;
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-}
-
-
+                .recipients-panel,
+                .message-panel {
+                    padding: 1.5rem;
+                }
+            }
         </style>
 
     </h:head>
 
     <h:body>
 
-        <!-- Sidebar -->
+        <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h4><i class="fas fa-hotel"></i> StayWell</h4>
@@ -482,117 +468,188 @@ input:focus, textarea:focus {
             </div>
 
             <nav class="sidebar-nav">
-                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
-                    <i class="bi bi-speedometer2 me-2"> </i>  Dashboard
-                </h:link>
-                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
-                    <i class="bi bi-door-open me-2"></i> Habitaciones
-                </h:link>
-                 <h:link outcome="/CatalogoHabitaciones.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
-                <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
-                    <i class="bi bi-calendar-event me-2"></i> Eventos
-                </h:link>
-                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
-                    <i class="bi bi-people me-2"></i> Usuarios
-                </h:link>
-                <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
-                    <i class="bi bi-journal-bookmark me-2"></i> Reservas
-                </h:link>
-                <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
-                    <i class="bi bi-person-badge me-2"></i> Empleados
-                </h:link>
-                <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
-                    <i class="bi bi-building me-2"></i> Espacios
-                </h:link>
-                <h:link outcome="/Correos.xhtml" styleClass="nav-link">
-                    <i class="bi bi-envelope me-2"></i> Correos
-                </h:link>
-                 <h:link outcome="/perfil.xhtml" styleClass="nav-link"><i class="bi bi-person-fill me-2"></i>Perfil</h:link>
-            </nav>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación Principal</div>
+                    <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </h:link>
+                    <h:link outcome="/perfil.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Perfil</span>
+                    </h:link>
+                </div>
 
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión de Habitaciones</div>
+                    <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
+                        <i class="bi bi-door-open"></i>
+                        <span>Habitaciones</span>
+                    </h:link>
+                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>Catálogo Habitaciones</span>
+                    </h:link>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión General</div>
+                    <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Reservas</span>
+                    </h:link>
+                    <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Eventos</span>
+                    </h:link>
+                    <h:link outcome="/Usuarios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </h:link>
+                    <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Empleados</span>
+                    </h:link>
+                    <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
+                        <i class="bi bi-building"></i>
+                        <span>Espacios</span>
+                    </h:link>
+                    <h:link outcome="/Correos.xhtml" styleClass="nav-link active">
+                        <i class="bi bi-envelope"></i>
+                        <span>Correos</span>
+                    </h:link>
+                </div>
+            </nav>
 
             <h:form>
                 <div class="sidebar-footer">
-                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
                     </h:commandLink>
                 </div>
             </h:form>
         </div>
 
         <!-- Main Content -->
-<div class="main-content">
-    <div class="top-bar d-flex justify-content-between align-items-center">
-        <h2><i class="fas fa-tachometer-alt"></i> Gestión de correos </h2>
-        <div class="user-info">
-            <span class="me-3">
-                    Bienvenido, <strong>#{usuarioLogueado.nombre}</strong>
-                </span>
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <p:commandLink onclick="PF('perfilDialog').show();" style="text-decoration:none; color:blue;">
-                            <i class="fas fa-user"></i> Perfil
-                        </p:commandLink>
-                    </li>
-                    <li><h:outputLink value="#"><i class="fas fa-cog"></i> Configuración</h:outputLink></li>
-                    <li><hr class="dropdown-divider" /></li>
-                </ul>
+        <div class="main-content">
+            <div class="top-bar">
+                <h2>
+                    <i class="bi bi-envelope-fill"></i>
+                    Gestión de Correos
+                </h2>
             </div>
-        </div>
-    </div>
 
-    <!-- Contenido principal -->
-    <div class="contenedor-full"  style="margin-top:40px;">
-        <div class="card">
-            <h2>✉️ Envío de Correos Masivos</h2>
+            <!-- Contenedor de Correos -->
+            <div class="email-container">
+                <h:form id="formCorreo">
+                    <div class="email-layout">
+                        
+                        <!-- PANEL IZQUIERDO: DESTINATARIOS -->
+                        <div class="recipients-panel">
+                            <div class="panel-header">
+                                <h3 class="panel-title">
+                                    <i class="bi bi-people-fill"></i>
+                                    Destinatarios
+                                </h3>
+                                <p class="panel-subtitle">Selecciona los usuarios que recibirán el correo</p>
+                            </div>
 
-            <!-- Formulario -->
-            <h:form id="formCorreo">
-                <div class="correo-layout">
-                    <!-- Columna izquierda -->
-                    <div class="destinatarios">
-                        <h3>👥 Destinatarios</h3>
-                        <p:selectManyMenu value="#{correoBean.dest}" showCheckbox="true" style="width:100%;height:400px;"
-                                          widgetVar="dest" required="true" requiredMessage="Debe seleccionar usuarios">
-                            <f:selectItems value="#{correoBean.listaUsr}" var="usr"
-                                           itemLabel="#{usr.nombre}" itemValue="#{usr.email}" />
-                        </p:selectManyMenu>
-  
-                        <div style="margin-top:10px; display:flex; gap:10px;">
-                            <p:commandButton value="Todos" onclick="PF('dest').selectAll();return false;" />
-                            <p:commandButton value="Ninguno" onclick="PF('dest').unselectAll();return false;" />
+                            <div class="recipients-count">
+                                <span class="count-number">#{correoBean.listaUsr.size()}</span>
+                                <span class="count-label">Usuarios disponibles</span>
+                            </div>
+
+                            <p:selectManyMenu value="#{correoBean.dest}" 
+                                              showCheckbox="true" 
+                                              widgetVar="dest" 
+                                              required="true" 
+                                              requiredMessage="Debe seleccionar al menos un destinatario">
+                                <f:selectItems value="#{correoBean.listaUsr}" 
+                                               var="usr"
+                                               itemLabel="#{usr.nombre}" 
+                                               itemValue="#{usr.email}" />
+                            </p:selectManyMenu>
+
+                            <div class="recipients-actions">
+                                <p:commandButton value="Seleccionar todos" 
+                                                 icon="pi pi-check-square"
+                                                 onclick="PF('dest').selectAll();return false;" 
+                                                 styleClass="ui-button-success" />
+                                <p:commandButton value="Limpiar selección" 
+                                                 icon="pi pi-times-circle"
+                                                 onclick="PF('dest').unselectAll();return false;" 
+                                                 styleClass="ui-button-secondary" />
+                            </div>
+                        </div>
+
+                        <!-- PANEL DERECHO: MENSAJE -->
+                        <div class="message-panel">
+                            <div class="panel-header">
+                                <h3 class="panel-title">
+                                    <i class="bi bi-pencil-square"></i>
+                                    Redactar Mensaje
+                                </h3>
+                                <p class="panel-subtitle">Escribe el contenido del correo que será enviado</p>
+                            </div>
+
+                            <div class="info-alert">
+                                <i class="bi bi-lightbulb-fill"></i>
+                                <div class="info-alert-content">
+                                    <div class="info-alert-title">Consejo importante</div>
+                                    <p class="info-alert-text">
+                                        Asegúrate de revisar el mensaje antes de enviarlo. Una vez enviado, no podrá ser modificado ni cancelado.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-tag-fill"></i>
+                                    Asunto del correo
+                                </label>
+                                <p:inputText value="#{correoBean.asunto}" 
+                                             placeholder="Ej: Actualización importante del sistema" 
+                                             required="true"
+                                             requiredMessage="El asunto es obligatorio" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-card-text"></i>
+                                    Mensaje
+                                </label>
+                                <p:inputTextarea value="#{correoBean.contmensaje}" 
+                                                 rows="12"
+                                                 placeholder="Escribe aquí el contenido de tu mensaje...
+
+Puedes incluir:
+• Información importante
+• Instrucciones detalladas
+• Enlaces relevantes
+• Contacto para dudas"
+                                                 required="true" 
+                                                 requiredMessage="El mensaje es obligatorio" />
+                            </div>
+
+                            <div class="form-actions">
+                                <p:commandButton value="Cancelar" 
+                                                 ajax="false" 
+                                                 immediate="true"
+                                                 action="/HomeAdmin"
+                                                 icon="pi pi-times"
+                                                 styleClass="btn-cancel" />
+                                <p:commandButton value="Enviar Correos" 
+                                                 ajax="false"
+                                                 actionListener="#{correoBean.enviarCorreo()}"
+                                                 icon="pi pi-send"
+                                                 styleClass="btn-send" />
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Columna derecha -->
-                    <div class="mensaje">
-                        <h3>🏷️ Asunto</h3>
-                        <p:inputText value="#{correoBean.asunto}" required="true"
-                                     requiredMessage="Debe especificar un asunto" />
-
-                        <h3>💬 Mensaje</h3>
-                        <p:inputTextarea value="#{correoBean.contmensaje}" rows="8"
-                                         required="true" requiredMessage="Debe especificar un mensaje" />
-                    </div>
-                </div>
-
-                <!-- Acciones -->
-                <div class="acciones">
-                    <p:commandButton value="✉️ Enviar" ajax="false"
-                                     actionListener="#{correoBean.enviarCorreo()}"
-                                     styleClass="btn-enviar" />
-                    <p:commandButton value="Cancelar" ajax="false" immediate="true"
-                                     action="/admin" styleClass="btn-cancelar" />
-                </div>
-            </h:form>
+                </h:form>
+            </div>
         </div>
-    </div>
-</div>
-
 
     </h:body>
 </html>

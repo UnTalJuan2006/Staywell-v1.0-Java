@@ -76,70 +76,88 @@ public class EspacioBean implements Serializable {
     }
 
     // ======= Agregar espacio =======
-   public String agregar() {
-    try {
-        espacio.setFechaActualizacion(LocalDateTime.now());
+    public String agregar() throws IOException {
+        try {
+            espacio.setFechaActualizacion(LocalDateTime.now());
 
-        // Guardar imagen en carpeta /img del proyecto (dentro de webapp)
-        if (imagen != null) {
-            // Obtener el contexto del servidor
-            ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
-                    .getExternalContext().getContext();
+            // Guardar imagen en carpeta /img del proyecto (dentro de webapp)
+            if (imagen != null) {
+                // Obtener el contexto del servidor
+                ServletContext sc = (ServletContext) FacesContext.getCurrentInstance()
+                        .getExternalContext().getContext();
 
-            // Ruta física a la carpeta img/
-            String rutaCarpeta = sc.getRealPath("/img/");
+                // Ruta física a la carpeta img/
+                String rutaCarpeta = sc.getRealPath("/img/");
 
-            // Crear la carpeta si no existe
-            File carpeta = new File(rutaCarpeta);
-            if (!carpeta.exists()) {
-                carpeta.mkdirs();
-            }
-
-            // Crear un nombre único para la imagen
-            String nombreArchivo = espacio.getNombre().replaceAll("\\s+", "_") 
-                                   + "_" + System.currentTimeMillis() + ".png";
-
-            // Guardar la imagen físicamente
-            File archivoDestino = new File(carpeta, nombreArchivo);
-            try (InputStream in = imagen.getInputStream();
-                 FileOutputStream out = new FileOutputStream(archivoDestino)) {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, len);
+                // Crear la carpeta si no existe
+                File carpeta = new File(rutaCarpeta);
+                if (!carpeta.exists()) {
+                    carpeta.mkdirs();
                 }
+
+                // Crear un nombre único para la imagen
+                String nombreArchivo = espacio.getNombre().replaceAll("\\s+", "_")
+                        + "_" + System.currentTimeMillis() + ".png";
+
+                // Guardar la imagen físicamente
+                File archivoDestino = new File(carpeta, nombreArchivo);
+                try (InputStream in = imagen.getInputStream(); FileOutputStream out = new FileOutputStream(archivoDestino)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                }
+
+                // Guardar solo el nombre del archivo (no la ruta completa) en la base de datos
+                espacio.setImagen(nombreArchivo);
             }
 
-            // Guardar solo el nombre del archivo (no la ruta completa) en la base de datos
-            espacio.setImagen(nombreArchivo);
+            // Guardar el espacio en la base de datos
+            espacioDAO.agregar(espacio);
+
+            // Refrescar la lista de espacios
+            cargarListaEspacios();
+
+            // Limpiar campos
+            espacio = new Espacio();
+            imagen = null;
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Espacio registrado correctamente."));
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo registrar el espacio: " + e.getMessage()));
+            return null;
         }
 
-        // Guardar el espacio en la base de datos
-        espacioDAO.agregar(espacio);
-
-        // Refrescar la lista de espacios
-        cargarListaEspacios();
-
-        // Limpiar campos
-        espacio = new Espacio();
-        imagen = null;
-
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Espacio registrado correctamente."));
-
-    } catch (IOException | SQLException e) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                        "No se pudo registrar el espacio: " + e.getMessage()));
-        return null;
+        return "Espacios?faces-redirect=true";
     }
 
-    return "Espacios?faces-redirect=true";
-}
+    public String eliminar(Espacio p) {
+        try{
+            EspacioDAO espacioDAO = new EspacioDAO();
+            espacioDAO.eliminar(p);
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Espacio eliminado correctamente", null));
+        }catch(Exception e){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al eliminar Espacio: " + e.getMessage(), null));
+        }
+        
+        return "Espacio?faces-redirect=true";
+    }
 
-
-    // ======= Método opcional para refrescar manualmente la lista =======
     public void refrescarLista() {
         cargarListaEspacios();
     }
+
+    public EnumEstadoEspacio[] getEstados() {
+        return EnumEstadoEspacio.values();
+    }
+
 }

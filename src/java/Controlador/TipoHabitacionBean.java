@@ -111,13 +111,6 @@ public class TipoHabitacionBean implements Serializable {
         this.listaTipoHabitaciones = listaTipoHabitaciones;
     }
 
-//    public List<TipoHabitacion> getListaTipoHabitaciones() {
-//        try {
-//            return tipoHabitacionDAO.listar();
-//        } catch (SQLException e) {
-//            System.out.println("Erro al listar tipos");
-//            return null;
-//        }
     public String agregar() throws IOException {
         try {
             // Verificamos si se subió una imagen
