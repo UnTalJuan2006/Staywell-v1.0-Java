@@ -1,10 +1,8 @@
 package Controlador;
 
-import DAO.EventoDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import Modelo.EnumPago;
-import Modelo.Evento;
 import Modelo.Pago;
 import Modelo.Reserva;
 import java.io.Serializable;
@@ -28,11 +26,8 @@ public class PagoBean implements Serializable {
 
     private Pago pago;
     private transient PagoDAO pagoDAO;
-    private transient EventoDAO eventoDAO;
     private Reserva reserva;
-    private Evento evento;
     private int idReserva;
-    private Integer idEvento;
     private Integer cuotas; // solo se usa cuando es crédito (no se guarda)
     private Integer codigoPagoGenerado;
     private boolean pagoExitoso;
@@ -46,7 +41,6 @@ public class PagoBean implements Serializable {
     public void init() {
         pago = new Pago();
         pagoDAO = new PagoDAO();
-        eventoDAO = new EventoDAO();
         pagoExitoso = false;
         codigoPagoGenerado = null;
         mensajeExito = null;
@@ -57,7 +51,6 @@ public class PagoBean implements Serializable {
 
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String idReservaParam = externalContext.getRequestParameterMap().get("idReserva");
-        String idEventoParam = externalContext.getRequestParameterMap().get("idEvento");
 
         if (idReservaParam != null) {
             try {
@@ -69,26 +62,14 @@ public class PagoBean implements Serializable {
             }
         }
 
-        if (reserva == null && idEventoParam != null) {
-            try {
-                idEvento = Integer.parseInt(idEventoParam);
-                evento = eventoDAO.buscar(idEvento);
-            } catch (Exception e) {
-                System.out.println("Error al cargar el evento: " + e.getMessage());
-            }
-        }
-
         if (reserva != null) {
             pago.setReserva(reserva);
             configurarContextoReserva();
-        } else if (evento != null) {
-            pago.setEvento(evento);
-            configurarContextoEvento();
         } else {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Contexto no disponible",
-                            "No se pudo recuperar la información de la reserva o del evento."));
+                            "No se pudo recuperar la información de la reserva."));
         }
     }
 
@@ -187,7 +168,6 @@ public class PagoBean implements Serializable {
         cuotas = null;
         pago = new Pago();
         pago.setReserva(reserva);
-        pago.setEvento(evento);
         pago.setMonto(BigDecimal.ZERO);
     }
 
@@ -216,12 +196,11 @@ public class PagoBean implements Serializable {
     }
 
     private boolean validarFormulario(FacesContext context) {
-        if ((pago.getReserva() == null || pago.getReserva().getIdReserva() <= 0)
-                && (pago.getEvento() == null || pago.getEvento().getIdEvento() <= 0)) {
+        if (pago.getReserva() == null || pago.getReserva().getIdReserva() <= 0) {
             context.addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Contexto no válido",
-                            "No se encontró la reserva o el evento asociado al pago."));
+                            "No se encontró la reserva asociada al pago."));
             return false;
         }
 
@@ -311,19 +290,6 @@ public class PagoBean implements Serializable {
         }
     }
 
-    private void configurarContextoEvento() {
-        descripcionContexto = "evento";
-        destinoRedireccion = "MisEventos.xhtml";
-        etiquetaBotonDestino = "Ver mis eventos";
-        if (evento != null && evento.getEspacio() != null && pago.getMonto() != null
-                && pago.getMonto().compareTo(BigDecimal.ZERO) == 0) {
-            pago.setMonto(BigDecimal.valueOf(evento.getEspacio().getCostoHora()));
-        }
-        if (pago.getMonto() == null) {
-            pago.setMonto(BigDecimal.ZERO);
-        }
-    }
-
     // Getters y Setters
     public Pago getPago() {
         return pago;
@@ -341,28 +307,12 @@ public class PagoBean implements Serializable {
         this.reserva = reserva;
     }
 
-    public Evento getEvento() {
-        return evento;
-    }
-
-    public void setEvento(Evento evento) {
-        this.evento = evento;
-    }
-
     public int getIdReserva() {
         return idReserva;
     }
 
     public void setIdReserva(int idReserva) {
         this.idReserva = idReserva;
-    }
-
-    public Integer getIdEvento() {
-        return idEvento;
-    }
-
-    public void setIdEvento(Integer idEvento) {
-        this.idEvento = idEvento;
     }
 
     public Integer getCuotas() {
@@ -374,7 +324,7 @@ public class PagoBean implements Serializable {
     }
 
     public boolean isContextoDisponible() {
-        return reserva != null || evento != null;
+        return reserva != null;
     }
 
     public String getDescripcionContexto() {

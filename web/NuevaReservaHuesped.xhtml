@@ -485,6 +485,131 @@
                     flex-direction: column;
                 }
             }
+
+            /* MODAL DE CONFIRMACIÓN */
+            .confirmation-modal .modal-content {
+                border: none;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+                background: linear-gradient(145deg, #f8fbff 0%, #eef6f5 100%);
+            }
+
+            .confirmation-hero {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 18px 22px;
+                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                color: #fff;
+            }
+
+            .confirmation-hero i {
+                font-size: 28px;
+            }
+
+            .receipt-card {
+                background: #fff;
+                margin: 18px;
+                border-radius: 14px;
+                border: 1px solid #e7edf0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+                overflow: hidden;
+            }
+
+            .receipt-header {
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px dashed #e0e7ec;
+            }
+
+            .receipt-number {
+                font-weight: 800;
+                color: #0d7a6f;
+                letter-spacing: 0.5px;
+            }
+
+            .receipt-body {
+                padding: 8px 20px 20px 20px;
+            }
+
+            .detail-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                padding: 10px 0;
+                border-bottom: 1px dashed #e8eef2;
+            }
+
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+
+            .detail-label {
+                font-size: 0.85rem;
+                color: #7a8a99;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+            }
+
+            .detail-value {
+                font-weight: 700;
+                color: #1f2d3d;
+            }
+
+            .payment-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: #e8f5f3;
+                color: #0d7a6f;
+                border-radius: 999px;
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 12px;
+                border-radius: 999px;
+                font-weight: 700;
+                background: linear-gradient(135deg, #e6fbf5 0%, #d4f3e7 100%);
+                color: #0d7a6f;
+            }
+
+            .confirmation-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 20px 20px 20px;
+            }
+
+            .btn-gradient {
+                background: linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%);
+                color: #fff;
+                border: none;
+                padding: 10px 18px;
+                border-radius: 10px;
+                font-weight: 700;
+                box-shadow: 0 10px 20px rgba(13, 122, 111, 0.25);
+            }
+
+            .btn-outline-soft {
+                border: 1px solid #c9d6df;
+                color: #1f2d3d;
+                border-radius: 10px;
+                padding: 10px 18px;
+                background: #fff;
+                font-weight: 700;
+            }
         </style>
     </h:head>
 
@@ -826,6 +951,96 @@
                             </div>
                         </div>
                     </div>
+                    <h:panelGroup rendered="#{reservaHuespedBean.mostrarConfirmacion}">
+                        <div class="modal fade confirmation-modal" id="confirmacionReservaModal" tabindex="-1" aria-labelledby="confirmacionReservaLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="confirmation-hero">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <div>
+                                            <div style="font-weight: 800; font-size: 1.2rem;">¡Reserva confirmada!</div>
+                                            <div style="opacity: 0.9;">Tu comprobante digital está listo.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="receipt-card">
+                                        <div class="receipt-header">
+                                            <div>
+                                                <div class="detail-label" style="letter-spacing: 0.8px;">NÚMERO DE RESERVA</div>
+                                                <div class="receipt-number">
+                                                    <h:outputText value="#{reservaHuespedBean.numeroReservaConfirmada}" />
+                                                </div>
+                                            </div>
+                                            <div class="status-pill">
+                                                <i class="bi bi-badge-check"></i>
+                                                <h:outputText value="#{reservaHuespedBean.estadoReservaConfirmada}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="receipt-body">
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-person"></i>Huésped</div>
+                                                    <div class="detail-value"><h:outputText value="#{reservaHuespedBean.nombreHuespedConfirmado}" /></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-door-open"></i>Habitación</div>
+                                                    <div class="detail-value"><h:outputText value="#{reservaHuespedBean.tipoHabitacionConfirmada}" /></div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-calendar-week"></i>Check-in / Check-out</div>
+                                                    <div class="detail-value"><h:outputText value="#{reservaHuespedBean.rangoFechasConfirmado}" /></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-wallet2"></i>Total</div>
+                                                    <div class="detail-value" style="font-size: 1.2rem; color:#0d7a6f;">
+                                                        <h:outputText value="#{reservaHuespedBean.totalConfirmadoFormateado}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-credit-card-2-front"></i>Método de pago</div>
+                                                    <div class="payment-chip">
+                                                        <i class="bi bi-shield-lock"></i>
+                                                        <h:outputText value="#{reservaHuespedBean.metodoPagoConfirmado}" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-clock-history"></i>Fecha de transacción</div>
+                                                    <div class="detail-value"><h:outputText value="#{reservaHuespedBean.fechaTransaccionFormateada}" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="confirmation-actions">
+                                            <button type="button" class="btn-outline-soft" data-bs-dismiss="modal">
+                                                <i class="bi bi-x-circle"></i> Cerrar
+                                            </button>
+                                            <div style="display:flex; gap:10px;">
+                                                <h:link outcome="MisReservas" styleClass="btn-outline-soft">
+                                                    <i class="bi bi-journal-check"></i> Ver mis reservas
+                                                </h:link>
+                                                <button type="button" class="btn-gradient" data-bs-dismiss="modal">
+                                                    <i class="bi bi-plus-circle"></i> Crear otra reserva
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var modalElement = document.getElementById('confirmacionReservaModal');
+                                if (modalElement) {
+                                    var confirmationModal = new bootstrap.Modal(modalElement);
+                                    confirmationModal.show();
+                                }
+                            });
+                        </script>
+                    </h:panelGroup>
                 </h:form>
             </div>
         </div>

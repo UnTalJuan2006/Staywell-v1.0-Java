@@ -13,6 +13,7 @@ import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -71,6 +72,11 @@ public class ReservaHuespedBean implements Serializable {
     private String fechaVencimientoTarjeta;
     private String codigoSeguridadTarjeta;
     private LocalDate fechaVencimientoTarjetaParseada;
+    private boolean mostrarConfirmacion;
+    private Reserva reservaConfirmada;
+    private LocalDateTime fechaTransaccion;
+    private BigDecimal totalConfirmado = BigDecimal.ZERO;
+    private EnumPago metodoPagoConfirmado;
 
     @PostConstruct
     public void init() {
@@ -117,6 +123,7 @@ public class ReservaHuespedBean implements Serializable {
         fechaVencimientoTarjeta = null;
         codigoSeguridadTarjeta = null;
         fechaVencimientoTarjetaParseada = null;
+        mostrarConfirmacion = false;
     }
 
     public void onTipoHabitacionChange() {
@@ -360,6 +367,9 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
+        BigDecimal totalAlConfirmar = totalReserva;
+        EnumPago metodoPagoAlConfirmar = tipoPagoSeleccionado;
+
         Reserva reserva = new Reserva();
         reserva.setHabitacion(habitacion);
         reserva.setUsuario(usuarioLogueado);
@@ -386,8 +396,14 @@ public class ReservaHuespedBean implements Serializable {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
                         "Reserva y pago confirmados correctamente."));
 
+                fechaTransaccion = LocalDateTime.now();
+                reservaConfirmada = reserva;
+                totalConfirmado = totalAlConfirmar;
+                metodoPagoConfirmado = metodoPagoAlConfirmar;
+
                 prepararNuevaReserva();
-                return "MisReservas.xhtml?faces-redirect=true";
+                mostrarConfirmacion = true;
+                return null;
             } else {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                         "No se pudo obtener el ID de la reserva creada."));
@@ -527,6 +543,77 @@ public class ReservaHuespedBean implements Serializable {
         }
 
         return "Datos de tarjeta registrados.";
+    }
+
+
+    public boolean isMostrarConfirmacion() {
+        return mostrarConfirmacion && reservaConfirmada != null;
+    }
+
+    public Reserva getReservaConfirmada() {
+        return reservaConfirmada;
+    }
+
+    public String getNumeroReservaConfirmada() {
+        return reservaConfirmada != null ? String.valueOf(reservaConfirmada.getIdReserva()) : "";
+    }
+
+    public String getNombreHuespedConfirmado() {
+        return reservaConfirmada != null ? reservaConfirmada.getNombreCliente() : "";
+    }
+
+    public String getTipoHabitacionConfirmada() {
+        if (reservaConfirmada == null || reservaConfirmada.getHabitacion() == null) {
+            return "";
+        }
+
+        Habitacion habitacion = reservaConfirmada.getHabitacion();
+        if (habitacion.getTipoHabitacion() != null) {
+            return habitacion.getTipoHabitacion().getNombre();
+        }
+
+        return habitacion.getNombreTipoHabitacion() != null ? habitacion.getNombreTipoHabitacion() : "Habitación";
+    }
+
+    public String getRangoFechasConfirmado() {
+        if (reservaConfirmada == null) {
+            return "";
+        }
+
+        LocalDateTime checkinConfirmado = reservaConfirmada.getCheckin();
+        LocalDateTime checkoutConfirmado = reservaConfirmada.getCheckout();
+
+        if (checkinConfirmado == null || checkoutConfirmado == null) {
+            return "";
+        }
+
+        return RESUMEN_FORMATTER.format(checkinConfirmado) + " - " + RESUMEN_FORMATTER.format(checkoutConfirmado);
+    }
+
+    public String getTotalConfirmadoFormateado() {
+        if (totalConfirmado == null) {
+            return "";
+        }
+        return "$" + totalConfirmado.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    public String getMetodoPagoConfirmado() {
+        return metodoPagoConfirmado != null ? metodoPagoConfirmado.name() : "";
+    }
+
+    public String getEstadoReservaConfirmada() {
+        if (reservaConfirmada == null || reservaConfirmada.getEstado() == null) {
+            return "";
+        }
+        String estado = reservaConfirmada.getEstado().name().toLowerCase();
+        return estado.substring(0, 1).toUpperCase() + estado.substring(1);
+    }
+
+    public String getFechaTransaccionFormateada() {
+        if (fechaTransaccion == null) {
+            return "";
+        }
+        return fechaTransaccion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
 
