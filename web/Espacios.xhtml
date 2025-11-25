@@ -227,6 +227,7 @@
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
                 overflow: hidden;
                 transition: transform 0.3s ease;
+                position: relative;
             }
 
             .card:hover {
@@ -262,6 +263,26 @@
                 color: #1a7c8f;
                 font-weight: bold;
                 font-size: 1rem;
+            }
+
+            .estado-badge {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                font-weight: 700;
+                font-size: 0.85rem;
+                color: #ffffff;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            }
+
+            .estado-badge.disponible {
+                background: #16a34a;
+            }
+
+            .estado-badge.mantenimiento {
+                background: #f59e0b;
             }
 
             .card-footer {
@@ -663,11 +684,11 @@
                     <div class="card-grid">
                         <ui:repeat value="#{espacioBean.listaEspacios}" var="p">
                             <div class="card">
+                                <div class="estado-badge #{p.estado eq 'Disponible' ? 'disponible' : 'mantenimiento'}">
+                                    #{p.estado}
+                                </div>
                                 <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}"/>
                                 <div class="card-body">
-                                    <div class="estado-badge #{p.estado eq 'Disponible' ? 'disponible' : 'mantenimiento'}">
-                                        #{p.estado}
-                                    </div>
                                     <div class="card-title">#{p.nombre}</div>
                                     <div class="card-text">#{p.descripcion}</div>
                                     <div class="card-price">$#{p.costoHora} / hora</div>
