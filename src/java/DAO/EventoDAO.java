@@ -11,9 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.faces.context.FacesContext;
 
 public class EventoDAO {
@@ -435,7 +438,41 @@ public class EventoDAO {
 
         return evento;
     }
-    
+
+    public Map<String, Integer> obtenerEventosPorMes(LocalDate fechaInicio) throws SQLException {
+        Map<String, Integer> eventosPorMes = new LinkedHashMap<>();
+        String sql = "SELECT DATE_FORMAT(fechaEvento, '%Y-%m') AS mes, COUNT(*) AS total "
+                + "FROM evento "
+                + "WHERE fechaEvento >= ? "
+                + "GROUP BY YEAR(fechaEvento), MONTH(fechaEvento) "
+                + "ORDER BY YEAR(fechaEvento), MONTH(fechaEvento)";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(fechaInicio));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    eventosPorMes.put(rs.getString("mes"), rs.getInt("total"));
+                }
+            }
+        }
+
+        return eventosPorMes;
+    }
+
+    public int contarEventosActivos() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM evento WHERE UPPER(TRIM(estado)) = 'ACTIVA'";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+
+        return 0;
+    }
+
     public void eliminar(int idEvento) throws SQLException {
         String sql = "DELETE from evento WHERE idEvento = ?";
         

@@ -254,7 +254,7 @@ public class EmpleadoDAO {
     
     public int contarPorCargo(EnumCargoEmpleado cargo) throws SQLException {
     String sql = "SELECT COUNT(*) AS total FROM empleado WHERE cargo = ?";
-    
+
     try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
         ps.setString(1, cargo.name());
         ResultSet rs = ps.executeQuery();
@@ -268,5 +268,19 @@ public class EmpleadoDAO {
 
     return 0;
 }
+
+    public int contarEmpleados() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM empleado";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+
+        return 0;
+    }
 
 }

@@ -217,4 +217,17 @@ public class HabitacionDAO {
         }
         return total;
     }
+
+    public int contarDisponibles() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM habitacion WHERE UPPER(TRIM(estado)) = 'DISPONIBLE'";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+
+        return 0;
+    }
 }

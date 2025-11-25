@@ -11,9 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.faces.context.FacesContext;
 
 public class ReservaDAO {
@@ -296,6 +299,22 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
         }
     }
 
+    public int contarReservasActivas() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM reserva WHERE estado = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, EnumEstadoReserva.ACTIVA.name());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+
+        return 0;
+    }
+
     private Reserva mapearReserva(ResultSet rs) throws SQLException {
         Reserva reserva = new Reserva();
 
@@ -348,6 +367,48 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
 
         return reserva;
     }
-    
-    
+
+    public Map<String, Integer> obtenerReservasPorMes(LocalDate fechaInicio) throws SQLException {
+        Map<String, Integer> reservasPorMes = new LinkedHashMap<>();
+        String sql = "SELECT DATE_FORMAT(fechaReserva, '%Y-%m') AS mes, COUNT(*) AS total "
+                + "FROM reserva "
+                + "WHERE fechaReserva >= ? "
+                + "GROUP BY YEAR(fechaReserva), MONTH(fechaReserva) "
+                + "ORDER BY YEAR(fechaReserva), MONTH(fechaReserva)";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(fechaInicio.atStartOfDay()));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    reservasPorMes.put(rs.getString("mes"), rs.getInt("total"));
+                }
+            }
+        }
+
+        return reservasPorMes;
+    }
+
+    public Map<String, Integer> obtenerOcupacionPorMes(LocalDate fechaInicio) throws SQLException {
+        Map<String, Integer> ocupacionMensual = new LinkedHashMap<>();
+        String sql = "SELECT DATE_FORMAT(checkin, '%Y-%m') AS mes, COUNT(*) AS total "
+                + "FROM reserva "
+                + "WHERE checkin IS NOT NULL AND checkin >= ? "
+                + "GROUP BY YEAR(checkin), MONTH(checkin) "
+                + "ORDER BY YEAR(checkin), MONTH(checkin)";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(fechaInicio.atStartOfDay()));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ocupacionMensual.put(rs.getString("mes"), rs.getInt("total"));
+                }
+            }
+        }
+
+        return ocupacionMensual;
+    }
+
+
 }

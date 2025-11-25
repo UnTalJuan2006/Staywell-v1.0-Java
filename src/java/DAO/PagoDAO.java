@@ -2,6 +2,7 @@ package DAO;
 
 import Controlador.Conexion;
 import Modelo.Pago;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -96,5 +97,20 @@ public class PagoDAO {
                 return idGenerado > 0 ? idGenerado : filas;
             }
         }
+    }
+
+    public BigDecimal obtenerTotalPagos() throws SQLException {
+        String sql = "SELECT COALESCE(SUM(monto), 0) AS totalPagos FROM pago";
+
+        try (Connection conexion = Conexion.conectar();
+                PreparedStatement ps = conexion.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getBigDecimal("totalPagos");
+            }
+        }
+
+        return BigDecimal.ZERO;
     }
 }
