@@ -282,6 +282,11 @@
                 height: 300px;
             }
 
+            .chart-container {
+                position: relative;
+                height: 320px;
+            }
+
             /* Scrollbar personalizada */
             .sidebar::-webkit-scrollbar {
                 width: 8px;
@@ -406,36 +411,54 @@
                     <div class="stat-card">
                         <i class="fas fa-users stat-icon"></i>
                         <div class="stat-info">
-                            <h3>0</h3>
+                            <h3>#{dashboardBean.totalUsuarios}</h3>
                             <p>Usuarios Registrados</p>
                         </div>
-                    </div>            
+                    </div>
                     <div class="stat-card">
                         <i class="fas fa-calendar-check stat-icon"></i>
                         <div class="stat-info">
-                            <h3>0</h3>
+                            <h3>#{dashboardBean.eventosActivos}</h3>
                             <p>Eventos Activos</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-bed stat-icon"></i>
                         <div class="stat-info">
-                            <h3>0</h3>
+                            <h3>#{dashboardBean.habitacionesDisponibles}</h3>
                             <p>Habitaciones Disponibles</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Gráficas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                     <div class="card p-4">
-                        <h3><i class="fas fa-chart-bar"></i> Ocupación General</h3>
-                        <canvas id="chartLeft"></canvas>
+                        <h3><i class="fas fa-chart-line"></i> Reservas de Habitaciones por mes</h3>
+                        <div class="chart-container">
+                            <canvas id="habitacionesMesChart"></canvas>
+                        </div>
                     </div>
 
                     <div class="card p-4">
-                        <h3><i class="fas fa-chart-pie"></i> Distribución de Reservas</h3>
-                        <canvas id="chartRight"></canvas>
+                        <h3><i class="fas fa-calendar-alt"></i> Reservas de Eventos por mes</h3>
+                        <div class="chart-container">
+                            <canvas id="eventosMesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card p-4">
+                        <h3><i class="fas fa-balance-scale"></i> Habitaciones vs Eventos</h3>
+                        <div class="chart-container">
+                            <canvas id="comparativaChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card p-4">
+                        <h3><i class="fas fa-chart-area"></i> Tendencia de Ocupación</h3>
+                        <div class="chart-container">
+                            <canvas id="ocupacionChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -474,29 +497,104 @@
         </p:dialog>
     </h:body>
     <script>
-        new Chart(document.getElementById('chartLeft'), {
+        const etiquetas = #{dashboardBean.etiquetasJson};
+        const reservasHabitaciones = #{dashboardBean.reservasHabitacionesJson};
+        const reservasEventos = #{dashboardBean.reservasEventosJson};
+        const ocupacionMensual = #{dashboardBean.ocupacionMensualJson};
+
+        const opcionesBasicas = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.formattedValue}` } }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('habitacionesMesChart'), {
             type: 'bar',
             data: {
-                labels: ['A', 'B', 'C', 'D', 'E'],
+                labels: etiquetas,
                 datasets: [{
-                    label: 'Ejemplo',
-                    data: [12, 19, 3, 5, 2],
-                    backgroundColor: '#007bff'
+                    label: 'Reservas de habitaciones',
+                    data: reservasHabitaciones,
+                    backgroundColor: 'rgba(26, 124, 143, 0.45)',
+                    borderColor: '#1a7c8f',
+                    borderWidth: 2,
+                    borderRadius: 6
                 }]
             },
-            options: {responsive: false, maintainAspectRatio: false}
+            options: opcionesBasicas
         });
 
-        new Chart(document.getElementById('chartRight'), {
-            type: 'pie',
+        new Chart(document.getElementById('eventosMesChart'), {
+            type: 'bar',
             data: {
-                labels: ['Rojo', 'Azul', 'Amarillo'],
+                labels: etiquetas,
                 datasets: [{
-                    data: [10, 20, 30],
-                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56']
+                    label: 'Reservas de eventos',
+                    data: reservasEventos,
+                    backgroundColor: 'rgba(255, 193, 7, 0.45)',
+                    borderColor: '#f0ad4e',
+                    borderWidth: 2,
+                    borderRadius: 6
                 }]
             },
-            options: {responsive: false, maintainAspectRatio: false}
+            options: opcionesBasicas
+        });
+
+        new Chart(document.getElementById('comparativaChart'), {
+            type: 'line',
+            data: {
+                labels: etiquetas,
+                datasets: [
+                    {
+                        label: 'Habitaciones',
+                        data: reservasHabitaciones,
+                        backgroundColor: 'rgba(26, 124, 143, 0.2)',
+                        borderColor: '#1a7c8f',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Eventos',
+                        data: reservasEventos,
+                        backgroundColor: 'rgba(240, 173, 78, 0.25)',
+                        borderColor: '#f0ad4e',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: opcionesBasicas
+        });
+
+        new Chart(document.getElementById('ocupacionChart'), {
+            type: 'line',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    label: 'Ocupación registrada',
+                    data: ocupacionMensual,
+                    backgroundColor: 'rgba(76, 175, 80, 0.25)',
+                    borderColor: '#4caf50',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#4caf50',
+                    tension: 0.35,
+                    fill: true
+                }]
+            },
+            options: opcionesBasicas
         });
     </script>
 </html>
