@@ -615,7 +615,7 @@
 
                             <div class="evento-footer">
 
-                                <p:commandButton value="Ver" process="@this" update=":detalleEventoPanel"
+                                <p:commandButton value="Ver" process="@this" update=":eventosForm:detalleEventoPanel"
                                                  oncomplete="PF('eventoDialog').show()"
                                                  actionListener="#{eventoPortalBean.seleccionarEvento(evento)}"
                                                  styleClass="btn btn-detalle">

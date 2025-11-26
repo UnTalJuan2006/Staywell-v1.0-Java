@@ -587,7 +587,7 @@
 
                                 <div class="flex justify-start gap-3 mt-5 border-t pt-3">
 
-                                    <p:commandButton value="Ver Detalles" process="@this" update=":detalleReservaPanel"
+                                    <p:commandButton value="Ver Detalles" process="@this" update=":reservasForm:detalleReservaPanel"
                                                      oncomplete="PF('reservaDialog').show()"
                                                      actionListener="#{reservaBean.seleccionarReserva(reserva)}"
                                                      styleClass="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
