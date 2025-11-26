@@ -1,5 +1,6 @@
 package Controlador;
 
+import Controlador.CorreoBean;
 import DAO.HabitacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
@@ -362,7 +363,6 @@ public class ReservaHuespedBean implements Serializable {
 //                    "No se pudo verificar la disponibilidad de la habitación."));
 //            return null;
 //        }
-
         if (!validarDatosPago(context)) {
             return null;
         }
@@ -384,6 +384,12 @@ public class ReservaHuespedBean implements Serializable {
 
         try {
             int idGenerado = reservaDAO.reservaHuespd(reserva);
+
+            CorreoBean.enviarCorreoReserva(
+                    usuarioLogueado.getEmail(),
+                    usuarioLogueado.getNombre(),
+                    String.valueOf(idGenerado)
+            );
 
             if (idGenerado > 0) {
                 reserva.setIdReserva(idGenerado);
@@ -416,7 +422,6 @@ public class ReservaHuespedBean implements Serializable {
 
         return null;
     }
-
 
     private boolean validarDatosPago(FacesContext context) {
         if (totalReserva == null || totalReserva.compareTo(BigDecimal.ZERO) <= 0) {
@@ -545,7 +550,6 @@ public class ReservaHuespedBean implements Serializable {
         return "Datos de tarjeta registrados.";
     }
 
-
     public boolean isMostrarConfirmacion() {
         return mostrarConfirmacion && reservaConfirmada != null;
     }
@@ -615,7 +619,6 @@ public class ReservaHuespedBean implements Serializable {
         }
         return fechaTransaccion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
-
 
     public String getResumenTipoHabitacion() {
         TipoHabitacion tipo = obtenerTipoSeleccionado();
