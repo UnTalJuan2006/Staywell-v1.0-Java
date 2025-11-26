@@ -8,6 +8,26 @@
         }
     }
 
+    function inicioDeDia(fecha) {
+        return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    }
+
+    function finDeDia(fecha) {
+        return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59, 59, 999);
+    }
+
+    function parseIsoLocalDateTime(valor) {
+        if (!valor || typeof valor !== 'string') return null;
+
+        const [fechaStr, horaStr = '00:00'] = valor.split('T');
+        const [anio, mes = '1', dia = '1'] = fechaStr.split('-').map(Number);
+        const [hora = 0, minuto = 0, segundo = 0] = horaStr.split(':').map(Number);
+
+        if (!anio || !mes || !dia) return null;
+
+        return new Date(anio, (mes - 1), dia, hora, minuto, segundo);
+    }
+
     function parseDisabledRanges(rawValue) {
         if (!rawValue) return [];
 
@@ -19,17 +39,19 @@
                 .map(range => {
                     if (!range || !range.from || !range.to) return null;
 
-                    const fromDate = new Date(range.from);
-                    const toDate = new Date(range.to);
+                    const fromDate = parseIsoLocalDateTime(range.from);
+                    const toDate = parseIsoLocalDateTime(range.to);
 
                     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) return null;
 
-                    if (fromDate.getTime() >= toDate.getTime()) return { from: fromDate };
+                    const fromStart = inicioDeDia(fromDate);
+                    const toEnd = finDeDia(toDate);
 
-                    const adjustedTo = new Date(toDate.getTime() - 60000);
-                    if (adjustedTo.getTime() < fromDate.getTime()) return { from: fromDate };
+                    if (fromStart.getTime() >= toEnd.getTime()) {
+                        return { from: fromStart, to: fromStart };
+                    }
 
-                    return { from: fromDate, to: adjustedTo };
+                    return { from: fromStart, to: toEnd };
                 })
                 .filter(Boolean);
         } catch (error) {
@@ -62,8 +84,24 @@
 
         const disabledRanges = readDisabledRanges(form);
         const today = new Date();
+        const todayStart = inicioDeDia(today);
+        const isDateDisabled = (date) => {
+            const dayStart = inicioDeDia(date);
+            const dayEnd = finDeDia(date);
 
-        const blockPastDates = { from: null, to: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1) };
+            if (dayStart < todayStart) {
+                return true;
+            }
+
+            return disabledRanges.some(range => {
+                if (!range.from) return false;
+
+                const fromTime = range.from.getTime();
+                const toTime = (range.to || range.from).getTime();
+
+                return dayEnd >= fromTime && dayStart <= toTime;
+            });
+        };
 
         let checkoutPicker = window.flatpickr(checkoutInput, {
             enableTime: true,
@@ -72,7 +110,8 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [...disabledRanges, blockPastDates]
+            disable: [isDateDisabled],
+            minDate: todayStart
         });
 
         window.flatpickr(checkinInput, {
@@ -82,7 +121,8 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [...disabledRanges, blockPastDates],
+            disable: [isDateDisabled],
+            minDate: todayStart,
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
                     checkoutPicker.set('minDate', selectedDates[0]);
