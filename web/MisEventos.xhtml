@@ -746,9 +746,10 @@
                                 <button type="button" class="btn btn-detalle btn-ver-evento">
                                     <i class="bi bi-eye"></i> Ver Detalles
                                 </button>
-                                <h:commandLink actionListener="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
-                                               styleClass="btn btn-descargar"
-                                               onclick="this.form.target='_blank'">
+                                <h:commandLink action="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
+                                               immediate="true"
+                                               target="_blank"
+                                               styleClass="btn btn-descargar">
                                     <span class="bi bi-download"></span>
                                     <span>Descargar</span>
                                 </h:commandLink>
