@@ -553,53 +553,98 @@
                 <div class="shadow-lg rounded-2xl p-8" >
                     <h2 class="text-2xl font-bold mb-4">Mis Reservas</h2>
 
+                    <h:form id="reservasForm">
+                        <ui:repeat value="#{reservaBean.listarPorUsuario}" var="reserva">
+                            <div class="bg-gray-50 shadow-md rounded-xl p-6 mb-6 hover:shadow-lg transition-all">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div>
+                                        <span class="font-bold text-gray-800 text-lg">RES-#{reserva.idReserva}</span>
+                                        <span class="ml-3 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                            #{reserva.estado}
+                                        </span>
+                                    </div>
 
-                    <ui:repeat value="#{reservaBean.listarPorUsuario}" var="reserva">
-                        <div class="bg-gray-50 shadow-md rounded-xl p-6 mb-6 hover:shadow-lg transition-all">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>
-                                    <span class="font-bold text-gray-800 text-lg">RES-#{reserva.idReserva}</span>
-                                    <span class="ml-3 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                        #{reserva.estado}
-                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-sm border-t pt-3">
+                                    <div>
+                                        <p class="font-semibold text-gray-800">Check-in</p>
+                                        <p>#{reservaBean.formatearFecha(reserva.checkin)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">Check-out</p>
+                                        <p>#{reservaBean.formatearFecha(reserva.checkout)}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">Habitación</p>
+                                        <p>#{reserva.habitacion.tipoHabitacion.nombre}</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800">Huéspedes</p>
+                                        <p>#{reserva.habitacion.tipoHabitacion.capacidad} personas</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-start gap-3 mt-5 border-t pt-3">
+
+                                    <p:commandButton value="Ver Detalles" process="@this" update=":reservasForm:detalleReservaPanel"
+                                                     oncomplete="PF('reservaDialog').show()"
+                                                     actionListener="#{reservaBean.seleccionarReserva(reserva)}"
+                                                     styleClass="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
+                                        <i class="bi bi-eye"></i>
+                                    </p:commandButton>
+
+                                    <p:commandButton value="Descargar" actionListener="#{reservaBean.descargarComprobanteReserva(reserva)}"
+                                                     ajax="false" styleClass="flex items-center gap-2 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
+                                        <i class="bi bi-download"></i>
+                                    </p:commandButton>
                                 </div>
 
                             </div>
+                        </ui:repeat>
 
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-gray-700 text-sm border-t pt-3">
-                                <div>
-                                    <p class="font-semibold text-gray-800">Check-in</p>
-                                    <p>#{reserva.checkin}</p>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-gray-800">Check-out</p>
-                                    <p>#{reserva.checkout}</p>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-gray-800">Habitación</p>
-                                    <p>#{reserva.habitacion.tipoHabitacion.nombre}</p>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-gray-800">Huéspedes</p>
-                                    <p>#{reserva.habitacion.tipoHabitacion.capacidad} personas</p>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-start gap-3 mt-5 border-t pt-3">
-
-                                <button class="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
-                                    <i class="bi bi-eye"></i> Ver Detalles
-                                </button>
-
-
-
-                                <button class="flex items-center gap-2 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
-                                    <i class="bi bi-download"></i> Descargar
-                                </button>
-                            </div>
-
-                        </div>
-                    </ui:repeat>
+                        <p:dialog id="reservaDialog" widgetVar="reservaDialog" modal="true" header="Detalle de reserva" closable="true" styleClass="p-fluid" width="600">
+                            <h:panelGroup id="detalleReservaPanel">
+                                <ui:fragment rendered="#{not empty reservaBean.reservaSeleccionada}">
+                                    <div class="info-grid" style="grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px;">
+                                        <div class="info-field">
+                                            <label class="info-label">Código</label>
+                                            <div class="info-value">RES-#{reservaBean.reservaSeleccionada.idReserva}</div>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="info-label">Estado</label>
+                                            <div class="info-value">#{reservaBean.reservaSeleccionada.estado}</div>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="info-label">Check-in</label>
+                                            <div class="info-value">#{reservaBean.formatearFecha(reservaBean.reservaSeleccionada.checkin)}</div>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="info-label">Check-out</label>
+                                            <div class="info-value">#{reservaBean.formatearFecha(reservaBean.reservaSeleccionada.checkout)}</div>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="info-label">Habitación</label>
+                                            <div class="info-value">#{reservaBean.reservaSeleccionada.habitacion != null ? reservaBean.reservaSeleccionada.habitacion.tipoHabitacion.nombre : 'Sin asignar'}</div>
+                                        </div>
+                                        <div class="info-field">
+                                            <label class="info-label">Huésped</label>
+                                            <div class="info-value">#{reservaBean.reservaSeleccionada.nombreCliente}</div>
+                                        </div>
+                                        <div class="info-field info-field-full">
+                                            <label class="info-label">Observaciones</label>
+                                            <div class="info-value">#{empty reservaBean.reservaSeleccionada.observaciones ? 'Sin observaciones' : reservaBean.reservaSeleccionada.observaciones}</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <p:commandButton value="Descargar comprobante" ajax="false"
+                                                         actionListener="#{reservaBean.descargarComprobanteReserva(reservaBean.reservaSeleccionada)}"
+                                                         styleClass="btn btn-crear-reserva" />
+                                    </div>
+                                </ui:fragment>
+                            </h:panelGroup>
+                        </p:dialog>
+                    </h:form>
                 </div>
             </div>
 
