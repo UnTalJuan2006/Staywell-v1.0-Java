@@ -733,58 +733,91 @@
                 </h:form>
             </div>
         </div>
-        <script>
-            (function () {
-                function parseOcupaciones() {
-                    const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-                    const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-                    if (!rawJson) { return []; }
+ <script type="text/javascript">
+(function () {
 
-                    try {
-                        const datos = JSON.parse(rawJson);
-                        if (!Array.isArray(datos)) { return []; }
-                        return datos.map(rango => {
-                            if (!rango || !rango.from) { return null; }
-                            const from = new Date(rango.from);
-                            const to = new Date(rango.to || rango.from);
-                            if (isNaN(from.getTime()) || isNaN(to.getTime())) { return null; }
-                            return { from, to };
-                        }).filter(Boolean);
-                    } catch (e) {
-                        console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-                        return [];
-                    }
-                }
+    function parseOcupaciones() {
+        const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+        const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+        if (!rawJson) { return []; }
 
-                function initHoraPicker(componenteId) {
-                    const input = document.getElementById("formEvento:" + componenteId);
-                    if (!input || !window.flatpickr) { return; }
-                    if (input._flatpickr) { input._flatpickr.destroy(); }
-                    window.flatpickr(input, { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
-                }
+        try {
+            const datos = JSON.parse(rawJson);
+            if (!Array.isArray(datos)) { return []; }
 
-                function initFechaPicker(disabledRanges) {
-                    const input = document.getElementById("formEvento:fechaEvento");
-                    if (!input || !window.flatpickr) { return; }
-                    if (input._flatpickr) { input._flatpickr.destroy(); }
-                    window.flatpickr(input, { dateFormat: "Y-m-d", altInput: true, altFormat: "d/m/Y", minDate: "today", allowInput: false, disable: disabledRanges });
-                }
+            return datos.map(function (rango) {
+                if (!rango || !rango.from) { return null; }
 
-                function inicializarPickersEvento() {
-                    if (!window.flatpickr) { return; }
-                    const rangosDeshabilitados = parseOcupaciones();
-                    initFechaPicker(rangosDeshabilitados);
-                    initHoraPicker("horaInicio");
-                    initHoraPicker("horaFin");
-                }
+                const from = new Date(rango.from);
+                const to = new Date(rango.to || rango.from);
 
-                document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
-                if (window.jsf && jsf.ajax) {
-                    jsf.ajax.addOnEvent(function(data) {
-                        if (data.status === 'success') { inicializarPickersEvento(); }
-                    });
-                }
-            })();
-        </script>
+                if (isNaN(from.getTime()) || isNaN(to.getTime())) { return null; }
+
+                return { from: from, to: to };
+            }).filter(Boolean);
+
+        } catch (e) {
+            console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+            return [];
+        }
+    }
+
+    function initHoraPicker(componenteId) {
+        const input = document.getElementById("formEvento:" + componenteId);
+        if (!input || !window.flatpickr) { return; }
+
+        if (input._flatpickr) {
+            input._flatpickr.destroy();
+        }
+
+        window.flatpickr(input, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+    }
+
+    function initFechaPicker(disabledRanges) {
+        const input = document.getElementById("formEvento:fechaEvento");
+        if (!input || !window.flatpickr) { return; }
+
+        if (input._flatpickr) {
+            input._flatpickr.destroy();
+        }
+
+        window.flatpickr(input, {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            minDate: "today",
+            allowInput: false,
+            disable: disabledRanges
+        });
+    }
+
+    function inicializarPickersEvento() {
+        if (!window.flatpickr) { return; }
+
+        const rangosDeshabilitados = parseOcupaciones();
+        initFechaPicker(rangosDeshabilitados);
+        initHoraPicker("horaInicio");
+        initHoraPicker("horaFin");
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+
+    if (window.jsf &amp;&amp; jsf.ajax) {
+        jsf.ajax.addOnEvent(function (data) {
+            if (data.status === 'success') {
+                inicializarPickersEvento();
+            }
+        });
+    }
+
+})();
+</script>
+
     </h:body>
 </html>
