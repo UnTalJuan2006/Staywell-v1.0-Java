@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -64,6 +65,13 @@ public class EventoHuespedBean implements Serializable {
     private String fechaVencimientoTarjeta;
     private String codigoSeguridadTarjeta;
     private java.time.LocalDate fechaVencimientoTarjetaParseada;
+    private boolean mostrarConfirmacion;
+    private Evento eventoConfirmado;
+    private LocalDateTime fechaTransaccion;
+    private BigDecimal totalConfirmado = BigDecimal.ZERO;
+    private EnumPago metodoPagoConfirmado;
+
+    private static final DateTimeFormatter RESUMEN_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     @PostConstruct
     public void init() {
@@ -112,6 +120,7 @@ public class EventoHuespedBean implements Serializable {
         fechaVencimientoTarjeta = null;
         codigoSeguridadTarjeta = null;
         fechaVencimientoTarjetaParseada = null;
+        mostrarConfirmacion = false;
     }
 
     private void aplicarEspacioPreseleccionado() {
@@ -374,8 +383,16 @@ public class EventoHuespedBean implements Serializable {
             context.getExternalContext().getFlash().setKeepMessages(true);
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
                     "Evento y pago registrados correctamente."));
+
+            evento.setIdEvento(idGenerado);
+            fechaTransaccion = LocalDateTime.now();
+            eventoConfirmado = evento;
+            totalConfirmado = totalEvento;
+            metodoPagoConfirmado = tipoPagoSeleccionado;
+
             prepararNuevoEvento();
-            return "MisEventos.xhtml?faces-redirect=true";
+            mostrarConfirmacion = true;
+            return null;
 
         } catch (SQLException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
@@ -663,5 +680,73 @@ public class EventoHuespedBean implements Serializable {
 
     public Usuario getUsuarioLogueado() {
         return usuarioLogueado;
+    }
+
+    public boolean isMostrarConfirmacion() {
+        return mostrarConfirmacion && eventoConfirmado != null;
+    }
+
+    public Evento getEventoConfirmado() {
+        return eventoConfirmado;
+    }
+
+    public String getNumeroEventoConfirmado() {
+        return eventoConfirmado != null ? String.valueOf(eventoConfirmado.getIdEvento()) : "";
+    }
+
+    public String getNombreEventoConfirmado() {
+        return eventoConfirmado != null ? eventoConfirmado.getNombreEvento() : "";
+    }
+
+    public String getNombreHuespedConfirmado() {
+        return eventoConfirmado != null ? eventoConfirmado.getNombreCliente() : "";
+    }
+
+    public String getEspacioConfirmado() {
+        if (eventoConfirmado == null || eventoConfirmado.getEspacio() == null) {
+            return "";
+        }
+        return eventoConfirmado.getEspacio().getNombre();
+    }
+
+    public String getFechaEventoConfirmada() {
+        if (eventoConfirmado == null || eventoConfirmado.getFechaEvento() == null) {
+            return "";
+        }
+
+        return new SimpleDateFormat("dd/MM/yyyy").format(eventoConfirmado.getFechaEvento());
+    }
+
+    public String getHorarioEventoConfirmado() {
+        if (eventoConfirmado == null || eventoConfirmado.getHoraInicio() == null || eventoConfirmado.getHoraFin() == null) {
+            return "";
+        }
+        return eventoConfirmado.getHoraInicio() + " - " + eventoConfirmado.getHoraFin();
+    }
+
+    public String getTotalConfirmadoFormateado() {
+        if (totalConfirmado == null) {
+            return "";
+        }
+        return "$" + totalConfirmado.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    public String getMetodoPagoConfirmado() {
+        return metodoPagoConfirmado != null ? metodoPagoConfirmado.name() : "";
+    }
+
+    public String getEstadoEventoConfirmado() {
+        if (eventoConfirmado == null || eventoConfirmado.getEstado() == null) {
+            return "";
+        }
+        String estado = eventoConfirmado.getEstado().name().toLowerCase();
+        return estado.substring(0, 1).toUpperCase() + estado.substring(1);
+    }
+
+    public String getFechaTransaccionFormateada() {
+        if (fechaTransaccion == null) {
+            return "";
+        }
+        return fechaTransaccion.format(RESUMEN_FORMATTER);
     }
 }

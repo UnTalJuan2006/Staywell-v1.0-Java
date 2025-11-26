@@ -597,139 +597,171 @@
                         </div>
                     </div>
 
-                    <div class="modal fade confirmation-modal" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+                    <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
-                                <div class="confirmation-hero">
-                                    <i class="bi bi-calendar-event"></i>
-                                    <div>
-                                        <div style="font-weight: 800; font-size: 1.2rem;">Confirmar evento y pago</div>
-                                        <div style="opacity: 0.9;">Revisa los detalles y completa el método de pago.</div>
-                                    </div>
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="modalPagoLabel">Confirmar método de pago</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                 </div>
-
-                                <div class="receipt-card">
-                                    <div class="receipt-header">
-                                        <div>
-                                            <div class="detail-label" style="letter-spacing: 0.8px;">EVENTO</div>
-                                            <div class="receipt-number">
-                                                <h:outputText value="#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}" />
-                                            </div>
-                                        </div>
-                                        <div class="status-pill">
-                                            <i class="bi bi-badge-check"></i>
-                                            Confirmación
-                                        </div>
-                                    </div>
-
-                                    <div class="receipt-body">
-                                        <div class="detail-row">
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-person"></i>Huésped</div>
-                                                <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreCliente}" /></div>
-                                            </div>
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-geo-alt"></i>Espacio</div>
-                                                <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreEspacioSeleccionado}" /></div>
-                                            </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="tipoPago" styleClass="form-label" />
+                                            <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
+                                                <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                            </h:selectOneMenu>
                                         </div>
 
-                                        <div class="detail-row">
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-calendar-week"></i>Fecha</div>
-                                                <div class="detail-value">
-                                                    <h:outputText value="#{eventoHuespedBean.fechaEvento}">
-                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                                    </h:outputText>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-clock-history"></i>Horario</div>
-                                                <div class="detail-value">
-                                                    <h:outputText value="#{eventoHuespedBean.horaInicio}" />
-                                                    <h:outputText value=" - #{eventoHuespedBean.horaFin}" />
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label" />
+                                            <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
+                                                <f:passThroughAttribute name="maxlength" value="19" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
+                                            </h:inputText>
                                         </div>
 
-                                        <div class="detail-row">
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-credit-card-2-front"></i>Total</div>
-                                                <div class="detail-value" style="font-size: 1.2rem; color:#156b7d;">
-                                                    <h:outputText value="#{eventoHuespedBean.totalEvento}">
-                                                        <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                                                    </h:outputText>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div class="detail-label"><i class="bi bi-shield-lock"></i>Método</div>
-                                                <div class="payment-chip">
-                                                    <i class="bi bi-credit-card"></i>
-                                                    <h:outputText value="#{eventoHuespedBean.tipoPagoSeleccionado}" />
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="titularTarjeta" styleClass="form-label" />
+                                            <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
                                         </div>
 
-                                        <div class="detail-row">
-                                            <div class="form-group" style="margin-bottom: 0;">
-                                                <h:outputLabel for="tipoPago" value="Tipo de tarjeta" styleClass="form-label" />
-                                                <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
-                                                    <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
-                                                    <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
-                                                </h:selectOneMenu>
-                                            </div>
-                                            <div class="form-group" style="margin-bottom: 0;">
-                                                <h:outputLabel for="numeroTarjeta" value="Número de tarjeta" styleClass="form-label" />
-                                                <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
-                                                    <f:passThroughAttribute name="maxlength" value="19" />
-                                                    <f:passThroughAttribute name="inputmode" value="numeric" />
-                                                    <f:passThroughAttribute name="pattern" value="\d*" />
-                                                    <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
-                                                </h:inputText>
-                                            </div>
+        
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label" />
+                                            <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                                <f:passThroughAttribute name="type" value="month" />
+                                            </h:inputText>
                                         </div>
 
-                                        <div class="detail-row">
-                                            <div class="form-group" style="margin-bottom: 0;">
-                                                <h:outputLabel for="titularTarjeta" value="Titular" styleClass="form-label" />
-                                                <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
-                                            </div>
-                                            <div class="form-group" style="margin-bottom: 0;">
-                                                <h:outputLabel for="fechaVencimiento" value="Vencimiento" styleClass="form-label" />
-                                                <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
-                                                    <f:passThroughAttribute name="type" value="month" />
-                                                </h:inputText>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label" />
+                                            <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
+                                                <f:passThroughAttribute name="maxlength" value="4" />
+                                                <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                <f:passThroughAttribute name="pattern" value="\d*" />
+                                                <f:passThroughAttribute name="placeholder" value="CVV" />
+                                            </h:inputText>
                                         </div>
 
-                                        <div class="detail-row">
-                                            <div class="form-group" style="margin-bottom: 0;">
-                                                <h:outputLabel for="codigoSeguridad" value="CVV" styleClass="form-label" />
-                                                <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
-                                                    <f:passThroughAttribute name="maxlength" value="4" />
-                                                    <f:passThroughAttribute name="inputmode" value="numeric" />
-                                                    <f:passThroughAttribute name="pattern" value="\d*" />
-                                                    <f:passThroughAttribute name="placeholder" value="CVV" />
-                                                </h:inputText>
-                                            </div>
-                                            <div class="form-group" style="margin-bottom: 0; display:flex; align-items:center;">
-                                                <div class="payment-note" style="margin:0;">
-                                                    Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
-                                                </div>
+                                        <div class="col-md-6">
+                                            <div class="payment-note" style="margin:0;">
+                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="confirmation-actions">
-                                    <button type="button" class="btn-outline-soft" data-bs-dismiss="modal">
-                                        <i class="bi bi-x-circle"></i> Cancelar
-                                    </button>
-                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-gradient" />
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-confirm-modal" />
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <h:panelGroup rendered="#{eventoHuespedBean.mostrarConfirmacion}">
+                        <div class="modal fade confirmation-modal" id="confirmacionEventoModal" tabindex="-1" aria-labelledby="confirmacionEventoLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="confirmation-hero">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <div>
+                                            <div style="font-weight: 800; font-size: 1.2rem;">¡Evento confirmado!</div>
+                                            <div style="opacity: 0.9;">Tu comprobante digital está listo.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="receipt-card">
+                                        <div class="receipt-header">
+                                            <div>
+                                                <div class="detail-label" style="letter-spacing: 0.8px;">NÚMERO DE EVENTO</div>
+                                                <div class="receipt-number">
+                                                    <h:outputText value="#{eventoHuespedBean.numeroEventoConfirmado}" />
+                                                </div>
+                                            </div>
+                                            <div class="status-pill">
+                                                <i class="bi bi-badge-check"></i>
+                                                <h:outputText value="#{eventoHuespedBean.estadoEventoConfirmado}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="receipt-body">
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-person"></i>Huésped</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreHuespedConfirmado}" /></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-geo-alt"></i>Espacio</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.espacioConfirmado}" /></div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-calendar-week"></i>Fecha del evento</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.fechaEventoConfirmada}" /></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-clock-history"></i>Horario</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.horarioEventoConfirmado}" /></div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-wallet2"></i>Total</div>
+                                                    <div class="detail-value" style="font-size: 1.2rem; color:#156b7d;">
+                                                        <h:outputText value="#{eventoHuespedBean.totalConfirmadoFormateado}" />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-credit-card-2-front"></i>Método de pago</div>
+                                                    <div class="payment-chip">
+                                                        <i class="bi bi-shield-lock"></i>
+                                                        <h:outputText value="#{eventoHuespedBean.metodoPagoConfirmado}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="detail-row">
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-clock"></i>Fecha de transacción</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.fechaTransaccionFormateada}" /></div>
+                                                </div>
+                                                <div>
+                                                    <div class="detail-label"><i class="bi bi-megaphone"></i>Evento</div>
+                                                    <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreEventoConfirmado}" /></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="confirmation-actions">
+                                            <button type="button" class="btn-outline-soft" data-bs-dismiss="modal">
+                                                <i class="bi bi-x-circle"></i> Cerrar
+                                            </button>
+                                            <div style="display:flex; gap:10px;">
+                                                <h:link outcome="MisEventos" styleClass="btn-outline-soft">
+                                                    <i class="bi bi-journal-check"></i> Ver mis eventos
+                                                </h:link>
+                                                <button type="button" class="btn-gradient" data-bs-dismiss="modal">
+                                                    <i class="bi bi-plus-circle"></i> Crear otro evento
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var modalElement = document.getElementById('confirmacionEventoModal');
+                                if (modalElement) {
+                                    var confirmationModal = new bootstrap.Modal(modalElement);
+                                    confirmationModal.show();
+                                }
+                            });
+                        </script>
+                    </h:panelGroup>
                 </h:form>
             </div>
         </div>
