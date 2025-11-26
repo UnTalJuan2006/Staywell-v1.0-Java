@@ -744,7 +744,7 @@
 
                             <div class="evento-footer">
                                 <button type="button" class="btn btn-detalle btn-ver-evento">
-                                    <i class="bi bi-eye"></i> Ver
+                                    <i class="bi bi-eye"></i> Ver Detalles
                                 </button>
                                 <h:commandLink actionListener="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
                                                styleClass="btn btn-descargar"
@@ -761,7 +761,8 @@
     </div>
 
     <div class="detalle-evento-modal" id="eventoModal">
-        <div class="detalle-evento-backdrop" data-close-evento></div>
+       <div class="detalle-backdrop" data-close-modal="true"></div>
+
         <div class="detalle-evento-panel">
             <div class="detalle-evento-header">
                 <div class="detalle-evento-title">
@@ -815,68 +816,80 @@
         </div>
     </div>
 
-    <script>
-        (function() {
-            const modal = document.getElementById('eventoModal');
-            const closeElements = modal.querySelectorAll('[data-close-evento], #cerrarEventoModal');
-            const downloadTrigger = document.getElementById('descargarEventoModal');
-            const body = document.body;
-            let activeCard = null;
+<script type="text/javascript">
+//<![CDATA[
+(function() {
+    var modal = document.getElementById('eventoModal');
+    var closeElements = modal.querySelectorAll('[data-close-evento], #cerrarEventoModal');
+    var downloadTrigger = document.getElementById('descargarEventoModal');
+    var body = document.body;
+    var activeCard = null;
 
-            function fillModal(card) {
-                const nombre = card.querySelector('.evento-nombre')?.textContent.trim() || card.querySelector('.evento-titulo').textContent.trim();
-                const estado = card.querySelector('.evento-estado').textContent.trim();
-                const fecha = card.querySelector('.evento-fecha').textContent.trim();
-                const horario = card.querySelector('.evento-horario').textContent.trim();
-                const espacio = card.querySelector('.evento-espacio-detalle').textContent.trim();
-                const cliente = card.querySelector('.evento-cliente').textContent.trim();
+    function fillModal(card) {
+        var nombreNode = card.querySelector('.evento-nombre');
 
-                document.getElementById('eventoTituloDetalle').textContent = nombre;
-                document.querySelector('#eventoEstadoDetalle .status-text').textContent = estado;
-                document.getElementById('eventoFechaDetalle').textContent = fecha;
-                document.getElementById('eventoHorarioDetalle').textContent = horario;
-                document.getElementById('eventoEspacioDetalle').textContent = espacio;
-                document.getElementById('eventoClienteDetalle').textContent = cliente;
+        var nombre = nombreNode
+            ? nombreNode.textContent.trim()
+            : card.querySelector('.evento-titulo').textContent.trim();
+
+        var estado = card.querySelector('.evento-estado').textContent.trim();
+        var fecha = card.querySelector('.evento-fecha').textContent.trim();
+        var horario = card.querySelector('.evento-horario').textContent.trim();
+        var espacio = card.querySelector('.evento-espacio-detalle').textContent.trim();
+        var cliente = card.querySelector('.evento-cliente').textContent.trim();
+
+        document.getElementById('eventoTituloDetalle').textContent = nombre;
+        document.querySelector('#eventoEstadoDetalle .status-text').textContent = estado;
+        document.getElementById('eventoFechaDetalle').textContent = fecha;
+        document.getElementById('eventoHorarioDetalle').textContent = horario;
+        document.getElementById('eventoEspacioDetalle').textContent = espacio;
+        document.getElementById('eventoClienteDetalle').textContent = cliente;
+    }
+
+    function openModal(card) {
+        activeCard = card;
+        fillModal(card);
+        modal.classList.add('is-visible');
+        body.classList.add('no-scroll');
+    }
+
+    function closeModal() {
+        modal.classList.remove('is-visible');
+        body.classList.remove('no-scroll');
+        activeCard = null;
+    }
+
+    document.querySelectorAll('.btn-ver-evento').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var card = button.closest('.evento-card');
+            if (card) {
+                openModal(card);
             }
+        });
+    });
 
-            function openModal(card) {
-                activeCard = card;
-                fillModal(card);
-                modal.classList.add('is-visible');
-                body.classList.add('no-scroll');
+    closeElements.forEach(function(el) {
+        el.addEventListener('click', closeModal);
+    });
+
+    if (downloadTrigger) {
+        downloadTrigger.addEventListener('click', function() {
+            if (!activeCard) return;
+            var downloadLink = activeCard.querySelector('.btn-descargar');
+            if (downloadLink) {
+                downloadLink.click();
             }
+        });
+    }
 
-            function closeModal() {
-                modal.classList.remove('is-visible');
-                body.classList.remove('no-scroll');
-                activeCard = null;
-            }
+    document.addEventListener('keydown', function(evt) {
+        if (evt.key === 'Escape' && modal.classList.contains('is-visible')) {
+            closeModal();
+        }
+    });
+})();
+ //]]>
+</script>
 
-            document.querySelectorAll('.btn-ver-evento').forEach(button => {
-                button.addEventListener('click', () => {
-                    const card = button.closest('.evento-card');
-                    if (card) {
-                        openModal(card);
-                    }
-                });
-            });
-
-            closeElements.forEach(el => el.addEventListener('click', closeModal));
-
-            downloadTrigger.addEventListener('click', () => {
-                if (!activeCard) return;
-                const downloadLink = activeCard.querySelector('.btn-descargar');
-                if (downloadLink) {
-                    downloadLink.click();
-                }
-            });
-
-            document.addEventListener('keydown', (evt) => {
-                if (evt.key === 'Escape' && modal.classList.contains('is-visible')) {
-                    closeModal();
-                }
-            });
-        })();
-    </script>
 </h:body>
 </html>

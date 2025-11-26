@@ -757,7 +757,7 @@
             </div>
 
             <div class="detalle-modal" id="reservaModal">
-                <div class="detalle-backdrop" data-close-modal></div>
+                <div class="detalle-backdrop" data-close-modal="true"></div>
                 <div class="detalle-dialog">
                     <div class="detalle-header">
                         <div class="detalle-title">
@@ -817,59 +817,64 @@
                 </div>
             </div>
 
-            <script>
-                (function() {
-                    const modal = document.getElementById('reservaModal');
-                    const closeElements = modal.querySelectorAll('[data-close-modal], #cerrarModal');
-                    const body = document.body;
+           <script type="text/javascript">
+//<![CDATA[
+(function() {
+    const modal = document.getElementById('reservaModal');
+    const closeElements = modal.querySelectorAll('[data-close-modal], #cerrarModal');
+    const body = document.body;
 
-                    function fillModal(card) {
-                        const codigo = card.querySelector('.reserva-id').textContent.trim();
-                        const estado = card.querySelector('.reserva-estado').textContent.trim();
-                        const checkin = card.querySelector('.reserva-checkin').textContent.trim();
-                        const checkout = card.querySelector('.reserva-checkout').textContent.trim();
-                        const habitacion = card.querySelector('.reserva-habitacion').textContent.trim();
-                        const huesped = card.querySelector('.reserva-huesped').textContent.trim();
-                        const observaciones = card.querySelector('.reserva-observacion').textContent.trim();
+    function fillModal(card) {
+        const codigo = card.querySelector('.reserva-id').textContent.trim();
+        const estado = card.querySelector('.reserva-estado').textContent.trim();
+        const checkin = card.querySelector('.reserva-checkin').textContent.trim();
+        const checkout = card.querySelector('.reserva-checkout').textContent.trim();
+        const habitacion = card.querySelector('.reserva-habitacion').textContent.trim();
+        const huesped = card.querySelector('.reserva-huesped').textContent.trim();
+        const observaciones = card.querySelector('.reserva-observacion').textContent.trim();
 
-                        document.getElementById('detalleCodigo').textContent = `Reserva RES-${codigo}`;
-                        document.querySelector('#detalleEstado .status-text').textContent = estado;
-                        document.getElementById('detalleCheckin').textContent = checkin;
-                        document.getElementById('detalleCheckout').textContent = checkout;
-                        document.getElementById('detalleHabitacion').textContent = habitacion;
-                        document.getElementById('detalleHuesped').textContent = huesped;
-                        document.getElementById('detalleObservaciones').textContent = observaciones;
-                    }
+        document.getElementById('detalleCodigo').textContent = 'Reserva RES-' + codigo;
+        document.querySelector('#detalleEstado .status-text').textContent = estado;
+        document.getElementById('detalleCheckin').textContent = checkin;
+        document.getElementById('detalleCheckout').textContent = checkout;
+        document.getElementById('detalleHabitacion').textContent = habitacion;
+        document.getElementById('detalleHuesped').textContent = huesped;
+        document.getElementById('detalleObservaciones').textContent = observaciones;
+    }
 
-                    function openModal(card) {
-                        fillModal(card);
-                        modal.classList.add('is-visible');
-                        body.classList.add('no-scroll');
-                    }
+    function openModal(card) {
+        fillModal(card);
+        modal.classList.add('is-visible');
+        body.classList.add('no-scroll');
+    }
 
-                    function closeModal() {
-                        modal.classList.remove('is-visible');
-                        body.classList.remove('no-scroll');
-                    }
+    function closeModal() {
+        modal.classList.remove('is-visible');
+        body.classList.remove('no-scroll');
+    }
 
-                    document.querySelectorAll('.btn-ver-reserva').forEach(button => {
-                        button.addEventListener('click', () => {
-                            const card = button.closest('.reserva-card');
-                            if (card) {
-                                openModal(card);
-                            }
-                        });
-                    });
+    document.querySelectorAll('.btn-ver-reserva').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const card = button.closest('.reserva-card');
+            if (card) {
+                openModal(card);
+            }
+        });
+    });
 
-                    closeElements.forEach(el => el.addEventListener('click', closeModal));
+    closeElements.forEach(function(el) {
+        el.addEventListener('click', closeModal);
+    });
 
-                    document.addEventListener('keydown', (evt) => {
-                        if (evt.key === 'Escape' && modal.classList.contains('is-visible')) {
-                            closeModal();
-                        }
-                    });
-                })();
-            </script>
+    document.addEventListener('keydown', function(evt) {
+        if (evt.key === 'Escape' && modal.classList.contains('is-visible')) {
+            closeModal();
+        }
+    });
+})();
+ //]]>
+</script>
+
         </div>
     </h:body>
 </html>
