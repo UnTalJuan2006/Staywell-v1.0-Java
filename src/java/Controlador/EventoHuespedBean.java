@@ -2,12 +2,12 @@ package Controlador;
 
 import DAO.EspacioDAO;
 import DAO.EventoDAO;
-import DAO.PagoDAO;
+import DAO.PagoEventoDAO;
 import Modelo.Espacio;
 import Modelo.Evento;
 import Modelo.EnumPago;
 import Modelo.EnumEstadoEvento;
-import Modelo.Pago;
+import Modelo.PagoEvento;
 import Modelo.Usuario;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ public class EventoHuespedBean implements Serializable {
 
     private final EspacioDAO espacioDAO = new EspacioDAO();
     private final EventoDAO eventoDAO = new EventoDAO();
-    private final PagoDAO pagoDAO = new PagoDAO();
+    private final PagoEventoDAO pagoEventoDAO = new PagoEventoDAO();
 
     private List<Espacio> espacios = new ArrayList<>();
     private String fechasOcupadasJson = "[]";
@@ -266,6 +266,8 @@ public class EventoHuespedBean implements Serializable {
     public String confirmarEvento() {
         FacesContext context = FacesContext.getCurrentInstance();
 
+        recalcularTotal();
+
         if (usuarioLogueado == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                     "Debe iniciar sesión para crear un evento."));
@@ -284,6 +286,12 @@ public class EventoHuespedBean implements Serializable {
             return null;
         }
 
+        if (esFechaPasada(fechaEvento)) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fecha inválida",
+                    "La fecha del evento no puede ser anterior a hoy."));
+            return null;
+        }
+
         // Validar horas
         if (horaInicio == null || horaFin == null) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
@@ -294,6 +302,10 @@ public class EventoHuespedBean implements Serializable {
         if (!horaFin.isAfter(horaInicio)) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
                     "La hora de fin debe ser posterior a la hora de inicio."));
+            return null;
+        }
+
+        if (!validarDisponibilidadEvento(context)) {
             return null;
         }
 
@@ -359,18 +371,18 @@ public class EventoHuespedBean implements Serializable {
     }
 
     private boolean registrarPagoParaEvento(FacesContext context, Evento evento) {
-        Pago pago = new Pago();
-        pago.setEvento(evento);
-        pago.setMonto(totalEvento != null ? totalEvento : BigDecimal.ZERO);
-        pago.setTipoTarjeta(tipoPagoSeleccionado);
-        pago.setNumeroTarjeta(numeroTarjeta);
-        pago.setTitular(titularTarjeta);
-        pago.setFechaVencimiento(fechaVencimientoTarjetaParseada);
-        pago.setCodigoSeguridad(codigoSeguridadTarjeta);
-        pago.setFechaCreacion(LocalDateTime.now());
+        PagoEvento pagoEvento = new PagoEvento();
+        pagoEvento.setEvento(evento);
+        pagoEvento.setMonto(totalEvento != null ? totalEvento : BigDecimal.ZERO);
+        pagoEvento.setTipoTarjeta(tipoPagoSeleccionado);
+        pagoEvento.setNumeroTarjeta(numeroTarjeta);
+        pagoEvento.setTitular(titularTarjeta);
+        pagoEvento.setFechaVencimiento(fechaVencimientoTarjetaParseada);
+        pagoEvento.setCodigoSeguridad(codigoSeguridadTarjeta);
+        pagoEvento.setFechaCreacion(LocalDateTime.now());
 
         try {
-            int idPago = pagoDAO.agregarPago(pago);
+            int idPago = pagoEventoDAO.agregarPagoEvento(pagoEvento);
             if (idPago <= 0) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pago no registrado",
                         "No se pudo guardar el pago asociado al evento."));
@@ -380,7 +392,7 @@ public class EventoHuespedBean implements Serializable {
         } catch (SQLException ex) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al registrar el pago",
                     "No se pudo almacenar el pago del evento: " + ex.getMessage()));
-            System.err.println("Error agregarPago() evento: " + ex.getMessage());
+            System.err.println("Error registrarPagoParaEvento(): " + ex.getMessage());
             return false;
         }
     }
@@ -452,6 +464,30 @@ public class EventoHuespedBean implements Serializable {
         }
 
         return true;
+    }
+
+    private boolean validarDisponibilidadEvento(FacesContext context) {
+        try {
+            boolean disponible = eventoDAO.espacioDisponible(espacioSeleccionado, fechaEvento, null);
+            if (!disponible) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Fechas no disponibles",
+                        "El espacio ya está reservado en el rango seleccionado."));
+                return false;
+            }
+        } catch (SQLException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo verificar la disponibilidad del espacio."));
+            System.err.println("Error validarDisponibilidadEvento(): " + ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private boolean esFechaPasada(Date fecha) {
+        return fecha.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate()
+                .isBefore(java.time.LocalDate.now());
     }
 
     // -------------------------
