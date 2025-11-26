@@ -85,23 +85,16 @@
         const disabledRanges = readDisabledRanges(form);
         const today = new Date();
         const todayStart = inicioDeDia(today);
-        const isDateDisabled = (date) => {
-            const dayStart = inicioDeDia(date);
-            const dayEnd = finDeDia(date);
 
-            if (dayStart < todayStart) {
-                return true;
-            }
-
-            return disabledRanges.some(range => {
-                if (!range.from) return false;
-
-                const fromTime = range.from.getTime();
-                const toTime = (range.to || range.from).getTime();
-
-                return dayEnd >= fromTime && dayStart <= toTime;
-            });
-        };
+        const disableRules = [
+            // Regla para bloquear cualquier fecha pasada
+            (date) => inicioDeDia(date) < todayStart,
+            // Reglas de rangos ocupados (inclusivos en check-in y check-out)
+            ...disabledRanges.map(range => ({
+                from: range.from,
+                to: range.to || range.from
+            }))
+        ];
 
         let checkoutPicker = window.flatpickr(checkoutInput, {
             enableTime: true,
@@ -110,7 +103,7 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [isDateDisabled],
+            disable: disableRules,
             minDate: todayStart
         });
 
@@ -121,7 +114,7 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [isDateDisabled],
+            disable: disableRules,
             minDate: todayStart,
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
