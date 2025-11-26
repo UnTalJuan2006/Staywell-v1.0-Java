@@ -85,6 +85,23 @@
         const disabledRanges = readDisabledRanges(form);
         const todayStart = inicioDeDia(new Date());
 
+        function normalizeManualInput(pickerInstance, minDate) {
+            const altOrBaseValue = (pickerInstance.altInput && pickerInstance.altInput.value) || pickerInstance.input.value;
+            const parsedDate = pickerInstance.selectedDates[0] || pickerInstance.parseDate(
+                altOrBaseValue,
+                pickerInstance.config.altInput && pickerInstance.config.allowInput ? pickerInstance.config.altFormat : pickerInstance.config.dateFormat
+            );
+
+            if (!parsedDate) {
+                pickerInstance.clear();
+                return null;
+            }
+
+            const normalized = inicioDeDia(parsedDate) < inicioDeDia(minDate) ? minDate : parsedDate;
+            pickerInstance.setDate(normalized, false);
+            return normalized;
+        }
+
         const disableRules = [
             // Regla para bloquear cualquier fecha pasada
             (date) => inicioDeDia(date) < todayStart,
@@ -116,10 +133,17 @@
                         instance.setDate(normalizedCheckout, false);
                     }
                 }
+            },
+            onClose() {
+                const minCheckout = checkoutPicker.config.minDate || todayStart;
+                const normalized = normalizeManualInput(checkoutPicker, minCheckout);
+                if (normalized && checkinPicker && checkinPicker.selectedDates.length && normalized < checkinPicker.selectedDates[0]) {
+                    checkoutPicker.setDate(checkinPicker.selectedDates[0], false);
+                }
             }
         });
 
-        window.flatpickr(checkinInput, {
+        const checkinPicker = window.flatpickr(checkinInput, {
             enableTime: true,
             dateFormat: DATE_FORMAT,
             altInput: true,
@@ -153,6 +177,17 @@
                     }
                 } else {
                     checkoutPicker.set('minDate', todayStart);
+                }
+            },
+            onClose() {
+                const normalizedCheckin = normalizeManualInput(checkinPicker, todayStart);
+                if (!checkoutPicker) return;
+
+                const minDate = normalizedCheckin || todayStart;
+                checkoutPicker.set('minDate', minDate);
+
+                if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < minDate) {
+                    checkoutPicker.clear();
                 }
             }
         });
