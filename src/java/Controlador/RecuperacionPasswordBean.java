@@ -19,6 +19,8 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class RecuperacionPasswordBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String email;
     private String codigoVerificacion;
     private String nuevaPassword;
@@ -72,7 +74,8 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
-            Usuario usuario = usuarioDAO.buscarPorEmail(email.trim());
+            email = email.trim();
+            Usuario usuario = usuarioDAO.buscarPorEmail(email);
             if (usuario == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El correo no está registrado"));
@@ -97,8 +100,13 @@ public class RecuperacionPasswordBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Código enviado", "Revisa tu bandeja de correo"));
         } catch (SQLException e) {
+            codigoEnviado = false;
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo generar el código: " + e.getMessage()));
+        } catch (Exception e) {
+            codigoEnviado = false;
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ocurrió un error al enviar el código"));
         }
     }
 
@@ -129,7 +137,8 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
-            Usuario usuario = usuarioDAO.buscarPorEmail(email.trim());
+            email = email.trim();
+            Usuario usuario = usuarioDAO.buscarPorEmail(email);
             if (usuario == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se encontró el usuario"));
