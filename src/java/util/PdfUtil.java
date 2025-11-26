@@ -12,6 +12,7 @@ import com.lowagie.text.FontFactory;
 import java.io.IOException;
 import java.util.List;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,9 +24,11 @@ public class PdfUtil {
             throws IOException, DocumentException {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
         HttpServletResponse response =
-                (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                (HttpServletResponse) externalContext.getResponse();
 
+        externalContext.responseReset();
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition",
                 "attachment; filename=" + nombreArchivo + ".pdf");
@@ -72,9 +75,11 @@ public class PdfUtil {
             throws IOException, DocumentException {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
         HttpServletResponse response =
-                (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                (HttpServletResponse) externalContext.getResponse();
 
+        externalContext.responseReset();
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition",
                 "attachment; filename=" + nombreArchivo + ".pdf");

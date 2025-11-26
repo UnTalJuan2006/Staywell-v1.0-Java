@@ -745,8 +745,8 @@
 
                                     <h:commandLink action="#{reservaBean.descargarComprobanteReserva(reserva)}"
                                                    immediate="true"
-                                                   styleClass="flex items-center gap-2 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-md text-sm shadow-sm transition"
-                                                   onclick="this.form.target='_blank'">
+                                                   target="_blank"
+                                                   styleClass="flex items-center gap-2 border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 font-medium px-4 py-2 rounded-md text-sm shadow-sm transition">
                                         <span class="bi bi-download"></span>
                                         <span>Descargar</span>
                                     </h:commandLink>
