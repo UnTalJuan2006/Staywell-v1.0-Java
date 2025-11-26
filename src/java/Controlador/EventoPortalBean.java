@@ -5,15 +5,19 @@ import Modelo.EnumEstadoEvento;
 import Modelo.Evento;
 import Modelo.Usuario;
 import java.io.Serializable;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import com.lowagie.text.DocumentException;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import util.PdfUtil;
 
 @ManagedBean
 @ViewScoped
@@ -26,6 +30,7 @@ public class EventoPortalBean implements Serializable {
     private List<Evento> eventosDisponibles = new ArrayList<>();
     private List<Evento> eventosDelUsuario = new ArrayList<>();
     private Evento eventoDetalle;
+    private Evento eventoSeleccionado;
 
     private Usuario usuarioLogueado;
 
@@ -128,6 +133,48 @@ public class EventoPortalBean implements Serializable {
                 && usuarioLogueado != null
                 && eventoDetalle.getUsuario() != null
                 && usuarioLogueado.getIdUsuario() == eventoDetalle.getUsuario().getIdUsuario();
+    }
+
+    public void seleccionarEvento(Evento evento) {
+        this.eventoSeleccionado = evento;
+    }
+
+    public Evento getEventoSeleccionado() {
+        return eventoSeleccionado;
+    }
+
+    public String formatearFechaEvento(java.util.Date fecha) {
+        if (fecha == null) {
+            return "Sin fecha";
+        }
+        return new SimpleDateFormat("dd/MM/yyyy").format(fecha);
+    }
+
+    public void descargarComprobanteEvento(Evento evento) {
+        if (evento == null) {
+            mostrarAdvertencia("Debes seleccionar un evento para descargar el comprobante.");
+            return;
+        }
+
+        try {
+            String[][] datos = new String[][]{
+                {"Código", "EV-" + evento.getIdEvento()},
+                {"Evento", evento.getNombreEvento()},
+                {"Fecha", formatearFechaEvento(evento.getFechaEvento())},
+                {"Horario", (evento.getHoraInicio() != null ? evento.getHoraInicio().toString() : "-")
+                    + " - " + (evento.getHoraFin() != null ? evento.getHoraFin().toString() : "-")},
+                {"Espacio", evento.getEspacio() != null ? evento.getEspacio().getNombre() : "Sin asignar"},
+                {"Cliente", evento.getNombreCliente()},
+                {"Estado", evento.getEstado() != null ? evento.getEstado().name() : ""}
+            };
+
+            PdfUtil.generarPdfDetalle("evento-" + evento.getIdEvento(),
+                    "Comprobante de Evento",
+                    datos);
+
+        } catch (IOException | DocumentException e) {
+            mostrarError("No se pudo generar el comprobante.", e.getMessage());
+        }
     }
 
     public String obtenerNombreClienteSesion() {

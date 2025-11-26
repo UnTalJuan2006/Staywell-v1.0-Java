@@ -10,6 +10,7 @@ import Modelo.Reserva;
 import Modelo.TipoHabitacion;
 import Modelo.Usuario;
 import java.io.Serializable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.lowagie.text.DocumentException;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -48,6 +50,8 @@ public class ReservaBean implements Serializable {
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private Usuario usuarioLogueado;
+
+    private Reserva reservaSeleccionada;
 
     private String filtroBusqueda;
 
@@ -164,6 +168,52 @@ public void init() {
         filtroCheckin = null;
         filtroCheckout = null;
         actualizarReservasFiltradas();
+    }
+
+    public void seleccionarReserva(Reserva reserva) {
+        this.reservaSeleccionada = reserva;
+    }
+
+    public Reserva getReservaSeleccionada() {
+        return reservaSeleccionada;
+    }
+
+    public String formatearFecha(LocalDateTime fecha) {
+        return fecha != null ? fecha.format(DISPLAY_FORMATTER) : "Pendiente";
+    }
+
+    public void descargarComprobanteReserva(Reserva reserva) {
+        if (reserva == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Reserva no encontrada",
+                            "Selecciona una reserva para generar el comprobante."));
+            return;
+        }
+
+        try {
+            String[][] datos = new String[][]{
+                {"Código", "RES-" + reserva.getIdReserva()},
+                {"Huésped", reserva.getNombreCliente()},
+                {"Correo", reserva.getEmail()},
+                {"Teléfono", reserva.getTelefono()},
+                {"Check-in", formatearFecha(reserva.getCheckin())},
+                {"Check-out", formatearFecha(reserva.getCheckout())},
+                {"Habitación", reserva.getHabitacion() != null ? reserva.getHabitacion().getTipoHabitacion().getNombre() : "Sin asignar"},
+                {"Estado", reserva.getEstado() != null ? reserva.getEstado().name() : ""},
+                {"Observaciones", reserva.getObservaciones() != null ? reserva.getObservaciones() : "N/A"}
+            };
+
+            PdfUtil.generarPdfDetalle("reserva-" + reserva.getIdReserva(),
+                    "Comprobante de Reserva",
+                    datos);
+
+        } catch (IOException | DocumentException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            "No se pudo generar el comprobante: " + e.getMessage()));
+        }
     }
 
     public void aplicarFiltroBusqueda() {

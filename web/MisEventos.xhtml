@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -577,52 +578,95 @@
                     </div>
                 </ui:fragment>
 
-                <ui:repeat value="#{eventoPortalBean.eventosDelUsuario}" var="evento">
-                    <div class="evento-card">
-                        <div class="evento-header">
-                            <div>
-                                <h4 class="evento-titulo">#{evento.nombreEvento}</h4>
-                                <div class="evento-espacio">
-                                    <i class="bi bi-building"></i>
-                                    Espacio: #{evento.espacio != null ? evento.espacio.nombre : 'Pendiente'}
-                                </div>
-                            </div>
-                            <span class="badge-estado">
-                                #{evento.estado}
-                            </span>
-                        </div>
-
-                        <div class="evento-body">
-                            <div class="evento-info">
-                                <strong><i class="bi bi-calendar3"></i> Fecha</strong>
+                <h:form id="eventosForm">
+                    <ui:repeat value="#{eventoPortalBean.eventosDelUsuario}" var="evento">
+                        <div class="evento-card">
+                            <div class="evento-header">
                                 <div>
-                                    <h:outputText value="#{evento.fechaEvento}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                    </h:outputText>
+                                    <h4 class="evento-titulo">#{evento.nombreEvento}</h4>
+                                    <div class="evento-espacio">
+                                        <i class="bi bi-building"></i>
+                                        Espacio: #{evento.espacio != null ? evento.espacio.nombre : 'Pendiente'}
+                                    </div>
+                                </div>
+                                <span class="badge-estado">
+                                    #{evento.estado}
+                                </span>
+                            </div>
+
+                            <div class="evento-body">
+                                <div class="evento-info">
+                                    <strong><i class="bi bi-calendar3"></i> Fecha</strong>
+                                    <div>
+                                        <h:outputText value="#{evento.fechaEvento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+                                <div class="evento-info">
+                                    <strong><i class="bi bi-clock"></i> Horario</strong>
+                                    <div>#{evento.horaInicio} - #{evento.horaFin}</div>
+                                </div>
+                                <div class="evento-info">
+                                    <strong><i class="bi bi-person"></i> Cliente</strong>
+                                    <div>#{evento.nombreCliente}</div>
                                 </div>
                             </div>
-                            <div class="evento-info">
-                                <strong><i class="bi bi-clock"></i> Horario</strong>
-                                <div>#{evento.horaInicio} - #{evento.horaFin}</div>
-                            </div>
-                            <div class="evento-info">
-                                <strong><i class="bi bi-person"></i> Cliente</strong>
-                                <div>#{evento.nombreCliente}</div>
-                            </div>
-                        </div>
 
-                        <div class="evento-footer">
-                         
-                            <h:link outcome="/DetalleEventoHuesped.xhtml" styleClass="btn btn-detalle">
-                                <i class="bi bi-eye"></i> Ver Detalles
-                                <f:param name="id" value="#{evento.idEvento}" />
-                            </h:link>
-                            <button class="btn btn-descargar">
-                                <i class="bi bi-download"></i> Descargar
-                            </button>
+                            <div class="evento-footer">
+
+                                <p:commandButton value="Ver" process="@this" update=":detalleEventoPanel"
+                                                 oncomplete="PF('eventoDialog').show()"
+                                                 actionListener="#{eventoPortalBean.seleccionarEvento(evento)}"
+                                                 styleClass="btn btn-detalle">
+                                    <i class="bi bi-eye"></i>
+                                </p:commandButton>
+                                <p:commandButton value="Descargar" ajax="false" actionListener="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
+                                                 styleClass="btn btn-descargar">
+                                    <i class="bi bi-download"></i>
+                                </p:commandButton>
+                            </div>
                         </div>
-                    </div>
-                </ui:repeat>
+                    </ui:repeat>
+
+                    <p:dialog id="eventoDialog" widgetVar="eventoDialog" modal="true" header="Detalle del evento" width="640" closable="true">
+                        <h:panelGroup id="detalleEventoPanel">
+                            <ui:fragment rendered="#{not empty eventoPortalBean.eventoSeleccionado}">
+                                <div class="detalle-grid">
+                                    <div>
+                                        <strong>Nombre</strong>
+                                        <div>#{eventoPortalBean.eventoSeleccionado.nombreEvento}</div>
+                                    </div>
+                                    <div>
+                                        <strong>Fecha</strong>
+                                        <div>#{eventoPortalBean.formatearFechaEvento(eventoPortalBean.eventoSeleccionado.fechaEvento)}</div>
+                                    </div>
+                                    <div>
+                                        <strong>Horario</strong>
+                                        <div>#{eventoPortalBean.eventoSeleccionado.horaInicio} - #{eventoPortalBean.eventoSeleccionado.horaFin}</div>
+                                    </div>
+                                    <div>
+                                        <strong>Espacio</strong>
+                                        <div>#{eventoPortalBean.eventoSeleccionado.espacio != null ? eventoPortalBean.eventoSeleccionado.espacio.nombre : 'Sin asignar'}</div>
+                                    </div>
+                                    <div>
+                                        <strong>Cliente</strong>
+                                        <div>#{eventoPortalBean.eventoSeleccionado.nombreCliente}</div>
+                                    </div>
+                                    <div>
+                                        <strong>Estado</strong>
+                                        <div>#{eventoPortalBean.eventoSeleccionado.estado}</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <p:commandButton value="Descargar comprobante" ajax="false"
+                                                     actionListener="#{eventoPortalBean.descargarComprobanteEvento(eventoPortalBean.eventoSeleccionado)}"
+                                                     styleClass="btn btn-descargar" />
+                                </div>
+                            </ui:fragment>
+                        </h:panelGroup>
+                    </p:dialog>
+                </h:form>
             </div>
         </div>
     </div>

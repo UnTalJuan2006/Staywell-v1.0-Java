@@ -65,4 +65,44 @@ public class PdfUtil {
 
         facesContext.responseComplete();
     }
+
+    public static void generarPdfDetalle(String nombreArchivo,
+                                          String titulo,
+                                          String[][] datos)
+            throws IOException, DocumentException {
+
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletResponse response =
+                (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=" + nombreArchivo + ".pdf");
+
+        Document document = new Document();
+        PdfWriter.getInstance(document, response.getOutputStream());
+        document.open();
+
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14);
+        Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
+        Font dataFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+
+        document.add(new Paragraph(titulo, titleFont));
+        document.add(new Paragraph("\n"));
+
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+
+        for (String[] fila : datos) {
+            if (fila.length < 2) {
+                continue;
+            }
+            table.addCell(new PdfPCell(new Paragraph(fila[0], labelFont)));
+            table.addCell(new PdfPCell(new Paragraph(fila[1] != null ? fila[1] : "", dataFont)));
+        }
+
+        document.add(table);
+        document.close();
+        facesContext.responseComplete();
+    }
 }

@@ -56,6 +56,28 @@ public class UsuarioBean implements Serializable {
         return usuariosFiltrados;
     }
 
+    public void cargarPerfilSesion() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null || context.isPostback()) {
+            return;
+        }
+
+        try {
+            Usuario logueado = (Usuario) context.getExternalContext()
+                    .getSessionMap().get("usuarioLogueado");
+
+            if (logueado != null) {
+                Usuario desdeDb = usuarioDAO.obtenerPorId(logueado.getIdUsuario());
+                usuario = desdeDb != null ? desdeDb : logueado;
+            }
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error", "No se pudo cargar el perfil del usuario."));
+        }
+    }
+
     @PostConstruct
     public void init() {
         try {
@@ -320,7 +342,7 @@ public class UsuarioBean implements Serializable {
         }
     }
     
-   public String actualizar() {
+    public String actualizar() {
     try {
         usuario.setFechaActualizacion(LocalDateTime.now());
         usuarioDAO.actualizar(usuario);
@@ -343,7 +365,40 @@ public class UsuarioBean implements Serializable {
     }
 }
 
-   
+    public void actualizarPerfilHuesped() {
+        try {
+            Usuario enSesion = (Usuario) FacesContext.getCurrentInstance()
+                    .getExternalContext().getSessionMap().get("usuarioLogueado");
+
+            if (enSesion != null) {
+                usuario.setIdUsuario(enSesion.getIdUsuario());
+            }
+
+            usuario.setFechaActualizacion(LocalDateTime.now());
+            usuarioDAO.actualizar(usuario);
+
+            Usuario refrescado = usuarioDAO.obtenerPorId(usuario.getIdUsuario());
+            if (refrescado != null) {
+                usuario = refrescado;
+            }
+
+            FacesContext.getCurrentInstance().getExternalContext()
+                    .getSessionMap().put("usuarioLogueado", usuario);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Perfil actualizado",
+                            "Tus datos se guardaron correctamente."));
+
+        } catch (SQLException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error",
+                            "No se pudo actualizar el perfil: " + e.getMessage()));
+        }
+    }
+
+
     public void cargarUsuarioPorId() {
     try {
         String idParam = FacesContext.getCurrentInstance().getExternalContext()
