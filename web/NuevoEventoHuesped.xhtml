@@ -468,7 +468,7 @@
                                     <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
-                                        <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago" />
+                                        <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago fechaEvento ocupacionesJson" />
                                     </h:selectOneMenu>
                                 </div>
 
