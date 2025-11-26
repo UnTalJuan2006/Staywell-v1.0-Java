@@ -360,6 +360,9 @@
             return;
         }
 
+        const hoy = new Date();
+        const inicioPermitido = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
         calendario = new window.FullCalendar.Calendar(calendarEl, {
             locale: 'es',
             initialView: 'dayGridMonth',
@@ -374,6 +377,7 @@
             droppable: true,
             eventDurationEditable: true,
             eventResizableFromStart: true,
+            validRange: {start: inicioPermitido},
             events: eventosData,
             eventContent: (arg) => {
                 const container = document.createElement('div');
