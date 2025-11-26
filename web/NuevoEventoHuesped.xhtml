@@ -1,145 +1,576 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-<h:head>
-    <title>Reservar Evento</title>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-    <style>
-        body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; }
-        .layout { display:flex; min-height:100vh; }
-        .sidebar { width:220px; background:#ffffff; border-right:1px solid #e0e0e0; padding-top:70px; position:fixed; top:0; bottom:0; }
-        .header { position:fixed; top:0; left:0; right:0; height:70px; background:#fff; border-bottom:1px solid #e0e0e0; display:flex; align-items:center; justify-content:space-between; padding:0 24px; z-index:1000; }
-        .nav-link { display:block; padding:12px 24px; color:#555; text-decoration:none; border-left:3px solid transparent; }
-        .nav-link.active, .nav-link:hover { background:#eefaf8; color:#1a9b8e; border-left-color:#1a9b8e; }
-        .content { margin-left:220px; padding:100px 40px 40px; width:100%; }
-        .card-form { background:#fff; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,0.08); padding:24px; }
-        .summary-card { background:#0f766e; color:#fff; border-radius:16px; padding:24px; margin-bottom: 1.5rem; }
-        .payment-card { background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); padding:1.8rem; }
-        .payment-card h5 { font-size:1.1rem; font-weight:700; color:#1a1a1a; margin-bottom:1.25rem; display:flex; align-items:center; gap:8px; }
-        .payment-card h5 i { color:#1a9b8e; font-size:1.2rem; }
-        .payment-summary { display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, rgba(26,155,142,0.1) 0%, rgba(13,122,111,0.15) 100%); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1.5rem; }
-        .payment-summary .summary-label { display:flex; align-items:center; gap:12px; color:#0d7a6f; font-weight:600; }
-        .payment-summary .summary-label i { font-size:1.5rem; }
-        .payment-summary .summary-amount { font-size:1.4rem; font-weight:700; color:#0d7a6f; }
-        .payment-note { font-size:0.85rem; color:#6c757d; margin-top:0.5rem; line-height:1.4; }
-        .btn-confirm { width:100%; background:linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%); color:white; border:none; padding:1rem; border-radius:8px; font-weight:600; cursor:pointer; margin-top:1.5rem; transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:8px; }
-        .btn-confirm:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(26,155,142,0.3); }
-        .btn-confirm-modal { background:linear-gradient(135deg, #1a9b8e 0%, #0d7a6f 100%); color:white; border:none; padding:0.75rem 1.5rem; border-radius:8px; font-weight:600; cursor:pointer; transition:all 0.3s ease; display:inline-flex; align-items:center; gap:8px; }
-        .btn-confirm-modal:hover { box-shadow:0 6px 20px rgba(26,155,142,0.3); }
-        .payment-resume { margin-top:1.2rem; font-size:0.9rem; color:#1a1a1a; background:#f4fafa; border-radius:8px; padding:0.75rem 1rem; }
-    </style>
-</h:head>
-<h:body>
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Nuevo Evento - Great Viaggio</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            html, body {
+                height: 100%;
+                overflow: hidden;
+                font-family: 'Segoe UI', Roboto, sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8f5f3 100%);
+            }
+
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 70px;
+                background: #fff;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 30px;
+                z-index: 1000;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+
+            .header-left .logo-text {
+                font-weight: 700;
+                font-size: 22px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-decoration: none;
+            }
+
+            .header-right { display: flex; align-items: center; gap: 12px; }
+
+            .btn-crear-reserva {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: white;
+                border: none;
+                padding: 10px 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                font-size: 0.9rem;
+            }
+
+            .btn-crear-reserva:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26, 124, 143, 0.4); }
+
+            .icon-btn {
+                background: none;
+                border: none;
+                font-size: 22px;
+                cursor: pointer;
+                color: #666;
+                transition: color 0.2s;
+                padding: 8px;
+            }
+
+            .icon-btn:hover { color: #1a7c8f; }
+
+            .user-profile {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                border-left: 2px solid #e0e0e0;
+                padding-left: 20px;
+                margin-left: 8px;
+            }
+
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 18px;
+            }
+
+            .layout { display: flex; height: 100%; padding-top: 70px; }
+
+            .sidebar {
+                width: 260px;
+                background: #fff;
+                border-right: 1px solid #e0e0e0;
+                position: fixed;
+                top: 70px;
+                bottom: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                padding: 24px 0;
+                box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+            }
+
+            .sidebar-section { padding: 0 16px; margin-bottom: 24px; }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #999;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+                padding: 0 12px;
+            }
+
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 16px;
+                color: #555;
+                text-decoration: none;
+                margin: 4px 0;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
+            }
+
+            .nav-link i { font-size: 20px; width: 24px; text-align: center; }
+            .nav-link:hover { background: #e8f4f6; color: #1a7c8f; }
+            .nav-link.active { background: linear-gradient(135deg, rgba(26, 124, 143, 0.1) 0%, rgba(26, 124, 143, 0.15) 100%); color: #1a7c8f; font-weight: 600; border-left: 3px solid #1a7c8f; }
+
+            .sidebar-footer { margin-top: auto; padding: 20px 16px; border-top: 1px solid #e0e0e0; }
+
+            .btn-logout {
+                width: 100%;
+                background: #f5f5f5;
+                color: #666;
+                border: 1px solid #e0e0e0;
+                padding: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .btn-logout:hover { background: #fff0f0; border-color: #ff5252; color: #ff5252; }
+
+            .content {
+                margin-left: 260px;
+                padding: 32px 48px;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
+                width: calc(100% - 260px);
+            }
+
+            .form-container { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; max-width: 1300px; }
+            .summary-column { display: flex; flex-direction: column; gap: 1.5rem; }
+
+            .form-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 2rem;
+                margin-left: -30px;
+            }
+
+            .form-card h5 {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .form-card h5 i { color: #1a7c8f; }
+            .form-group { margin-bottom: 1.5rem; }
+            .form-label { font-weight: 600; color: #333; margin-bottom: 0.6rem; display: block; font-size: 0.95rem; }
+
+            .form-control, .form-select {
+                border: 1.5px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+            }
+
+            .form-control:focus, .form-select:focus { border-color: #1a7c8f; box-shadow: 0 0 0 3px rgba(26, 155, 142, 0.1); outline: none; }
+
+            .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+            .form-row.full { grid-template-columns: 1fr; }
+
+            .summary-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 1.5rem;
+                position: sticky;
+                top: 100px;
+            }
+
+            .payment-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 1.8rem;
+                position: sticky;
+                top: 420px;
+            }
+
+            .payment-card h5 { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
+            .payment-card h5 i { color: #1a7c8f; font-size: 1.2rem; }
+
+            .payment-summary {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: linear-gradient(135deg, rgba(26,155,142,0.1) 0%, rgba(13,122,111,0.15) 100%);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .payment-summary .summary-label { display: flex; align-items: center; gap: 12px; color: #0d7a6f; font-weight: 600; }
+            .payment-summary .summary-label i { font-size: 1.5rem; }
+            .payment-summary .summary-amount { font-size: 1.4rem; font-weight: 700; color: #0d7a6f; }
+
+            .payment-note { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; line-height: 1.4; }
+
+            .summary-card h5 {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding-bottom: 1rem;
+                border-bottom: 2px solid #f0f0f0;
+            }
+
+            .summary-card h5 i { color: #1a7c8f; font-size: 1.3rem; }
+
+            .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #f5f5f5; font-size: 0.95rem; }
+            .summary-item strong { color: #333; }
+            .summary-item span { color: #666; }
+
+            .summary-total {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 0;
+                margin-top: 1rem;
+                border-top: 2px solid #1a7c8f;
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #1a7c8f;
+            }
+
+            .btn-confirm {
+                width: 100%;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: white;
+                border: none;
+                padding: 1rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 1.5rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3); }
+
+            .btn-confirm-modal {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-confirm-modal:hover { box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3); }
+
+            .payment-resume { margin-top: 1.2rem; font-size: 0.9rem; color: #1a1a1a; background: #f4fafa; border-radius: 8px; padding: 0.75rem 1rem; }
+
+            .alert-info { background: #e8f5f3; border: 1px solid #1a7c8f; color: #156b7d; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+
+            @media (max-width: 1024px) { .form-container { grid-template-columns: 1fr; } .summary-card { position: static; } .payment-card { position: static; } .content { margin-left: 220px; padding: 1.5rem; } }
+
+            @media (max-width: 768px) {
+                .content { margin-left: 0; width: 100%; padding: 24px 20px; height: auto; }
+                .sidebar { width: 100%; height: auto; position: relative; top: 0; border-right: none; border-bottom: 1px solid #e0e0e0; flex-direction: row; overflow-x: auto; padding: 0; }
+                .form-row { grid-template-columns: 1fr; }
+                .layout { flex-direction: column; }
+            }
+
+            .confirmation-modal .modal-content { border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18); background: linear-gradient(145deg, #f8fbff 0%, #eef6f5 100%); }
+            .confirmation-hero { display: flex; align-items: center; gap: 12px; padding: 18px 22px; background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%); color: #fff; }
+            .confirmation-hero i { font-size: 28px; }
+            .receipt-card { background: #fff; margin: 18px; border-radius: 14px; border: 1px solid #e7edf0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); overflow: hidden; }
+            .receipt-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed #e0e7ec; }
+            .receipt-number { font-weight: 800; color: #156b7d; letter-spacing: 0.5px; }
+            .receipt-body { padding: 8px 20px 20px 20px; }
+            .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 0; border-bottom: 1px dashed #e8eef2; }
+            .detail-row:last-child { border-bottom: none; }
+            .detail-label { font-size: 0.85rem; color: #7a8a99; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+            .detail-value { font-weight: 700; color: #1f2d3d; }
+            .payment-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: #e8f5f3; border-radius: 999px; color: #156b7d; font-weight: 700; font-size: 0.9rem; }
+            .status-pill { display: inline-flex; align-items: center; gap: 8px; background: #e8f5f3; color: #156b7d; padding: 8px 14px; border-radius: 999px; font-weight: 700; letter-spacing: 0.3px; }
+            .confirmation-actions { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 20px 20px; }
+            .btn-outline-soft { background: #f4f7fb; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+            .btn-outline-soft:hover { background: #e8eef5; }
+            .btn-gradient { background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%); color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 30px rgba(26, 124, 143, 0.35); }
+            .btn-gradient:hover { transform: translateY(-1px); }
+            .content::-webkit-scrollbar, .sidebar::-webkit-scrollbar { width: 8px; }
+            .content::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
+            .content::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb { background: #1a7c8f; border-radius: 4px; }
+            .content::-webkit-scrollbar-thumb:hover, .sidebar::-webkit-scrollbar-thumb:hover { background: #156b7d; }
+        </style>
+    </h:head>
+
+    <h:body>
         <div class="header">
             <div class="header-left">
-                <a href="HomeHuesped.xhtml" class="logo-text" style="text-decoration:none;color:#1a9b8e;font-weight:700;font-size:20px;">Great Viaggio</a>
+                <a href="HomeHuesped.xhtml" class="logo-text">Great Viaggio</a>
             </div>
-            <div class="header-right d-flex gap-2">
-                <a href="EventosHuesped.xhtml" class="btn btn-outline-secondary"><i class="bi bi-stars"></i> Eventos disponibles</a>
-                <a href="NuevaReservaHuesped.xhtml" class="btn btn-outline-primary"><i class="bi bi-plus-circle"></i> Nueva Reserva</a>
-                <a href="NuevoEventoHuesped.xhtml" class="btn btn-primary"><i class="bi bi-calendar-event"></i> Crear Evento</a>
+            <div class="header-right">
+                <a href="NuevaReservaHuesped.xhtml" class="btn-crear-reserva">
+                    <i class="bi bi-plus-circle"></i> Nueva Reserva
+                </a>
+                <a href="NuevoEventoHuesped.xhtml" class="btn-crear-reserva">
+                    <i class="bi bi-calendar-event"></i> Nuevo Evento
+                </a>
+                <button class="icon-btn"><i class="bi bi-bell"></i></button>
+                <div class="user-profile">
+                    <span><strong>#{usuarioLogueado.nombre}</strong></span>
+                    <div class="user-avatar"><i class="bi bi-person"></i></div>
+                </div>
             </div>
         </div>
+
         <div class="layout">
             <div class="sidebar">
-                <a href="HomeHuesped.xhtml" class="nav-link"><i class="bi bi-house-door me-2"></i>Inicio</a>
-                <a href="NuevaReservaHuesped.xhtml" class="nav-link"><i class="bi bi-calendar-plus me-2"></i>Nueva Reserva</a>
-                <a href="MisReservas.xhtml" class="nav-link"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</a>
-                <a href="EventosHuesped.xhtml" class="nav-link"><i class="bi bi-stars me-2"></i>Eventos disponibles</a>
-                <a href="NuevoEventoHuesped.xhtml" class="nav-link active"><i class="bi bi-building me-2"></i>Nuevo Evento</a>
-                <a href="MisEventos.xhtml" class="nav-link"><i class="bi bi-calendar-event me-2"></i>Mis Eventos</a>
-                <a href="MiPerfil.xhtml" class="nav-link"><i class="bi bi-person-circle me-2"></i>Perfil</a>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navegación</div>
+                    <a href="HomeHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-house-door"></i>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="MiPerfil.xhtml" class="nav-link">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Reservas</div>
+                    <a href="NuevaReservaHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-plus"></i>
+                        <span>Nueva Reserva</span>
+                    </a>
+                    <a href="MisReservas.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Reservas</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Eventos</div>
+                    <a href="EventosHuesped.xhtml" class="nav-link">
+                        <i class="bi bi-stars"></i>
+                        <span>Eventos Disponibles</span>
+                    </a>
+                    <a href="NuevoEventoHuesped.xhtml" class="nav-link active">
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Nuevo Evento</span>
+                    </a>
+                    <a href="MisEventos.xhtml" class="nav-link">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Mis Eventos</span>
+                    </a>
+                </div>
+
+                <h:form>
+                    <div class="sidebar-footer">
+                        <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn-logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
+                        </h:commandLink>
+                    </div>
+                </h:form>
             </div>
+
             <div class="content">
-                <h:messages styleClass="alert alert-warning" layout="table" />
-                <h:form id="formEvento">
-                    <div class="row g-4">
-                        <div class="col-lg-7">
-                            <div class="card-form">
-                                <h3 class="mb-3"><i class="bi bi-building"></i> Datos del evento</h3>
-                                <h:outputText id="ocupacionesJson" value="#{eventoHuespedBean.fechasOcupadasJson}" styleClass="d-none" />
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="form-label">Nombre del evento</label>
-                                        <h:inputText value="#{eventoHuespedBean.nombreEvento}" styleClass="form-control" required="true" />
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label">Descripción</label>
-                                        <h:inputTextarea value="#{eventoHuespedBean.descripcion}" rows="3" styleClass="form-control" />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Espacio</label>
-                                        <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
-                                            <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
-                                            <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago" />
-                                        </h:selectOneMenu>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="fechaEvento">Fecha</label>
-                                        <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" required="true"
-                                                     requiredMessage="Selecciona la fecha del evento.">
-                                            <f:passThroughAttribute name="type" value="text" />
-                                            <f:convertDateTime pattern="yyyy-MM-dd" />
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
-                                        </h:inputText>
-                                        <h:message for="fechaEvento" styleClass="text-danger small" />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Hora inicio</label>
-                                        <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de inicio.">
-                                            <f:converter converterId="localTimeConverter" />
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
-                                        </h:inputText>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Hora fin</label>
-                                        <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de fin.">
-                                            <f:converter converterId="localTimeConverter" />
-                                            <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
-                                        </h:inputText>
-                                    </div>
+                <h:form id="formEvento" styleClass="reserva-form">
+                    <h:messages styleClass="alert-info" layout="table" />
+
+                    <div class="form-container">
+                        <div class="form-card">
+                            <h5><i class="bi bi-building"></i> Datos del Evento</h5>
+                            <h:outputText id="ocupacionesJson" value="#{eventoHuespedBean.fechasOcupadasJson}" styleClass="d-none" />
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-megaphone" style="color: #1a7c8f;"></i> Nombre del evento
+                                    </label>
+                                    <h:inputText value="#{eventoHuespedBean.nombreEvento}" styleClass="form-control" required="true" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-person-badge" style="color: #1a7c8f;"></i> Cliente
+                                    </label>
+                                    <h:inputText value="#{eventoHuespedBean.nombreCliente}" styleClass="form-control" readonly="true" />
+                                </div>
+                            </div>
+
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-journal-text" style="color: #1a7c8f;"></i> Descripción
+                                    </label>
+                                    <h:inputTextarea value="#{eventoHuespedBean.descripcion}" rows="3" styleClass="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-geo-alt" style="color: #1a7c8f;"></i> Espacio
+                                    </label>
+                                    <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
+                                        <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
+                                        <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago" />
+                                    </h:selectOneMenu>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="fechaEvento">
+                                        <i class="bi bi-calendar-event" style="color: #1a7c8f;"></i> Fecha
+                                    </label>
+                                    <h:inputText id="fechaEvento" value="#{eventoHuespedBean.fechaEvento}" styleClass="form-control" required="true"
+                                                 requiredMessage="Selecciona la fecha del evento.">
+                                        <f:passThroughAttribute name="type" value="text" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
+                                    </h:inputText>
+                                    <h:message for="fechaEvento" styleClass="text-danger small" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-clock-history" style="color: #1a7c8f;"></i> Hora inicio
+                                    </label>
+                                    <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de inicio.">
+                                        <f:converter converterId="localTimeConverter" />
+                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
+                                    </h:inputText>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-clock" style="color: #1a7c8f;"></i> Hora fin
+                                    </label>
+                                    <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de fin.">
+                                        <f:converter converterId="localTimeConverter" />
+                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
+                                    </h:inputText>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-5">
-                            <h:panelGroup id="resumenCard" layout="block" styleClass="summary-card">
-                                <h4 class="mb-3">Resumen</h4>
-                                <p class="mb-1">Nombre: <strong>#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}</strong></p>
-                                <p class="mb-1">Espacio: <strong>#{empty eventoHuespedBean.nombreEspacioSeleccionado ? 'Sin seleccionar' : eventoHuespedBean.nombreEspacioSeleccionado}</strong></p>
-                                <p class="mb-1">Fecha: <strong>
-                                    <h:outputText value="#{eventoHuespedBean.fechaEvento}">
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                    </h:outputText>
-                                </strong></p>
-                                <p class="mb-1">Horario: <strong>
-                                    <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
-                                    <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
-                                    <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
-                                </strong></p>
-                                <p class="mb-1">Costo estimado: <strong>$
-                                    <h:outputText value="#{eventoHuespedBean.totalEvento}">
-                                        <f:convertNumber pattern="#,##0.00" />
-                                    </h:outputText>
-                                </strong></p>
-                                <small>El valor puede variar según la duración del evento.</small>
+
+                        <div class="summary-column">
+                            <h:panelGroup id="resumenCard" layout="block">
+                                <div class="summary-card">
+                                    <h5><i class="bi bi-receipt"></i> Resumen del evento</h5>
+
+                                    <div class="summary-item">
+                                        <strong>Nombre:</strong>
+                                        <span>#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Espacio:</strong>
+                                        <span>#{empty eventoHuespedBean.nombreEspacioSeleccionado ? 'Sin seleccionar' : eventoHuespedBean.nombreEspacioSeleccionado}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Fecha:</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.fechaEvento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Horario:</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
+                                            <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
+                                            <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Precio por hora:</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.precioDia}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-total">
+                                        <span>Total estimado:</span>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.totalEvento}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+                                </div>
                             </h:panelGroup>
+
                             <div class="payment-card">
-                                <h5><i class="bi bi-credit-card-2-front"></i> Método de pago</h5>
+                                <h5><i class="bi bi-shield-lock"></i> Método de pago</h5>
+
                                 <div class="payment-summary">
                                     <div class="summary-label">
-                                        <i class="bi bi-shield-lock"></i>
+                                        <i class="bi bi-credit-card-2-front"></i>
                                         <div>
                                             <span>Total a pagar</span>
-                                            <div style="font-size:0.8rem; color:#0d7a6f;">Se confirma al registrar el evento</div>
+                                            <div style="font-size:0.8rem; color:#156b7d; font-weight:400;">Se confirmará al registrar el evento</div>
                                         </div>
                                     </div>
                                     <h:panelGroup id="montoPago">
@@ -150,12 +581,15 @@
                                         </span>
                                     </h:panelGroup>
                                 </div>
-                                <div class="payment-note">
+
+                                <div class="payment-note" style="margin-top: 1rem;">
                                     Confirma tu evento ingresando los datos de tu tarjeta cuando estés listo.
                                 </div>
+
                                 <button type="button" class="btn-confirm" data-bs-toggle="modal" data-bs-target="#modalPago">
                                     Ingresar o editar datos de pago
                                 </button>
+
                                 <h:panelGroup id="resumenPago" layout="block" styleClass="payment-resume">
                                     #{eventoHuespedBean.resumenMetodoPago}
                                 </h:panelGroup>
@@ -163,60 +597,135 @@
                         </div>
                     </div>
 
-                    <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+                    <div class="modal fade confirmation-modal" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="modalPagoLabel">Confirmar método de pago</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                <div class="confirmation-hero">
+                                    <i class="bi bi-calendar-event"></i>
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 1.2rem;">Confirmar evento y pago</div>
+                                        <div style="opacity: 0.9;">Revisa los detalles y completa el método de pago.</div>
+                                    </div>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <h:outputLabel for="tipoPago" value="Tipo de tarjeta" styleClass="form-label" />
-                                            <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
-                                                <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
-                                                <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
-                                            </h:selectOneMenu>
+
+                                <div class="receipt-card">
+                                    <div class="receipt-header">
+                                        <div>
+                                            <div class="detail-label" style="letter-spacing: 0.8px;">EVENTO</div>
+                                            <div class="receipt-number">
+                                                <h:outputText value="#{empty eventoHuespedBean.nombreEvento ? 'Pendiente' : eventoHuespedBean.nombreEvento}" />
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <h:outputLabel for="numeroTarjeta" value="Número de tarjeta" styleClass="form-label" />
-                                            <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
-                                                <f:passThroughAttribute name="maxlength" value="19" />
-                                                <f:passThroughAttribute name="inputmode" value="numeric" />
-                                                <f:passThroughAttribute name="pattern" value="\d*" />
-                                                <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
-                                            </h:inputText>
+                                        <div class="status-pill">
+                                            <i class="bi bi-badge-check"></i>
+                                            Confirmación
                                         </div>
-                                        <div class="col-md-6">
-                                            <h:outputLabel for="titularTarjeta" value="Titular" styleClass="form-label" />
-                                            <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
+                                    </div>
+
+                                    <div class="receipt-body">
+                                        <div class="detail-row">
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-person"></i>Huésped</div>
+                                                <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreCliente}" /></div>
+                                            </div>
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-geo-alt"></i>Espacio</div>
+                                                <div class="detail-value"><h:outputText value="#{eventoHuespedBean.nombreEspacioSeleccionado}" /></div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <h:outputLabel for="fechaVencimiento" value="Vencimiento" styleClass="form-label" />
-                                            <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
-                                                <f:passThroughAttribute name="type" value="month" />
-                                            </h:inputText>
+
+                                        <div class="detail-row">
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-calendar-week"></i>Fecha</div>
+                                                <div class="detail-value">
+                                                    <h:outputText value="#{eventoHuespedBean.fechaEvento}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-clock-history"></i>Horario</div>
+                                                <div class="detail-value">
+                                                    <h:outputText value="#{eventoHuespedBean.horaInicio}" />
+                                                    <h:outputText value=" - #{eventoHuespedBean.horaFin}" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <h:outputLabel for="codigoSeguridad" value="CVV" styleClass="form-label" />
-                                            <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
-                                                <f:passThroughAttribute name="maxlength" value="4" />
-                                                <f:passThroughAttribute name="inputmode" value="numeric" />
-                                                <f:passThroughAttribute name="pattern" value="\d*" />
-                                                <f:passThroughAttribute name="placeholder" value="CVV" />
-                                            </h:inputText>
+
+                                        <div class="detail-row">
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-credit-card-2-front"></i>Total</div>
+                                                <div class="detail-value" style="font-size: 1.2rem; color:#156b7d;">
+                                                    <h:outputText value="#{eventoHuespedBean.totalEvento}">
+                                                        <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                    </h:outputText>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="detail-label"><i class="bi bi-shield-lock"></i>Método</div>
+                                                <div class="payment-chip">
+                                                    <i class="bi bi-credit-card"></i>
+                                                    <h:outputText value="#{eventoHuespedBean.tipoPagoSeleccionado}" />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="payment-note" style="margin:0;">
-                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
+
+                                        <div class="detail-row">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <h:outputLabel for="tipoPago" value="Tipo de tarjeta" styleClass="form-label" />
+                                                <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
+                                                    <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
+                                                    <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                                </h:selectOneMenu>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <h:outputLabel for="numeroTarjeta" value="Número de tarjeta" styleClass="form-label" />
+                                                <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
+                                                    <f:passThroughAttribute name="maxlength" value="19" />
+                                                    <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                    <f:passThroughAttribute name="pattern" value="\d*" />
+                                                    <f:passThroughAttribute name="placeholder" value="•••• •••• •••• ••••" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="detail-row">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <h:outputLabel for="titularTarjeta" value="Titular" styleClass="form-label" />
+                                                <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
+                                            </div>
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <h:outputLabel for="fechaVencimiento" value="Vencimiento" styleClass="form-label" />
+                                                <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                                    <f:passThroughAttribute name="type" value="month" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="detail-row">
+                                            <div class="form-group" style="margin-bottom: 0;">
+                                                <h:outputLabel for="codigoSeguridad" value="CVV" styleClass="form-label" />
+                                                <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
+                                                    <f:passThroughAttribute name="maxlength" value="4" />
+                                                    <f:passThroughAttribute name="inputmode" value="numeric" />
+                                                    <f:passThroughAttribute name="pattern" value="\d*" />
+                                                    <f:passThroughAttribute name="placeholder" value="CVV" />
+                                                </h:inputText>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom: 0; display:flex; align-items:center;">
+                                                <div class="payment-note" style="margin:0;">
+                                                    Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-confirm-modal" />
+
+                                <div class="confirmation-actions">
+                                    <button type="button" class="btn-outline-soft" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle"></i> Cancelar
+                                    </button>
+                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-gradient" />
                                 </div>
                             </div>
                         </div>
@@ -224,91 +733,58 @@
                 </h:form>
             </div>
         </div>
-<script>
-    (function () {
-        function parseOcupaciones() {
-            const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-            const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-            if (!rawJson) {
-                return [];
-            }
+        <script>
+            (function () {
+                function parseOcupaciones() {
+                    const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+                    const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+                    if (!rawJson) { return []; }
 
-            try {
-                const datos = JSON.parse(rawJson);
-                if (!Array.isArray(datos)) {
-                    return [];
-                }
-                return datos.map(rango => {
-                    if (!rango || !rango.from) {
-                        return null;
+                    try {
+                        const datos = JSON.parse(rawJson);
+                        if (!Array.isArray(datos)) { return []; }
+                        return datos.map(rango => {
+                            if (!rango || !rango.from) { return null; }
+                            const from = new Date(rango.from);
+                            const to = new Date(rango.to || rango.from);
+                            if (isNaN(from.getTime()) || isNaN(to.getTime())) { return null; }
+                            return { from, to };
+                        }).filter(Boolean);
+                    } catch (e) {
+                        console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+                        return [];
                     }
-                    const from = new Date(rango.from);
-                    const to = new Date(rango.to || rango.from);
-                    if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                        return null;
-                    }
-                    return { from, to };
-                }).filter(Boolean);
-            } catch (e) {
-                console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-                return [];
-            }
-        }
-
-        function initHoraPicker(componenteId) {
-            const input = document.getElementById("formEvento:" + componenteId);
-            if (!input || !window.flatpickr) {
-                return;
-            }
-            if (input._flatpickr) {
-                input._flatpickr.destroy();
-            }
-            window.flatpickr(input, {
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-                time_24hr: true,
-                allowInput: true
-            });
-        }
-
-        function initFechaPicker(disabledRanges) {
-            const input = document.getElementById("formEvento:fechaEvento");
-            if (!input || !window.flatpickr) {
-                return;
-            }
-            if (input._flatpickr) {
-                input._flatpickr.destroy();
-            }
-            window.flatpickr(input, {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d/m/Y",
-                minDate: "today",
-                allowInput: false,
-                disable: disabledRanges
-            });
-        }
-
-        function inicializarPickersEvento() {
-            if (!window.flatpickr) {
-                return;
-            }
-            const rangosDeshabilitados = parseOcupaciones();
-            initFechaPicker(rangosDeshabilitados);
-            initHoraPicker("horaInicio");
-            initHoraPicker("horaFin");
-        }
-
-        document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
-        if (window.jsf &amp;&amp; jsf.ajax) {
-            jsf.ajax.addOnEvent(function(data) {
-                if (data.status === 'success') {
-                    inicializarPickersEvento();
                 }
-            });
-        }
-    })();
-</script>
-</h:body>
+
+                function initHoraPicker(componenteId) {
+                    const input = document.getElementById("formEvento:" + componenteId);
+                    if (!input || !window.flatpickr) { return; }
+                    if (input._flatpickr) { input._flatpickr.destroy(); }
+                    window.flatpickr(input, { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, allowInput: true });
+                }
+
+                function initFechaPicker(disabledRanges) {
+                    const input = document.getElementById("formEvento:fechaEvento");
+                    if (!input || !window.flatpickr) { return; }
+                    if (input._flatpickr) { input._flatpickr.destroy(); }
+                    window.flatpickr(input, { dateFormat: "Y-m-d", altInput: true, altFormat: "d/m/Y", minDate: "today", allowInput: false, disable: disabledRanges });
+                }
+
+                function inicializarPickersEvento() {
+                    if (!window.flatpickr) { return; }
+                    const rangosDeshabilitados = parseOcupaciones();
+                    initFechaPicker(rangosDeshabilitados);
+                    initHoraPicker("horaInicio");
+                    initHoraPicker("horaFin");
+                }
+
+                document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+                if (window.jsf && jsf.ajax) {
+                    jsf.ajax.addOnEvent(function(data) {
+                        if (data.status === 'success') { inicializarPickersEvento(); }
+                    });
+                }
+            })();
+        </script>
+    </h:body>
 </html>
