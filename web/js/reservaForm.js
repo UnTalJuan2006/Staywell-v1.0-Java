@@ -8,6 +8,14 @@
         }
     }
 
+    function inicioDeDia(fecha) {
+        return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    }
+
+    function finDeDia(fecha) {
+        return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59, 59, 999);
+    }
+
     function parseDisabledRanges(rawValue) {
         if (!rawValue) return [];
 
@@ -24,12 +32,12 @@
 
                     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) return null;
 
-                    if (fromDate.getTime() >= toDate.getTime()) return { from: fromDate };
+                    const fromStart = inicioDeDia(fromDate);
+                    const toEnd = finDeDia(toDate);
 
-                    const adjustedTo = new Date(toDate.getTime() - 60000);
-                    if (adjustedTo.getTime() < fromDate.getTime()) return { from: fromDate };
+                    if (fromStart.getTime() >= toEnd.getTime()) return { from: fromStart };
 
-                    return { from: fromDate, to: adjustedTo };
+                    return { from: fromStart, to: toEnd };
                 })
                 .filter(Boolean);
         } catch (error) {
@@ -72,7 +80,8 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [...disabledRanges, blockPastDates]
+            disable: [...disabledRanges, blockPastDates],
+            minDate: today
         });
 
         window.flatpickr(checkinInput, {
@@ -83,6 +92,7 @@
             time_24hr: true,
             allowInput: true,
             disable: [...disabledRanges, blockPastDates],
+            minDate: today,
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
                     checkoutPicker.set('minDate', selectedDates[0]);
