@@ -417,6 +417,97 @@
             font-size: 16px;
         }
 
+        /* === MODAL DETALLE EVENTO === */
+        .detalle-evento-dialog .ui-dialog-content {
+            background: #f5f7fa;
+            padding: 0 !important;
+        }
+
+        .detalle-evento-wrapper {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e5eef1;
+        }
+
+        .detalle-evento-header {
+            padding: 18px 22px;
+            background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .detalle-evento-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.4px;
+        }
+
+        .detalle-evento-status {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detalle-evento-body {
+            padding: 22px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            background: #f8fcfd;
+        }
+
+        .detalle-evento-item {
+            background: #fff;
+            border: 1px solid #e8f4f6;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .detalle-evento-item .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #6c7c80;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .detalle-evento-item .value {
+            font-size: 1rem;
+            color: #1f2f36;
+            font-weight: 600;
+        }
+
+        .detalle-evento-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px 22px 20px;
+            background: #fff;
+            border-top: 1px solid #e8f4f6;
+        }
+
+        @media (max-width: 640px) {
+            .detalle-evento-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* === ALERTAS === */
         .alert {
             padding: 16px 20px;
@@ -629,39 +720,57 @@
                         </div>
                     </ui:repeat>
 
-                    <p:dialog id="eventoDialog" widgetVar="eventoDialog" modal="true" header="Detalle del evento" width="640" closable="true">
+                    <p:dialog id="eventoDialog" widgetVar="eventoDialog" modal="true" header="Detalle del evento" width="680" closable="true" styleClass="detalle-evento-dialog">
                         <h:panelGroup id="detalleEventoPanel">
                             <ui:fragment rendered="#{not empty eventoPortalBean.eventoSeleccionado}">
-                                <div class="detalle-grid">
-                                    <div>
-                                        <strong>Nombre</strong>
-                                        <div>#{eventoPortalBean.eventoSeleccionado.nombreEvento}</div>
+                                <div class="detalle-evento-wrapper">
+                                    <div class="detalle-evento-header">
+                                        <div class="detalle-evento-title">
+                                            <i class="bi bi-calendar4-week"></i>
+                                            #{eventoPortalBean.eventoSeleccionado.nombreEvento}
+                                        </div>
+                                        <span class="detalle-evento-status">
+                                            <i class="bi bi-circle-fill"></i>
+                                            #{eventoPortalBean.eventoSeleccionado.estado}
+                                        </span>
                                     </div>
-                                    <div>
-                                        <strong>Fecha</strong>
-                                        <div>#{eventoPortalBean.formatearFechaEvento(eventoPortalBean.eventoSeleccionado.fechaEvento)}</div>
+
+                                    <div class="detalle-evento-body">
+                                        <div class="detalle-evento-item">
+                                            <div class="label">
+                                                <i class="bi bi-calendar-date"></i>
+                                                Fecha
+                                            </div>
+                                            <div class="value">#{eventoPortalBean.formatearFechaEvento(eventoPortalBean.eventoSeleccionado.fechaEvento)}</div>
+                                        </div>
+                                        <div class="detalle-evento-item">
+                                            <div class="label">
+                                                <i class="bi bi-clock-history"></i>
+                                                Horario
+                                            </div>
+                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.horaInicio} - #{eventoPortalBean.eventoSeleccionado.horaFin}</div>
+                                        </div>
+                                        <div class="detalle-evento-item">
+                                            <div class="label">
+                                                <i class="bi bi-building"></i>
+                                                Espacio
+                                            </div>
+                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.espacio != null ? eventoPortalBean.eventoSeleccionado.espacio.nombre : 'Sin asignar'}</div>
+                                        </div>
+                                        <div class="detalle-evento-item">
+                                            <div class="label">
+                                                <i class="bi bi-person"></i>
+                                                Cliente
+                                            </div>
+                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.nombreCliente}</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <strong>Horario</strong>
-                                        <div>#{eventoPortalBean.eventoSeleccionado.horaInicio} - #{eventoPortalBean.eventoSeleccionado.horaFin}</div>
+
+                                    <div class="detalle-evento-footer">
+                                        <p:commandButton value="Descargar comprobante" ajax="false"
+                                                         actionListener="#{eventoPortalBean.descargarComprobanteEvento(eventoPortalBean.eventoSeleccionado)}"
+                                                         styleClass="btn btn-descargar" />
                                     </div>
-                                    <div>
-                                        <strong>Espacio</strong>
-                                        <div>#{eventoPortalBean.eventoSeleccionado.espacio != null ? eventoPortalBean.eventoSeleccionado.espacio.nombre : 'Sin asignar'}</div>
-                                    </div>
-                                    <div>
-                                        <strong>Cliente</strong>
-                                        <div>#{eventoPortalBean.eventoSeleccionado.nombreCliente}</div>
-                                    </div>
-                                    <div>
-                                        <strong>Estado</strong>
-                                        <div>#{eventoPortalBean.eventoSeleccionado.estado}</div>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-end mt-3">
-                                    <p:commandButton value="Descargar comprobante" ajax="false"
-                                                     actionListener="#{eventoPortalBean.descargarComprobanteEvento(eventoPortalBean.eventoSeleccionado)}"
-                                                     styleClass="btn btn-descargar" />
                                 </div>
                             </ui:fragment>
                         </h:panelGroup>
