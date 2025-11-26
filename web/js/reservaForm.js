@@ -70,8 +70,8 @@
 
         const disabledRanges = readDisabledRanges(form);
         const today = new Date();
-
-        const blockPastDates = { from: null, to: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1) };
+        const todayStart = inicioDeDia(today);
+        const blockPastDates = { from: null, to: new Date(todayStart.getTime() - 1) };
 
         let checkoutPicker = window.flatpickr(checkoutInput, {
             enableTime: true,
@@ -81,7 +81,7 @@
             time_24hr: true,
             allowInput: true,
             disable: [...disabledRanges, blockPastDates],
-            minDate: today
+            minDate: todayStart
         });
 
         window.flatpickr(checkinInput, {
@@ -92,7 +92,7 @@
             time_24hr: true,
             allowInput: true,
             disable: [...disabledRanges, blockPastDates],
-            minDate: today,
+            minDate: todayStart,
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
                     checkoutPicker.set('minDate', selectedDates[0]);
