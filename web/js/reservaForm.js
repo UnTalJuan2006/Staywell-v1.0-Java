@@ -16,6 +16,18 @@
         return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59, 59, 999);
     }
 
+    function parseIsoLocalDateTime(valor) {
+        if (!valor || typeof valor !== 'string') return null;
+
+        const [fechaStr, horaStr = '00:00'] = valor.split('T');
+        const [anio, mes = '1', dia = '1'] = fechaStr.split('-').map(Number);
+        const [hora = 0, minuto = 0, segundo = 0] = horaStr.split(':').map(Number);
+
+        if (!anio || !mes || !dia) return null;
+
+        return new Date(anio, (mes - 1), dia, hora, minuto, segundo);
+    }
+
     function parseDisabledRanges(rawValue) {
         if (!rawValue) return [];
 
@@ -27,15 +39,17 @@
                 .map(range => {
                     if (!range || !range.from || !range.to) return null;
 
-                    const fromDate = new Date(range.from);
-                    const toDate = new Date(range.to);
+                    const fromDate = parseIsoLocalDateTime(range.from);
+                    const toDate = parseIsoLocalDateTime(range.to);
 
                     if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) return null;
 
                     const fromStart = inicioDeDia(fromDate);
                     const toEnd = finDeDia(toDate);
 
-                    if (fromStart.getTime() >= toEnd.getTime()) return { from: fromStart };
+                    if (fromStart.getTime() >= toEnd.getTime()) {
+                        return { from: fromStart, to: fromStart };
+                    }
 
                     return { from: fromStart, to: toEnd };
                 })
@@ -71,7 +85,20 @@
         const disabledRanges = readDisabledRanges(form);
         const today = new Date();
         const todayStart = inicioDeDia(today);
-        const blockPastDates = { from: null, to: new Date(todayStart.getTime() - 1) };
+
+        const disableRules = [
+            // Regla para bloquear cualquier fecha pasada
+            (date) => inicioDeDia(date) < todayStart,
+            // Reglas de rangos ocupados (inclusivos en check-in y check-out)
+            (date) => {
+                const current = inicioDeDia(date);
+                return disabledRanges.some(range => {
+                    const rangeStart = inicioDeDia(range.from);
+                    const rangeEnd = inicioDeDia(range.to || range.from);
+                    return current >= rangeStart && current <= rangeEnd;
+                });
+            }
+        ];
 
         let checkoutPicker = window.flatpickr(checkoutInput, {
             enableTime: true,
@@ -80,7 +107,7 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [...disabledRanges, blockPastDates],
+            disable: disableRules,
             minDate: todayStart
         });
 
@@ -91,7 +118,7 @@
             altFormat: 'd/m/Y H:i',
             time_24hr: true,
             allowInput: true,
-            disable: [...disabledRanges, blockPastDates],
+            disable: disableRules,
             minDate: todayStart,
             onReady(selectedDates) {
                 if (selectedDates && selectedDates.length && checkoutPicker) {
@@ -102,9 +129,10 @@
                 if (!checkoutPicker) return;
                 if (selectedDates && selectedDates.length) {
                     const checkinDate = selectedDates[0];
-                    checkoutPicker.set('minDate', checkinDate);
+                    const normalizedCheckin = inicioDeDia(checkinDate) < todayStart ? todayStart : checkinDate;
+                    checkoutPicker.set('minDate', normalizedCheckin);
 
-                    if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < checkinDate) {
+                    if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < normalizedCheckin) {
                         checkoutPicker.clear();
                     }
                 } else {
