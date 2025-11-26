@@ -523,9 +523,6 @@ public void init() {
         fechasOcupadasJson = "[]";
     }
 
-    public String formatearFecha(LocalDateTime fecha) {
-        return fecha != null ? fecha.format(DISPLAY_FORMATTER) : "";
-    }
 
     public List<Reserva> getReservasFiltradas() {
         return reservasFiltradas != null ? reservasFiltradas : new ArrayList<>();

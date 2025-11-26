@@ -4,6 +4,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       lang="es">
+    <f:metadata>
+        <f:viewAction action="#{usuarioBean.cargarPerfilSesion}" />
+    </f:metadata>
     <h:head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -540,7 +543,7 @@
                 </a>
                 <button class="icon-btn"><i class="bi bi-bell"></i></button>
                 <div class="user-profile">
-                    <span><strong>#{usuarioLogueado.nombre}</strong></span>
+                    <span><strong>#{usuarioBean.usuario.nombre}</strong></span>
                     <div class="user-avatar"><i class="bi bi-person"></i></div>
                 </div>
             </div>
@@ -610,17 +613,17 @@
                                 <i class="bi bi-person"></i>
                             </div>
 
-                            <h3 class="profile-name">#{usuarioLogueado.nombre}</h3>
-                            <p class="profile-role">#{usuarioLogueado.rol}</p>
+                            <h3 class="profile-name">#{usuarioBean.usuario.nombre}</h3>
+                            <p class="profile-role">#{usuarioBean.usuario.rol}</p>
 
                             <div class="profile-info-item">
                                 <i class="bi bi-envelope-fill"></i>
-                                <span>#{usuarioLogueado.email}</span>
+                                <span>#{usuarioBean.usuario.email}</span>
                             </div>
 
                             <div class="profile-info-item">
                                 <i class="bi bi-telephone-fill"></i>
-                                <span>#{usuarioLogueado.telefono}</span>
+                                <span>#{usuarioBean.usuario.telefono}</span>
                             </div>
 
                             <div class="profile-info-item">
@@ -637,31 +640,27 @@
                         <div class="profile-main">
                             <div class="section-header">
                                 <h3 class="section-title">Información Personal</h3>
-                                <h:link outcome="editarPerfil.xhtml" styleClass="btn-primary">
-                                    <i class="bi bi-pencil-square"></i> Editar Perfil
-                                    <f:param name="id" value="#{usuarioLogueado.idUsuario}" />
-                                </h:link>
                             </div>
 
                             <div class="info-grid">
                                 <div class="info-field">
                                     <label class="info-label">Nombre Completo</label>
-                                    <div class="info-value">#{usuarioLogueado.nombre}</div>
+                                    <div class="info-value">#{usuarioBean.usuario.nombre}</div>
                                 </div>
 
                                 <div class="info-field">
                                     <label class="info-label">Correo Electrónico</label>
-                                    <div class="info-value">#{usuarioLogueado.email}</div>
+                                    <div class="info-value">#{usuarioBean.usuario.email}</div>
                                 </div>
 
                                 <div class="info-field">
                                     <label class="info-label">Teléfono</label>
-                                    <div class="info-value">#{usuarioLogueado.telefono}</div>
+                                    <div class="info-value">#{usuarioBean.usuario.telefono}</div>
                                 </div>
 
                                 <div class="info-field">
                                     <label class="info-label">Cargo</label>
-                                    <div class="info-value">#{usuarioLogueado.rol}</div>
+                                    <div class="info-value">Huesped</div>
                                 </div>
 
                                 <div class="info-field">
@@ -678,7 +677,7 @@
 
                                 <div class="info-field info-field-full">
                                     <label class="info-label">Dirección</label>
-                                    <div class="info-value">#{usuarioLogueado.direccion}</div>
+                                    <div class="info-value">#{usuarioBean.usuario.direccion}</div>
                                 </div>
 
                                 <div class="info-field info-field-full">
@@ -686,6 +685,36 @@
                                     <div class="info-value">Cliente del hotel con acceso a servicios premium y gestión de reservas personalizadas.</div>
                                 </div>
                             </div>
+
+
+                            <div class="section-header" style="margin-top:32px;">
+                                <h3 class="section-title">Editar información</h3>
+                            </div>
+
+                            <h:form id="perfilForm">
+                                <h:messages styleClass="alert alert-warning" layout="list" />
+                                <div class="info-grid">
+                                    <div class="info-field">
+                                        <label class="info-label" for="nombre">Nombre Completo</label>
+                                        <h:inputText id="nombre" value="#{usuarioBean.usuario.nombre}" styleClass="form-control" required="true" />
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label" for="email">Correo Electrónico</label>
+                                        <h:inputText id="email" value="#{usuarioBean.usuario.email}" styleClass="form-control" required="true" />
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label" for="telefono">Teléfono</label>
+                                        <h:inputText id="telefono" value="#{usuarioBean.usuario.telefono}" styleClass="form-control" />
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label" for="direccion">Dirección</label>
+                                        <h:inputText id="direccion" value="#{usuarioBean.usuario.direccion}" styleClass="form-control" />
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <h:commandButton value="Guardar cambios" actionListener="#{usuarioBean.actualizarPerfilHuesped}" styleClass="btn btn-crear-reserva" />
+                                </div>
+                            </h:form>
                         </div>
                     </div>
                 </div>
