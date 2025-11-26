@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -418,17 +417,41 @@
         }
 
         /* === MODAL DETALLE EVENTO === */
-        .detalle-evento-dialog .ui-dialog-content {
-            background: #f5f7fa;
-            padding: 0 !important;
+        .detalle-evento-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1200;
         }
 
-        .detalle-evento-wrapper {
+        .detalle-evento-modal.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .detalle-evento-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(17, 38, 50, 0.45);
+            backdrop-filter: blur(2px);
+        }
+
+        .detalle-evento-panel {
+            position: relative;
+            max-width: 720px;
+            width: 100%;
             background: #fff;
             border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
             overflow: hidden;
-            border: 1px solid #e5eef1;
+            border: 1px solid #d8e7eb;
+            z-index: 1;
         }
 
         .detalle-evento-header {
@@ -500,11 +523,24 @@
             padding: 16px 22px 20px;
             background: #fff;
             border-top: 1px solid #e8f4f6;
+            gap: 10px;
+        }
+
+        .evento-extra {
+            display: none;
+        }
+
+        .no-scroll {
+            overflow: hidden;
         }
 
         @media (max-width: 640px) {
             .detalle-evento-body {
                 grid-template-columns: 1fr;
+            }
+
+            .detalle-evento-panel {
+                max-width: 96%;
             }
         }
 
@@ -680,15 +716,13 @@
                                         Espacio: #{evento.espacio != null ? evento.espacio.nombre : 'Pendiente'}
                                     </div>
                                 </div>
-                                <span class="badge-estado">
-                                    #{evento.estado}
-                                </span>
+                                <span class="badge-estado evento-estado">#{evento.estado}</span>
                             </div>
 
                             <div class="evento-body">
                                 <div class="evento-info">
                                     <strong><i class="bi bi-calendar3"></i> Fecha</strong>
-                                    <div>
+                                    <div class="evento-fecha">
                                         <h:outputText value="#{evento.fechaEvento}">
                                             <f:convertDateTime pattern="dd/MM/yyyy" />
                                         </h:outputText>
@@ -696,88 +730,153 @@
                                 </div>
                                 <div class="evento-info">
                                     <strong><i class="bi bi-clock"></i> Horario</strong>
-                                    <div>#{evento.horaInicio} - #{evento.horaFin}</div>
+                                    <div class="evento-horario">#{evento.horaInicio} - #{evento.horaFin}</div>
                                 </div>
                                 <div class="evento-info">
                                     <strong><i class="bi bi-person"></i> Cliente</strong>
-                                    <div>#{evento.nombreCliente}</div>
+                                    <div class="evento-cliente">#{evento.nombreCliente}</div>
+                                </div>
+                                <div class="evento-extra" aria-hidden="true">
+                                    <span class="evento-espacio-detalle">#{evento.espacio != null ? evento.espacio.nombre : 'Sin asignar'}</span>
+                                    <span class="evento-nombre">#{evento.nombreEvento}</span>
                                 </div>
                             </div>
 
                             <div class="evento-footer">
-
-                                <p:commandButton value="Ver" process="@this" update=":eventosForm:detalleEventoPanel"
-                                                 oncomplete="PF('eventoDialog').show()"
-                                                 actionListener="#{eventoPortalBean.seleccionarEvento(evento)}"
-                                                 styleClass="btn btn-detalle">
-                                    <i class="bi bi-eye"></i>
-                                </p:commandButton>
-                                <p:commandButton value="Descargar" ajax="false" actionListener="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
-                                                 styleClass="btn btn-descargar">
-                                    <i class="bi bi-download"></i>
-                                </p:commandButton>
+                                <button type="button" class="btn btn-detalle btn-ver-evento">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                                <h:commandLink actionListener="#{eventoPortalBean.descargarComprobanteEvento(evento)}"
+                                               styleClass="btn btn-descargar"
+                                               onclick="this.form.target='_blank'">
+                                    <span class="bi bi-download"></span>
+                                    <span>Descargar</span>
+                                </h:commandLink>
                             </div>
                         </div>
                     </ui:repeat>
-
-                    <p:dialog id="eventoDialog" widgetVar="eventoDialog" modal="true" header="Detalle del evento" width="680" closable="true" styleClass="detalle-evento-dialog">
-                        <h:panelGroup id="detalleEventoPanel">
-                            <ui:fragment rendered="#{not empty eventoPortalBean.eventoSeleccionado}">
-                                <div class="detalle-evento-wrapper">
-                                    <div class="detalle-evento-header">
-                                        <div class="detalle-evento-title">
-                                            <i class="bi bi-calendar4-week"></i>
-                                            #{eventoPortalBean.eventoSeleccionado.nombreEvento}
-                                        </div>
-                                        <span class="detalle-evento-status">
-                                            <i class="bi bi-circle-fill"></i>
-                                            #{eventoPortalBean.eventoSeleccionado.estado}
-                                        </span>
-                                    </div>
-
-                                    <div class="detalle-evento-body">
-                                        <div class="detalle-evento-item">
-                                            <div class="label">
-                                                <i class="bi bi-calendar-date"></i>
-                                                Fecha
-                                            </div>
-                                            <div class="value">#{eventoPortalBean.formatearFechaEvento(eventoPortalBean.eventoSeleccionado.fechaEvento)}</div>
-                                        </div>
-                                        <div class="detalle-evento-item">
-                                            <div class="label">
-                                                <i class="bi bi-clock-history"></i>
-                                                Horario
-                                            </div>
-                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.horaInicio} - #{eventoPortalBean.eventoSeleccionado.horaFin}</div>
-                                        </div>
-                                        <div class="detalle-evento-item">
-                                            <div class="label">
-                                                <i class="bi bi-building"></i>
-                                                Espacio
-                                            </div>
-                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.espacio != null ? eventoPortalBean.eventoSeleccionado.espacio.nombre : 'Sin asignar'}</div>
-                                        </div>
-                                        <div class="detalle-evento-item">
-                                            <div class="label">
-                                                <i class="bi bi-person"></i>
-                                                Cliente
-                                            </div>
-                                            <div class="value">#{eventoPortalBean.eventoSeleccionado.nombreCliente}</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detalle-evento-footer">
-                                        <p:commandButton value="Descargar comprobante" ajax="false"
-                                                         actionListener="#{eventoPortalBean.descargarComprobanteEvento(eventoPortalBean.eventoSeleccionado)}"
-                                                         styleClass="btn btn-descargar" />
-                                    </div>
-                                </div>
-                            </ui:fragment>
-                        </h:panelGroup>
-                    </p:dialog>
                 </h:form>
             </div>
         </div>
     </div>
+
+    <div class="detalle-evento-modal" id="eventoModal">
+        <div class="detalle-evento-backdrop" data-close-evento></div>
+        <div class="detalle-evento-panel">
+            <div class="detalle-evento-header">
+                <div class="detalle-evento-title">
+                    <i class="bi bi-calendar4-week"></i>
+                    <span id="eventoTituloDetalle"></span>
+                </div>
+                <span class="detalle-evento-status" id="eventoEstadoDetalle">
+                    <i class="bi bi-circle-fill"></i>
+                    <span class="status-text"></span>
+                </span>
+            </div>
+
+            <div class="detalle-evento-body">
+                <div class="detalle-evento-item">
+                    <div class="label">
+                        <i class="bi bi-calendar-date"></i>
+                        Fecha
+                    </div>
+                    <div class="value" id="eventoFechaDetalle"></div>
+                </div>
+                <div class="detalle-evento-item">
+                    <div class="label">
+                        <i class="bi bi-clock-history"></i>
+                        Horario
+                    </div>
+                    <div class="value" id="eventoHorarioDetalle"></div>
+                </div>
+                <div class="detalle-evento-item">
+                    <div class="label">
+                        <i class="bi bi-building"></i>
+                        Espacio
+                    </div>
+                    <div class="value" id="eventoEspacioDetalle"></div>
+                </div>
+                <div class="detalle-evento-item">
+                    <div class="label">
+                        <i class="bi bi-person"></i>
+                        Cliente
+                    </div>
+                    <div class="value" id="eventoClienteDetalle"></div>
+                </div>
+            </div>
+
+            <div class="detalle-evento-footer">
+                <button type="button" class="btn btn-descargar" id="descargarEventoModal">
+                    <span class="bi bi-download"></span>
+                    <span>Descargar comprobante</span>
+                </button>
+                <button type="button" class="btn btn-detalle" id="cerrarEventoModal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const modal = document.getElementById('eventoModal');
+            const closeElements = modal.querySelectorAll('[data-close-evento], #cerrarEventoModal');
+            const downloadTrigger = document.getElementById('descargarEventoModal');
+            const body = document.body;
+            let activeCard = null;
+
+            function fillModal(card) {
+                const nombre = card.querySelector('.evento-nombre')?.textContent.trim() || card.querySelector('.evento-titulo').textContent.trim();
+                const estado = card.querySelector('.evento-estado').textContent.trim();
+                const fecha = card.querySelector('.evento-fecha').textContent.trim();
+                const horario = card.querySelector('.evento-horario').textContent.trim();
+                const espacio = card.querySelector('.evento-espacio-detalle').textContent.trim();
+                const cliente = card.querySelector('.evento-cliente').textContent.trim();
+
+                document.getElementById('eventoTituloDetalle').textContent = nombre;
+                document.querySelector('#eventoEstadoDetalle .status-text').textContent = estado;
+                document.getElementById('eventoFechaDetalle').textContent = fecha;
+                document.getElementById('eventoHorarioDetalle').textContent = horario;
+                document.getElementById('eventoEspacioDetalle').textContent = espacio;
+                document.getElementById('eventoClienteDetalle').textContent = cliente;
+            }
+
+            function openModal(card) {
+                activeCard = card;
+                fillModal(card);
+                modal.classList.add('is-visible');
+                body.classList.add('no-scroll');
+            }
+
+            function closeModal() {
+                modal.classList.remove('is-visible');
+                body.classList.remove('no-scroll');
+                activeCard = null;
+            }
+
+            document.querySelectorAll('.btn-ver-evento').forEach(button => {
+                button.addEventListener('click', () => {
+                    const card = button.closest('.evento-card');
+                    if (card) {
+                        openModal(card);
+                    }
+                });
+            });
+
+            closeElements.forEach(el => el.addEventListener('click', closeModal));
+
+            downloadTrigger.addEventListener('click', () => {
+                if (!activeCard) return;
+                const downloadLink = activeCard.querySelector('.btn-descargar');
+                if (downloadLink) {
+                    downloadLink.click();
+                }
+            });
+
+            document.addEventListener('keydown', (evt) => {
+                if (evt.key === 'Escape' && modal.classList.contains('is-visible')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
 </h:body>
 </html>
