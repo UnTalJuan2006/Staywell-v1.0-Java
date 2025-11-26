@@ -152,12 +152,14 @@ public class EventoHuespedBean implements Serializable {
     }
 
     /**
-     * Versión corregida: sin reflexión, sin catch vacío.
-     * Asume que Espacio.getCostoHora() devuelve double (ajusta si tu modelo difiere).
+     * Versión corregida: sin reflexión, sin catch vacío. Asume que
+     * Espacio.getCostoHora() devuelve double (ajusta si tu modelo difiere).
      */
     private void actualizarPrecioPorEspacio() {
         precioDia = BigDecimal.ZERO;
-        if (espacioSeleccionado == null) return;
+        if (espacioSeleccionado == null) {
+            return;
+        }
 
         // 1) Buscar en la lista cargada
         Optional<Espacio> opt = espacios.stream()
@@ -225,7 +227,9 @@ public class EventoHuespedBean implements Serializable {
     private void actualizarFechasOcupadas() {
         fechasOcupadasJson = "[]";
 
-        if (espacioSeleccionado == null) return;
+        if (espacioSeleccionado == null) {
+            return;
+        }
 
         try {
             List<Evento> ocupaciones = eventoDAO.listarOcupacionesEspacio(espacioSeleccionado, null);
@@ -240,9 +244,13 @@ public class EventoHuespedBean implements Serializable {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             for (Evento ev : ocupaciones) {
-                if (ev.getFechaEvento() == null) continue;
+                if (ev.getFechaEvento() == null) {
+                    continue;
+                }
                 String fecha = sdf.format(ev.getFechaEvento());
-                if (!first) jsonBuilder.append(',');
+                if (!first) {
+                    jsonBuilder.append(',');
+                }
                 jsonBuilder.append("{")
                         .append("\"from\":\"").append(fecha).append("\",")
                         .append("\"to\":\"").append(fecha).append("\"")
@@ -338,6 +346,13 @@ public class EventoHuespedBean implements Serializable {
         // Guardar evento y luego pago; si pago falla, revertir evento
         try {
             int idGenerado = eventoDAO.agregarEvento(evento);
+
+            CorreoBean.enviarCorreoConfirmacionEvento(
+                    usuarioLogueado.getEmail(),
+                    usuarioLogueado.getNombre(),
+                    String.valueOf(idGenerado)
+            );
+
             if (idGenerado <= 0) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
                         "No se pudo crear el evento."));

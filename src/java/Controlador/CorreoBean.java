@@ -247,6 +247,107 @@ public class CorreoBean implements Serializable {
             }
         }).start();
     }
+    
+    public static void enviarCorreoConfirmacionEvento(String email, String nombre, String numeroEvento) {
+    new Thread(() -> {
+        final String user = "juanmanuelrojasj@gmail.com";
+        final String pass = "lwtu nzug ctar yyke";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.debug", "true");
+
+        Session sesion = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(user, pass);
+            }
+        });
+
+        try {
+            Message mensaje = new MimeMessage(sesion);
+            mensaje.setFrom(new InternetAddress(user));
+            mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            mensaje.setSubject("🎉 Confirmación de Evento - Great Viaggio Hotel");
+
+            String contenidoHTML = "<!DOCTYPE html>"
+                + "<html lang='es'>"
+                + "<head>"
+                + "<meta charset='UTF-8'>"
+                + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+                + "<style>"
+                + "  * {margin:0;padding:0;box-sizing:border-box;}"
+                + "  body {margin:0;padding:20px;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8f5f3 100%);}"
+                + "  .email-wrapper {max-width:650px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(26,124,143,0.15);}"
+                + "  .header {background:linear-gradient(135deg,#1a7c8f 0%,#156b7d 100%);padding:50px 30px;text-align:center;position:relative;}"
+                + "  .header::before {content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1a7c8f,#2dd4bf,#1a7c8f);}"
+                + "  .logo {font-size:36px;font-weight:800;color:#ffffff;letter-spacing:1px;margin:0;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}"
+                + "  .tagline {color:#e0f2f1;font-size:14px;margin-top:8px;letter-spacing:2px;text-transform:uppercase;opacity:0.9;}"
+                + "  .content {padding:50px 40px;background:#ffffff;}"
+
+                + "  .success-badge {display:inline-block;background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(139,92,246,0.15));color:#6b21a8;padding:10px 24px;border-radius:25px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:25px;border:2px solid rgba(139,92,246,0.3);}"
+                + "  .success-icon {font-size:24px;margin-right:8px;}"
+                + "  .greeting {color:#1a7c8f;font-size:26px;font-weight:700;margin:0 0 20px 0;line-height:1.3;}"
+                + "  .intro-text {color:#555;font-size:16px;line-height:1.8;margin-bottom:30px;}"
+
+                + "  .event-card {background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%);border:2px solid #a855f7;border-radius:16px;padding:30px;margin:30px 0;box-shadow:0 4px 12px rgba(168,85,247,0.15);}"
+                + "  .event-title {color:#6b21a8;font-size:18px;font-weight:700;margin:0 0 20px 0;text-transform:uppercase;letter-spacing:1px;text-align:center;}"
+                + "  .event-number {background:linear-gradient(135deg,#a855f7 0%,#9333ea 100%);color:#ffffff;padding:15px;border-radius:10px;text-align:center;margin-bottom:25px;}"
+                + "  .event-number-label {font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:0.9;margin-bottom:5px;}"
+                + "  .event-number-value {font-size:28px;font-weight:800;letter-spacing:2px;}"
+
+                + "</style>"
+                + "</head>"
+                + "<body>"
+
+                + "<div class='email-wrapper'>"
+                + "  <div class='header'>"
+                + "    <h1 class='logo'>Great Viaggio</h1>"
+                + "    <p class='tagline'>Eventos memorables, momentos inolvidables</p>"
+                + "  </div>"
+
+                + "  <div class='content'>"
+                + "    <span class='success-badge'><span class='success-icon'>🎉</span> Evento Confirmado</span>"
+                + "    <h2 class='greeting'>¡Estimado/a " + nombre + "!</h2>"
+
+                + "    <p class='intro-text'>Nos complace confirmar que su reserva de evento ha sido procesada exitosamente. Gracias por confiar en <strong>Great Viaggio Hotel</strong>.</p>"
+
+                + "    <div class='event-card'>"
+                + "      <h3 class='event-title'>🎊 Detalles de su Evento</h3>"
+                + "      <div class='event-number'>"
+                + "        <div class='event-number-label'>Código de Confirmación</div>"
+                + "        <div class='event-number-value'>" + numeroEvento + "</div>"
+                + "      </div>"
+                + "    </div>"
+
+                + "    <div style='text-align:center;margin-top:30px;'>"
+                + "      <a href='https://www.greatviaggio.com/mis-eventos' style='display:inline-block;background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;'>Ver Mi Evento →</a>"
+                + "    </div>"
+
+                + "  </div>"
+
+                + "  <div class='footer' style='padding:30px;text-align:center;color:#777;font-size:13px;'>"
+                + "    &copy; 2025 Great Viaggio Hotel - Departamento de Eventos"
+                + "  </div>"
+
+                + "</div>"
+                + "</body>"
+                + "</html>";
+
+            mensaje.setContent(contenidoHTML, "text/html; charset=utf-8");
+            Transport.send(mensaje);
+
+            System.out.println("✅ Correo de confirmación de evento enviado a: " + email);
+
+        } catch (MessagingException e) {
+            System.err.println("❌ Error enviando correo de evento a " + email + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }).start();
+}
 
     // 🔹 Enviar correo de confirmación de reserva
     public static void enviarCorreoReserva(String email, String nombre, String numeroReserva) {
@@ -421,6 +522,9 @@ public class CorreoBean implements Serializable {
             }
         }).start();
     }
+    
+    
+    
 
     // ========================== Plantillas para envío manual ==========================
     public void seleccionarPlantilla(String tipo) {
