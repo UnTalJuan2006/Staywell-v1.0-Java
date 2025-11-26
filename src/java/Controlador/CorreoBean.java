@@ -248,7 +248,7 @@ public class CorreoBean implements Serializable {
         }).start();
     }
     
-    public static void enviarCorreoConfirmacionEvento(String email, String nombre, String numeroEvento) {
+    public static void enviarCorreoConfirmacionEvento(String email, String nombre, String numeroEvento ) {
     new Thread(() -> {
         final String user = "juanmanuelrojasj@gmail.com";
         final String pass = "lwtu nzug ctar yyke";

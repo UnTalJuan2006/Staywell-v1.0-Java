@@ -359,6 +359,7 @@ public class EventoHuespedBean implements Serializable {
             CorreoBean.enviarCorreoConfirmacionEvento(
                     usuarioLogueado.getEmail(),
                     usuarioLogueado.getNombre(),
+                    
                     String.valueOf(idGenerado)
             );
 
