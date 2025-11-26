@@ -90,10 +90,14 @@
             // Regla para bloquear cualquier fecha pasada
             (date) => inicioDeDia(date) < todayStart,
             // Reglas de rangos ocupados (inclusivos en check-in y check-out)
-            ...disabledRanges.map(range => ({
-                from: range.from,
-                to: range.to || range.from
-            }))
+            (date) => {
+                const current = inicioDeDia(date);
+                return disabledRanges.some(range => {
+                    const rangeStart = inicioDeDia(range.from);
+                    const rangeEnd = inicioDeDia(range.to || range.from);
+                    return current >= rangeStart && current <= rangeEnd;
+                });
+            }
         ];
 
         let checkoutPicker = window.flatpickr(checkoutInput, {
@@ -125,9 +129,10 @@
                 if (!checkoutPicker) return;
                 if (selectedDates && selectedDates.length) {
                     const checkinDate = selectedDates[0];
-                    checkoutPicker.set('minDate', checkinDate);
+                    const normalizedCheckin = inicioDeDia(checkinDate) < todayStart ? todayStart : checkinDate;
+                    checkoutPicker.set('minDate', normalizedCheckin);
 
-                    if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < checkinDate) {
+                    if (checkoutPicker.selectedDates.length && checkoutPicker.selectedDates[0] < normalizedCheckin) {
                         checkoutPicker.clear();
                     }
                 } else {
