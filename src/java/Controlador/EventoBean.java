@@ -114,15 +114,21 @@ public class EventoBean implements Serializable {
         }
     }
 
+    private List<Evento> listaMutable(List<Evento> origen) {
+        return origen != null ? new ArrayList<>(origen) : new ArrayList<>();
+    }
+
+    private <T> List<T> listaMutableGenerica(List<T> origen) {
+        return origen != null ? new ArrayList<>(origen) : new ArrayList<>();
+    }
+
     private void cargarListasBasicas() {
         System.out.println("[DEBUG] Iniciando carga de listas básicas...");
-        
+
         // Load spaces
         try {
-            listaEspacios = espacioDAO.listar();
-            if (listaEspacios == null) {
-                listaEspacios = new ArrayList<>();
-            }
+            List<Espacio> espacios = espacioDAO.listar();
+            listaEspacios = listaMutableGenerica(espacios);
             System.out.println("[DEBUG] Espacios cargados exitosamente: " + listaEspacios.size());
         } catch (SQLException e) {
             System.out.println("❌ Error SQL al cargar espacios: " + e.getMessage());
@@ -136,10 +142,8 @@ public class EventoBean implements Serializable {
 
         // Load users
         try {
-            listaUsuarios = usuarioDAO.listar();
-            if (listaUsuarios == null) {
-                listaUsuarios = new ArrayList<>();
-            }
+            List<Usuario> usuarios = usuarioDAO.listar();
+            listaUsuarios = listaMutableGenerica(usuarios);
             System.out.println("[DEBUG] Usuarios cargados exitosamente: " + listaUsuarios.size());
         } catch (SQLException e) {
             System.out.println("❌ Error SQL al cargar usuarios: " + e.getMessage());
@@ -163,10 +167,8 @@ public class EventoBean implements Serializable {
 
     public void cargarEventos() {
         try {
-            listaEventos = eventoDAO.listar();
-            if (listaEventos == null) {
-                listaEventos = new ArrayList<>();
-            }
+            List<Evento> eventos = eventoDAO.listar();
+            listaEventos = listaMutable(eventos);
             actualizarEventosFiltrados();
             System.out.println("[DEBUG] Eventos cargados: " + listaEventos.size());
         } catch (SQLException e) {
@@ -182,14 +184,12 @@ public class EventoBean implements Serializable {
     public void listarEventosDelUsuario() {
         try {
             if (usuarioLogueado != null) {
-                listarPorUsuario = eventoDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
-                if (listarPorUsuario == null) {
-                    listarPorUsuario = new ArrayList<>();
-                }
+                List<Evento> eventosUsuario = eventoDAO.listarPorUsuario(usuarioLogueado.getIdUsuario());
+                listarPorUsuario = listaMutable(eventosUsuario);
 
                 // Sincronizamos las listas base y filtrada para que el filtro funcione
                 // correctamente para usuarios huéspedes.
-                listaEventos = new ArrayList<>(listarPorUsuario);
+                listaEventos = listaMutable(listarPorUsuario);
                 actualizarEventosFiltrados();
                 System.out.println("[DEBUG] Eventos del usuario " + usuarioLogueado.getIdUsuario()
                         + " cargados: " + listarPorUsuario.size());
@@ -322,7 +322,7 @@ public class EventoBean implements Serializable {
         String terminoNormalizado = normalizarTexto(filtroBusqueda);
 
         if (inicio == null && fin == null && terminoNormalizado.isEmpty()) {
-            eventosFiltrados = new ArrayList<>(fuente);
+            eventosFiltrados = listaMutable(fuente);
             return;
         }
 
@@ -707,19 +707,19 @@ public class EventoBean implements Serializable {
     }
 
     public List<Evento> getListaEventos() {
-        return listaEventos;
+        return listaMutable(listaEventos);
     }
 
     public List<Evento> getEventosFiltrados() {
-        return eventosFiltrados != null ? eventosFiltrados : new ArrayList<>();
+        return eventosFiltrados != null ? listaMutable(eventosFiltrados) : new ArrayList<>();
     }
 
     public List<Espacio> getListaEspacios() {
-        return listaEspacios;
+        return listaMutableGenerica(listaEspacios);
     }
 
     public List<Usuario> getListaUsuarios() {
-        return listaUsuarios;
+        return listaMutableGenerica(listaUsuarios);
     }
 
     public Integer getUsuarioIdSeleccionado() {
@@ -772,16 +772,21 @@ public class EventoBean implements Serializable {
     }
 
     public List<Evento> getListarPorUsuario() {
-        return listarPorUsuario;
+        return listaMutable(listarPorUsuario);
     }
 
     public void setListarPorUsuario(List<Evento> listarPorUsuario) {
-        this.listarPorUsuario = listarPorUsuario;
+        this.listarPorUsuario = listaMutable(listarPorUsuario);
     }
 
     public void exportarExcelEventos() {
         try {
             List<Evento> lista = eventoDAO.listar();
+            if (lista == null) {
+                lista = new ArrayList<>();
+            } else {
+                lista = new ArrayList<>(lista);
+            }
 
             String[] headers = {
                 "ID", "Nombre", "Fecha", "Hora Inicio", "Hora Fin",
@@ -813,6 +818,11 @@ public class EventoBean implements Serializable {
     public void exportarPdfEventos() {
         try {
             List<Evento> lista = eventoDAO.listar();
+            if (lista == null) {
+                lista = new ArrayList<>();
+            } else {
+                lista = new ArrayList<>(lista);
+            }
 
             String[] headers = {
                 "ID", "Nombre", "Fecha", "Hora Inicio", "Hora Fin",
