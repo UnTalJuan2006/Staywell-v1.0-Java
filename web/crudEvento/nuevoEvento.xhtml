@@ -91,7 +91,7 @@
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
                                         execute="fechaEvento espacio"
-                                        render="fechaEvento horaInicio horaFin ocupacionesJson @messages"/>
+                                        render="horaInicio horaFin ocupacionesJson @messages"/>
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
@@ -129,7 +129,7 @@
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
                                         execute="espacio fechaEvento"
-                                        render="fechaEvento horaInicio horaFin ocupacionesJson @messages" />
+                                        render="horaInicio horaFin ocupacionesJson @messages" />
                             </h:selectOneMenu>
                             <h:message for="espacio" styleClass="text-danger small" />
                         </div>
@@ -191,7 +191,9 @@ function inicializarPickersEvento() {
         flatpickr(fecha, {
             enableTime: true,
             dateFormat: "Y-m-d H:i",
-            minDate: "today"
+            minDate: "today",
+            allowInput: true,
+            defaultDate: fecha.value || null
         });
     }
 
