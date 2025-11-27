@@ -526,6 +526,46 @@ public class CorreoBean implements Serializable {
     
     
 
+
+    // 🔹 Enviar código de recuperación de contraseña
+    public static void enviarCodigoRecuperacion(String email, String codigo) {
+        new Thread(() -> {
+            final String user = "juanmanuelrojasj@gmail.com";
+            final String pass = "lwtu nzug ctar yyke";
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+
+            Session sesion = Session.getInstance(props, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(user, pass);
+                }
+            });
+
+            try {
+                Message mensaje = new MimeMessage(sesion);
+                mensaje.setFrom(new InternetAddress(user));
+                mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+                mensaje.setSubject("Recuperación de contraseña - Great Viaggio Hotel");
+
+                String contenido = "<h2>Recuperación de contraseña</h2>"
+                        + "<p>Utiliza el siguiente código para restablecer tu contraseña:</p>"
+                        + "<h1 style='letter-spacing:4px;'>" + codigo + "</h1>"
+                        + "<p>El código expira en 15 minutos y solo puede usarse una vez.</p>"
+                        + "<p>Si no solicitaste este cambio, ignora este mensaje.</p>";
+
+                mensaje.setContent(contenido, "text/html; charset=utf-8");
+                Transport.send(mensaje);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     // ========================== Plantillas para envío manual ==========================
     public void seleccionarPlantilla(String tipo) {
         this.plantillaSeleccionada = tipo;
