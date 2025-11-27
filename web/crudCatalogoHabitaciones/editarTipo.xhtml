@@ -17,75 +17,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 270px;
-                background: #131318;
-                color: white;
-                z-index: 1000;
-                overflow-y: auto;
-            }
-
-            .sidebar-header {
-                padding: 2rem 1.5rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                text-align: center;
-                padding-bottom: 10px;
-            }
-
-            .sidebar-nav .nav-link {
-                display: flex;
-                align-items: center;
-                padding: 10px 18px;
-                color: rgba(255, 255, 255, 0.8);
-                text-decoration: none;
-            }
-
-            .sidebar-nav .nav-link:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: white;
-            }
-
-            .sidebar-nav .nav-link.active {
-                background: rgba(255, 255, 255, 0.2);
-                color: white;
-                border-right: 4px solid #ffd700;
-            }
-
-            .sidebar-footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 1.5rem;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .main-content {
-                margin-left: 280px;
-                padding: 2rem;
-            }
-
-            .top-bar {
-                background: white;
-                padding: 1.5rem 2rem;
-                border-bottom: 1px solid #e9ecef;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .form-card {
-                max-width: 900px;
-            }
-        </style>
-    </h:head>
+        <link rel="stylesheet" href="../css/admin-crud.css" />
+</h:head>
 
     <h:body>
         <div class="sidebar">
@@ -97,10 +30,10 @@
             <nav class="sidebar-nav">
                 <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
                 <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
-                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link active"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
                 <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
                 <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
-                <h:link outcome="/Reservas.xhtml" styleClass="nav-link active"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
+                <h:link outcome="/Reservas.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
                 <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
                 <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
                 <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>

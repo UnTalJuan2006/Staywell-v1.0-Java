@@ -6,51 +6,92 @@
     <meta charset="UTF-8" />
     <title>Nueva Habitación</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="../css/admin-crud.css" />
 </h:head>
 
-<h:body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
-    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Registrar Nueva Habitación</h1>
+<h:body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-hotel"></i> StayWell</h4>
+            <p>Panel Admin</p>
+        </div>
+
+        <nav class="sidebar-nav">
+            <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
+            <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link active"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
+            <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+            <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
+            <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
+            <h:link outcome="/Reservas.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
+            <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
+            <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
+            <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
+            <h:link outcome="/.xhtml" styleClass="nav-link"><i class="bi bi-bar-chart me-2"></i> Mantenimientos</h:link>
+        </nav>
 
         <h:form>
-            <!-- Mensajes -->
-            <h:messages styleClass="mb-4 text-center text-red-600" layout="table" />
-
-            <!-- Número de habitación -->
-            <div class="mb-4">
-                <label for="numHabitacion" class="block text-gray-700 font-semibold mb-1">Número de habitación:</label>
-                <h:inputText id="numHabitacion" value="#{habitacionBean.habitacion.numHabitacion}"
-                             styleClass="border rounded-lg w-full p-2 focus:ring-2 focus:ring-indigo-500"
-                             required="true" requiredMessage="El número de habitación es obligatorio." />
-            </div>
-
-            <!-- Tipo de habitación -->
-            <div class="mb-4">
-                <label for="tipoHabitacion" class="block text-gray-700 font-semibold mb-1">Tipo de habitación:</label>
-                <h:selectOneMenu id="tipoHabitacion"
-                                 value="#{habitacionBean.idTipoSeleccionado}"
-                                 styleClass="border rounded-lg w-full p-2 focus:ring-2 focus:ring-indigo-500"
-                                 required="true"
-                                 requiredMessage="Debe seleccionar un tipo de habitación.">
-                    <f:selectItem itemLabel="-- Seleccione un tipo --" itemValue="" />
-                    <f:selectItems value="#{habitacionBean.listaTipos}"
-                                   var="t"
-                                   itemValue="#{t.idTipoHabitacion}"
-                                   itemLabel="#{t.nombre}" />
-                </h:selectOneMenu>
-            </div>
-
-            <!-- Botones -->
-            <div class="flex justify-between items-center mt-6">
-                <h:commandButton value="Registrar"
-                                 action="#{habitacionBean.agregar}"
-                                 styleClass="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition" />
-
-                <h:link outcome="Habitaciones"
-                        value="Volver al listado"
-                        styleClass="text-indigo-600 hover:text-indigo-800 font-medium" />
+            <div class="sidebar-footer">
+                <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </h:commandLink>
             </div>
         </h:form>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar d-flex justify-content-between align-items-center">
+            <div class="page-title">
+                <h2><i class="bi bi-plus-circle"></i> Registrar Habitación</h2>
+                <span>Completa la información para agregar una nueva habitación.</span>
+            </div>
+            <div class="d-flex gap-2">
+                <h:link outcome="/Habitaciones.xhtml" styleClass="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </h:link>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h:messages styleClass="alert alert-warning" layout="table" />
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos de la Habitación</h5>
+                    <p class="mb-0 section-helper">Ingresa información clara para mantener el inventario actualizado.</p>
+                </div>
+                <div class="card-body">
+                    <h:form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="numHabitacion" class="form-label">Número de habitación</label>
+                                <h:inputText id="numHabitacion" value="#{habitacionBean.habitacion.numHabitacion}"
+                                             styleClass="form-control"
+                                             required="true" requiredMessage="El número de habitación es obligatorio." />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tipoHabitacion" class="form-label">Tipo de habitación</label>
+                                <h:selectOneMenu id="tipoHabitacion"
+                                                 value="#{habitacionBean.idTipoSeleccionado}"
+                                                 styleClass="form-select"
+                                                 required="true"
+                                                 requiredMessage="Debe seleccionar un tipo de habitación.">
+                                    <f:selectItem itemLabel="-- Seleccione un tipo --" itemValue="" />
+                                    <f:selectItems value="#{habitacionBean.listaTipos}"
+                                                   var="t"
+                                                   itemValue="#{t.idTipoHabitacion}"
+                                                   itemLabel="#{t.nombre}" />
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <h:commandButton value="Registrar" action="#{habitacionBean.agregar}" styleClass="btn btn-primary me-2" />
+                            <h:link outcome="/Habitaciones.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
     </div>
 </h:body>
 </html>
