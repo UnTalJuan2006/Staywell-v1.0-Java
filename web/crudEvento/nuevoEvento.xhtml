@@ -91,7 +91,7 @@
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
                                         execute="@form"
-                                        render="horaInicio horaFin ocupacionesJson @messages"/>
+                                        render="ocupacionesJson @messages"/>
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
@@ -129,7 +129,7 @@
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
                                         execute="@form"
-                                        render="horaInicio horaFin ocupacionesJson @messages" />
+                                        render="ocupacionesJson @messages" />
                             </h:selectOneMenu>
                             <h:message for="espacio" styleClass="text-danger small" />
                         </div>
