@@ -4,6 +4,7 @@ import Controlador.Conexion;
 import Modelo.EnumEstadoUsuario;
 import Modelo.EnumRoles;
 import Modelo.Usuario;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAO {
+
+    private Connection obtenerConexion() throws SQLException {
+        Connection con = Conexion.conectar();
+        if (con == null) {
+            throw new SQLException("No se pudo establecer conexión con la base de datos");
+        }
+        return con;
+    }
 
     public List<Usuario> listar() throws SQLException {
         List<Usuario> listaUsuarios = new ArrayList<>();
@@ -258,7 +267,7 @@ public class UsuarioDAO {
 
     public Usuario buscarPorEmail(String email) throws SQLException {
         String sql = "SELECT * FROM usuario WHERE LOWER(email) = LOWER(?) LIMIT 1";
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, email);
 
             try (ResultSet rs = ps.executeQuery()) {

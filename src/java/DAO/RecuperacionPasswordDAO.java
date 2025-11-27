@@ -11,9 +11,17 @@ import java.time.LocalDateTime;
 
 public class RecuperacionPasswordDAO {
 
+    private Connection obtenerConexion() throws SQLException {
+        Connection con = Conexion.conectar();
+        if (con == null) {
+            throw new SQLException("No se pudo establecer conexión con la base de datos");
+        }
+        return con;
+    }
+
     public void invalidarTokensActivos(int idUsuario) throws SQLException {
         String sql = "UPDATE recuperacion_password SET usado = 1 WHERE idUsuario = ? AND usado = 0";
-        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idUsuario);
             ps.executeUpdate();
         }
@@ -21,7 +29,7 @@ public class RecuperacionPasswordDAO {
 
     public void crearRegistro(RecuperacionPassword rec) throws SQLException {
         String sql = "INSERT INTO recuperacion_password (idUsuario, token, fechaExpiracion, usado) VALUES (?, ?, ?, ?)";
-        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, rec.getIdUsuario());
             ps.setString(2, rec.getToken());
             ps.setTimestamp(3, Timestamp.valueOf(rec.getFechaExpiracion()));
@@ -32,7 +40,7 @@ public class RecuperacionPasswordDAO {
 
     public RecuperacionPassword obtenerTokenValido(String token, int idUsuario) throws SQLException {
         String sql = "SELECT * FROM recuperacion_password WHERE token = ? AND idUsuario = ? AND usado = 0 AND fechaExpiracion > ? ORDER BY idRecuperacion DESC LIMIT 1";
-        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, token);
             ps.setInt(2, idUsuario);
             ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
@@ -57,7 +65,7 @@ public class RecuperacionPasswordDAO {
 
     public void marcarComoUsado(int idRecuperacion) throws SQLException {
         String sql = "UPDATE recuperacion_password SET usado = 1 WHERE idRecuperacion = ?";
-        try (Connection con = Conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idRecuperacion);
             ps.executeUpdate();
         }
