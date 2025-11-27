@@ -77,7 +77,7 @@
                                          required="true"
                                          requiredMessage="Debe indicar la fecha del evento.">
                                 <f:convertDateTime pattern="yyyy-MM-dd" />
-                                <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" render="@form" />
+                                <f:ajax event="change" listener="#{eventoBean.validarFechasAjax}" execute="@form" render="@form" />
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
                         </div>
@@ -179,7 +179,9 @@
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
-                time_24hr: true
+                time_24hr: true,
+                allowInput: true,
+                defaultDate: horaInicio.value || null
             });
         }
 
@@ -192,7 +194,9 @@
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
-                time_24hr: true
+                time_24hr: true,
+                allowInput: true,
+                defaultDate: horaFin.value || null
             });
         }
     }

@@ -90,7 +90,7 @@
                                 <f:convertDateTime pattern="yyyy-MM-dd" />
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
-                                        execute="fechaEvento espacio"
+                                        execute="@form"
                                         render="horaInicio horaFin ocupacionesJson @messages"/>
                             </h:inputText>
                             <h:message for="fechaEvento" styleClass="text-danger small" />
@@ -128,7 +128,7 @@
                                                itemLabel="#{espacio.nombre}" />
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
-                                        execute="espacio fechaEvento"
+                                        execute="@form"
                                         render="horaInicio horaFin ocupacionesJson @messages" />
                             </h:selectOneMenu>
                             <h:message for="espacio" styleClass="text-danger small" />
@@ -206,7 +206,9 @@ function inicializarPickersEvento() {
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
-            time_24hr: true
+            time_24hr: true,
+            allowInput: true,
+            defaultDate: horaInicio.value || null
         });
     }
 
@@ -219,7 +221,9 @@ function inicializarPickersEvento() {
             enableTime: true,
             noCalendar: true,
             dateFormat: "H:i",
-            time_24hr: true
+            time_24hr: true,
+            allowInput: true,
+            defaultDate: horaFin.value || null
         });
     }
 }
