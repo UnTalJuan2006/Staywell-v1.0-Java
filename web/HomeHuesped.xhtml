@@ -590,7 +590,7 @@
                     </div>
 
                     <div class="habitaciones-grid">
-                        <p:repeat var="t" value="#{tipoHabitacionBean.listaTipoHabitaciones}">
+                        <p:repeat var="t" value="#{tipoHabitacionBean.listaTipoHabitacionesDisponibles}">
                             <div class="habitacion-card">
                                 <div class="habitacion-img">
                                     <img src="#{request.contextPath}/img/#{t.imagen}" alt="#{t.nombre}" />
@@ -626,7 +626,7 @@
                     </div>
 
                     <div class="habitaciones-grid">
-                        <p:repeat var="p" value="#{espacioBean.listaEspacios}">
+                        <p:repeat var="p" value="#{espacioBean.listaEspaciosDisponibles}">
                             <div class="habitacion-card">
                                 <div class="habitacion-img">
                                     <img src="#{request.contextPath}/img/#{p.imagen}" alt="#{p.nombre}" />

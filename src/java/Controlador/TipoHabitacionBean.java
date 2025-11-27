@@ -1,5 +1,6 @@
 package Controlador;
 
+import DAO.HabitacionDAO;
 import DAO.TipoHabitacionDAO;
 import Modelo.TipoHabitacion;
 import java.io.File;
@@ -29,6 +30,7 @@ public class TipoHabitacionBean implements Serializable {
 
     private TipoHabitacion tipoHabitacion = new TipoHabitacion();
     private TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
+    private HabitacionDAO habitacionDAO = new HabitacionDAO();
     private Part imagen;
     private List<TipoHabitacion> listaTipoHabitaciones;
     private String filtroNombre;
@@ -71,6 +73,16 @@ public class TipoHabitacionBean implements Serializable {
         return listaTipoHabitaciones;
     }
 
+    public List<TipoHabitacion> getListaTipoHabitacionesDisponibles() {
+        if (listaOriginal == null) {
+            return new ArrayList<>();
+        }
+
+        return listaOriginal.stream()
+                .filter(tipo -> tieneHabitacionesDisponibles(tipo.getIdTipoHabitacion()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public void aplicarFiltro() {
         if (listaOriginal == null) {
             listaOriginal = new ArrayList<>();
@@ -93,6 +105,19 @@ public class TipoHabitacionBean implements Serializable {
             listaOriginal = new ArrayList<>();
         }
         return listaOriginal; // usa todos los tipos para llenar el select
+    }
+
+    private boolean tieneHabitacionesDisponibles(Integer idTipoHabitacion) {
+        if (idTipoHabitacion == null) {
+            return false;
+        }
+
+        try {
+            return habitacionDAO.contarDisponiblesPorTipo(idTipoHabitacion) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {

@@ -80,6 +80,16 @@ public class EspacioBean implements Serializable {
         return listaEspacios;
     }
 
+    public List<Espacio> getListaEspaciosDisponibles() {
+        if (listaOriginal == null) {
+            return new ArrayList<>();
+        }
+
+        return listaOriginal.stream()
+                .filter(e -> EnumEstadoEspacio.Disponible.equals(e.getEstado()))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public String getFiltroTipo() {
         return filtroTipo;
     }
