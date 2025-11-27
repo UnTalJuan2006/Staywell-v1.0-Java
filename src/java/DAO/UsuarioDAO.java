@@ -256,6 +256,58 @@ public class UsuarioDAO {
         return 0;
     }
 
+    public Usuario buscarPorEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM usuario WHERE LOWER(email) = LOWER(?) LIMIT 1";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdUsuario(rs.getInt("idUsuario"));
+                    u.setNombre(rs.getString("nombre"));
+                    u.setEmail(rs.getString("email"));
+                    u.setDireccion(rs.getString("direccion"));
+                    u.setTelefono(rs.getString("telefono"));
+
+                    java.sql.Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
+                    if (fechaCreacion != null) {
+                        u.setFechaCreacion(fechaCreacion.toLocalDateTime());
+                    }
+
+                    java.sql.Timestamp fechaActualizacion = rs.getTimestamp("fechaActualizacion");
+                    if (fechaActualizacion != null) {
+                        u.setFechaActualizacion(fechaActualizacion.toLocalDateTime());
+                    }
+
+                    String rol = rs.getString("rol");
+                    if (rol != null) {
+                        u.setRol(EnumRoles.valueOf(rol.trim().toUpperCase()));
+                    }
+
+                    String estado = rs.getString("estado");
+                    if (estado != null) {
+                        u.setEstado(EnumEstadoUsuario.valueOf(estado));
+                    }
+
+                    return u;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void actualizarPassword(int idUsuario, String passwordEncriptado) throws SQLException {
+        String sql = "UPDATE usuario SET password = ?, fechaActualizacion = ? WHERE idUsuario = ?";
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, passwordEncriptado);
+            ps.setTimestamp(2, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            ps.setInt(3, idUsuario);
+            ps.executeUpdate();
+        }
+    }
+
 
 
 }
