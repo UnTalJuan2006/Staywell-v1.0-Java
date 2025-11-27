@@ -145,13 +145,16 @@
         </div>
     </div>
 </div>
-<script>
+
+<script type="text/javascript">
     function inicializarPickersEditar() {
         if (!window.flatpickr) {
             return;
         }
 
-        flatpickr.localize(flatpickr.l10ns.es);
+        if (window.flatpickr &amp;&amp; window.flatpickr.l10ns &amp;&amp; window.flatpickr.l10ns.es) {
+            flatpickr.localize(flatpickr.l10ns.es);
+        }
 
         var fecha = document.getElementById("formEditar:fechaEvento");
         if (fecha) {
@@ -196,7 +199,7 @@
 
     document.addEventListener("DOMContentLoaded", inicializarPickersEditar);
 
-    if (window.jsf && jsf.ajax) {
+    if (window.jsf &amp;&amp; jsf.ajax) {
         jsf.ajax.addOnEvent(function(data) {
             if (data.status === 'success') {
                 inicializarPickersEditar();
@@ -204,5 +207,6 @@
         });
     }
 </script>
+
 </h:body>
 </html>
