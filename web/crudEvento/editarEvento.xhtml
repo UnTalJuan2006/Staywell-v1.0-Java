@@ -146,26 +146,63 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    function inicializarPickersEditar() {
+        if (!window.flatpickr) {
+            return;
+        }
+
         flatpickr.localize(flatpickr.l10ns.es);
-        flatpickr("#formEditar\\:fechaEvento", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            minDate: "today"
+
+        var fecha = document.getElementById("formEditar:fechaEvento");
+        if (fecha) {
+            if (fecha._flatpickr) {
+                fecha._flatpickr.destroy();
+            }
+            flatpickr(fecha, {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                minDate: "today",
+                allowInput: true,
+                defaultDate: fecha.value || null
+            });
+        }
+
+        var horaInicio = document.getElementById("formEditar:horaInicio");
+        if (horaInicio) {
+            if (horaInicio._flatpickr) {
+                horaInicio._flatpickr.destroy();
+            }
+            flatpickr(horaInicio, {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true
+            });
+        }
+
+        var horaFin = document.getElementById("formEditar:horaFin");
+        if (horaFin) {
+            if (horaFin._flatpickr) {
+                horaFin._flatpickr.destroy();
+            }
+            flatpickr(horaFin, {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializarPickersEditar);
+
+    if (window.jsf && jsf.ajax) {
+        jsf.ajax.addOnEvent(function(data) {
+            if (data.status === 'success') {
+                inicializarPickersEditar();
+            }
         });
-        flatpickr("#formEditar\\:horaInicio", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
-        flatpickr("#formEditar\\:horaFin", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true
-        });
-    });
+    }
 </script>
 </h:body>
 </html>

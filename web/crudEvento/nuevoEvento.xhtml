@@ -191,7 +191,9 @@ function inicializarPickersEvento() {
         flatpickr(fecha, {
             enableTime: true,
             dateFormat: "Y-m-d H:i",
-            minDate: "today"
+            minDate: "today",
+            allowInput: true,
+            defaultDate: fecha.value || null
         });
     }
 
