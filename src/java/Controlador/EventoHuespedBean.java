@@ -5,6 +5,7 @@ import DAO.EventoDAO;
 import DAO.PagoEventoDAO;
 import Modelo.Espacio;
 import Modelo.Evento;
+import Modelo.EnumEstadoEspacio;
 import Modelo.EnumPago;
 import Modelo.EnumEstadoEvento;
 import Modelo.PagoEvento;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -94,7 +96,10 @@ public class EventoHuespedBean implements Serializable {
     // -------------------------
     private void cargarEspacios() {
         try {
-            espacios = espacioDAO.listar();
+            List<Espacio> espaciosDisponibles = espacioDAO.listar();
+            espacios = espaciosDisponibles.stream()
+                    .filter(e -> EnumEstadoEspacio.Disponible.equals(e.getEstado()))
+                    .collect(Collectors.toList());
         } catch (SQLException ex) {
             espacios = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
