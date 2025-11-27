@@ -87,7 +87,7 @@
                                          styleClass="form-control" readonly="true"
                                          required="true"
                                          requiredMessage="Debe indicar la fecha del evento.">
-                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
                                 <f:ajax event="change"
                                         listener="#{eventoBean.validarFechasAjax}"
                                         execute="fechaEvento espacio"
@@ -189,8 +189,8 @@ function inicializarPickersEvento() {
             fecha._flatpickr.destroy();
         }
         flatpickr(fecha, {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
+            enableTime: false,
+            dateFormat: "Y-m-d",
             minDate: "today",
             allowInput: true,
             defaultDate: fecha.value || null
