@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -523,8 +524,12 @@ public class EventoBean implements Serializable {
             return false;
         }
 
-        Date hoy = new Date();
-        if (evento.getFechaEvento().before(hoy)) {
+        LocalDate fechaEventoLocal = evento.getFechaEvento().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        LocalDate hoy = LocalDate.now();
+
+        if (fechaEventoLocal.isBefore(hoy)) {
             context.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_ERROR,
                     "Fecha inválida",
