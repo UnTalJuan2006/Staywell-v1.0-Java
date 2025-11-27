@@ -5,6 +5,7 @@ import DAO.HabitacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
+import Modelo.EnumEstadoHabitacion;
 import Modelo.EnumEstadoReserva;
 import Modelo.EnumPago;
 import Modelo.Habitacion;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -160,13 +162,16 @@ public class ReservaHuespedBean implements Serializable {
             if (fechaEntrada != null && fechaSalida != null && fechaSalida.isAfter(fechaEntrada)) {
                 List<Habitacion> disponibles = new ArrayList<>();
                 for (Habitacion habitacion : habitacionesPorTipo) {
-                    if (reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                    if (EnumEstadoHabitacion.Disponible.equals(habitacion.getEstado())
+                            && reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
                         disponibles.add(habitacion);
                     }
                 }
                 habitacionesDisponibles = disponibles;
             } else {
-                habitacionesDisponibles = habitacionesPorTipo;
+                habitacionesDisponibles = habitacionesPorTipo.stream()
+                        .filter(h -> EnumEstadoHabitacion.Disponible.equals(h.getEstado()))
+                        .collect(Collectors.toCollection(ArrayList::new));
             }
 
             if (habitacionSeleccionada != null) {

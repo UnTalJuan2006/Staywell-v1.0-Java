@@ -230,4 +230,20 @@ public class HabitacionDAO {
 
         return 0;
     }
+
+    public int contarDisponiblesPorTipo(int idTipoHabitacion) throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM habitacion "
+                + "WHERE idTipoHabitacion = ? AND UPPER(TRIM(estado)) = 'DISPONIBLE'";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idTipoHabitacion);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+
+        return 0;
+    }
 }
