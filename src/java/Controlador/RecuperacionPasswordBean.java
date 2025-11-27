@@ -125,6 +125,8 @@ public class RecuperacionPasswordBean implements Serializable {
 
     public void validarYRestablecer() {
         try {
+            asegurarDaos();
+
             if (!codigoEnviado) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso", "Primero solicita un código de verificación"));
@@ -158,7 +160,6 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
-            asegurarDaos();
             RecuperacionPassword rec = recuperacionDAO.obtenerTokenValido(codigoVerificacion.trim(), usuario.getIdUsuario());
             if (rec == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
