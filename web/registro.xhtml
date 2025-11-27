@@ -130,49 +130,54 @@
 
             <h:form>
                 <div class="input-box">
-                    <h:inputText id="nombre" value="#{usuarioBean.usuario.nombre}" 
+                    <h:inputText id="nombre" value="#{usuarioBean.usuario.nombre}"
                                  required="true" requiredMessage="Debe ingresar un nombre">
                         <f:passThroughAttribute name="placeholder" value="Nombre"/>
                     </h:inputText>
-
-
+                    <h:message for="nombre" styleClass="mensaje-error"/>
                 </div>
 
                 <div class="input-box">
-                    <h:inputText id="email" value="#{usuarioBean.usuario.email}" 
-                                 required="true" requiredMessage="Debe ingresar un correo">
+                    <h:inputText id="email" value="#{usuarioBean.usuario.email}"
+                                 required="true" requiredMessage="Debe ingresar un correo"
+                                 validatorMessage="Ingrese un correo electrónico válido (ejemplo@dominio.com)">
                         <f:passThroughAttribute name="placeholder" value="Email"/>
-                        <!-- Valida que contenga al menos una @ -->
-                        <f:validateRegex pattern=".+@.+" 
-                                         />
+                        <f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"/>
+                        <f:ajax event="blur" render="emailMsg"/>
                     </h:inputText>
+                    <h:message id="emailMsg" for="email" styleClass="mensaje-error"/>
                 </div>
 
 
 
                 <div class="input-box">
-                    <h:inputText id="telefono" value="#{usuarioBean.usuario.telefono}" 
+                    <h:inputText id="telefono" value="#{usuarioBean.usuario.telefono}"
                                  required="true" requiredMessage="Debe ingresar un teléfono">
                         <f:passThroughAttribute name="placeholder" value="Telefono"/>
                     </h:inputText>
-
+                    <h:message for="telefono" styleClass="mensaje-error"/>
                 </div>
 
                 <div class="input-box">
-                    <h:inputText id="direccion" value="#{usuarioBean.usuario.direccion}" 
+                    <h:inputText id="direccion" value="#{usuarioBean.usuario.direccion}"
                                  required="true" requiredMessage="Debe ingresar una dirrecion">
                         <f:passThroughAttribute name="placeholder" value="Dircción"/>
                     </h:inputText>
+                    <h:message for="direccion" styleClass="mensaje-error"/>
                 </div>
 
 
                 <div class="input-box">
-                    <h:inputSecret id="password" value="#{usuarioBean.usuario.password}" 
-                                   required="true" requiredMessage="Una Mayúscula, una minúscula, un número (4 a 10 caracteres)" >
+                    <h:inputSecret id="password" value="#{usuarioBean.usuario.password}"
+                                   required="true"
+                                   requiredMessage="La contraseña es obligatoria"
+                                   validatorMessage="Debe tener al menos 8 caracteres, con mayúsculas, minúsculas, números y un símbolo">
                         <f:passThroughAttribute name="placeholder" value="Contraseña"/>
+                        <f:validateRegex pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\-=[\\]{};':\"\\|,.<>/?]).{8,}$"/>
+                        <f:ajax event="blur" render="passwordMsg"/>
 
                     </h:inputSecret>
-
+                    <h:message id="passwordMsg" for="password" styleClass="mensaje-error"/>
                 </div>
 
                 <h:commandButton value="Registrar" action="#{usuarioBean.agregar}" 
