@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -74,7 +75,7 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
-            email = email.trim();
+            email = email.trim().toLowerCase(Locale.ROOT);
             Usuario usuario = usuarioDAO.buscarPorEmail(email);
             if (usuario == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -137,7 +138,7 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
-            email = email.trim();
+            email = email.trim().toLowerCase(Locale.ROOT);
             Usuario usuario = usuarioDAO.buscarPorEmail(email);
             if (usuario == null) {
                 FacesContext.getCurrentInstance().addMessage(null,

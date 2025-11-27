@@ -257,7 +257,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorEmail(String email) throws SQLException {
-        String sql = "SELECT * FROM usuario WHERE email = ? LIMIT 1";
+        String sql = "SELECT * FROM usuario WHERE LOWER(email) = LOWER(?) LIMIT 1";
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setString(1, email);
 
