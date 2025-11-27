@@ -11,6 +11,7 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -28,8 +29,18 @@ public class RecuperacionPasswordBean implements Serializable {
     private String confirmarPassword;
     private boolean codigoEnviado;
 
-    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
-    private final RecuperacionPasswordDAO recuperacionDAO = new RecuperacionPasswordDAO();
+    private transient UsuarioDAO usuarioDAO;
+    private transient RecuperacionPasswordDAO recuperacionDAO;
+
+    @PostConstruct
+    public void init() {
+        if (usuarioDAO == null) {
+            usuarioDAO = new UsuarioDAO();
+        }
+        if (recuperacionDAO == null) {
+            recuperacionDAO = new RecuperacionPasswordDAO();
+        }
+    }
 
     public String getEmail() {
         return email;
@@ -76,6 +87,7 @@ public class RecuperacionPasswordBean implements Serializable {
             }
 
             email = email.trim().toLowerCase(Locale.ROOT);
+            asegurarDaos();
             Usuario usuario = usuarioDAO.buscarPorEmail(email);
             if (usuario == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -146,6 +158,7 @@ public class RecuperacionPasswordBean implements Serializable {
                 return;
             }
 
+            asegurarDaos();
             RecuperacionPassword rec = recuperacionDAO.obtenerTokenValido(codigoVerificacion.trim(), usuario.getIdUsuario());
             if (rec == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
@@ -164,6 +177,15 @@ public class RecuperacionPasswordBean implements Serializable {
         } catch (SQLException | IOException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo restablecer la contraseña: " + e.getMessage()));
+        }
+    }
+
+    private void asegurarDaos() {
+        if (usuarioDAO == null) {
+            usuarioDAO = new UsuarioDAO();
+        }
+        if (recuperacionDAO == null) {
+            recuperacionDAO = new RecuperacionPasswordDAO();
         }
     }
 
