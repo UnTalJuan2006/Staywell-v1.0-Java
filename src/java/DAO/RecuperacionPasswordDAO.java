@@ -20,7 +20,7 @@ public class RecuperacionPasswordDAO {
     }
 
     public void invalidarTokensActivos(int idUsuario) throws SQLException {
-        String sql = "UPDATE recuperacion_password SET usado = 1 WHERE idUsuario = ? AND usado = 0";
+        String sql = "UPDATE recuperacionpassword SET usado = 1 WHERE idUsuario = ? AND usado = 0";
         try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idUsuario);
             ps.executeUpdate();
@@ -28,7 +28,7 @@ public class RecuperacionPasswordDAO {
     }
 
     public void crearRegistro(RecuperacionPassword rec) throws SQLException {
-        String sql = "INSERT INTO recuperacion_password (idUsuario, token, fechaExpiracion, usado) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO recuperacionpassword (idUsuario, token, fechaExpiracion, usado) VALUES (?, ?, ?, ?)";
         try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, rec.getIdUsuario());
             ps.setString(2, rec.getToken());
@@ -39,7 +39,7 @@ public class RecuperacionPasswordDAO {
     }
 
     public RecuperacionPassword obtenerTokenValido(String token, int idUsuario) throws SQLException {
-        String sql = "SELECT * FROM recuperacion_password WHERE token = ? AND idUsuario = ? AND usado = 0 AND fechaExpiracion > ? ORDER BY idRecuperacion DESC LIMIT 1";
+        String sql = "SELECT * FROM recuperacionpassword WHERE token = ? AND idUsuario = ? AND usado = 0 AND fechaExpiracion > ? ORDER BY idRecuperacion DESC LIMIT 1";
         try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, token);
             ps.setInt(2, idUsuario);
@@ -64,7 +64,7 @@ public class RecuperacionPasswordDAO {
     }
 
     public void marcarComoUsado(int idRecuperacion) throws SQLException {
-        String sql = "UPDATE recuperacion_password SET usado = 1 WHERE idRecuperacion = ?";
+        String sql = "UPDATE recuperacionpassword SET usado = 1 WHERE idRecuperacion = ?";
         try (Connection con = obtenerConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idRecuperacion);
             ps.executeUpdate();

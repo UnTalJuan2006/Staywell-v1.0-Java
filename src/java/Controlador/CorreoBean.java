@@ -247,107 +247,96 @@ public class CorreoBean implements Serializable {
             }
         }).start();
     }
-    
-    public static void enviarCorreoConfirmacionEvento(String email, String nombre, String numeroEvento ) {
-    new Thread(() -> {
-        final String user = "juanmanuelrojasj@gmail.com";
-        final String pass = "lwtu nzug ctar yyke";
 
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.debug", "true");
+    public static void enviarCorreoConfirmacionEvento(String email, String nombre, String numeroEvento) {
+        new Thread(() -> {
+            final String user = "juanmanuelrojasj@gmail.com";
+            final String pass = "lwtu nzug ctar yyke";
 
-        Session sesion = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(user, pass);
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.debug", "true");
+
+            Session sesion = Session.getInstance(props, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(user, pass);
+                }
+            });
+
+            try {
+                Message mensaje = new MimeMessage(sesion);
+                mensaje.setFrom(new InternetAddress(user));
+                mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+                mensaje.setSubject("🎉 Confirmación de Evento - Great Viaggio Hotel");
+
+                String contenidoHTML = "<!DOCTYPE html>"
+                        + "<html lang='es'>"
+                        + "<head>"
+                        + "<meta charset='UTF-8'>"
+                        + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+                        + "<style>"
+                        + "  * {margin:0;padding:0;box-sizing:border-box;}"
+                        + "  body {margin:0;padding:20px;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8f5f3 100%);}"
+                        + "  .email-wrapper {max-width:650px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(26,124,143,0.15);}"
+                        + "  .header {background:linear-gradient(135deg,#1a7c8f 0%,#156b7d 100%);padding:50px 30px;text-align:center;position:relative;}"
+                        + "  .header::before {content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1a7c8f,#2dd4bf,#1a7c8f);}"
+                        + "  .logo {font-size:36px;font-weight:800;color:#ffffff;letter-spacing:1px;margin:0;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}"
+                        + "  .tagline {color:#e0f2f1;font-size:14px;margin-top:8px;letter-spacing:2px;text-transform:uppercase;opacity:0.9;}"
+                        + "  .content {padding:50px 40px;background:#ffffff;}"
+                        + "  .success-badge {display:inline-block;background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(139,92,246,0.15));color:#6b21a8;padding:10px 24px;border-radius:25px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:25px;border:2px solid rgba(139,92,246,0.3);}"
+                        + "  .success-icon {font-size:24px;margin-right:8px;}"
+                        + "  .greeting {color:#1a7c8f;font-size:26px;font-weight:700;margin:0 0 20px 0;line-height:1.3;}"
+                        + "  .intro-text {color:#555;font-size:16px;line-height:1.8;margin-bottom:30px;}"
+                        + "  .event-card {background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%);border:2px solid #a855f7;border-radius:16px;padding:30px;margin:30px 0;box-shadow:0 4px 12px rgba(168,85,247,0.15);}"
+                        + "  .event-title {color:#6b21a8;font-size:18px;font-weight:700;margin:0 0 20px 0;text-transform:uppercase;letter-spacing:1px;text-align:center;}"
+                        + "  .event-number {background:linear-gradient(135deg,#a855f7 0%,#9333ea 100%);color:#ffffff;padding:15px;border-radius:10px;text-align:center;margin-bottom:25px;}"
+                        + "  .event-number-label {font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:0.9;margin-bottom:5px;}"
+                        + "  .event-number-value {font-size:28px;font-weight:800;letter-spacing:2px;}"
+                        + "</style>"
+                        + "</head>"
+                        + "<body>"
+                        + "<div class='email-wrapper'>"
+                        + "  <div class='header'>"
+                        + "    <h1 class='logo'>Great Viaggio</h1>"
+                        + "    <p class='tagline'>Eventos memorables, momentos inolvidables</p>"
+                        + "  </div>"
+                        + "  <div class='content'>"
+                        + "    <span class='success-badge'><span class='success-icon'>🎉</span> Evento Confirmado</span>"
+                        + "    <h2 class='greeting'>¡Estimado/a " + nombre + "!</h2>"
+                        + "    <p class='intro-text'>Nos complace confirmar que su reserva de evento ha sido procesada exitosamente. Gracias por confiar en <strong>Great Viaggio Hotel</strong>.</p>"
+                        + "    <div class='event-card'>"
+                        + "      <h3 class='event-title'>🎊 Detalles de su Evento</h3>"
+                        + "      <div class='event-number'>"
+                        + "        <div class='event-number-label'>Código de Confirmación</div>"
+                        + "        <div class='event-number-value'>" + numeroEvento + "</div>"
+                        + "      </div>"
+                        + "    </div>"
+                        + "    <div style='text-align:center;margin-top:30px;'>"
+                        + "      <a href='https://www.greatviaggio.com/mis-eventos' style='display:inline-block;background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;'>Ver Mi Evento →</a>"
+                        + "    </div>"
+                        + "  </div>"
+                        + "  <div class='footer' style='padding:30px;text-align:center;color:#777;font-size:13px;'>"
+                        + "    &copy; 2025 Great Viaggio Hotel - Departamento de Eventos"
+                        + "  </div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>";
+
+                mensaje.setContent(contenidoHTML, "text/html; charset=utf-8");
+                Transport.send(mensaje);
+
+                System.out.println("✅ Correo de confirmación de evento enviado a: " + email);
+
+            } catch (MessagingException e) {
+                System.err.println("❌ Error enviando correo de evento a " + email + ": " + e.getMessage());
+                e.printStackTrace();
             }
-        });
-
-        try {
-            Message mensaje = new MimeMessage(sesion);
-            mensaje.setFrom(new InternetAddress(user));
-            mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            mensaje.setSubject("🎉 Confirmación de Evento - Great Viaggio Hotel");
-
-            String contenidoHTML = "<!DOCTYPE html>"
-                + "<html lang='es'>"
-                + "<head>"
-                + "<meta charset='UTF-8'>"
-                + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-                + "<style>"
-                + "  * {margin:0;padding:0;box-sizing:border-box;}"
-                + "  body {margin:0;padding:20px;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8f5f3 100%);}"
-                + "  .email-wrapper {max-width:650px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(26,124,143,0.15);}"
-                + "  .header {background:linear-gradient(135deg,#1a7c8f 0%,#156b7d 100%);padding:50px 30px;text-align:center;position:relative;}"
-                + "  .header::before {content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1a7c8f,#2dd4bf,#1a7c8f);}"
-                + "  .logo {font-size:36px;font-weight:800;color:#ffffff;letter-spacing:1px;margin:0;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}"
-                + "  .tagline {color:#e0f2f1;font-size:14px;margin-top:8px;letter-spacing:2px;text-transform:uppercase;opacity:0.9;}"
-                + "  .content {padding:50px 40px;background:#ffffff;}"
-
-                + "  .success-badge {display:inline-block;background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(139,92,246,0.15));color:#6b21a8;padding:10px 24px;border-radius:25px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:25px;border:2px solid rgba(139,92,246,0.3);}"
-                + "  .success-icon {font-size:24px;margin-right:8px;}"
-                + "  .greeting {color:#1a7c8f;font-size:26px;font-weight:700;margin:0 0 20px 0;line-height:1.3;}"
-                + "  .intro-text {color:#555;font-size:16px;line-height:1.8;margin-bottom:30px;}"
-
-                + "  .event-card {background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%);border:2px solid #a855f7;border-radius:16px;padding:30px;margin:30px 0;box-shadow:0 4px 12px rgba(168,85,247,0.15);}"
-                + "  .event-title {color:#6b21a8;font-size:18px;font-weight:700;margin:0 0 20px 0;text-transform:uppercase;letter-spacing:1px;text-align:center;}"
-                + "  .event-number {background:linear-gradient(135deg,#a855f7 0%,#9333ea 100%);color:#ffffff;padding:15px;border-radius:10px;text-align:center;margin-bottom:25px;}"
-                + "  .event-number-label {font-size:12px;text-transform:uppercase;letter-spacing:1px;opacity:0.9;margin-bottom:5px;}"
-                + "  .event-number-value {font-size:28px;font-weight:800;letter-spacing:2px;}"
-
-                + "</style>"
-                + "</head>"
-                + "<body>"
-
-                + "<div class='email-wrapper'>"
-                + "  <div class='header'>"
-                + "    <h1 class='logo'>Great Viaggio</h1>"
-                + "    <p class='tagline'>Eventos memorables, momentos inolvidables</p>"
-                + "  </div>"
-
-                + "  <div class='content'>"
-                + "    <span class='success-badge'><span class='success-icon'>🎉</span> Evento Confirmado</span>"
-                + "    <h2 class='greeting'>¡Estimado/a " + nombre + "!</h2>"
-
-                + "    <p class='intro-text'>Nos complace confirmar que su reserva de evento ha sido procesada exitosamente. Gracias por confiar en <strong>Great Viaggio Hotel</strong>.</p>"
-
-                + "    <div class='event-card'>"
-                + "      <h3 class='event-title'>🎊 Detalles de su Evento</h3>"
-                + "      <div class='event-number'>"
-                + "        <div class='event-number-label'>Código de Confirmación</div>"
-                + "        <div class='event-number-value'>" + numeroEvento + "</div>"
-                + "      </div>"
-                + "    </div>"
-
-                + "    <div style='text-align:center;margin-top:30px;'>"
-                + "      <a href='https://www.greatviaggio.com/mis-eventos' style='display:inline-block;background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;padding:14px 36px;border-radius:30px;font-weight:700;'>Ver Mi Evento →</a>"
-                + "    </div>"
-
-                + "  </div>"
-
-                + "  <div class='footer' style='padding:30px;text-align:center;color:#777;font-size:13px;'>"
-                + "    &copy; 2025 Great Viaggio Hotel - Departamento de Eventos"
-                + "  </div>"
-
-                + "</div>"
-                + "</body>"
-                + "</html>";
-
-            mensaje.setContent(contenidoHTML, "text/html; charset=utf-8");
-            Transport.send(mensaje);
-
-            System.out.println("✅ Correo de confirmación de evento enviado a: " + email);
-
-        } catch (MessagingException e) {
-            System.err.println("❌ Error enviando correo de evento a " + email + ": " + e.getMessage());
-            e.printStackTrace();
-        }
-    }).start();
-}
+        }).start();
+    }
 
     // 🔹 Enviar correo de confirmación de reserva
     public static void enviarCorreoReserva(String email, String nombre, String numeroReserva) {
@@ -492,7 +481,7 @@ public class CorreoBean implements Serializable {
                         + "  <div class='footer'>"
                         + "    <div class='footer-logo'>Great Viaggio</div>"
                         + "    <p class='footer-text'>"
-                            + "      Calle131a #58D-20, Bogotá, Colombia<br>"
+                        + "      Calle131a #58D-20, Bogotá, Colombia<br>"
                         + "      +3123466149 | reservas@greatviaggio.com<br>"
                         + "      Atención al cliente disponible 24/7"
                         + "    </p>"
@@ -522,10 +511,6 @@ public class CorreoBean implements Serializable {
             }
         }).start();
     }
-    
-    
-    
-
 
     // 🔹 Enviar código de recuperación de contraseña
     public static void enviarCodigoRecuperacion(String email, String codigo) {
@@ -552,11 +537,129 @@ public class CorreoBean implements Serializable {
                 mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
                 mensaje.setSubject("Recuperación de contraseña - Great Viaggio Hotel");
 
-                String contenido = "<h2>Recuperación de contraseña</h2>"
-                        + "<p>Utiliza el siguiente código para restablecer tu contraseña:</p>"
-                        + "<h1 style='letter-spacing:4px;'>" + codigo + "</h1>"
-                        + "<p>El código expira en 15 minutos y solo puede usarse una vez.</p>"
-                        + "<p>Si no solicitaste este cambio, ignora este mensaje.</p>";
+                String contenido = "<!DOCTYPE html>"
+                        + "<html lang='es'>"
+                        + "<head>"
+                        + "<meta charset='UTF-8'>"
+                        + "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+                        + "<style>"
+                        + "  * {margin:0;padding:0;box-sizing:border-box;}"
+                        + "  body {margin:0;padding:20px;font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#e8f5f3 100%);}"
+                        + "  .email-wrapper {max-width:650px;margin:0 auto;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(26,124,143,0.15);}"
+                        + "  .header {background:linear-gradient(135deg,#1a7c8f 0%,#156b7d 100%);padding:50px 30px;text-align:center;position:relative;}"
+                        + "  .header::before {content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1a7c8f,#2dd4bf,#1a7c8f);}"
+                        + "  .logo {font-size:36px;font-weight:800;color:#ffffff;letter-spacing:1px;margin:0;text-shadow:2px 2px 4px rgba(0,0,0,0.2);}"
+                        + "  .tagline {color:#e0f2f1;font-size:14px;margin-top:8px;letter-spacing:2px;text-transform:uppercase;opacity:0.9;}"
+                        + "  .content {padding:50px 40px;background:#ffffff;}"
+                        + "  .security-badge {display:inline-block;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.15));color:#991b1b;padding:10px 24px;border-radius:25px;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:25px;border:2px solid rgba(239,68,68,0.3);}"
+                        + "  .security-icon {font-size:24px;margin-right:8px;}"
+                        + "  .greeting {color:#1a7c8f;font-size:26px;font-weight:700;margin:0 0 20px 0;line-height:1.3;}"
+                        + "  .intro-text {color:#555;font-size:16px;line-height:1.8;margin-bottom:30px;}"
+                        + "  .code-card {background:linear-gradient(135deg,#f8fcfd 0%,#e8f4f6 100%);border:2px solid #1a7c8f;border-radius:16px;padding:40px 30px;margin:30px 0;box-shadow:0 4px 12px rgba(26,124,143,0.1);text-align:center;}"
+                        + "  .code-title {color:#1a7c8f;font-size:16px;font-weight:700;margin:0 0 20px 0;text-transform:uppercase;letter-spacing:1px;}"
+                        + "  .code-display {background:#1a7c8f;color:#ffffff;padding:25px;border-radius:12px;margin:20px 0;}"
+                        + "  .code-value {font-size:42px;font-weight:800;letter-spacing:8px;font-family:'Courier New',monospace;margin:0;}"
+                        + "  .code-hint {color:#666;font-size:13px;margin-top:15px;font-style:italic;}"
+                        + "  .warning-box {background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.15));border-left:4px solid #ef4444;padding:20px;border-radius:10px;margin:30px 0;}"
+                        + "  .warning-title {color:#991b1b;font-size:16px;font-weight:700;margin:0 0 10px 0;display:flex;align-items:center;gap:8px;}"
+                        + "  .warning-text {color:#991b1b;font-size:14px;line-height:1.6;margin:0;}"
+                        + "  .info-box {background:#ffffff;border:2px solid #e8f4f6;padding:25px;border-radius:12px;margin:30px 0;}"
+                        + "  .info-item {display:flex;align-items:start;margin-bottom:15px;}"
+                        + "  .info-item:last-child {margin-bottom:0;}"
+                        + "  .info-icon {background:#1a7c8f;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;margin-right:15px;flex-shrink:0;}"
+                        + "  .info-text {color:#555;font-size:15px;line-height:1.6;}"
+                        + "  .highlight-box {background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.15));border-left:4px solid #f59e0b;padding:20px;border-radius:10px;margin:30px 0;}"
+                        + "  .highlight-text {color:#92400e;font-size:14px;line-height:1.6;margin:0;}"
+                        + "  .cta-container {text-align:center;margin:40px 0 30px 0;}"
+                        + "  .cta-button {display:inline-block;background:linear-gradient(135deg,#1a7c8f 0%,#156b7d 100%);color:#ffffff;text-decoration:none;padding:16px 45px;border-radius:30px;font-weight:700;font-size:16px;letter-spacing:0.5px;box-shadow:0 8px 20px rgba(26,124,143,0.3);transition:all 0.3s ease;}"
+                        + "  .cta-button:hover {transform:translateY(-3px);box-shadow:0 12px 30px rgba(26,124,143,0.4);}"
+                        + "  .divider {height:2px;background:linear-gradient(90deg,transparent,#e8f4f6,transparent);margin:35px 0;}"
+                        + "  .footer {background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);padding:35px 40px;text-align:center;border-top:1px solid #e0e0e0;}"
+                        + "  .footer-logo {color:#1a7c8f;font-size:20px;font-weight:700;margin-bottom:15px;}"
+                        + "  .footer-text {color:#777;font-size:13px;line-height:1.8;margin-bottom:20px;}"
+                        + "  .social-links {margin:20px 0;}"
+                        + "  .social-icon {display:inline-block;width:36px;height:36px;background:#1a7c8f;color:#fff;border-radius:50%;text-decoration:none;margin:0 6px;line-height:36px;font-weight:bold;transition:all 0.3s ease;}"
+                        + "  .social-icon:hover {background:#156b7d;transform:scale(1.1);}"
+                        + "  .copyright {color:#999;font-size:12px;margin-top:20px;padding-top:20px;border-top:1px solid #ddd;}"
+                        + "  @media screen and (max-width:640px) {"
+                        + "    body {padding:10px;}"
+                        + "    .header {padding:35px 20px;}"
+                        + "    .logo {font-size:28px;}"
+                        + "    .content {padding:35px 25px;}"
+                        + "    .greeting {font-size:22px;}"
+                        + "    .intro-text {font-size:15px;}"
+                        + "    .code-card {padding:30px 20px;}"
+                        + "    .code-value {font-size:36px;letter-spacing:6px;}"
+                        + "    .cta-button {padding:14px 35px;font-size:15px;}"
+                        + "    .footer {padding:30px 25px;}"
+                        + "  }"
+                        + "</style>"
+                        + "</head>"
+                        + "<body>"
+                        + "<div class='email-wrapper'>"
+                        + "  <div class='header'>"
+                        + "    <h1 class='logo'>Great Viaggio</h1>"
+                        + "    <p class='tagline'>Seguridad y confianza garantizadas</p>"
+                        + "  </div>"
+                        + "  <div class='content'>"
+                        + "    <span class='security-badge'><span class='security-icon'>🔐</span> Recuperación de Contraseña</span>"
+                        + "    <h2 class='greeting'>Restablece tu Contraseña</h2>"
+                        + "    <p class='intro-text'>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>Great Viaggio Hotel</strong>. Utiliza el siguiente código de verificación para completar el proceso.</p>"
+                        + "    <div class='code-card'>"
+                        + "      <h3 class='code-title'>🔑 Tu Código de Verificación</h3>"
+                        + "      <div class='code-display'>"
+                        + "        <div class='code-value'>" + codigo + "</div>"
+                        + "      </div>"
+                        + "      <p class='code-hint'>Copia este código exactamente como se muestra</p>"
+                        + "    </div>"
+                        + "    <div class='warning-box'>"
+                        + "      <p class='warning-title'>⚠️ Importante - Validez del Código</p>"
+                        + "      <p class='warning-text'>Este código de verificación <strong>expira en 15 minutos</strong> y solo puede ser utilizado <strong>una vez</strong>. Por seguridad, no lo compartas con nadie.</p>"
+                        + "    </div>"
+                        + "    <div class='info-box'>"
+                        + "      <div class='info-item'>"
+                        + "        <span class='info-icon'>1</span>"
+                        + "        <span class='info-text'><strong>Ingresa el código:</strong> Copia el código de 6 dígitos que aparece arriba</span>"
+                        + "      </div>"
+                        + "      <div class='info-item'>"
+                        + "        <span class='info-icon'>2</span>"
+                        + "        <span class='info-text'><strong>Crea una nueva contraseña:</strong> Elige una contraseña segura y única</span>"
+                        + "      </div>"
+                        + "      <div class='info-item'>"
+                        + "        <span class='info-icon'>3</span>"
+                        + "        <span class='info-text'><strong>Confirma los cambios:</strong> Guarda tu nueva contraseña de forma segura</span>"
+                        + "      </div>"
+                        + "    </div>"
+                        + "    <div class='highlight-box'>"
+                        + "      <p class='highlight-text'>💡 <strong>¿No solicitaste este cambio?</strong> Si no fuiste tú quien solicitó restablecer la contraseña, ignora este mensaje. Tu cuenta permanece segura y no se realizará ningún cambio.</p>"
+                        + "    </div>"
+                        + "    <div class='cta-container'>"
+                        + "      <a href='https://www.greatviaggio.com/recuperar-password' class='cta-button'>Restablecer Contraseña →</a>"
+                        + "    </div>"
+                        + "    <div class='divider'></div>"
+                        + "    <p class='intro-text' style='text-align:center;margin-bottom:0;'>Si necesitas ayuda adicional, nuestro equipo de soporte está disponible para asistirte en cualquier momento.</p>"
+                        + "  </div>"
+                        + "  <div class='footer'>"
+                        + "    <div class='footer-logo'>Great Viaggio</div>"
+                        + "    <p class='footer-text'>"
+                        + "      Carrera 7 #10-20, Bogotá, Colombia<br>"
+                        + "      +57 601 234 5678 | soporte@greatviaggio.com<br>"
+                        + "      Soporte técnico disponible 24/7"
+                        + "    </p>"
+                        + "    <div class='social-links'>"
+                        + "      <a href='#' class='social-icon'>f</a>"
+                        + "      <a href='#' class='social-icon'>𝕏</a>"
+                        + "      <a href='#' class='social-icon'>in</a>"
+                        + "      <a href='#' class='social-icon'>📷</a>"
+                        + "    </div>"
+                        + "    <p class='copyright'>"
+                        + "      &copy; 2025 Great Viaggio Hotel. Todos los derechos reservados.<br>"
+                        + "      Este es un correo automático de seguridad. Por favor, no respondas directamente."
+                        + "    </p>"
+                        + "  </div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>";
 
                 mensaje.setContent(contenido, "text/html; charset=utf-8");
                 Transport.send(mensaje);
