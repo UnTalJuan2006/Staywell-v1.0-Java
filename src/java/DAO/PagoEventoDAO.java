@@ -72,4 +72,25 @@ public class PagoEventoDAO {
 
     }
 
+    public BigDecimal obtenerTotalPagosPorUsuario(int idUsuario) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(pe.monto), 0) AS totalPagos "
+                + "FROM pagoevento pe "
+                + "INNER JOIN evento e ON pe.idEvento = e.idEvento "
+                + "WHERE e.idUsuario = ?";
+
+        try (Connection conexion = Conexion.conectar();
+                PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBigDecimal("totalPagos");
+                }
+            }
+        }
+
+        return BigDecimal.ZERO;
+    }
+
 }
