@@ -527,7 +527,7 @@
                             <!-- Check-in -->
                             <div class="col-md-4">
                                 <label class="filter-label">Check-in desde</label>
-                                <h:inputText value="#{reservaBean.filtroCheckin}" 
+                                <h:inputText value="#{reservaBean.filtroCheckin}"
                                              styleClass="form-control filter-date-input">
                                     <f:passThroughAttribute name="type" value="date" />
                                     <f:convertDateTime pattern="yyyy-MM-dd" />
@@ -546,8 +546,14 @@
                                 </h:inputText>
                             </div>
 
-                            <!-- Limpiar -->
-                            <div class="col-md-4 d-flex justify-content-start">
+                            <!-- Acciones de filtro -->
+                            <div class="col-md-4 d-flex justify-content-start gap-2">
+                                <h:commandButton value="Reservas de Hoy"
+                                                 styleClass="btn btn-success"
+                                                 actionListener="#{reservaBean.filtrarReservasDeHoy}">
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
+                                </h:commandButton>
+
                                 <h:commandButton value="Limpiar filtros"
                                                  styleClass="btn btn-outline-secondary btn-clear"
                                                  actionListener="#{reservaBean.limpiarFiltrosFechas}">
