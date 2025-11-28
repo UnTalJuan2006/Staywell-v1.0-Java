@@ -389,10 +389,10 @@
                 <p>Panel Admin</p>
             </div>
 
-            <nav class="sidebar-nav">
+             <nav class="sidebar-nav">
                 <div class="sidebar-section">
                     <div class="sidebar-title">Navegación Principal</div>
-                    <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link">
+                    <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link ">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </h:link>
@@ -403,7 +403,7 @@
                 </div>
 
                 <div class="sidebar-section">
-                    <div class="sidebar-title">Gestión de Habitaciones</div>
+                    <div class="sidebar-title">Gestión Reservas</div>
                     <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link">
                         <i class="bi bi-door-open"></i>
                         <span>Habitaciones</span>
@@ -412,33 +412,53 @@
                         <i class="bi bi-journal-bookmark"></i>
                         <span>Catálogo Habitaciones</span>
                     </h:link>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-title">Gestión General</div>
                     <h:link outcome="/Reservas.xhtml" styleClass="nav-link">
                         <i class="bi bi-calendar-check"></i>
                         <span>Reservas</span>
                     </h:link>
+
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión Eventos</div>
+
                     <h:link outcome="/Eventos.xhtml" styleClass="nav-link">
                         <i class="bi bi-calendar-event"></i>
                         <span>Eventos</span>
-                    </h:link>
-                    <h:link outcome="/Usuarios.xhtml" styleClass="nav-link active">
-                        <i class="bi bi-people"></i>
-                        <span>Usuarios</span>
-                    </h:link>
-                    <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
-                        <i class="bi bi-person-badge"></i>
-                        <span>Empleados</span>
                     </h:link>
                     <h:link outcome="/Espacios.xhtml" styleClass="nav-link">
                         <i class="bi bi-building"></i>
                         <span>Espacios</span>
                     </h:link>
+
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Gestión General</div>
+                    <h:link outcome="/Usuarios.xhtml" styleClass="nav-link active">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </h:link>
+
+                    <h:link outcome="/Empleados.xhtml" styleClass="nav-link">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Empleados</span>
+                    </h:link>
+
                     <h:link outcome="/Correos.xhtml" styleClass="nav-link">
                         <i class="bi bi-envelope"></i>
                         <span>Correos</span>
+                    </h:link>
+
+                    <h:link outcome="/Pagos.xhtml" styleClass="nav-link">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Pagos</span>
+                    </h:link>
+
+                    <h:link outcome="/Novedades.xhtml" styleClass="nav-link">
+                      <i class="bi bi-stars"></i>
+
+                        <span>Novedadas</span>
                     </h:link>
                 </div>
             </nav>

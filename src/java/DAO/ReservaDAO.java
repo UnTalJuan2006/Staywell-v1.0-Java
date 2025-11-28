@@ -368,26 +368,30 @@ public List<Reserva> listarPorUsuario(int idUsuario) throws SQLException {
         return reserva;
     }
 
-    public Map<String, Integer> obtenerReservasPorMes(LocalDate fechaInicio) throws SQLException {
-        Map<String, Integer> reservasPorMes = new LinkedHashMap<>();
-        String sql = "SELECT DATE_FORMAT(fechaReserva, '%Y-%m') AS mes, COUNT(*) AS total "
-                + "FROM reserva "
-                + "WHERE fechaReserva >= ? "
-                + "GROUP BY YEAR(fechaReserva), MONTH(fechaReserva) "
-                + "ORDER BY YEAR(fechaReserva), MONTH(fechaReserva)";
+  public Map<String, Integer> obtenerReservasPorMes(LocalDate fechaInicio) throws SQLException {
+    Map<String, Integer> reservasPorMes = new LinkedHashMap<>();
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
-            ps.setTimestamp(1, Timestamp.valueOf(fechaInicio.atStartOfDay()));
+    String sql = 
+        "SELECT DATE_FORMAT(checkin, '%Y-%m') AS mes, COUNT(*) AS total " +
+        "FROM reserva " +
+        "WHERE checkin IS NOT NULL " +
+        "AND checkin >= ? " +
+        "GROUP BY YEAR(checkin), MONTH(checkin) " +
+        "ORDER BY YEAR(checkin), MONTH(checkin)";
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    reservasPorMes.put(rs.getString("mes"), rs.getInt("total"));
-                }
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        ps.setTimestamp(1, Timestamp.valueOf(fechaInicio.atStartOfDay()));
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                reservasPorMes.put(rs.getString("mes"), rs.getInt("total"));
             }
         }
-
-        return reservasPorMes;
     }
+
+    return reservasPorMes;
+}
+
 
     public Map<String, Integer> obtenerOcupacionPorMes(LocalDate fechaInicio) throws SQLException {
         Map<String, Integer> ocupacionMensual = new LinkedHashMap<>();

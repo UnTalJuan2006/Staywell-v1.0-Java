@@ -1,7 +1,10 @@
 package DAO;
 
 import Controlador.Conexion;
+import Modelo.EnumPago;
 import Modelo.Pago;
+import Modelo.Reserva;
+import Modelo.Usuario;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +14,61 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PagoDAO {
+
+   public List<Pago> listar() throws SQLException {
+    List<Pago> listaPagos = new ArrayList<>();
+
+    String sql =
+        "SELECT p.*, r.idUsuario " +
+        "FROM pago p " +
+        "LEFT JOIN reserva r ON p.idReserva = r.idReserva";
+
+    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            Pago p = new Pago();
+            p.setIdPago(rs.getInt("idPago"));
+            Reserva reserva = new Reserva();
+            reserva.setIdReserva(rs.getInt("idReserva"));
+            Usuario usuario = new Usuario();
+            usuario.setIdUsuario(rs.getInt("idUsuario"));
+            reserva.setUsuario(usuario);
+            p.setReserva(reserva);
+            
+            p.setTipoTarjeta(EnumPago.valueOf(
+                rs.getString("tipoTarjeta")
+            ));
+
+            p.setNumeroTarjeta(rs.getString("numeroTarjeta"));
+            p.setTitular(rs.getString("titular"));
+
+            if (rs.getDate("fechaVencimiento") != null) {
+                p.setFechaVencimiento(
+                    rs.getDate("fechaVencimiento").toLocalDate()
+                );
+            }
+
+            p.setCodigoSeguridad(rs.getString("codigoSeguridad"));
+
+            if (rs.getTimestamp("fechaCreacion") != null) {
+                p.setFechaCreacion(
+                    rs.getTimestamp("fechaCreacion").toLocalDateTime()
+                );
+            }
+
+            p.setMonto(rs.getBigDecimal("monto"));
+
+            listaPagos.add(p);
+        }
+    }
+
+    return listaPagos;
+}
 
     public int agregarPago(Pago pago) throws SQLException {
         if (pago == null) {
@@ -38,7 +94,6 @@ public class PagoDAO {
 
             try (PreparedStatement ps = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-               
                 ps.setInt(1, pago.getReserva().getIdReserva());
 
                 // Evitar valores nulos en columnas obligatorias del esquema.
@@ -72,8 +127,7 @@ public class PagoDAO {
                 // el controlador puede no retornar la llave generada. Usamos LAST_INSERT_ID()
                 // como respaldo para evitar falsos negativos en el registro de pagos.
                 if (idGenerado <= 0) {
-                    try (Statement st = conexion.createStatement();
-                            ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
+                    try (Statement st = conexion.createStatement(); ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()")) {
                         if (rs.next()) {
                             idGenerado = rs.getInt(1);
                         }
@@ -88,9 +142,7 @@ public class PagoDAO {
     public BigDecimal obtenerTotalPagos() throws SQLException {
         String sql = "SELECT COALESCE(SUM(monto), 0) AS totalPagos FROM pago";
 
-        try (Connection conexion = Conexion.conectar();
-                PreparedStatement ps = conexion.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (Connection conexion = Conexion.conectar(); PreparedStatement ps = conexion.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             if (rs.next()) {
                 return rs.getBigDecimal("totalPagos");

@@ -47,7 +47,7 @@ public class DashboardBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        LocalDate fechaInicio = LocalDate.now().minusMonths(MESES_A_MOSTRAR - 1).withDayOfMonth(1);
+        LocalDate fechaInicio = LocalDate.now().plusMonths(1).minusMonths(MESES_A_MOSTRAR - 1).withDayOfMonth(1);
         etiquetasMeses = construirEtiquetas(fechaInicio);
 
         try {
