@@ -153,4 +153,25 @@ public class PagoDAO {
 
         return BigDecimal.ZERO;
     }
+
+    public BigDecimal obtenerTotalPagosPorUsuario(int idUsuario) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(p.monto), 0) AS totalPagos "
+                + "FROM pago p "
+                + "INNER JOIN reserva r ON p.idReserva = r.idReserva "
+                + "WHERE r.idUsuario = ?";
+
+        try (Connection conexion = Conexion.conectar();
+                PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBigDecimal("totalPagos");
+                }
+            }
+        }
+
+        return BigDecimal.ZERO;
+    }
 }
