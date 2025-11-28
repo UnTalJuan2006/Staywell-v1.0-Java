@@ -978,6 +978,26 @@
                                         </span>
                                     </div>
 
+                                    <div class="summary-item">
+                                        <strong>Subtotal (sin IVA):</strong>
+                                        <span>
+                                            <h:outputText value="#{reservaHuespedBean.subtotalReserva}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>IVA (incluido):</strong>
+                                        <span>
+                                            <h:outputText value="#{reservaHuespedBean.ivaReserva}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
                                     <div class="summary-total">
                                         <span>Total:</span>
                                         <span>
@@ -1002,6 +1022,24 @@
                                         </div>
                                     </div>
                                     <h:panelGroup id="montoPago">
+                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 6px;">
+                                            <span style="color:#6c757d;">Subtotal (sin IVA)</span>
+                                            <span style="font-weight:600; color:#333;">
+                                                <h:outputText value="#{reservaHuespedBean.subtotalReserva}">
+                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                     minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
+                                            <span style="color:#6c757d;">IVA incluido</span>
+                                            <span style="font-weight:600; color:#333;">
+                                                <h:outputText value="#{reservaHuespedBean.ivaReserva}">
+                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                     minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </span>
+                                        </div>
                                         <span class="summary-amount">
                                             <h:outputText value="#{reservaHuespedBean.totalReserva}">
                                                 <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"

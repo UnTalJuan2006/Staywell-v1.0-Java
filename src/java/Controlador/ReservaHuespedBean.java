@@ -42,6 +42,8 @@ public class ReservaHuespedBean implements Serializable {
     private static final DateTimeFormatter RESUMEN_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
+    private static final BigDecimal IVA_RATE = new BigDecimal("0.19");
+
     private final TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final ReservaDAO reservaDAO = new ReservaDAO();
@@ -65,6 +67,8 @@ public class ReservaHuespedBean implements Serializable {
 
     private BigDecimal precioPorNoche = BigDecimal.ZERO;
     private BigDecimal totalReserva = BigDecimal.ZERO;
+    private BigDecimal subtotalReserva = BigDecimal.ZERO;
+    private BigDecimal ivaReserva = BigDecimal.ZERO;
     private long numeroNoches = 0;
 
     private Usuario usuarioLogueado;
@@ -118,6 +122,8 @@ public class ReservaHuespedBean implements Serializable {
         observaciones = null;
         numeroNoches = 0;
         totalReserva = BigDecimal.ZERO;
+        subtotalReserva = BigDecimal.ZERO;
+        ivaReserva = BigDecimal.ZERO;
         precioPorNoche = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
         tipoPagoSeleccionado = null;
@@ -222,6 +228,22 @@ public class ReservaHuespedBean implements Serializable {
         if (precioPorNoche.compareTo(BigDecimal.ZERO) > 0) {
             totalReserva = precioPorNoche.multiply(BigDecimal.valueOf(numeroNoches));
         }
+
+        calcularDesgloseImpuestos();
+    }
+
+    private void calcularDesgloseImpuestos() {
+        subtotalReserva = BigDecimal.ZERO;
+        ivaReserva = BigDecimal.ZERO;
+
+        if (totalReserva == null || totalReserva.compareTo(BigDecimal.ZERO) <= 0) {
+            subtotalReserva = BigDecimal.ZERO;
+            ivaReserva = BigDecimal.ZERO;
+            return;
+        }
+
+        subtotalReserva = totalReserva.divide(BigDecimal.ONE.add(IVA_RATE), 2, RoundingMode.HALF_UP);
+        ivaReserva = totalReserva.subtract(subtotalReserva).setScale(2, RoundingMode.HALF_UP);
     }
 
     private LocalDate convertirADia(Date fecha) {
@@ -726,6 +748,14 @@ public class ReservaHuespedBean implements Serializable {
 
     public BigDecimal getTotalReserva() {
         return totalReserva;
+    }
+
+    public BigDecimal getSubtotalReserva() {
+        return subtotalReserva;
+    }
+
+    public BigDecimal getIvaReserva() {
+        return ivaReserva;
     }
 
     public long getNumeroNoches() {
