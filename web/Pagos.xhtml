@@ -244,7 +244,7 @@
                 letter-spacing: 0.4px;
                 padding: 0.55rem 1.4rem;
             }
-            
+
             /* Reorganizado para que los iconos se mantengan visibles */
             .export-buttons {
                 position: absolute;
@@ -386,7 +386,7 @@
                 <p>Panel Admin</p>
             </div>
 
-             <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <div class="sidebar-section">
                     <div class="sidebar-title">Navegación Principal</div>
                     <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link ">
@@ -455,10 +455,14 @@
             </nav>
 
             <div class="sidebar-footer">
-                <h:link outcome="/index.xhtml" styleClass="btn">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Salir</span>
-                </h:link>
+                <h:form>
+   
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </h:commandLink>
+             
+            </h:form>
             </div>
         </div>
 
@@ -478,12 +482,14 @@
                 <h:form id="filtroForm">
                     <div class="filter-card-custom mb-4 position-relative">
                         <div class="filter-header">
-                            <div class="filter-icon-box text-primary">
-                                <i class="bi bi-funnel"></i>
+
+                            <div class="filter-icon-box">
+                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
                             </div>
+
                             <div>
                                 <div class="filter-title">Filtros y análisis</div>
-                                <small class="text-muted">Controla los pagos sin salir del dashboard.</small>
+
                             </div>
                         </div>
 
