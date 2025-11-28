@@ -220,6 +220,8 @@ public class EventoHuespedBean implements Serializable {
 
         if (espacioSeleccionado == null || precioDia.compareTo(BigDecimal.ZERO) <= 0) {
             totalEvento = BigDecimal.ZERO;
+            subtotalEvento = BigDecimal.ZERO;
+            ivaEvento = BigDecimal.ZERO;
             return;
         }
 
@@ -240,6 +242,9 @@ public class EventoHuespedBean implements Serializable {
         }
 
         totalEvento = totalCalculado.setScale(2, RoundingMode.HALF_UP);
+        subtotalEvento = totalEvento
+                .divide(BigDecimal.ONE.add(IVA_RATE), 2, RoundingMode.HALF_UP);
+        ivaEvento = totalEvento.subtract(subtotalEvento).setScale(2, RoundingMode.HALF_UP);
     }
 
     // -------------------------

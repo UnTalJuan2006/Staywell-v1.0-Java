@@ -551,6 +551,24 @@
                                         </span>
                                     </div>
 
+                                    <div class="summary-item">
+                                        <strong>Subtotal (sin IVA):</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.subtotalEvento}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>IVA (19%):</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.ivaEvento}">
+                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                        </span>
+                                    </div>
+
                                     <div class="summary-total">
                                         <span>Total estimado:</span>
                                         <span>
@@ -574,11 +592,25 @@
                                         </div>
                                     </div>
                                     <h:panelGroup id="montoPago">
-                                        <span class="summary-amount">
-                                            <h:outputText value="#{eventoHuespedBean.totalEvento}">
-                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                                            </h:outputText>
-                                        </span>
+                                        <div style="text-align: right;">
+                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
+                                                Subtotal:
+                                                <h:outputText value="#{eventoHuespedBean.subtotalEvento}" style="margin-left:6px;">
+                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </div>
+                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
+                                                IVA (19%):
+                                                <h:outputText value="#{eventoHuespedBean.ivaEvento}" style="margin-left:6px;">
+                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </div>
+                                            <span class="summary-amount" style="display:block;">
+                                                <h:outputText value="#{eventoHuespedBean.totalEvento}">
+                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                </h:outputText>
+                                            </span>
+                                        </div>
                                     </h:panelGroup>
                                 </div>
 
