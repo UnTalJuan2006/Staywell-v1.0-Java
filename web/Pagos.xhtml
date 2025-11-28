@@ -260,7 +260,7 @@
                         <i class="bi bi-door-open"></i>
                         <span>Habitaciones</span>
                     </h:link>
-                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link ">
+                    <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link">
                         <i class="bi bi-journal-bookmark"></i>
                         <span>Catálogo Habitaciones</span>
                     </h:link>
@@ -297,7 +297,7 @@
                         <span>Empleados</span>
                     </h:link>
 
-                    <h:link outcome="/Correos.xhtml" styleClass="nav-link">
+                    <h:link outcome="/Correos.xhtml" styleClass="nav-link ">
                         <i class="bi bi-envelope"></i>
                         <span>Correos</span>
                     </h:link>
@@ -305,6 +305,12 @@
                     <h:link outcome="/Pagos.xhtml" styleClass="nav-link active">
                         <i class="bi bi-credit-card"></i>
                         <span>Pagos</span>
+                    </h:link>
+
+                    <h:link outcome="/Novedades.xhtml" styleClass="nav-link">
+                      <i class="bi bi-stars"></i>
+
+                        <span>Novedadas</span>
                     </h:link>
                 </div>
             </nav>
@@ -323,17 +329,7 @@
                     <h2 class="mb-1">Gestión de Pagos</h2>
                     <p class="text-muted mb-0">Visualiza las transacciones registradas en el sistema.</p>
                 </div>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-card">
-                        <div class="icon-wrapper">
-                            <i class="bi bi-wallet2"></i>
-                        </div>
-                        <div class="content">
-                            <span class="label">Fuente de datos</span>
-                            <span class="value">PagoDAO.listar()</span>
-                        </div>
-                    </div>
-                </div>
+          
             </div>
 
             <div class="container-fluid mt-4">
