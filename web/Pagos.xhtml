@@ -355,6 +355,7 @@
                                 <table class="table table-striped align-middle" id="tblPagos">
                                     <thead>
                                         <tr>
+                                            <th>ID Pago</th>
                                             <th>ID Reserva</th>
                                             <th>Nombre</th>
                                             <th>Tipo de tarjeta</th>
@@ -365,6 +366,7 @@
                                     <tbody>
                                         <ui:repeat value="#{pagoAdminBean.pagos}" var="pago" varStatus="loop">
                                             <tr>
+                                                <td>#{pago.idPago}</td>
                                                 <td>#{pago.reserva.idReserva}</td>
                                                 <td>#{pago.reserva.usuario.nombre}</td>
                                                 <td>
