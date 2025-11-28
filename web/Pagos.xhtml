@@ -451,18 +451,24 @@
                         <i class="bi bi-credit-card"></i>
                         <span>Pagos</span>
                     </h:link>
+                       <h:link outcome="/Novedades.xhtml" styleClass="nav-link">
+                      <i class="bi bi-stars"></i>
+
+                        <span>Novedadas</span>
+                    </h:link>
+                    
                 </div>
             </nav>
 
             <div class="sidebar-footer">
                 <h:form>
-   
+
                     <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn">
                         <i class="bi bi-box-arrow-right"></i>
                         <span>Cerrar Sesión</span>
                     </h:commandLink>
-             
-            </h:form>
+
+                </h:form>
             </div>
         </div>
 
