@@ -184,13 +184,36 @@
 
             /* --- CARD FILTROS --- */
             .filter-card-custom {
-                background: rgba(255, 255, 255, 0.75);
-                backdrop-filter: blur(8px);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 248, 255, 0.95));
+                backdrop-filter: blur(10px);
                 border-radius: 18px;
-                border: 1px solid rgba(200, 200, 200, 0.4);
-                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(13, 110, 253, 0.08);
+                box-shadow: 0 16px 35px rgba(13, 110, 253, 0.08);
                 padding: 1.5rem;
                 position: relative;
+                overflow: hidden;
+            }
+
+            .filter-card-custom::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 20% 20%, rgba(32, 201, 151, 0.12), transparent 35%),
+                    radial-gradient(circle at 80% 0%, rgba(13, 110, 253, 0.12), transparent 40%);
+                pointer-events: none;
+            }
+
+            .filter-ribbon {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(120deg, #0d6efd, #20c997);
+                color: white;
+                padding: 8px 14px;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.95rem;
+                box-shadow: 0 8px 18px rgba(13, 110, 253, 0.25);
             }
 
             /* Encabezado (icono de filtros) */
@@ -214,6 +237,12 @@
                 font-weight: 600;
                 color: #495057;
                 font-size: 1.15rem;
+            }
+
+            .filter-subtitle {
+                color: #6c757d;
+                margin: 2px 0 0 0;
+                font-size: 0.95rem;
             }
 
             /* Buscador general */
@@ -246,14 +275,121 @@
             /* Inputs de fecha */
             .filter-date-input {
                 border-radius: 10px;
+                border: 1px solid #dfe6ef;
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.02);
+                transition: all .25s ease;
+            }
+
+            .filter-date-input:focus {
+                border-color: #20c997;
+                box-shadow: 0 0 0 0.15rem rgba(32, 201, 151, 0.22);
             }
 
             /* Botón limpiar */
             .btn-clear {
                 border-radius: 12px;
+                font-weight: 600;
+                letter-spacing: 0.25px;
+                padding: 0.65rem 1.4rem;
+                border: 1px solid #d4d9e1;
+                color: #4b5563;
+                background: #f8fafc;
+                transition: all 0.22s ease;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+            }
+
+            .btn-clear:hover {
+                background: #eef2ff;
+                border-color: #cfd8e3;
+                color: #1f2937;
+                transform: translateY(-1px);
+            }
+
+            .btn-today {
+                background: linear-gradient(135deg, #20c997, #0bb891 45%, #0d6efd);
+                border: none;
+                color: #ffffff;
+                border-radius: 14px;
+                padding: 0.75rem 1.4rem;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 10px 24px rgba(13, 110, 253, 0.25);
+                transition: all 0.25s ease;
+                letter-spacing: 0.2px;
+            }
+
+            .btn-today:hover {
+                transform: translateY(-2px) scale(1.01);
+                box-shadow: 0 16px 34px rgba(13, 110, 253, 0.35);
+            }
+
+            .btn-today:active {
+                transform: translateY(0);
+            }
+
+            .today-alert {
+                background: linear-gradient(120deg, #e8fff4, #e0f7f3);
+                border: 1px solid #b8f2d6;
+                color: #0f5132;
+                border-radius: 14px;
+                padding: 0.7rem 0.95rem;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                gap: 9px;
+                box-shadow: 0 10px 18px rgba(16, 185, 129, 0.18);
+            }
+
+            .filter-hint {
+                background: #f8f9fb;
+                border: 1px dashed #cfd8e3;
+                color: #5b6470;
+                border-radius: 12px;
+                padding: 0.65rem 0.85rem;
                 font-weight: 500;
-                letter-spacing: 0.4px;
-                padding: 0.55rem 1.4rem;
+            }
+
+            .date-chip {
+                background: white;
+                border: 1px solid #e5e7eb;
+                padding: 0.85rem 0.95rem;
+                border-radius: 14px;
+                box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+                height: 100%;
+            }
+
+            .btn-today {
+                background: linear-gradient(135deg, #20c997, #0ca678);
+                border: none;
+                color: #ffffff;
+                border-radius: 12px;
+                padding: 0.7rem 1.3rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 8px 18px rgba(12, 166, 120, 0.28);
+                transition: all 0.25s ease;
+            }
+
+            .btn-today:hover {
+                transform: translateY(-1px) scale(1.01);
+                box-shadow: 0 12px 26px rgba(12, 166, 120, 0.35);
+            }
+
+            .today-alert {
+                background: #e8fff4;
+                border: 1px solid #b8f2d6;
+                color: #0f5132;
+                border-radius: 12px;
+                padding: 0.65rem 0.85rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
             }
 
             .btn-today {
@@ -529,11 +665,20 @@
                         </div>
 
                         <!-- Encabezado con icono -->
-                        <div class="filter-header">
-                            <div class="filter-icon-box">
-                                <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                            <div class="filter-header mb-0">
+                                <div class="filter-icon-box">
+                                    <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                                </div>
+                                <div>
+                                    <div class="filter-title">Opciones de filtrado</div>
+                                    <div class="filter-subtitle">Refina las reservas por fechas, búsqueda o con el atajo de hoy.</div>
+                                </div>
                             </div>
-                            <span class="filter-title">Opciones de filtrado</span>
+                            <div class="filter-ribbon">
+                                <i class="bi bi-stars"></i>
+                                <span>Panel pulido para búsquedas más rápidas</span>
+                            </div>
                         </div>
 
                         <!-- Buscador -->
@@ -548,29 +693,40 @@
                             </p:inputText>
                         </div>
 
+                        <h:panelGroup rendered="#{reservaBean.filtroCheckinHoyActivo}">
+                            <div class="today-alert mb-3">
+                                <i class="bi bi-sun-fill"></i>
+                                <span>#{reservaBean.textoFiltroHoy}</span>
+                            </div>
+                        </h:panelGroup>
+
                         <hr class="my-3" style="opacity: .15;"></hr>
 
-                        <div class="row g-4 align-items-end">
+                        <div class="row g-4 align-items-stretch">
                             <!-- Check-in -->
                             <div class="col-md-4">
-                                <label class="filter-label">Check-in desde</label>
-                                <h:inputText value="#{reservaBean.filtroCheckin}" 
-                                             styleClass="form-control filter-date-input">
-                                    <f:passThroughAttribute name="type" value="date" />
-                                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-                                </h:inputText>
+                                <div class="date-chip">
+                                    <label class="filter-label">Check-in desde</label>
+                                    <h:inputText value="#{reservaBean.filtroCheckin}"
+                                                 styleClass="form-control filter-date-input">
+                                        <f:passThroughAttribute name="type" value="date" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                    </h:inputText>
+                                </div>
                             </div>
 
                             <!-- Check-out -->
                             <div class="col-md-4">
-                                <label class="filter-label">Check-out hasta</label>
-                                <h:inputText value="#{reservaBean.filtroCheckout}" 
-                                             styleClass="form-control filter-date-input">
-                                    <f:passThroughAttribute name="type" value="date" />
-                                    <f:convertDateTime pattern="yyyy-MM-dd" />
-                                    <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
-                                </h:inputText>
+                                <div class="date-chip">
+                                    <label class="filter-label">Check-out hasta</label>
+                                    <h:inputText value="#{reservaBean.filtroCheckout}"
+                                                 styleClass="form-control filter-date-input">
+                                        <f:passThroughAttribute name="type" value="date" />
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        <f:ajax event="change" render=":reservasTable" listener="#{reservaBean.aplicarFiltroFechas}" />
+                                    </h:inputText>
+                                </div>
                             </div>
 
                             <!-- Acciones -->
