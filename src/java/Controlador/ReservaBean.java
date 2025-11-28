@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class ReservaBean implements Serializable {
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private static final DateTimeFormatter FECHA_SIMPLE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Usuario usuarioLogueado;
 
     private Reserva reservaSeleccionada;
@@ -62,6 +64,7 @@ public class ReservaBean implements Serializable {
 
     private Date filtroCheckin;
     private Date filtroCheckout;
+    private boolean filtroCheckinHoyActivo;
     
 
   @PostConstruct
@@ -150,6 +153,7 @@ public void init() {
     }
 
     public void aplicarFiltroFechas() {
+        filtroCheckinHoyActivo = false;
         LocalDate checkinLocal = convertirFecha(filtroCheckin);
         LocalDate checkoutLocal = convertirFecha(filtroCheckout);
 
@@ -164,9 +168,17 @@ public void init() {
         actualizarReservasFiltradas();
     }
 
+    public void filtrarReservasDeHoy() {
+        filtroCheckinHoyActivo = true;
+        filtroCheckin = convertirADate(LocalDate.now());
+        filtroCheckout = null;
+        actualizarReservasFiltradas();
+    }
+
     public void limpiarFiltrosFechas() {
         filtroCheckin = null;
         filtroCheckout = null;
+        filtroCheckinHoyActivo = false;
         actualizarReservasFiltradas();
     }
 
@@ -780,14 +792,35 @@ public void init() {
                 .toLocalDate();
     }
 
+    private Date convertirADate(LocalDate fecha) {
+        if (fecha == null) {
+            return null;
+        }
+
+        return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public boolean isFiltroCheckinHoyActivo() {
+        return filtroCheckinHoyActivo;
+    }
+
+    public String getTextoFiltroHoy() {
+        if (!filtroCheckinHoyActivo) {
+            return "";
+        }
+
+        return "Mostrando reservas con check-in hoy (" + LocalDate.now().format(FECHA_SIMPLE_FORMATTER) + ")";
+    }
+
     private void actualizarReservasFiltradas() {
         List<Reserva> fuente = listaReservas != null ? listaReservas : new ArrayList<>();
         LocalDate checkinLocal = convertirFecha(filtroCheckin);
         LocalDate checkoutLocal = convertirFecha(filtroCheckout);
         String termino = filtroBusqueda != null ? filtroBusqueda.trim().toLowerCase() : "";
         boolean tieneBusqueda = !termino.isEmpty();
+        boolean sinRangoFechas = checkinLocal == null && checkoutLocal == null && !filtroCheckinHoyActivo;
 
-        if (checkinLocal == null && checkoutLocal == null) {
+        if (sinRangoFechas) {
             reservasFiltradas = new ArrayList<>(fuente);
             if (!tieneBusqueda) {
                 return;
@@ -810,12 +843,16 @@ public void init() {
 
             boolean coincide = true;
 
-            if (checkinLocal != null) {
-                coincide = coincide && !checkin.toLocalDate().isBefore(checkinLocal);
-            }
+            if (filtroCheckinHoyActivo) {
+                coincide = coincide && checkin.toLocalDate().isEqual(LocalDate.now());
+            } else {
+                if (checkinLocal != null) {
+                    coincide = coincide && !checkin.toLocalDate().isBefore(checkinLocal);
+                }
 
-            if (checkoutLocal != null) {
-                coincide = coincide && !checkout.toLocalDate().isAfter(checkoutLocal);
+                if (checkoutLocal != null) {
+                    coincide = coincide && !checkout.toLocalDate().isAfter(checkoutLocal);
+                }
             }
 
             if (tieneBusqueda) {
