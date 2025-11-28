@@ -23,9 +23,10 @@ public class PagoDAO {
     List<Pago> listaPagos = new ArrayList<>();
 
     String sql =
-        "SELECT p.*, r.idUsuario " +
+        "SELECT p.*, r.idUsuario, u.nombre AS nombreUsuario " +
         "FROM pago p " +
-        "LEFT JOIN reserva r ON p.idReserva = r.idReserva";
+        "LEFT JOIN reserva r ON p.idReserva = r.idReserva " +
+        "LEFT JOIN usuario u ON r.idUsuario = u.idUsuario";
 
     try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
@@ -37,6 +38,7 @@ public class PagoDAO {
             reserva.setIdReserva(rs.getInt("idReserva"));
             Usuario usuario = new Usuario();
             usuario.setIdUsuario(rs.getInt("idUsuario"));
+            usuario.setNombre(rs.getString("nombreUsuario"));
             reserva.setUsuario(usuario);
             p.setReserva(reserva);
             
