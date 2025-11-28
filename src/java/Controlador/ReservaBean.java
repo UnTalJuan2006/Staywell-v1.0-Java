@@ -50,6 +50,7 @@ public class ReservaBean implements Serializable {
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private static final DateTimeFormatter FECHA_SIMPLE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Usuario usuarioLogueado;
 
     private Reserva reservaSeleccionada;
@@ -797,6 +798,18 @@ public void init() {
         }
 
         return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public boolean isFiltroCheckinHoyActivo() {
+        return filtroCheckinHoyActivo;
+    }
+
+    public String getTextoFiltroHoy() {
+        if (!filtroCheckinHoyActivo) {
+            return "";
+        }
+
+        return "Mostrando reservas con check-in hoy (" + LocalDate.now().format(FECHA_SIMPLE_FORMATTER) + ")";
     }
 
     private void actualizarReservasFiltradas() {
