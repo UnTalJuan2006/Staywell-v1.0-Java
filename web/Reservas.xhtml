@@ -201,6 +201,14 @@
 
             .filter-date-input {
                 border-radius: 10px;
+                border: 1px solid #dfe6ef;
+                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.02);
+                transition: all .25s ease;
+            }
+
+            .filter-date-input:focus {
+                border-color: #20c997;
+                box-shadow: 0 0 0 0.15rem rgba(32, 201, 151, 0.22);
             }
 
             .btn-clear {
@@ -546,6 +554,11 @@
                                                  actionListener="#{reservaBean.limpiarFiltrosFechas}">
                                     <f:ajax execute="@form" render=":filterForm :reservasTable" />
                                 </h:commandButton>
+
+                                <h:panelGroup rendered="#{reservaBean.filtroCheckinHoyActivo}" styleClass="today-pill">
+                                    <i class="bi bi-info-circle"></i>
+                                    <h:outputText value="#{reservaBean.textoFiltroHoy}" />
+                                </h:panelGroup>
                             </div>
                         </div>
 
