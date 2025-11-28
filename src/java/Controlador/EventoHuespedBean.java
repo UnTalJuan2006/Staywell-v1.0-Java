@@ -72,6 +72,11 @@ public class EventoHuespedBean implements Serializable {
     private LocalDateTime fechaTransaccion;
     private BigDecimal totalConfirmado = BigDecimal.ZERO;
     private EnumPago metodoPagoConfirmado;
+    private static final BigDecimal IVA_RATE = new BigDecimal("0.19");
+    
+    
+    private BigDecimal subtotalEvento = BigDecimal.ZERO;
+    private BigDecimal ivaEvento = BigDecimal.ZERO;
 
     private static final DateTimeFormatter RESUMEN_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -118,6 +123,8 @@ public class EventoHuespedBean implements Serializable {
         nombreCliente = usuarioLogueado != null ? usuarioLogueado.getNombre() : null;
         precioDia = BigDecimal.ZERO;
         totalEvento = BigDecimal.ZERO;
+        subtotalEvento = BigDecimal.ZERO;
+        ivaEvento = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
         tipoPagoSeleccionado = null;
         numeroTarjeta = null;
@@ -650,6 +657,14 @@ public class EventoHuespedBean implements Serializable {
 
     public void setTipoPagoSeleccionado(EnumPago tipoPagoSeleccionado) {
         this.tipoPagoSeleccionado = tipoPagoSeleccionado;
+    }
+    
+    public BigDecimal getSubtotalEvento(){
+        return subtotalEvento;
+    }
+    
+    public BigDecimal getIvaEvento(){
+        return ivaEvento;
     }
 
     public String getNumeroTarjeta() {
