@@ -391,6 +391,33 @@
                 gap: 8px;
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
             }
+
+            .btn-today {
+                border-radius: 12px;
+                font-weight: 600;
+                letter-spacing: 0.4px;
+                padding: 0.6rem 1.4rem;
+                background: linear-gradient(135deg, #0d6efd, #3692ff);
+                border: 1px solid #0b5ed7;
+                box-shadow: 0 6px 14px rgba(13, 110, 253, 0.3);
+            }
+
+            .btn-today:hover {
+                background: linear-gradient(135deg, #0b5ed7, #2c82f4);
+                box-shadow: 0 8px 18px rgba(13, 110, 253, 0.35);
+            }
+
+            .today-pill {
+                color: #0d6efd;
+                background: #e7f1ff;
+                border: 1px solid #cfe2ff;
+                border-radius: 999px;
+                padding: 0.35rem 0.8rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+            }
             
             /* Reorganizado para que los iconos se mantengan visibles */
             .export-buttons {
@@ -702,29 +729,25 @@
                                 </div>
                             </div>
 
-                            <!-- Acciones de filtro -->
-                            <div class="col-md-4">
-                                <div class="date-chip h-100 d-flex flex-column gap-3">
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <p:commandButton value="Reservas de Hoy"
-                                                         icon="bi bi-sunrise-fill"
-                                                         styleClass="btn-today"
-                                                         actionListener="#{reservaBean.filtrarReservasDeHoy}"
-                                                         process="@form"
-                                                         update=":filterForm :reservasTable" />
+                            <!-- Acciones -->
+                            <div class="col-md-4 d-flex flex-column gap-2 align-items-start">
+                                <p:commandButton value="Reservas de hoy"
+                                                 icon="bi bi-calendar2-day"
+                                                 styleClass="btn btn-primary btn-today"
+                                                 actionListener="#{reservaBean.filtrarReservasDeHoy}"
+                                                 process="@form"
+                                                 update=":filterForm :reservasTable" />
 
-                                        <p:commandButton value="Limpiar filtros"
-                                                         icon="bi bi-eraser-fill"
-                                                         styleClass="btn-clear"
-                                                         actionListener="#{reservaBean.limpiarFiltrosFechas}"
-                                                         process="@form"
-                                                         update=":filterForm :reservasTable" />
-                                    </div>
-                                    <div class="filter-hint w-100">
-                                        <i class="bi bi-lightbulb"></i>
-                                        Un clic muestra solo los check-ins del día; otro limpia para ver todo.
-                                    </div>
-                                </div>
+                                <h:commandButton value="Limpiar filtros"
+                                                 styleClass="btn btn-outline-secondary btn-clear"
+                                                 actionListener="#{reservaBean.limpiarFiltrosFechas}">
+                                    <f:ajax execute="@form" render=":filterForm :reservasTable" />
+                                </h:commandButton>
+
+                                <h:panelGroup rendered="#{reservaBean.filtroCheckinHoyActivo}" styleClass="today-pill">
+                                    <i class="bi bi-info-circle"></i>
+                                    <h:outputText value="#{reservaBean.textoFiltroHoy}" />
+                                </h:panelGroup>
                             </div>
                         </div>
 
