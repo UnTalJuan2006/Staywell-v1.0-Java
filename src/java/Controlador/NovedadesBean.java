@@ -101,6 +101,13 @@ public class NovedadesBean implements Serializable {
             return null;
         }
 
+        if (novedad.getFechaFin() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Debe indicar la fecha de finalización."));
+            return null;
+        }
+
         try {
             Habitacion h = new Habitacion();
             h.setIdHabitacion(habitacionSeleccionada);
@@ -135,6 +142,13 @@ public class NovedadesBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
                             "Advertencia", "Seleccione un espacio."));
+            return null;
+        }
+
+        if (novedad.getFechaFin() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Debe indicar la fecha de finalización."));
             return null;
         }
 
