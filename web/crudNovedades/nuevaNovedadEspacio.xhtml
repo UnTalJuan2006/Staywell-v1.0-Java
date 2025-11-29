@@ -75,9 +75,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="fechaFin" class="form-label">Fecha de finalización</label>
-                                <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control"
+                                <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control" converter="localDateTimeConverter"
                                              required="true" requiredMessage="Seleccione la fecha y hora de finalización.">
-                                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
                                     <f:passThroughAttribute name="type" value="datetime-local" />
                                 </h:inputText>
                                 <small class="text-muted">Define cuándo se resuelve la novedad.</small>
