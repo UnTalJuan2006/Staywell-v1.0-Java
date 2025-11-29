@@ -472,8 +472,6 @@
                                             <th>Fecha Registro</th>
                                             <th>Fecha Fin</th>
                                             <th>Estado</th>
-                                            <th>Habitacion</th>
-                                            <th>Espacio</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -485,17 +483,21 @@
                                                 <td>#{novedadesBean.obtenerTipo(n)}</td>
                                                 <td>#{novedadesBean.obtenerDestino(n)}</td>
                                                 <td>
-                                                    <h:outputText value="#{n.fechaRegistro}"/>
+                                                    <h:outputText value="#{n.fechaRegistro}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
                                                 </td>
                                                 <td>
-                                                    <h:outputText value="#{n.fechaFin}"/>
+                                                    <h:outputText value="#{n.fechaFin}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-#{n.estado == 'ACTIVA' ? 'success' : 'secondary'}">
                                                         #{n.estado}
                                                     </span>
                                                 </td>
-                                               
+
                                                 <td class="table-actions">
                                                     <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-info btn-sm">
                                                         <i class="bi bi-eye"></i>

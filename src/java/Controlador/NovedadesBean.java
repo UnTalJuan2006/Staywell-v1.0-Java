@@ -121,6 +121,10 @@ public class NovedadesBean implements Serializable {
             novedad.setFechaRegistro(LocalDateTime.now());
             novedad.setEstado(EnumEstadoNovedad.ACTIVA);
 
+            if (!validarFechaFinPosterior()) {
+                return null;
+            }
+
             novedadesDAO.agregar(novedad);
             limpiarFormulario();
             cargarListas();
@@ -165,6 +169,10 @@ public class NovedadesBean implements Serializable {
             novedad.setFechaRegistro(LocalDateTime.now());
             novedad.setEstado(EnumEstadoNovedad.ACTIVA);
 
+            if (!validarFechaFinPosterior()) {
+                return null;
+            }
+
             novedadesDAO.agregar(novedad);
             limpiarFormulario();
             cargarListas();
@@ -202,6 +210,10 @@ public class NovedadesBean implements Serializable {
 
             if (novedad.getFechaRegistro() == null) {
                 novedad.setFechaRegistro(LocalDateTime.now());
+            }
+
+            if (!validarFechaFinPosterior()) {
+                return null;
             }
 
             novedadesDAO.actualizar(novedad);
@@ -258,6 +270,18 @@ public class NovedadesBean implements Serializable {
         }
 
         return "Sin asignar";
+    }
+
+    private boolean validarFechaFinPosterior() {
+        if (novedad.getFechaRegistro() != null && novedad.getFechaFin() != null
+                && novedad.getFechaFin().isBefore(novedad.getFechaRegistro())) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "La fecha de finalización no puede ser anterior a la fecha de registro."));
+            return false;
+        }
+
+        return true;
     }
 
     private void limpiarFormulario() {

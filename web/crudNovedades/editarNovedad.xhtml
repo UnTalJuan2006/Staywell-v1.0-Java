@@ -103,6 +103,7 @@
                                 <label for="fechaFin" class="form-label">Fecha de cierre</label>
                                 <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control">
                                     <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
+                                    <f:passThroughAttribute name="type" value="datetime-local" />
                                 </h:inputText>
                                 <small class="text-muted">Opcional: define cuándo se resolvió.</small>
                             </div>
