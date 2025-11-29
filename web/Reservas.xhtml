@@ -164,11 +164,36 @@
             }
 
             .filter-card {
-                background: #fff;
-                border: 1px solid #e9ecef;
+                background: rgba(255, 255, 255, 0.75);
+                backdrop-filter: blur(8px);
+                border-radius: 18px;
+                border: 1px solid rgba(200, 200, 200, 0.4);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                position: relative;
+            }
+
+            .filter-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 1rem;
+            }
+
+            .filter-icon-box {
+                background: #0d6efd15;
+                padding: 10px 14px;
                 border-radius: 12px;
-                padding: 1.25rem 1.5rem;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                color: #495057;
+                font-size: 1.15rem;
             }
 
             .filter-label {
@@ -177,19 +202,22 @@
                 margin-bottom: 6px;
             }
 
-            .filter-input:focus {
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
-            }
-
             .filter-search-wrapper {
                 position: relative;
                 width: 100%;
+                max-width: 380px;
             }
 
             .filter-search-input {
-                border-radius: 10px !important;
+                border-radius: 12px !important;
+                border: 1px solid #d1d1d1 !important;
+                transition: all .3s ease !important;
                 padding-left: 2.5rem !important;
+            }
+
+            .filter-search-input:focus {
+                border-color: #0d6efd !important;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, .25) !important;
             }
 
             .filter-search-icon {
@@ -201,36 +229,61 @@
 
             .filter-date-input {
                 border-radius: 10px;
-                border: 1px solid #dfe6ef;
-                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.02);
-                transition: all .25s ease;
+                border: 1px solid #d1d1d1;
+                transition: all .3s ease;
             }
 
             .filter-date-input:focus {
-                border-color: #20c997;
-                box-shadow: 0 0 0 0.15rem rgba(32, 201, 151, 0.22);
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
             }
 
             .btn-clear {
-                border-radius: 10px;
+                border-radius: 12px;
                 font-weight: 500;
-                letter-spacing: 0.3px;
-                padding: 0.55rem 1.25rem;
+                letter-spacing: 0.4px;
+                padding: 0.55rem 1.4rem;
+                width: 100%;
+                border: 2px solid #6c757d;
+                color: #6c757d;
+                background: white;
+                transition: all 0.3s ease;
+            }
+
+            .btn-clear:hover {
+                background: #6c757d;
+                color: white;
+                border-color: #6c757d;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+            }
+
+            .btn-clear:active {
+                transform: translateY(0);
             }
 
             .btn-today {
-                border-radius: 10px;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-                padding: 0.6rem 1.3rem;
-                background: linear-gradient(135deg, #0d6efd, #1a73e8);
-                border: 1px solid #0d6efd;
-                box-shadow: 0 6px 14px rgba(13, 110, 253, 0.25);
+                border-radius: 12px;
+                font-weight: 500;
+                letter-spacing: 0.4px;
+                padding: 0.55rem 1.4rem;
+                width: 100%;
+                border: 2px solid #0d6efd;
+                color: #0d6efd;
+                background: white;
+                transition: all 0.3s ease;
             }
 
             .btn-today:hover {
-                background: linear-gradient(135deg, #0c63e7, #135bbf);
-                box-shadow: 0 8px 18px rgba(13, 110, 253, 0.3);
+                background: #0d6efd;
+                color: white;
+                border-color: #0d6efd;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            }
+
+            .btn-today:active {
+                transform: translateY(0);
             }
 
             .today-pill {
@@ -490,10 +543,12 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-wrap justify-content-between gap-3 align-items-center mb-3">
-                            <div>
-                                <h5 class="mb-1 text-primary fw-bold">Opciones de filtrado</h5>
-                                <small class="text-muted">Busca por huésped, habitación o rango de fechas.</small>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="filter-header">
+                                <div class="filter-icon-box">
+                                    <i class="bi bi-funnel-fill" style="font-size: 1.4rem; color:#0d6efd;"></i>
+                                </div>
+                                <span class="filter-title">Opciones de filtrado</span>
                             </div>
 
                             <h:panelGroup rendered="#{reservaBean.filtroCheckinHoyActivo}" styleClass="today-pill">
@@ -502,24 +557,20 @@
                             </h:panelGroup>
                         </div>
 
-                        <div class="row g-3 align-items-end">
-                            <!-- Buscador -->
-                            <div class="col-lg-4">
-                                <label class="filter-label">Buscar</label>
-                                <div class="filter-search-wrapper">
-                                    <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                        <div class="filter-search-wrapper mb-4">
+                            <i class="bi bi-search text-secondary position-absolute filter-search-icon"></i>
+                            <p:inputText id="globalFilter"
+                                         value="#{reservaBean.filtroBusqueda}"
+                                         placeholder="Buscar por habitación o huésped"
+                                         styleClass="form-control filter-search-input shadow-sm">
+                                <f:ajax event="keyup" render=":reservasTable" listener="#{reservaBean.aplicarFiltroBusqueda}" />
+                            </p:inputText>
+                        </div>
 
-                                    <p:inputText id="globalFilter"
-                                                 value="#{reservaBean.filtroBusqueda}"
-                                                 placeholder="Buscar por habitación o huésped"
-                                                 styleClass="form-control filter-search-input shadow-sm">
-                                        <f:ajax event="keyup" render=":reservasTable" listener="#{reservaBean.aplicarFiltroBusqueda}" />
-                                    </p:inputText>
-                                </div>
-                            </div>
+                        <hr class="my-3" style="opacity: .15;"/>
 
-                            <!-- Check-in -->
-                            <div class="col-lg-3">
+                        <div class="row g-4 align-items-end">
+                            <div class="col-md-3">
                                 <label class="filter-label">Check-in desde</label>
                                 <h:inputText value="#{reservaBean.filtroCheckin}"
                                              styleClass="form-control filter-date-input">
@@ -529,8 +580,7 @@
                                 </h:inputText>
                             </div>
 
-                            <!-- Check-out -->
-                            <div class="col-lg-3">
+                            <div class="col-md-3">
                                 <label class="filter-label">Check-out hasta</label>
                                 <h:inputText value="#{reservaBean.filtroCheckout}"
                                              styleClass="form-control filter-date-input">
@@ -540,25 +590,21 @@
                                 </h:inputText>
                             </div>
 
-                            <!-- Acciones -->
-                            <div class="col-lg-2 d-flex flex-wrap gap-2 justify-content-end">
-                                <p:commandButton value="Reservas de hoy"
-                                                 icon="bi bi-calendar2-day"
-                                                 styleClass="btn btn-primary btn-today"
-                                                 actionListener="#{reservaBean.filtrarReservasDeHoy}"
-                                                 process="@form"
-                                                 update=":filterForm :reservasTable" />
+                            <div class="col-md-3">
+                                <h:commandButton value="Reservas de hoy" styleClass="btn btn-today">
 
-                                <h:commandButton value="Limpiar"
+                                    <f:ajax listener="#{reservaBean.filtrarReservasDeHoy}" 
+                                            execute="@form" 
+                                            render=":filterForm :reservasTable" />
+                                </h:commandButton>
+                            </div>
+
+                            <div class="col-md-3">
+                                <h:commandButton value="Limpiar filtros"
                                                  styleClass="btn btn-outline-secondary btn-clear"
                                                  actionListener="#{reservaBean.limpiarFiltrosFechas}">
                                     <f:ajax execute="@form" render=":filterForm :reservasTable" />
                                 </h:commandButton>
-
-                                <h:panelGroup rendered="#{reservaBean.filtroCheckinHoyActivo}" styleClass="today-pill">
-                                    <i class="bi bi-info-circle"></i>
-                                    <h:outputText value="#{reservaBean.textoFiltroHoy}" />
-                                </h:panelGroup>
                             </div>
                         </div>
 
