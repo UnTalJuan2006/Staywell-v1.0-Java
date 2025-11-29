@@ -58,6 +58,10 @@ public class NovedadesBean implements Serializable {
             listaNovedades = new ArrayList<>();
             habitaciones = new ArrayList<>();
             espacios = new ArrayList<>();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error", "No se pudo cargar la información de novedades."));
         }
     }
 

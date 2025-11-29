@@ -385,6 +385,10 @@
 
     <h:body>
 
+        <f:metadata>
+            <f:viewAction action="#{novedadesBean.cargarListas}" />
+        </f:metadata>
+
         <f:event listener="#{novedadesBean.cargarListas}" type="preRenderView" />
 
         <!-- Sidebar Rediseñada -->
