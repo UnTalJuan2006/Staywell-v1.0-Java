@@ -5,8 +5,11 @@
       lang="es"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{novedadesBean.cargarListas}" />
+    </f:metadata>
     <h:head>
-        <title>Gestion de Usuarios </title>
+        <title>Gestión de Novedades</title>
 
         <!-- Tailwind y Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -458,7 +461,7 @@
                     <h:link outcome="/Novedades.xhtml" styleClass="nav-link active">
                       <i class="bi bi-stars"></i>
 
-                        <span>Novedadas</span>
+                        <span>Novedades</span>
                     </h:link>
                 </div>
             </nav>
@@ -499,71 +502,68 @@
                             </div>
                         </div>
 
-                        <h:panelGroup rendered="#{empty novedadesBean.listaNovedades}">
-                            <div class="alert alert-warning mb-0">
-                                No se encontraron novedades registradas.
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{not empty novedadesBean.listaNovedades}">
-                            <h:form id="frmNovedades">
-                                <div class="table-responsive">
-                                    <table class="table table-striped align-middle" id="tblNovedades">
-                                        <thead>
+                        <h:form id="frmNovedades">
+                            <div class="table-responsive">
+                                <table class="table table-striped align-middle" id="tblNovedades">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Descripción</th>
+                                            <th>Tipo</th>
+                                            <th>Destino</th>
+                                            <th>Fecha registro</th>
+                                            <th>Fecha fin</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ui:repeat value="#{novedadesBean.listaNovedades}" var="novedades" varStatus="loop">
                                             <tr>
-                                                <th>#</th>
-                                                <th>Descripción</th>
-                                                <th>Tipo</th>
-                                                <th>Destino</th>
-                                                <th>Fecha registro</th>
-                                                <th>Fecha fin</th>
-                                                <th>Estado</th>
-                                                <th>Acciones</th>
+                                                <td>#{loop.index + 1}</td>
+                                                <td>#{novedades.descripcion}</td>
+                                                <td>#{novedadesBean.obtenerTipo(novedades)}</td>
+                                                <td>#{novedadesBean.obtenerDestino(novedades)}</td>
+                                                <td>
+                                                    <h:outputText value="#{novedades.fechaRegistro}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
+                                                </td>
+                                                <td>
+                                                    <h:outputText value="#{novedades.fechaFin}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-#{novedades.estado == 'ACTIVA' ? 'success' : 'secondary'}">
+                                                        #{novedades.estado}
+                                                    </span>
+                                                </td>
+                                                <td class="table-actions">
+                                                    <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-info btn-sm me-1">
+                                                        <i class="bi bi-eye"></i>
+                                                        <f:param name="id" value="#{novedades.idNovedad}" />
+                                                    </h:link>
+                                                    <h:link outcome="/crudNovedades/editarNovedad.xhtml" styleClass="btn btn-outline-primary btn-sm me-1">
+                                                        <i class="bi bi-pencil"></i>
+                                                        <f:param name="id" value="#{novedades.idNovedad}" />
+                                                    </h:link>
+                                                    <h:commandLink action="#{novedadesBean.eliminar(novedades)}" styleClass="btn btn-outline-danger btn-sm"
+                                                                   onclick="return confirm('¿Desea eliminar esta novedad?');">
+                                                        <i class="bi bi-trash"></i>
+                                                    </h:commandLink>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            <ui:repeat value="#{novedadesBean.listaNovedades}" var="novedades" varStatus="loop">
-                                                <tr>
-                                                    <td>#{loop.index + 1}</td>
-                                                    <td>#{novedades.descripcion}</td>
-                                                    <td>#{novedadesBean.obtenerTipo(novedades)}</td>
-                                                    <td>#{novedadesBean.obtenerDestino(novedades)}</td>
-                                                    <td>
-                                                        <h:outputText value="#{novedades.fechaRegistro}">
-                                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-                                                        </h:outputText>
-                                                    </td>
-                                                    <td>
-                                                        <h:outputText value="#{novedades.fechaFin}">
-                                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-                                                        </h:outputText>
-                                                    </td>
-                                                    <td>
-                                                        <span class="badge bg-#{novedades.estado == 'ACTIVA' ? 'success' : 'secondary'}">
-                                                            #{novedades.estado}
-                                                        </span>
-                                                    </td>
-                                                    <td class="table-actions">
-                                                        <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-info btn-sm me-1">
-                                                            <i class="bi bi-eye"></i>
-                                                            <f:param name="id" value="#{novedades.idNovedad}" />
-                                                        </h:link>
-                                                        <h:link outcome="/crudNovedades/editarNovedad.xhtml" styleClass="btn btn-outline-primary btn-sm me-1">
-                                                            <i class="bi bi-pencil"></i>
-                                                            <f:param name="id" value="#{novedades.idNovedad}" />
-                                                        </h:link>
-                                                        <h:commandLink action="#{novedadesBean.eliminar(novedades)}" styleClass="btn btn-outline-danger btn-sm"
-                                                                       onclick="return confirm('¿Desea eliminar esta novedad?');">
-                                                            <i class="bi bi-trash"></i>
-                                                        </h:commandLink>
-                                                    </td>
-                                                </tr>
-                                            </ui:repeat>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </h:form>
-                        </h:panelGroup>
+                                        </ui:repeat>
+                                        <ui:fragment rendered="#{empty novedadesBean.listaNovedades}">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted py-4">No se encontraron novedades registradas.</td>
+                                            </tr>
+                                        </ui:fragment>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </h:form>
                     </div>
                 </div>
             </div>
