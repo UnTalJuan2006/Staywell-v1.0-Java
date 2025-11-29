@@ -7,6 +7,7 @@ public class Habitacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private int idHabitacion;
+    private EnumTipoNovedad tipoNovedad;
     private int numHabitacion;
     private TipoHabitacion tipoHabitacion;
     private EnumEstadoHabitacion estado;
@@ -69,6 +70,14 @@ public class Habitacion implements Serializable {
 
     public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
         this.tipoHabitacion = tipoHabitacion;
+    }
+
+    public EnumTipoNovedad getTipoNovedad() {
+        return tipoNovedad;
+    }
+
+    public void setTipoNovedad(EnumTipoNovedad tipoNovedad) {
+        this.tipoNovedad = tipoNovedad;
     }
         
     
