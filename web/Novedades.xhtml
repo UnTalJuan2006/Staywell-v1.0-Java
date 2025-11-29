@@ -2,14 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      lang="es"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      lang="es">
 
     <h:head>
         <title>Gestión de Novedades</title>
 
-        <!-- Tailwind y Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -21,7 +20,6 @@
                 background-color: #f8f9fa;
             }
 
-            /* SIDEBAR REDISEÑADA */
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -56,7 +54,6 @@
                 opacity: 0.9;
             }
 
-            /* Secciones del sidebar */
             .sidebar-section {
                 padding: 0 16px;
                 margin-bottom: 24px;
@@ -132,7 +129,6 @@
                 border-color: rgba(255, 255, 255, 0.3);
             }
 
-            /* Scrollbar personalizada */
             .sidebar::-webkit-scrollbar {
                 width: 8px;
             }
@@ -160,11 +156,6 @@
                 padding: 1.5rem 2rem;
                 border-bottom: 1px solid #e9ecef;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .table-actions a,
-            .table-actions button {
-                margin-right: 0.5rem;
             }
 
             .stats {
@@ -208,21 +199,6 @@
                 font-size: 0.9em;
             }
 
-            .btn-exportar {
-                background-color: #007bff;
-                color: white;
-                padding: 10px;
-            }
-
-            .btn-exportar:hover {
-                background-color: #0056b3;
-            }
-
-            h3{
-                color:#000000;
-                font-size: unset;
-            }
-
             .table-actions .btn {
                 margin-right: 0.4rem !important;
             }
@@ -230,124 +206,12 @@
             .table-actions .btn:last-child {
                 margin-right: 0 !important;
             }
-
-            /* Reorganizado para que los iconos se mantengan visibles */
-            .export-buttons {
-                position: absolute;
-                top: 50%;
-                right: 20px;
-                transform: translateY(-50%);
-                z-index: 100;
-            }
-
-            /* Contenedor wrapper para mantener hover activo */
-            .export-container {
-                position: relative;
-                display: inline-flex;
-                align-items: center;
-                padding: 8px;
-            }
-
-            .export-main-btn {
-                background: #0d6efd;
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-size: 20px;
-                z-index: 10;
-                border: none;
-                padding: 0;
-                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
-            }
-
-            .export-main-btn:hover {
-                background: #0b5ed7;
-                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
-                transform: scale(1.05);
-            }
-
-            /* Excel option - positioned above */
-            .export-option-excel {
-                position: absolute;
-                bottom: 65px;
-                right: -8px;
-                opacity: 0;
-                transform: translateY(10px) scale(0.8);
-                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-                pointer-events: none;
-                z-index: 5;
-                margin: 0;
-                padding: 6px;
-                border: none;
-                background: white;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 45px;
-                height: 45px;
-            }
-
-            /* PDF option - positioned below */
-            .export-option-pdf {
-                position: absolute;
-                top: 65px;
-                right: -8px;
-                opacity: 0;
-                transform: translateY(-10px) scale(0.8);
-                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-                pointer-events: none;
-                z-index: 5;
-                margin: 0;
-                padding: 6px;
-                border: none;
-                background: white;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 45px;
-                height: 45px;
-            }
-
-            /* Show options on container hover */
-            .export-container:hover .export-option-excel,
-            .export-container:hover .export-option-pdf {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                pointer-events: auto;
-            }
-
-            .export-icon {
-                width: 28px;
-                height: 28px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                display: block;
-                margin: 0;
-                padding: 0;
-            }
-
-            .export-option-excel:hover,
-            .export-option-pdf:hover {
-                transform: scale(1.15);
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-            }
         </style>
 
     </h:head>
 
     <h:body>
 
-        <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <h4><i class="fas fa-hotel"></i> StayWell</h4>
@@ -430,6 +294,115 @@
             </h:form>
         </div>
 
-      
+        <div class="main-content">
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <div class="page-title">
+                    <h2><i class="bi bi-stars"></i> Gestión de novedades</h2>
+                    <span>Administra los mantenimientos de habitaciones y espacios.</span>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <h:link outcome="/crudNovedades/nuevaNovedadHabitacion.xhtml" styleClass="btn btn-primary">
+                        <i class="bi bi-door-open"></i> Novedad de habitación
+                    </h:link>
+                    <h:link outcome="/crudNovedades/nuevaNovedadEspacio.xhtml" styleClass="btn btn-outline-primary">
+                        <i class="bi bi-building"></i> Novedad de espacio
+                    </h:link>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h:messages styleClass="alert alert-info" layout="table" />
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <i class="bi bi-clipboard-data stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>Total novedades</h3>
+                            <p>#{novedadesBean.totalNovedades()}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="bi bi-exclamation-circle stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>Novedades activas</h3>
+                            <p>#{novedadesBean.totalActivas()}</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="bi bi-check2-circle stat-icon"></i>
+                        <div class="stat-info">
+                            <h3>Novedades resueltas</h3>
+                            <p>#{novedadesBean.totalResueltas()}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">Listado de novedades</h5>
+                            <small class="text-muted">Verifica rápidamente el destino y estado de cada registro.</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h:form id="tablaNovedadesForm">
+                            <div class="table-responsive">
+                                <h:dataTable value="#{novedadesBean.novedades}" var="nov" styleClass="table table-striped align-middle" headerClass="table-light">
+                                    <h:column>
+                                        <f:facet name="header">#</f:facet>
+                                        #{nov.idNovedad}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Descripción</f:facet>
+                                        #{nov.descripcion}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Destino</f:facet>
+                                        #{novedadesBean.obtenerDestino(nov)}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Estado</f:facet>
+                                        <span class="badge #{nov.estado eq 'ACTIVA' ? 'bg-warning text-dark' : 'bg-success'}">#{nov.estado}</span>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Fecha registro</f:facet>
+                                        <h:outputText value="#{nov.fechaRegistro}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                        </h:outputText>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Fecha fin</f:facet>
+                                        <h:outputText value="#{nov.fechaFin}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                        </h:outputText>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Acciones</f:facet>
+                                        <div class="table-actions d-flex">
+                                            <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-primary btn-sm" title="Ver detalle">
+                                                <i class="bi bi-eye"></i>
+                                                <f:param name="id" value="#{nov.idNovedad}" />
+                                            </h:link>
+                                            <h:link outcome="/crudNovedades/editarNovedad.xhtml" styleClass="btn btn-outline-secondary btn-sm" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                                <f:param name="id" value="#{nov.idNovedad}" />
+                                            </h:link>
+                                            <h:commandLink action="#{novedadesBean.eliminar(nov)}" styleClass="btn btn-outline-danger btn-sm" title="Eliminar"
+                                                          onclick="return confirm('¿Desea eliminar la novedad seleccionada?');">
+                                                <i class="bi bi-trash"></i>
+                                            </h:commandLink>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                            <ui:fragment rendered="#{empty novedadesBean.novedades}">
+                                <div class="alert alert-light text-center mb-0">No hay novedades registradas.</div>
+                            </ui:fragment>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </h:body>
 </html>
