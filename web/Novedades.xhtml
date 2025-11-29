@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="es">
+
+<h:head>
+    <title>Gestión de Novedades</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link rel="stylesheet" href="css/admin-crud.css" />
+</h:head>
+
+<h:body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-hotel"></i> StayWell</h4>
+            <p>Panel Admin</p>
+        </div>
+
+        <nav class="sidebar-nav">
+            <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
+            <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
+            <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+            <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
+            <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
+            <h:link outcome="/Reservas.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
+            <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
+            <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
+            <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
+            <h:link outcome="/Novedades.xhtml" styleClass="nav-link active"><i class="bi bi-exclamation-diamond me-2"></i> Novedades</h:link>
+        </nav>
+
+        <h:form>
+            <div class="sidebar-footer">
+                <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </h:commandLink>
+            </div>
+        </h:form>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar d-flex justify-content-between align-items-center">
+            <div class="page-title">
+                <h2><i class="bi bi-exclamation-diamond"></i> Novedades</h2>
+                <span>Controla y supervisa las novedades de habitaciones y espacios.</span>
+            </div>
+            <div class="d-flex gap-2">
+                <h:link outcome="/crudNovedades/nuevaNovedadHabitacion.xhtml" styleClass="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Habitación
+                </h:link>
+                <h:link outcome="/crudNovedades/nuevaNovedadEspacio.xhtml" styleClass="btn btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Espacio
+                </h:link>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Novedades registradas</h5>
+                    <p class="mb-0 text-muted">Consulta, edita o elimina las novedades asociadas.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <h:link outcome="/crudNovedades/nuevaNovedadHabitacion.xhtml" styleClass="btn btn-success btn-sm">
+                        <i class="bi bi-plus-lg"></i> Nueva de Habitación
+                    </h:link>
+                    <h:link outcome="/crudNovedades/nuevaNovedadEspacio.xhtml" styleClass="btn btn-outline-success btn-sm">
+                        <i class="bi bi-plus-lg"></i> Nueva de Espacio
+                    </h:link>
+                </div>
+            </div>
+            <div class="card-body">
+                <h:messages styleClass="alert alert-warning" layout="table" />
+                <h:form>
+                    <div class="table-responsive">
+                        <h:dataTable value="#{novedadesBean.listaNovedades}" var="n"
+                                     styleClass="table table-striped align-middle"
+                                     headerClass="table-light" rowClasses="">
+                            <h:column>
+                                <f:facet name="header">ID</f:facet>
+                                #{n.idNovedad}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Tipo</f:facet>
+                                <h:outputText value="Habitación" rendered="#{novedadesBean.esDeHabitacion(n)}" />
+                                <h:outputText value="Espacio" rendered="#{!novedadesBean.esDeHabitacion(n)}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Destino</f:facet>
+                                #{novedadesBean.obtenerDestino(n)}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Descripción</f:facet>
+                                #{n.descripcion}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Estado</f:facet>
+                                <span class="badge bg-warning text-dark" rendered="#{n.estado eq 'ACTIVA'}">#{n.estado}</span>
+                                <span class="badge bg-success" rendered="#{n.estado eq 'RESUELTA'}">#{n.estado}</span>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Registro</f:facet>
+                                <h:outputText value="#{n.fechaRegistro}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Cierre</f:facet>
+                                <h:outputText value="#{n.fechaFin}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Acciones</f:facet>
+                                <div class="btn-group" role="group">
+                                    <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-info btn-sm"
+                                            rendered="true">
+                                        <f:param name="id" value="#{n.idNovedad}" />
+                                        <i class="bi bi-eye"></i>
+                                    </h:link>
+                                    <h:link outcome="/crudNovedades/editarNovedad.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                        <f:param name="id" value="#{n.idNovedad}" />
+                                        <i class="bi bi-pencil"></i>
+                                    </h:link>
+                                    <h:commandButton value="" action="#{novedadesBean.eliminar(n)}" styleClass="btn btn-outline-danger btn-sm"
+                                                     onclick="return confirm('¿Desea eliminar la novedad?');">
+                                        <i class="bi bi-trash"></i>
+                                    </h:commandButton>
+                                </div>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </div>
+</h:body>
+</html>
