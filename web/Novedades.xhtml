@@ -6,7 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Gestion de Usuarios </title>
+        <title>Gestión de Novedades</title>
 
         <!-- Tailwind y Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -382,6 +382,12 @@
 
     <h:body>
 
+        <f:metadata>
+            <f:viewAction action="#{novedadesBean.cargarListas}" />
+        </f:metadata>
+
+        <f:event listener="#{novedadesBean.cargarListas}" type="preRenderView" />
+
         <!-- Sidebar Rediseñada -->
         <div class="sidebar">
             <div class="sidebar-header">
@@ -458,7 +464,7 @@
                     <h:link outcome="/Novedades.xhtml" styleClass="nav-link active">
                       <i class="bi bi-stars"></i>
 
-                        <span>Novedadas</span>
+                        <span>Novedades</span>
                     </h:link>
                 </div>
             </nav>
@@ -481,51 +487,86 @@
             </div>
 
             <div class="mt-5">
-                 <div class="card shadow-sm">
+                <h:messages styleClass="alert alert-info" layout="table" />
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title mb-3">Novedades Registrads</h5>
-                        <h:panelGroup rendered="#{empty novedadesBean.listaNovedades}">
-                            <div class="alert alert-warning mb-0">
-                                No se encontraron Novedaes Registradas.
+                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
+                            <div>
+                                <h5 class="card-title mb-1">Novedades registradas</h5>
+                                <p class="text-muted mb-0">Gestiona las novedades de habitaciones y espacios desde un solo lugar.</p>
                             </div>
-                        </h:panelGroup>
+                            <div class="d-flex gap-2">
+                                <h:link outcome="/crudNovedades/nuevaNovedadHabitacion.xhtml" styleClass="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i> Novedad de habitación
+                                </h:link>
+                                <h:link outcome="/crudNovedades/nuevaNovedadEspacio.xhtml" styleClass="btn btn-outline-primary">
+                                    <i class="bi bi-plus-circle-dotted me-2"></i> Novedad de espacio
+                                </h:link>
+                            </div>
+                        </div>
 
-                        <h:panelGroup rendered="#{not empty novedadesBean.listaNovedades}" >
+                        <h:form id="frmNovedades">
                             <div class="table-responsive">
-                                <table class="table table-striped align-middle" id="tblUsuarios">
+                                <table class="table table-striped align-middle" id="tblNovedades">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Descripcion</th>
-                                            <th>fechaRegistro</th>
-                                            <th>fecha Fin</th>
-                                            <th>estado</th>
-                                            <th>NumHabitacion</th>
-                                            <th>NumEspacio</th>
+                                            <th>Descripción</th>
+                                            <th>Tipo</th>
+                                            <th>Destino</th>
+                                            <th>Fecha registro</th>
+                                            <th>Fecha fin</th>
+                                            <th>Estado</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <ui:repeat value="#{novedadesBean.listaNovedades}" var="Novedades" varStatus="loop">
+                                        <ui:repeat value="#{novedadesBean.listaNovedades}" var="novedades" varStatus="loop">
                                             <tr>
                                                 <td>#{loop.index + 1}</td>
                                                 <td>#{novedades.descripcion}</td>
-                                                <td>#{novedades.fechaRegistro}</td>
-                                                <td style="display: none;">#{novedades.fechaFin} </td>
-                                                <td>#{novedades.estado}</td>
-                                                
-
+                                                <td>#{novedadesBean.obtenerTipo(novedades)}</td>
+                                                <td>#{novedadesBean.obtenerDestino(novedades)}</td>
+                                                <td>
+                                                    <h:outputText value="#{novedades.fechaRegistro}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
+                                                </td>
+                                                <td>
+                                                    <h:outputText value="#{novedades.fechaFin}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                                    </h:outputText>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-#{novedades.estado == 'ACTIVA' ? 'success' : 'secondary'}">
+                                                        #{novedades.estado}
+                                                    </span>
+                                                </td>
                                                 <td class="table-actions">
-                                                    <h:form styleClass="d-inline">
-                                                      
-                                                    </h:form>
+                                                    <h:link outcome="/crudNovedades/verNovedad.xhtml" styleClass="btn btn-outline-info btn-sm me-1">
+                                                        <i class="bi bi-eye"></i>
+                                                        <f:param name="id" value="#{novedades.idNovedad}" />
+                                                    </h:link>
+                                                    <h:link outcome="/crudNovedades/editarNovedad.xhtml" styleClass="btn btn-outline-primary btn-sm me-1">
+                                                        <i class="bi bi-pencil"></i>
+                                                        <f:param name="id" value="#{novedades.idNovedad}" />
+                                                    </h:link>
+                                                    <h:commandLink action="#{novedadesBean.eliminar(novedades)}" styleClass="btn btn-outline-danger btn-sm"
+                                                                   onclick="return confirm('¿Desea eliminar esta novedad?');">
+                                                        <i class="bi bi-trash"></i>
+                                                    </h:commandLink>
                                                 </td>
                                             </tr>
                                         </ui:repeat>
+                                        <ui:fragment rendered="#{empty novedadesBean.listaNovedades}">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted py-4">No se encontraron novedades registradas.</td>
+                                            </tr>
+                                        </ui:fragment>
                                     </tbody>
                                 </table>
                             </div>
-                        </h:panelGroup>
+                        </h:form>
                     </div>
                 </div>
             </div>

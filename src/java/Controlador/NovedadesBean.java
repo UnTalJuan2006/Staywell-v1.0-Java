@@ -58,6 +58,10 @@ public class NovedadesBean implements Serializable {
             listaNovedades = new ArrayList<>();
             habitaciones = new ArrayList<>();
             espacios = new ArrayList<>();
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error", "No se pudo cargar la información de novedades."));
         }
     }
 
@@ -91,10 +95,20 @@ public class NovedadesBean implements Serializable {
     }
 
     public String registrarHabitacion() {
+        habitacionSeleccionada = habitacionSeleccionada != null && habitacionSeleccionada == 0 ? null : habitacionSeleccionada;
+        espacioSeleccionado = null;
+
         if (habitacionSeleccionada == null) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
                             "Advertencia", "Seleccione una habitación."));
+            return null;
+        }
+
+        if (novedad.getFechaFin() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Debe indicar la fecha de finalización."));
             return null;
         }
 
@@ -125,10 +139,20 @@ public class NovedadesBean implements Serializable {
     }
 
     public String registrarEspacio() {
+        espacioSeleccionado = espacioSeleccionado != null && espacioSeleccionado == 0 ? null : espacioSeleccionado;
+        habitacionSeleccionada = null;
+
         if (espacioSeleccionado == null) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN,
                             "Advertencia", "Seleccione un espacio."));
+            return null;
+        }
+
+        if (novedad.getFechaFin() == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Debe indicar la fecha de finalización."));
             return null;
         }
 
@@ -160,6 +184,10 @@ public class NovedadesBean implements Serializable {
 
     public String actualizar() {
         try {
+            if (!validarDestinoSeleccionado()) {
+                return null;
+            }
+
             if (habitacionSeleccionada != null) {
                 Habitacion h = new Habitacion();
                 h.setIdHabitacion(habitacionSeleccionada);
@@ -216,6 +244,10 @@ public class NovedadesBean implements Serializable {
         return n.getHabitacion() != null;
     }
 
+    public String obtenerTipo(Novedades n) {
+        return esDeHabitacion(n) ? "Habitación" : "Espacio";
+    }
+
     public String obtenerDestino(Novedades n) {
         if (n.getHabitacion() != null) {
             return "Habitación " + n.getHabitacion().getNumHabitacion();
@@ -232,6 +264,27 @@ public class NovedadesBean implements Serializable {
         novedad = new Novedades();
         habitacionSeleccionada = null;
         espacioSeleccionado = null;
+    }
+
+    private boolean validarDestinoSeleccionado() {
+        boolean habitacionAsignada = habitacionSeleccionada != null;
+        boolean espacioAsignado = espacioSeleccionado != null;
+
+        if (habitacionAsignada && espacioAsignado) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Seleccione únicamente habitación o espacio."));
+            return false;
+        }
+
+        if (!habitacionAsignada && !espacioAsignado) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Advertencia", "Debe seleccionar una habitación o un espacio."));
+            return false;
+        }
+
+        return true;
     }
 
     public Novedades getNovedad() {

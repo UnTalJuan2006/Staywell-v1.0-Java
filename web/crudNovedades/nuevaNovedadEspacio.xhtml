@@ -73,6 +73,15 @@
                                                    itemLabel="#{e.nombre}" />
                                 </h:selectOneMenu>
                             </div>
+                            <div class="col-md-6">
+                                <label for="fechaFin" class="form-label">Fecha de finalización</label>
+                                <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control"
+                                             required="true" requiredMessage="Seleccione la fecha y hora de finalización."
+                                             placeholder="YYYY-MM-DD HH:mm" >
+                                    <f:convertDateTime pattern="yyyy-MM-dd'T'HH:mm" />
+                                </h:inputText>
+                                <small class="text-muted">Define cuándo se resuelve la novedad.</small>
+                            </div>
                             <div class="col-md-12">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <h:inputTextarea id="descripcion" value="#{novedadesBean.novedad.descripcion}" rows="4"
