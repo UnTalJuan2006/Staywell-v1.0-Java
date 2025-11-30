@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="es">
+
+    <h:head>
+        <title>Gestión de Notificaciones</title>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', sans-serif;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 260px;
+                background: #1a7c8f;
+                color: white;
+                overflow-y: auto;
+                padding-top: 32px;
+            }
+
+            .sidebar-header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .sidebar-header h4 {
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+
+            .sidebar-title {
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.65);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                padding: 0 1.5rem;
+                margin-top: 12px;
+                margin-bottom: 8px;
+            }
+
+            .sidebar nav a {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: rgba(255, 255, 255, 0.85);
+                text-decoration: none;
+                padding: 12px 18px;
+                margin: 4px 0;
+                transition: all 0.2s ease;
+            }
+
+            .sidebar nav a:hover,
+            .sidebar nav a.active {
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+            }
+
+            .main-content {
+                margin-left: 260px;
+                padding: 32px;
+            }
+
+            .top-bar {
+                background: white;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+                margin-bottom: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .notification-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+                padding: 24px;
+                height: 100%;
+                border: 1px solid #e5eaef;
+            }
+
+            .notification-card .card-title {
+                font-weight: 700;
+                color: #1a202c;
+            }
+
+            .badge-unread {
+                background: #ffe8cc;
+                color: #c05621;
+                border-radius: 50px;
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .badge-read {
+                background: #e2f3f5;
+                color: #1a7c8f;
+                border-radius: 50px;
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .history-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+                padding: 24px;
+                border: 1px solid #e5eaef;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="bi bi-building"></i> StayWell</h4>
+                <p class="mb-0">Panel Admin</p>
+            </div>
+
+            <nav>
+                <div class="sidebar-title">Navegación Principal</div>
+                <h:link outcome="/HomeAdmin.xhtml">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </h:link>
+                <h:link outcome="/perfil.xhtml">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Perfil</span>
+                </h:link>
+                <h:link outcome="/Notificaciones.xhtml" styleClass="active">
+                    <i class="bi bi-bell"></i>
+                    <span>Notificaciones</span>
+                </h:link>
+
+                <div class="sidebar-title">Gestión Reservas</div>
+                <h:link outcome="/Habitaciones.xhtml">
+                    <i class="bi bi-door-open"></i>
+                    <span>Habitaciones</span>
+                </h:link>
+                <h:link outcome="/TipoHabitacion.xhtml">
+                    <i class="bi bi-journal-bookmark"></i>
+                    <span>Catálogo Habitaciones</span>
+                </h:link>
+                <h:link outcome="/Reservas.xhtml">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Reservas</span>
+                </h:link>
+
+                <div class="sidebar-title">Gestión Eventos</div>
+                <h:link outcome="/Eventos.xhtml">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Eventos</span>
+                </h:link>
+                <h:link outcome="/Espacios.xhtml">
+                    <i class="bi bi-building"></i>
+                    <span>Espacios</span>
+                </h:link>
+
+                <div class="sidebar-title">Gestión General</div>
+                <h:link outcome="/Usuarios.xhtml">
+                    <i class="bi bi-people"></i>
+                    <span>Usuarios</span>
+                </h:link>
+                <h:link outcome="/Empleados.xhtml">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Empleados</span>
+                </h:link>
+                <h:link outcome="/Correos.xhtml">
+                    <i class="bi bi-envelope"></i>
+                    <span>Correos</span>
+                </h:link>
+                <h:link outcome="/Pagos.xhtml">
+                    <i class="bi bi-credit-card"></i>
+                    <span>Pagos</span>
+                </h:link>
+                <h:link outcome="/Novedades.xhtml">
+                    <i class="bi bi-stars"></i>
+                    <span>Novedades</span>
+                </h:link>
+            </nav>
+
+            <h:form>
+                <div class="p-3">
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light w-100">
+                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                    </h:commandLink>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <div>
+                    <h3 class="mb-0"><i class="bi bi-bell me-2"></i> Gestión de Notificaciones</h3>
+                    <small class="text-muted">Envía avisos generales o personalizados y revisa el historial reciente.</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary">Usuarios registrados: #{notificacionBean.totalUsuarios}</span>
+                </div>
+            </div>
+
+            <h:messages styleClass="alert alert-info" layout="table" />
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="notification-card">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <h4 class="card-title mb-1">Notificación General</h4>
+                                <small class="text-muted">Se enviará a todos los usuarios activos.</small>
+                            </div>
+                            <span class="badge bg-gradient bg-primary"><i class="bi bi-megaphone-fill"></i></span>
+                        </div>
+
+                        <h:form id="formGeneral">
+                            <div class="mb-3">
+                                <h:outputLabel for="tituloGeneral" styleClass="form-label">Asunto</h:outputLabel>
+                                <h:inputText id="tituloGeneral" value="#{notificacionBean.notificacionGeneral.titulo}" styleClass="form-control" required="true" requiredMessage="El asunto es obligatorio" />
+                            </div>
+                            <div class="mb-3">
+                                <h:outputLabel for="mensajeGeneral" styleClass="form-label">Mensaje</h:outputLabel>
+                                <h:inputTextarea id="mensajeGeneral" value="#{notificacionBean.notificacionGeneral.mensaje}" styleClass="form-control" required="true" requiredMessage="El mensaje es obligatorio" rows="5" />
+                            </div>
+                            <div class="text-end">
+                                <h:commandButton value="Enviar a todos" action="#{notificacionBean.enviarNotificacionGeneral}" styleClass="btn btn-primary">
+                                    <i class="bi bi-send-fill me-2"></i>
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="notification-card">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <h4 class="card-title mb-1">Notificación Personal</h4>
+                                <small class="text-muted">Envía un mensaje dirigido a un huésped.</small>
+                            </div>
+                            <span class="badge bg-info text-dark"><i class="bi bi-person-check"></i></span>
+                        </div>
+
+                        <h:form id="formPersonal">
+                            <div class="mb-3">
+                                <h:outputLabel for="usuarioDestino" styleClass="form-label">Seleccionar usuario</h:outputLabel>
+                                <h:selectOneMenu id="usuarioDestino" value="#{notificacionBean.usuarioSeleccionado}" styleClass="form-select" required="true" requiredMessage="Seleccione un usuario">
+                                    <f:selectItem itemLabel="-- Seleccione --" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{notificacionBean.listaUsuarios}" var="usuario" itemValue="#{usuario.idUsuario}" itemLabel="#{usuario.nombre} - #{usuario.email}" />
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="mb-3">
+                                <h:outputLabel for="tituloPersonal" styleClass="form-label">Asunto</h:outputLabel>
+                                <h:inputText id="tituloPersonal" value="#{notificacionBean.notificacionPersonal.titulo}" styleClass="form-control" required="true" requiredMessage="El asunto es obligatorio" />
+                            </div>
+                            <div class="mb-3">
+                                <h:outputLabel for="mensajePersonal" styleClass="form-label">Mensaje</h:outputLabel>
+                                <h:inputTextarea id="mensajePersonal" value="#{notificacionBean.notificacionPersonal.mensaje}" styleClass="form-control" required="true" requiredMessage="El mensaje es obligatorio" rows="5" />
+                            </div>
+                            <div class="text-end">
+                                <h:commandButton value="Enviar notificación" action="#{notificacionBean.enviarNotificacionPersonal}" styleClass="btn btn-info text-white">
+                                    <i class="bi bi-send-fill me-2"></i>
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-card mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0"><i class="bi bi-clock-history me-2"></i>Historial reciente</h4>
+                    <span class="text-muted">Notificaciones enviadas a usuarios y generales.</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Asunto</th>
+                                <th>Tipo</th>
+                                <th>Destinatario</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <h:panelGroup rendered="#{empty notificacionBean.historialNotificaciones}">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                        <div class="mt-2">No hay notificaciones registradas.</div>
+                                    </td>
+                                </tr>
+                            </h:panelGroup>
+
+                            <ui:repeat value="#{notificacionBean.historialNotificaciones}" var="notif">
+                                <tr>
+                                    <td>
+                                        <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
+                                    </td>
+                                    <td>#{notif.titulo}</td>
+                                    <td>
+                                        <span class="badge bg-#{notif.tipo == 'GENERAL' ? 'primary' : 'info'}">#{notif.tipo.etiqueta}</span>
+                                    </td>
+                                    <td>
+                                        <h:panelGroup rendered="#{notif.usuario ne null}">#{notif.usuario.nombre}</h:panelGroup>
+                                        <h:panelGroup rendered="#{notif.usuario eq null}">Todos</h:panelGroup>
+                                    </td>
+                                    <td>
+                                        <span class="#{notif.estado == 'NO_LEIDA' ? 'badge-unread' : 'badge-read'}">
+                                            #{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>

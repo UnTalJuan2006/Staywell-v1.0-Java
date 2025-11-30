@@ -20,12 +20,36 @@ public class NotificacionDAO {
                 = "SELECT n.idNotificacion, n.titulo, n.mensaje, n.fechaEnvio, n.estado, n.tipo, "
                 + "u.idUsuario, u.nombre, u.email "
                 + "FROM notificacion n "
-                + "LEFT JOIN usuario u ON n.idUsuario = u.idUsuario";
+                + "LEFT JOIN usuario u ON n.idUsuario = u.idUsuario "
+                + "ORDER BY n.fechaEnvio DESC";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 lista.add(mapearNotificacion(rs));
+            }
+        }
+
+        return lista;
+    }
+
+    public List<Notificacion> listarGeneralesYUsuario(int idUsuario) throws SQLException {
+        List<Notificacion> lista = new ArrayList<>();
+
+        String sql = "SELECT n.idNotificacion, n.titulo, n.mensaje, n.fechaEnvio, n.estado, n.tipo, "
+                + "u.idUsuario, u.nombre, u.email "
+                + "FROM notificacion n "
+                + "LEFT JOIN usuario u ON n.idUsuario = u.idUsuario "
+                + "WHERE n.idUsuario IS NULL OR n.idUsuario = ? "
+                + "ORDER BY n.fechaEnvio DESC";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearNotificacion(rs));
+                }
             }
         }
 
@@ -45,24 +69,8 @@ public class NotificacionDAO {
             ps.setInt(1, idUsuario);
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Notificacion notificacion = new Notificacion();
-
-                    notificacion.setIdNotificacion(rs.getInt("idNotificacion"));
-                    notificacion.setTitulo(rs.getString("titulo"));
-                    notificacion.setMensaje(rs.getString("mensaje"));
-                    notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
-                    notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado")));
-                    notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo")));
-
-                    Usuario usuario = new Usuario();
-                    usuario.setIdUsuario(rs.getInt("idUsuario"));
-                    usuario.setNombre(rs.getString("nombre"));
-                    usuario.setEmail(rs.getString("email"));
-
-                    notificacion.setUsuario(usuario);
-
-                    lista.add(notificacion);
+            while (rs.next()) {
+                    lista.add(mapearNotificacion(rs));
                 }
             }
         }
@@ -110,16 +118,18 @@ public class NotificacionDAO {
         notificacion.setTitulo(rs.getString("titulo"));
         notificacion.setMensaje(rs.getString("mensaje"));
         notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
-        notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado")));
-        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo")));
+        notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado").toUpperCase()));
+        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo").toUpperCase()));
 
-        Usuario usuario = new Usuario();
+        int idUsuario = rs.getInt("idUsuario");
+        if (!rs.wasNull()) {
+            Usuario usuario = new Usuario();
+            usuario.setIdUsuario(idUsuario);
+            usuario.setNombre(rs.getString("nombre"));
+            usuario.setEmail(rs.getString("email"));
 
-        usuario.setIdUsuario(rs.getInt("idUsuario"));
-        usuario.setNombre(rs.getString("nombre"));
-        usuario.setEmail(rs.getString("email"));
-
-        notificacion.setUsuario(usuario);
+            notificacion.setUsuario(usuario);
+        }
 
         return notificacion;
     }

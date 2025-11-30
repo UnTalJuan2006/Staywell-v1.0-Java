@@ -9,6 +9,16 @@ package Modelo;
  * @author juanm
  */
 public enum EnumTipoNotificacion {
-    General,
-    Personal
+    GENERAL("General"),
+    PERSONAL("Personal");
+
+    private final String etiqueta;
+
+    EnumTipoNotificacion(String etiqueta) {
+        this.etiqueta = etiqueta;
+    }
+
+    public String getEtiqueta() {
+        return etiqueta;
+    }
 }
