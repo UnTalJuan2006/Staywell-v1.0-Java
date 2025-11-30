@@ -118,8 +118,8 @@ public class NotificacionDAO {
         notificacion.setTitulo(rs.getString("titulo"));
         notificacion.setMensaje(rs.getString("mensaje"));
         notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
-        notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado")));
-        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo")));
+        notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado").toUpperCase()));
+        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo").toUpperCase()));
 
         int idUsuario = rs.getInt("idUsuario");
         if (!rs.wasNull()) {

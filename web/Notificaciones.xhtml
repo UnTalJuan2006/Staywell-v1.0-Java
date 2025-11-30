@@ -315,7 +315,7 @@
                                     </td>
                                     <td>#{notif.titulo}</td>
                                     <td>
-                                        <span class="badge bg-#{notif.tipo == 'General' ? 'primary' : 'info'}">#{notif.tipo}</span>
+                                        <span class="badge bg-#{notif.tipo == 'GENERAL' ? 'primary' : 'info'}">#{notif.tipo.etiqueta}</span>
                                     </td>
                                     <td>
                                         <h:panelGroup rendered="#{notif.usuario ne null}">#{notif.usuario.nombre}</h:panelGroup>

@@ -39,8 +39,8 @@ public class NotificacionBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        notificacionGeneral = crearBorrador(EnumTipoNotificacion.General);
-        notificacionPersonal = crearBorrador(EnumTipoNotificacion.Personal);
+        notificacionGeneral = crearBorrador(EnumTipoNotificacion.GENERAL);
+        notificacionPersonal = crearBorrador(EnumTipoNotificacion.PERSONAL);
 
         cargarUsuarios();
         cargarHistorial();
@@ -102,14 +102,14 @@ public class NotificacionBean implements Serializable {
     }
 
     public void enviarNotificacionGeneral() {
-        notificacionGeneral.setTipo(EnumTipoNotificacion.General);
+        notificacionGeneral.setTipo(EnumTipoNotificacion.GENERAL);
         notificacionGeneral.setEstado(EnumEstadoNotificacion.NO_LEIDA);
         notificacionGeneral.setFechaEnvio(LocalDateTime.now());
 
         try {
             getNotificacionDAO().enviarGeneral(notificacionGeneral);
             mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Notificación general enviada correctamente.");
-            notificacionGeneral = crearBorrador(EnumTipoNotificacion.General);
+            notificacionGeneral = crearBorrador(EnumTipoNotificacion.GENERAL);
             cargarHistorial();
         } catch (SQLException e) {
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo enviar la notificación general.");
@@ -122,14 +122,14 @@ public class NotificacionBean implements Serializable {
             return;
         }
 
-        notificacionPersonal.setTipo(EnumTipoNotificacion.Personal);
+        notificacionPersonal.setTipo(EnumTipoNotificacion.PERSONAL);
         notificacionPersonal.setEstado(EnumEstadoNotificacion.NO_LEIDA);
         notificacionPersonal.setFechaEnvio(LocalDateTime.now());
 
         try {
             getNotificacionDAO().enviarPorUsuario(notificacionPersonal, usuarioSeleccionado);
             mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Notificación enviada al usuario seleccionado.");
-            notificacionPersonal = crearBorrador(EnumTipoNotificacion.Personal);
+            notificacionPersonal = crearBorrador(EnumTipoNotificacion.PERSONAL);
             usuarioSeleccionado = null;
             cargarHistorial();
         } catch (SQLException e) {
