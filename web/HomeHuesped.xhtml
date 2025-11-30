@@ -750,53 +750,81 @@
             </div>
         </div>
 
-        <div class="modal fade notifications-modal" id="notificacionesModal" tabindex="-1" aria-labelledby="notificacionesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="notificacionesModalLabel"><i class="bi bi-bell me-2"></i>Mis notificaciones</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h:panelGroup rendered="#{empty notificacionBean.notificacionesUsuario}">
-                            <div class="p-4 text-center text-muted">
-                                <i class="bi bi-inbox" style="font-size:2rem;"></i>
-                                <div class="mt-2">No tienes notificaciones disponibles.</div>
-                            </div>
-                        </h:panelGroup>
+<div class="modal fade notifications-modal" id="notificacionesModal" tabindex="-1"
+     aria-labelledby="notificacionesModalLabel" aria-hidden="true">
 
-                        <ui:repeat value="#{notificacionBean.notificacionesUsuario}" var="notif">
-                            <div class="notification-item #{notif.estado == 'NO_LEIDA' ? 'unread' : ''}">
-                                <div class="notification-icon #{notif.tipo == 'General' ? 'general' : 'personal'}">
-                                    <i class="bi #{notif.tipo == 'General' ? 'bi-megaphone' : 'bi-person-fill'}"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong>#{notif.titulo}</strong>
-                                            <div class="notification-meta mt-1">
-                                                <span><i class="bi bi-tag"></i> #{notif.tipo}</span>
-                                                <span>•</span>
-                                                <span><i class="bi bi-clock"></i>
-                                                    <h:outputText value="#{notif.fechaEnvio}">
-                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="localDateTime" />
-                                                    </h:outputText>
-                                                </span>
-                                                <h:panelGroup rendered="#{notif.usuario ne null}">
-                                                    <span>•</span>
-                                                    <span><i class="bi bi-person"></i> #{notif.usuario.nombre}</span>
-                                                </h:panelGroup>
-                                            </div>
-                                        </div>
-                                        <span class="badge #{notif.estado == 'NO_LEIDA' ? 'bg-warning text-dark' : 'bg-success'}">#{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}</span>
-                                    </div>
-                                    <p class="mt-2 mb-0" style="color:#4a5568;">#{notif.mensaje}</p>
-                                </div>
-                            </div>
-                        </ui:repeat>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificacionesModalLabel">
+                    <i class="bi bi-bell me-2"></i> Mis notificaciones
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- SIN NOTIFICACIONES -->
+                <h:panelGroup rendered="#{empty notificacionBean.notificacionesUsuario}">
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                        <div class="mt-2">No tienes notificaciones disponibles.</div>
                     </div>
-                </div>
+                </h:panelGroup>
+
+                <!-- CON NOTIFICACIONES -->
+                <ui:repeat value="#{notificacionBean.notificacionesUsuario}" var="notif">
+
+                    <h:panelGroup styleClass="notification-item"
+                                  rendered="#{notif.estado eq 'NO_LEIDA'}">
+                        <div class="notification-item unread">
+                            <div class="notification-icon general">
+                                <i class="bi bi-megaphone"></i>
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <strong>#{notif.titulo}</strong>
+
+                                <div class="notification-meta mt-1">
+                                    <span><i class="bi bi-tag"></i> #{notif.tipo}</span>
+                                    <span> • </span>
+                                    <span><i class="bi bi-clock"></i> #{notif.fechaEnvio}</span>
+                                </div>
+
+                                <p class="mt-2 mb-0">#{notif.mensaje}</p>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup styleClass="notification-item"
+                                  rendered="#{notif.estado eq 'LEIDA'}">
+                        <div class="notification-item">
+                            <div class="notification-icon personal">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <strong>#{notif.titulo}</strong>
+
+                                <div class="notification-meta mt-1">
+                                    <span><i class="bi bi-tag"></i> #{notif.tipo}</span>
+                                    <span> • </span>
+                                    <span><i class="bi bi-clock"></i> #{notif.fechaEnvio}</span>
+                                </div>
+
+                                <p class="mt-2 mb-0">#{notif.mensaje}</p>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                </ui:repeat>
+
             </div>
         </div>
+    </div>
+</div>
+
     </h:body>
 </html>
