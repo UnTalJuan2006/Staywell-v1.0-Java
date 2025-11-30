@@ -9,6 +9,7 @@ import Modelo.Usuario;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -30,6 +31,8 @@ public class NotificacionBean implements Serializable {
     private List<Usuario> listaUsuarios;
     private List<Notificacion> historialNotificaciones;
     private List<Notificacion> notificacionesUsuario;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private transient NotificacionDAO notificacionDAO;
     private transient UsuarioDAO usuarioDAO;
@@ -88,6 +91,14 @@ public class NotificacionBean implements Serializable {
             }
         }
         return total;
+    }
+
+    public String formatearFecha(LocalDateTime fecha) {
+        if (fecha == null) {
+            return "";
+        }
+
+        return fecha.format(formatter);
     }
 
     public void enviarNotificacionGeneral() {

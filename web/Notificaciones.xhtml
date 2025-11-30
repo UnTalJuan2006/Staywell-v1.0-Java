@@ -311,9 +311,7 @@
                             <ui:repeat value="#{notificacionBean.historialNotificaciones}" var="notif">
                                 <tr>
                                     <td>
-                                        <h:outputText value="#{notif.fechaEnvio}">
-                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" type="localDateTime" />
-                                        </h:outputText>
+                                        <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
                                     </td>
                                     <td>#{notif.titulo}</td>
                                     <td>
