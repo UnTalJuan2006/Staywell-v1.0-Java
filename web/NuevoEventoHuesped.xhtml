@@ -13,7 +13,11 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
         <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
             html, body {
                 height: 100%;
@@ -48,7 +52,11 @@
                 text-decoration: none;
             }
 
-            .header-right { display: flex; align-items: center; gap: 12px; }
+            .header-right {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
 
             .btn-crear-reserva {
                 background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
@@ -66,7 +74,10 @@
                 font-size: 0.9rem;
             }
 
-            .btn-crear-reserva:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(26, 124, 143, 0.4); }
+            .btn-crear-reserva:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(26, 124, 143, 0.4);
+            }
 
             .icon-btn {
                 background: none;
@@ -78,7 +89,9 @@
                 padding: 8px;
             }
 
-            .icon-btn:hover { color: #1a7c8f; }
+            .icon-btn:hover {
+                color: #1a7c8f;
+            }
 
             .user-profile {
                 display: flex;
@@ -101,7 +114,11 @@
                 font-size: 18px;
             }
 
-            .layout { display: flex; height: 100%; padding-top: 70px; }
+            .layout {
+                display: flex;
+                height: 100%;
+                padding-top: 70px;
+            }
 
             .sidebar {
                 width: 260px;
@@ -118,7 +135,10 @@
                 box-shadow: 2px 0 8px rgba(0,0,0,0.04);
             }
 
-            .sidebar-section { padding: 0 16px; margin-bottom: 24px; }
+            .sidebar-section {
+                padding: 0 16px;
+                margin-bottom: 24px;
+            }
 
             .sidebar-title {
                 font-size: 0.75rem;
@@ -143,11 +163,27 @@
                 font-size: 0.95rem;
             }
 
-            .nav-link i { font-size: 20px; width: 24px; text-align: center; }
-            .nav-link:hover { background: #e8f4f6; color: #1a7c8f; }
-            .nav-link.active { background: linear-gradient(135deg, rgba(26, 124, 143, 0.1) 0%, rgba(26, 124, 143, 0.15) 100%); color: #1a7c8f; font-weight: 600; border-left: 3px solid #1a7c8f; }
+            .nav-link i {
+                font-size: 20px;
+                width: 24px;
+                text-align: center;
+            }
+            .nav-link:hover {
+                background: #e8f4f6;
+                color: #1a7c8f;
+            }
+            .nav-link.active {
+                background: linear-gradient(135deg, rgba(26, 124, 143, 0.1) 0%, rgba(26, 124, 143, 0.15) 100%);
+                color: #1a7c8f;
+                font-weight: 600;
+                border-left: 3px solid #1a7c8f;
+            }
 
-            .sidebar-footer { margin-top: auto; padding: 20px 16px; border-top: 1px solid #e0e0e0; }
+            .sidebar-footer {
+                margin-top: auto;
+                padding: 20px 16px;
+                border-top: 1px solid #e0e0e0;
+            }
 
             .btn-logout {
                 width: 100%;
@@ -166,7 +202,11 @@
                 text-decoration: none;
             }
 
-            .btn-logout:hover { background: #fff0f0; border-color: #ff5252; color: #ff5252; }
+            .btn-logout:hover {
+                background: #fff0f0;
+                border-color: #ff5252;
+                color: #ff5252;
+            }
 
             .content {
                 margin-left: 260px;
@@ -176,8 +216,17 @@
                 width: calc(100% - 260px);
             }
 
-            .form-container { display: grid; grid-template-columns: 1fr 380px; gap: 2rem; max-width: 1300px; }
-            .summary-column { display: flex; flex-direction: column; gap: 1.5rem; }
+            .form-container {
+                display: grid;
+                grid-template-columns: 1fr 380px;
+                gap: 2rem;
+                max-width: 1300px;
+            }
+            .summary-column {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
 
             .form-card {
                 background: white;
@@ -197,9 +246,19 @@
                 gap: 10px;
             }
 
-            .form-card h5 i { color: #1a7c8f; }
-            .form-group { margin-bottom: 1.5rem; }
-            .form-label { font-weight: 600; color: #333; margin-bottom: 0.6rem; display: block; font-size: 0.95rem; }
+            .form-card h5 i {
+                color: #1a7c8f;
+            }
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+            .form-label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.6rem;
+                display: block;
+                font-size: 0.95rem;
+            }
 
             .form-control, .form-select {
                 border: 1.5px solid #e0e0e0;
@@ -209,10 +268,20 @@
                 transition: all 0.3s ease;
             }
 
-            .form-control:focus, .form-select:focus { border-color: #1a7c8f; box-shadow: 0 0 0 3px rgba(26, 155, 142, 0.1); outline: none; }
+            .form-control:focus, .form-select:focus {
+                border-color: #1a7c8f;
+                box-shadow: 0 0 0 3px rgba(26, 155, 142, 0.1);
+                outline: none;
+            }
 
-            .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-            .form-row.full { grid-template-columns: 1fr; }
+            .form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+            .form-row.full {
+                grid-template-columns: 1fr;
+            }
 
             .summary-card {
                 background: white;
@@ -232,8 +301,19 @@
                 top: 420px;
             }
 
-            .payment-card h5 { font-size: 1.1rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
-            .payment-card h5 i { color: #1a7c8f; font-size: 1.2rem; }
+            .payment-card h5 {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .payment-card h5 i {
+                color: #1a7c8f;
+                font-size: 1.2rem;
+            }
 
             .payment-summary {
                 display: flex;
@@ -245,11 +325,28 @@
                 margin-bottom: 1.5rem;
             }
 
-            .payment-summary .summary-label { display: flex; align-items: center; gap: 12px; color: #0d7a6f; font-weight: 600; }
-            .payment-summary .summary-label i { font-size: 1.5rem; }
-            .payment-summary .summary-amount { font-size: 1.4rem; font-weight: 700; color: #0d7a6f; }
+            .payment-summary .summary-label {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                color: #0d7a6f;
+                font-weight: 600;
+            }
+            .payment-summary .summary-label i {
+                font-size: 1.5rem;
+            }
+            .payment-summary .summary-amount {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #0d7a6f;
+            }
 
-            .payment-note { font-size: 0.85rem; color: #6c757d; margin-top: 0.5rem; line-height: 1.4; }
+            .payment-note {
+                font-size: 0.85rem;
+                color: #6c757d;
+                margin-top: 0.5rem;
+                line-height: 1.4;
+            }
 
             .summary-card h5 {
                 font-size: 1.1rem;
@@ -263,11 +360,25 @@
                 border-bottom: 2px solid #f0f0f0;
             }
 
-            .summary-card h5 i { color: #1a7c8f; font-size: 1.3rem; }
+            .summary-card h5 i {
+                color: #1a7c8f;
+                font-size: 1.3rem;
+            }
 
-            .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px solid #f5f5f5; font-size: 0.95rem; }
-            .summary-item strong { color: #333; }
-            .summary-item span { color: #666; }
+            .summary-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.8rem 0;
+                border-bottom: 1px solid #f5f5f5;
+                font-size: 0.95rem;
+            }
+            .summary-item strong {
+                color: #333;
+            }
+            .summary-item span {
+                color: #666;
+            }
 
             .summary-total {
                 display: flex;
@@ -298,7 +409,10 @@
                 gap: 8px;
             }
 
-            .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3); }
+            .btn-confirm:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
+            }
 
             .btn-confirm-modal {
                 background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
@@ -314,43 +428,204 @@
                 gap: 8px;
             }
 
-            .btn-confirm-modal:hover { box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3); }
-
-            .payment-resume { margin-top: 1.2rem; font-size: 0.9rem; color: #1a1a1a; background: #f4fafa; border-radius: 8px; padding: 0.75rem 1rem; }
-
-            .alert-info { background: #e8f5f3; border: 1px solid #1a7c8f; color: #156b7d; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
-
-            @media (max-width: 1024px) { .form-container { grid-template-columns: 1fr; } .summary-card { position: static; } .payment-card { position: static; } .content { margin-left: 220px; padding: 1.5rem; } }
-
-            @media (max-width: 768px) {
-                .content { margin-left: 0; width: 100%; padding: 24px 20px; height: auto; }
-                .sidebar { width: 100%; height: auto; position: relative; top: 0; border-right: none; border-bottom: 1px solid #e0e0e0; flex-direction: row; overflow-x: auto; padding: 0; }
-                .form-row { grid-template-columns: 1fr; }
-                .layout { flex-direction: column; }
+            .btn-confirm-modal:hover {
+                box-shadow: 0 6px 20px rgba(26, 155, 142, 0.3);
             }
 
-            .confirmation-modal .modal-content { border: none; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18); background: linear-gradient(145deg, #f8fbff 0%, #eef6f5 100%); }
-            .confirmation-hero { display: flex; align-items: center; gap: 12px; padding: 18px 22px; background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%); color: #fff; }
-            .confirmation-hero i { font-size: 28px; }
-            .receipt-card { background: #fff; margin: 18px; border-radius: 14px; border: 1px solid #e7edf0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); overflow: hidden; }
-            .receipt-header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed #e0e7ec; }
-            .receipt-number { font-weight: 800; color: #156b7d; letter-spacing: 0.5px; }
-            .receipt-body { padding: 8px 20px 20px 20px; }
-            .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 10px 0; border-bottom: 1px dashed #e8eef2; }
-            .detail-row:last-child { border-bottom: none; }
-            .detail-label { font-size: 0.85rem; color: #7a8a99; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
-            .detail-value { font-weight: 700; color: #1f2d3d; }
-            .payment-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: #e8f5f3; border-radius: 999px; color: #156b7d; font-weight: 700; font-size: 0.9rem; }
-            .status-pill { display: inline-flex; align-items: center; gap: 8px; background: #e8f5f3; color: #156b7d; padding: 8px 14px; border-radius: 999px; font-weight: 700; letter-spacing: 0.3px; }
-            .confirmation-actions { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 20px 20px; }
-            .btn-outline-soft { background: #f4f7fb; color: #4b5563; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 16px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-            .btn-outline-soft:hover { background: #e8eef5; }
-            .btn-gradient { background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%); color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 10px 30px rgba(26, 124, 143, 0.35); }
-            .btn-gradient:hover { transform: translateY(-1px); }
-            .content::-webkit-scrollbar, .sidebar::-webkit-scrollbar { width: 8px; }
-            .content::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track { background: #f1f1f1; }
-            .content::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb { background: #1a7c8f; border-radius: 4px; }
-            .content::-webkit-scrollbar-thumb:hover, .sidebar::-webkit-scrollbar-thumb:hover { background: #156b7d; }
+            .payment-resume {
+                margin-top: 1.2rem;
+                font-size: 0.9rem;
+                color: #1a1a1a;
+                background: #f4fafa;
+                border-radius: 8px;
+                padding: 0.75rem 1rem;
+            }
+
+            .alert-info {
+                background: #e8f5f3;
+                border: 1px solid #1a7c8f;
+                color: #156b7d;
+                border-radius: 8px;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            @media (max-width: 1024px) {
+                .form-container {
+                    grid-template-columns: 1fr;
+                }
+                .summary-card {
+                    position: static;
+                }
+                .payment-card {
+                    position: static;
+                }
+                .content {
+                    margin-left: 220px;
+                    padding: 1.5rem;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .content {
+                    margin-left: 0;
+                    width: 100%;
+                    padding: 24px 20px;
+                    height: auto;
+                }
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                    top: 0;
+                    border-right: none;
+                    border-bottom: 1px solid #e0e0e0;
+                    flex-direction: row;
+                    overflow-x: auto;
+                    padding: 0;
+                }
+                .form-row {
+                    grid-template-columns: 1fr;
+                }
+                .layout {
+                    flex-direction: column;
+                }
+            }
+
+            .confirmation-modal .modal-content {
+                border: none;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+                background: linear-gradient(145deg, #f8fbff 0%, #eef6f5 100%);
+            }
+            .confirmation-hero {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 18px 22px;
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: #fff;
+            }
+            .confirmation-hero i {
+                font-size: 28px;
+            }
+            .receipt-card {
+                background: #fff;
+                margin: 18px;
+                border-radius: 14px;
+                border: 1px solid #e7edf0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+                overflow: hidden;
+            }
+            .receipt-header {
+                padding: 16px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px dashed #e0e7ec;
+            }
+            .receipt-number {
+                font-weight: 800;
+                color: #156b7d;
+                letter-spacing: 0.5px;
+            }
+            .receipt-body {
+                padding: 8px 20px 20px 20px;
+            }
+            .detail-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+                padding: 10px 0;
+                border-bottom: 1px dashed #e8eef2;
+            }
+            .detail-row:last-child {
+                border-bottom: none;
+            }
+            .detail-label {
+                font-size: 0.85rem;
+                color: #7a8a99;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+            }
+            .detail-value {
+                font-weight: 700;
+                color: #1f2d3d;
+            }
+            .payment-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: #e8f5f3;
+                border-radius: 999px;
+                color: #156b7d;
+                font-weight: 700;
+                font-size: 0.9rem;
+            }
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: #e8f5f3;
+                color: #156b7d;
+                padding: 8px 14px;
+                border-radius: 999px;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+            }
+            .confirmation-actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 20px 20px 20px;
+            }
+            .btn-outline-soft {
+                background: #f4f7fb;
+                color: #4b5563;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .btn-outline-soft:hover {
+                background: #e8eef5;
+            }
+            .btn-gradient {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: 0 10px 30px rgba(26, 124, 143, 0.35);
+            }
+            .btn-gradient:hover {
+                transform: translateY(-1px);
+            }
+            .content::-webkit-scrollbar, .sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+            .content::-webkit-scrollbar-track, .sidebar::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+            .content::-webkit-scrollbar-thumb, .sidebar::-webkit-scrollbar-thumb {
+                background: #1a7c8f;
+                border-radius: 4px;
+            }
+            .content::-webkit-scrollbar-thumb:hover, .sidebar::-webkit-scrollbar-thumb:hover {
+                background: #156b7d;
+            }
         </style>
     </h:head>
 
@@ -402,10 +677,10 @@
 
                 <div class="sidebar-section">
                     <div class="sidebar-title">Eventos</div>
-<!--                    <a href="EventosHuesped.xhtml" class="nav-link">
-                        <i class="bi bi-stars"></i>
-                        <span>Eventos Disponibles</span>
-                    </a>-->
+                    <!--                    <a href="EventosHuesped.xhtml" class="nav-link">
+                                            <i class="bi bi-stars"></i>
+                                            <span>Eventos Disponibles</span>
+                                        </a>-->
                     <a href="NuevoEventoHuesped.xhtml" class="nav-link active">
                         <i class="bi bi-calendar-event"></i>
                         <span>Nuevo Evento</span>
@@ -415,7 +690,7 @@
                         <span>Mis Eventos</span>
                     </a>
                 </div>
-                
+
                 <div class="sidebar-section">
                     <div class="sidebar-title">Pagos</div>
                     <a href="MisPagos.xhtml" class="nav-link">
@@ -601,18 +876,18 @@
                                     </div>
                                     <h:panelGroup id="montoPago">
                                         <div style="text-align: right;">
-<!--                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
-                                                Subtotal:
-                                                <h:outputText value="#{eventoHuespedBean.subtotalEvento}" style="margin-left:6px;">
-                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                                                </h:outputText>
-                                            </div>-->
-<!--                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
-                                                IVA (19%):
-                                                <h:outputText value="#{eventoHuespedBean.ivaEvento}" style="margin-left:6px;">
-                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
-                                                </h:outputText>
-                                            </div>-->
+                                            <!--                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
+                                                                                            Subtotal:
+                                                                                            <h:outputText value="#{eventoHuespedBean.subtotalEvento}" style="margin-left:6px;">
+                                                                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                                                            </h:outputText>
+                                                                                        </div>-->
+                                            <!--                                            <div style="font-size:0.9rem; color:#0d7a6f; font-weight:600;">
+                                                                                            IVA (19%):
+                                                                                            <h:outputText value="#{eventoHuespedBean.ivaEvento}" style="margin-left:6px;">
+                                                                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
+                                                                                            </h:outputText>
+                                                                                        </div>-->
                                             <span class="summary-amount" style="display:block;">
                                                 <h:outputText value="#{eventoHuespedBean.totalEvento}">
                                                     <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true" minFractionDigits="2" maxFractionDigits="2" />
@@ -647,16 +922,25 @@
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <h:outputLabel for="tipoPago" styleClass="form-label" />
-                                            <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}" styleClass="form-select" required="true" requiredMessage="Selecciona el tipo de tarjeta.">
+                                            <h:outputLabel for="tipoPago" styleClass="form-label" value="Tipo de tarjeta">
+                                                <i class="bi bi-credit-card me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
+                                            <h:selectOneMenu id="tipoPago" value="#{eventoHuespedBean.tipoPagoSeleccionado}"
+                                                             styleClass="form-select" required="true"
+                                                             requiredMessage="Selecciona el tipo de tarjeta.">
                                                 <f:selectItem itemLabel="Selecciona un tipo" itemValue="#{null}" noSelectionOption="true" />
-                                                <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago" itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
+                                                <f:selectItems value="#{eventoHuespedBean.tiposPago}" var="tipoPago"
+                                                               itemLabel="#{tipoPago}" itemValue="#{tipoPago}" />
                                             </h:selectOneMenu>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label" />
-                                            <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el número de la tarjeta.">
+                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label" value="Número de tarjeta">
+                                                <i class="bi bi-123 me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
+                                            <h:inputText id="numeroTarjeta" value="#{eventoHuespedBean.numeroTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el número de la tarjeta.">
                                                 <f:passThroughAttribute name="maxlength" value="19" />
                                                 <f:passThroughAttribute name="inputmode" value="numeric" />
                                                 <f:passThroughAttribute name="pattern" value="\d*" />
@@ -665,21 +949,34 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="titularTarjeta" styleClass="form-label" />
-                                            <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el nombre del titular." />
+                                            <h:outputLabel for="titularTarjeta" styleClass="form-label" value="Nombre del titular">
+                                                <i class="bi bi-person me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
+                                            <h:inputText id="titularTarjeta" value="#{eventoHuespedBean.titularTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el nombre del titular.">
+                                                <f:passThroughAttribute name="placeholder" value="Nombre como aparece en la tarjeta" />
+                                            </h:inputText>
                                         </div>
 
-        
                                         <div class="col-md-6">
-                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label" />
-                                            <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}" styleClass="form-control" required="true" requiredMessage="Selecciona el vencimiento de la tarjeta.">
+                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label" value="Fecha de vencimiento">
+                                                <i class="bi bi-calendar-event me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
+                                            <h:inputText id="fechaVencimiento" value="#{eventoHuespedBean.fechaVencimientoTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Selecciona el vencimiento de la tarjeta.">
                                                 <f:passThroughAttribute name="type" value="month" />
                                             </h:inputText>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label" />
-                                            <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}" styleClass="form-control" required="true" requiredMessage="Ingresa el código de seguridad.">
+                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label" value="Código de seguridad (CVV)">
+                                                <i class="bi bi-shield-lock me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
+                                            <h:inputText id="codigoSeguridad" value="#{eventoHuespedBean.codigoSeguridadTarjeta}"
+                                                         styleClass="form-control" required="true"
+                                                         requiredMessage="Ingresa el código de seguridad.">
                                                 <f:passThroughAttribute name="maxlength" value="4" />
                                                 <f:passThroughAttribute name="inputmode" value="numeric" />
                                                 <f:passThroughAttribute name="pattern" value="\d*" />
@@ -688,15 +985,23 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="payment-note" style="margin:0;">
-                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
+                                            <div class="payment-note d-flex align-items-center" 
+                                                 style="margin: 0; padding: 1rem; background-color: #f0f9ff; border-left: 3px solid #1a7c8f; border-radius: 4px; height: 100%;">
+                                                <div>
+                                                    <i class="bi bi-info-circle me-2" style="color: #1a7c8f;"></i>
+                                                    <small class="text-muted">
+                                                        Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar el evento.
+                                                    </small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <h:commandButton value="Confirmar evento y pagar" action="#{eventoHuespedBean.confirmarEvento}" styleClass="btn-confirm-modal" />
+                                    <h:commandButton value="Confirmar evento y pagar"
+                                                     action="#{eventoHuespedBean.confirmarEvento}"
+                                                     styleClass="btn-confirm-modal" />
                                 </div>
                             </div>
                         </div>
@@ -805,91 +1110,105 @@
                 </h:form>
             </div>
         </div>
- <script type="text/javascript">
-(function () {
+        <script type="text/javascript">
+            (function () {
 
-    function parseOcupaciones() {
-        const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-        const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-        if (!rawJson) { return []; }
+                function parseOcupaciones() {
+                    const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+                    const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+                    if (!rawJson) {
+                        return [];
+                    }
 
-        try {
-            const datos = JSON.parse(rawJson);
-            if (!Array.isArray(datos)) { return []; }
+                    try {
+                        const datos = JSON.parse(rawJson);
+                        if (!Array.isArray(datos)) {
+                            return [];
+                        }
 
-            return datos.map(function (rango) {
-                if (!rango || !rango.from) { return null; }
+                        return datos.map(function (rango) {
+                            if (!rango || !rango.from) {
+                                return null;
+                            }
 
-                const from = new Date(rango.from);
-                const to = new Date(rango.to || rango.from);
+                            const from = new Date(rango.from);
+                            const to = new Date(rango.to || rango.from);
 
-                if (isNaN(from.getTime()) || isNaN(to.getTime())) { return null; }
+                            if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                                return null;
+                            }
 
-                return { from: from, to: to };
-            }).filter(Boolean);
+                            return {from: from, to: to};
+                        }).filter(Boolean);
 
-        } catch (e) {
-            console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-            return [];
-        }
-    }
+                    } catch (e) {
+                        console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+                        return [];
+                    }
+                }
 
-    function initHoraPicker(componenteId) {
-        const input = document.getElementById("formEvento:" + componenteId);
-        if (!input || !window.flatpickr) { return; }
+                function initHoraPicker(componenteId) {
+                    const input = document.getElementById("formEvento:" + componenteId);
+                    if (!input || !window.flatpickr) {
+                        return;
+                    }
 
-        if (input._flatpickr) {
-            input._flatpickr.destroy();
-        }
+                    if (input._flatpickr) {
+                        input._flatpickr.destroy();
+                    }
 
-        window.flatpickr(input, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            allowInput: true
-        });
-    }
+                    window.flatpickr(input, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        allowInput: true
+                    });
+                }
 
-    function initFechaPicker(disabledRanges) {
-        const input = document.getElementById("formEvento:fechaEvento");
-        if (!input || !window.flatpickr) { return; }
+                function initFechaPicker(disabledRanges) {
+                    const input = document.getElementById("formEvento:fechaEvento");
+                    if (!input || !window.flatpickr) {
+                        return;
+                    }
 
-        if (input._flatpickr) {
-            input._flatpickr.destroy();
-        }
+                    if (input._flatpickr) {
+                        input._flatpickr.destroy();
+                    }
 
-        window.flatpickr(input, {
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d/m/Y",
-            minDate: "today",
-            allowInput: false,
-            disable: disabledRanges
-        });
-    }
+                    window.flatpickr(input, {
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        minDate: "today",
+                        allowInput: false,
+                        disable: disabledRanges
+                    });
+                }
 
-    function inicializarPickersEvento() {
-        if (!window.flatpickr) { return; }
+                function inicializarPickersEvento() {
+                    if (!window.flatpickr) {
+                        return;
+                    }
 
-        const rangosDeshabilitados = parseOcupaciones();
-        initFechaPicker(rangosDeshabilitados);
-        initHoraPicker("horaInicio");
-        initHoraPicker("horaFin");
-    }
+                    const rangosDeshabilitados = parseOcupaciones();
+                    initFechaPicker(rangosDeshabilitados);
+                    initHoraPicker("horaInicio");
+                    initHoraPicker("horaFin");
+                }
 
-    document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+                document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
 
-    if (window.jsf &amp;&amp; jsf.ajax) {
-        jsf.ajax.addOnEvent(function (data) {
-            if (data.status === 'success') {
-                inicializarPickersEvento();
-            }
-        });
-    }
+                if (window.jsf & amp; & amp; jsf.ajax) {
+                    jsf.ajax.addOnEvent(function (data) {
+                        if (data.status === 'success') {
+                            inicializarPickersEvento();
+                        }
+                    });
+                }
 
-})();
-</script>
+            })();
+        </script>
 
     </h:body>
 </html>

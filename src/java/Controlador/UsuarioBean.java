@@ -188,32 +188,66 @@ public class UsuarioBean implements Serializable {
         }
     }
 
-    public void agregar() {
-        try {
-            usuario.setFechaCreacion(LocalDateTime.now());
-            usuario.setFechaActualizacion(LocalDateTime.now());
+   public void agregar() {
+    FacesContext context = FacesContext.getCurrentInstance();
 
-            usuario.setPassword(CifradoAES.encriptar(usuario.getPassword()));
-            usuario.setRol(EnumRoles.HUESPED);
-            usuario.setEstado(EnumEstadoUsuario.Activo);
+    try {
 
-            usuarioDAO.agregar(usuario);
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
-            // 🎯 ENVÍO DE CORREO - MÉTODO ESTÁTICO
-            CorreoBean.enviarCorreoBienvenida(usuario.getEmail(), usuario.getNombre());
-
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Usuario registrado. Correo de bienvenida enviado."));
-
-            usuario = new Usuario();
-            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Error al registrar usuario: " + e.getMessage()));
+        if (usuario.getEmail() == null || !usuario.getEmail().matches(emailRegex)) {
+            context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Correo inválido",
+                "Debe ingresar un correo válido (ejemplo@dominio.com)")
+            );
+            return;
         }
+
+   
+        String passwordRegex =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$";
+
+        if (usuario.getPassword() == null || !usuario.getPassword().matches(passwordRegex)) {
+            context.addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Contraseña insegura",
+                "Debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo")
+            );
+            return;
+        }
+
+        usuario.setFechaCreacion(LocalDateTime.now());
+        usuario.setFechaActualizacion(LocalDateTime.now());
+        usuario.setPassword(CifradoAES.encriptar(usuario.getPassword()));
+        usuario.setRol(EnumRoles.HUESPED);
+        usuario.setEstado(EnumEstadoUsuario.Activo);
+        usuarioDAO.agregar(usuario);
+        
+        CorreoBean.enviarCorreoBienvenida(
+            usuario.getEmail(),
+            usuario.getNombre()
+        );
+
+        context.addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_INFO,
+            "Éxito",
+            "Usuario registrado correctamente. Se envió correo de bienvenida.")
+        );
+
+        usuario = new Usuario();
+
+        context.getExternalContext().redirect("login.xhtml");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        context.addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Error",
+            "Error al registrar usuario: " + e.getMessage())
+        );
     }
+}
 
     public int totalUsuarios() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM usuario";

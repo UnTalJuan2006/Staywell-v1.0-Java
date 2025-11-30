@@ -682,7 +682,7 @@
                 background: #fff;
                 font-weight: 700;
             }
-            
+
             @media (max-width: 768px) {
                 .content {
                     margin-left: 0;
@@ -785,10 +785,10 @@
 
                 <div class="sidebar-section">
                     <div class="sidebar-title">Eventos</div>
-<!--                    <a href="EventosHuesped.xhtml" class="nav-link">
-                        <i class="bi bi-stars"></i>
-                        <span>Eventos Disponibles</span>
-                    </a>-->
+                    <!--                    <a href="EventosHuesped.xhtml" class="nav-link">
+                                            <i class="bi bi-stars"></i>
+                                            <span>Eventos Disponibles</span>
+                                        </a>-->
                     <a href="NuevoEventoHuesped.xhtml" class="nav-link">
                         <i class="bi bi-calendar-event"></i>
                         <span>Nuevo Evento</span>
@@ -798,7 +798,7 @@
                         <span>Mis Eventos</span>
                     </a>
                 </div>
-                
+
                 <div class="sidebar-section">
                     <div class="sidebar-title">Pagos</div>
                     <a href="MisPagos.xhtml" class="nav-link">
@@ -1030,24 +1030,24 @@
                                         </div>
                                     </div>
                                     <h:panelGroup id="montoPago">
-<!--                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 6px;">
-                                            <span style="color:#6c757d;">Subtotal (sin IVA)</span>
-                                            <span style="font-weight:600; color:#333;">
-                                                <h:outputText value="#{reservaHuespedBean.subtotalReserva}">
-                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
-                                                                     minFractionDigits="2" maxFractionDigits="2" />
-                                                </h:outputText>
-                                            </span>
-                                        </div>-->
-<!--                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
-                                            <span style="color:#6c757d;">IVA incluido</span>
-                                            <span style="font-weight:600; color:#333;">
-                                                <h:outputText value="#{reservaHuespedBean.ivaReserva}">
-                                                    <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
-                                                                     minFractionDigits="2" maxFractionDigits="2" />
-                                                </h:outputText>
-                                            </span>
-                                        </div>-->
+                                        <!--                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 6px;">
+                                                                                    <span style="color:#6c757d;">Subtotal (sin IVA)</span>
+                                                                                    <span style="font-weight:600; color:#333;">
+                                                                                        <h:outputText value="#{reservaHuespedBean.subtotalReserva}">
+                                                                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                                                             minFractionDigits="2" maxFractionDigits="2" />
+                                                                                        </h:outputText>
+                                                                                    </span>
+                                                                                </div>-->
+                                        <!--                                        <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
+                                                                                    <span style="color:#6c757d;">IVA incluido</span>
+                                                                                    <span style="font-weight:600; color:#333;">
+                                                                                        <h:outputText value="#{reservaHuespedBean.ivaReserva}">
+                                                                                            <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                                                             minFractionDigits="2" maxFractionDigits="2" />
+                                                                                        </h:outputText>
+                                                                                    </span>
+                                                                                </div>-->
                                         <span class="summary-amount">
                                             <h:outputText value="#{reservaHuespedBean.totalReserva}">
                                                 <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
@@ -1082,9 +1082,9 @@
                                 <div class="modal-body">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <h:outputLabel for="tipoPago" styleClass="form-label"/>
-<!--                                                          value="<i class='bi bi-credit-card' style='color: #1a7c8f;'></i> Tipo de tarjeta"-->
-                                                          
+                                            <h:outputLabel for="tipoPago" styleClass="form-label" value="Tipo de tarjeta">
+                                                <i class="bi bi-credit-card me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
                                             <h:selectOneMenu id="tipoPago" value="#{reservaHuespedBean.tipoPagoSeleccionado}"
                                                              styleClass="form-select" required="true"
                                                              requiredMessage="Selecciona el tipo de tarjeta.">
@@ -1095,8 +1095,9 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label"
-                                                          />
+                                            <h:outputLabel for="numeroTarjeta" styleClass="form-label" value="Número de tarjeta">
+                                                <i class="bi bi-123 me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
                                             <h:inputText id="numeroTarjeta" value="#{reservaHuespedBean.numeroTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Ingresa el número de la tarjeta.">
@@ -1108,16 +1109,20 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="titularTarjeta" styleClass="form-label"
-                                                         />
+                                            <h:outputLabel for="titularTarjeta" styleClass="form-label" value="Nombre del titular">
+                                                <i class="bi bi-person me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
                                             <h:inputText id="titularTarjeta" value="#{reservaHuespedBean.titularTarjeta}"
                                                          styleClass="form-control" required="true"
-                                                         requiredMessage="Ingresa el nombre del titular." />
+                                                         requiredMessage="Ingresa el nombre del titular.">
+                                                <f:passThroughAttribute name="placeholder" value="Nombre como aparece en la tarjeta" />
+                                            </h:inputText>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label"
-                                                          />
+                                            <h:outputLabel for="fechaVencimiento" styleClass="form-label" value="Fecha de vencimiento">
+                                                <i class="bi bi-calendar-event me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
                                             <h:inputText id="fechaVencimiento" value="#{reservaHuespedBean.fechaVencimientoTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Selecciona el vencimiento de la tarjeta.">
@@ -1126,8 +1131,9 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label"
-                                                           />
+                                            <h:outputLabel for="codigoSeguridad" styleClass="form-label" value="Código de seguridad (CVV)">
+                                                <i class="bi bi-shield-lock me-2" style="color: #1a7c8f;"></i>
+                                            </h:outputLabel>
                                             <h:inputText id="codigoSeguridad" value="#{reservaHuespedBean.codigoSeguridadTarjeta}"
                                                          styleClass="form-control" required="true"
                                                          requiredMessage="Ingresa el código de seguridad.">
@@ -1139,8 +1145,14 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <div class="payment-note" style="margin:0;">
-                                                Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar la reserva.
+                                            <div class="payment-note d-flex align-items-center" 
+                                                 style="margin: 0; padding: 1rem; background-color: #f0f9ff; border-left: 3px solid #1a7c8f; border-radius: 4px; height: 100%;">
+                                                <div>
+                                                    <i class="bi bi-info-circle me-2" style="color: #1a7c8f;"></i>
+                                                    <small class="text-muted">
+                                                        Tus datos se almacenan de forma cifrada y solo se utilizan para confirmar la reserva.
+                                                    </small>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

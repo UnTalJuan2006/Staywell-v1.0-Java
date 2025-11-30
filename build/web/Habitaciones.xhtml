@@ -353,7 +353,7 @@
                 <p>Panel Admin</p>
             </div>
 
-  <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <div class="sidebar-section">
                     <div class="sidebar-title">Navegación Principal</div>
                     <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link ">
@@ -363,6 +363,10 @@
                     <h:link outcome="/perfil.xhtml" styleClass="nav-link">
                         <i class="bi bi-person-fill"></i>
                         <span>Perfil</span>
+                    </h:link>
+                     <h:link outcome="/Notificacion.xhtml" styleClass="nav-link ">
+                        <i class="bi bi-bell"></i>
+                        <span>Notificaciones</span>
                     </h:link>
                 </div>
 
@@ -420,7 +424,7 @@
                     </h:link>
 
                     <h:link outcome="/Novedades.xhtml" styleClass="nav-link">
-                      <i class="bi bi-stars"></i>
+                        <i class="bi bi-stars"></i>
 
                         <span>Novedadas</span>
                     </h:link>
@@ -444,6 +448,10 @@
                 <h2><i class="bi bi-door-open"></i> Gestión de Habitaciones</h2>
 
                 <div class="d-flex gap-2">
+                    <h:link outcome="/Novedades.xhtml" styleClass="btn btn-outline-primary">
+                        <i class="bi bi-stars"></i> Novedades 
+                    </h:link>
+
 
                     <h:link outcome="/crudHabitaciones/nuevaHabitacion.xhtml" styleClass="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Nueva Habitacion
@@ -497,7 +505,7 @@
 
                 </div>
 
-                
+
                 <!-- Card de filtros sin quedar flotando siempre -->
                 <div class="card shadow-sm mb-4"
                      style="position: relative; top: 0; width: 100%; max-width: 100%; background: white; padding: 15px; border-radius: 12px;">

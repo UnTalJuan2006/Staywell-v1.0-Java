@@ -76,11 +76,11 @@ public class EventoBean implements Serializable {
                 System.out.println("⚠ No hay usuario logueado en sesión.");
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                        "Debe iniciar sesión para acceder a las reservas."));
+                                "Debe iniciar sesión para acceder a las reservas."));
                 return;
             }
 
-            System.out.println("[DEBUG] Usuario logueado: " + usuarioLogueado.getNombre() 
+            System.out.println("[DEBUG] Usuario logueado: " + usuarioLogueado.getNombre()
                     + " | Rol: " + usuarioLogueado.getRol());
 
             try {
@@ -99,12 +99,12 @@ public class EventoBean implements Serializable {
                 e.printStackTrace();
                 listaEventos = new ArrayList<>();
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                        "No se pudieron cargar los eventos."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                                "No se pudieron cargar los eventos."));
             }
 
             System.out.println("[DEBUG] EventoBean inicializado correctamente.");
-            System.out.println("[DEBUG] Resumen - Espacios: " + listaEspacios.size() 
+            System.out.println("[DEBUG] Resumen - Espacios: " + listaEspacios.size()
                     + ", Usuarios: " + listaUsuarios.size() + ", Eventos: " + listaEventos.size());
 
         } catch (Exception ex) {
@@ -177,7 +177,7 @@ public class EventoBean implements Serializable {
             eventosFiltrados = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudieron cargar los eventos."));
+                            "No se pudieron cargar los eventos."));
         }
     }
 
@@ -202,8 +202,8 @@ public class EventoBean implements Serializable {
             e.printStackTrace();
             listarPorUsuario = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                    "No se pudieron cargar las reservas del usuario."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudieron cargar las reservas del usuario."));
         }
     }
 
@@ -217,8 +217,8 @@ public class EventoBean implements Serializable {
             Espacio espacio = obtenerEspacioPorId(espacioIdSeleccionado);
             if (espacio == null) {
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
-                        "Debe seleccionar un espacio."));
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                                "Debe seleccionar un espacio."));
                 return null;
             }
             evento.setEspacio(espacio);
@@ -232,16 +232,16 @@ public class EventoBean implements Serializable {
             eventoDAO.eventoHuesped(evento);
 
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", 
-                    "Evento registrado correctamente."));
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
+                            "Evento registrado correctamente."));
             limpiarFormulario();
             return "HomeHuesped?faces-redirect=true";
 
         } catch (SQLException e) {
             System.out.println("❌ Error al guardar evento: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                    "No se pudo registrar el evento."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo registrar el evento."));
             return null;
         }
     }
@@ -264,14 +264,14 @@ public class EventoBean implements Serializable {
                     System.out.println("[DEBUG] Evento cargado: " + id);
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
-                            "El evento no existe."));
+                            new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                                    "El evento no existe."));
                 }
             } catch (NumberFormatException | SQLException e) {
                 System.out.println("❌ Error al cargar evento por ID: " + e.getMessage());
                 FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                        "No se pudo cargar el evento."));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                                "No se pudo cargar el evento."));
             }
         }
     }
@@ -283,7 +283,7 @@ public class EventoBean implements Serializable {
         if (fechaInicioLocal != null && fechaFinLocal != null && fechaFinLocal.isBefore(fechaInicioLocal)) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Rango inválido",
-                    "La fecha final debe ser posterior a la inicial."));
+                            "La fecha final debe ser posterior a la inicial."));
             filtroFechaFin = null;
             actualizarEventosFiltrados();
             return;
@@ -448,16 +448,16 @@ public class EventoBean implements Serializable {
             eventoDAO.actualizar(evento);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
-                    "Evento actualizado correctamente."));
+                            "Evento actualizado correctamente."));
             limpiarFormulario();
             cargarEventos();
             return "Eventos?faces-redirect=true";
-            
+
         } catch (SQLException e) {
             System.out.println("❌ Error al actualizar evento: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", 
-                    "No se pudo actualizar el evento."));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                            "No se pudo actualizar el evento."));
             return null;
         }
     }
@@ -468,15 +468,15 @@ public class EventoBean implements Serializable {
 
         if (espacio == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
-                    "Debe seleccionar un espacio."));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                            "Debe seleccionar un espacio."));
             return false;
         }
 
         if (usuario == null) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", 
-                    "Debe seleccionar un huésped."));
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
+                            "Debe seleccionar un huésped."));
             return false;
         }
 
@@ -490,25 +490,30 @@ public class EventoBean implements Serializable {
         return true;
     }
 
-    public void validarFechasAjax() {
-        refrescarOcupacionesEspacio();
-
-        if (evento.getFechaEvento() == null || espacioIdSeleccionado == null) {
-            return;
-        }
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        if (!validarFechaBasica(false)) {
-            context.validationFailed();
-            return;
-        }
-
-        if (!validarDisponibilidadFechas(false)) {
-            context.validationFailed();
-            return;
-        }
+  public void validarFechasAjax() {
+    // ✅ Solo validar si el evento YA tiene fecha correctamente cargada
+    if (evento == null || evento.getFechaEvento() == null || espacioIdSeleccionado == null) {
+        return;
     }
+
+    // ✅ NO validar si el valor aún viene como String sin convertir
+    if (!(evento.getFechaEvento() instanceof Date)) {
+        return;
+    }
+
+    refrescarOcupacionesEspacio();
+
+    FacesContext context = FacesContext.getCurrentInstance();
+
+    if (!validarFechaBasica(false)) {
+        context.validationFailed();
+        return;
+    }
+
+    if (!validarDisponibilidadFechas(false)) {
+        context.validationFailed();
+    }
+}
 
     private boolean validarFechaBasica(boolean mostrarMensajeCamposIncompletos) {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -524,9 +529,18 @@ public class EventoBean implements Serializable {
             return false;
         }
 
-        LocalDate fechaEventoLocal = evento.getFechaEvento().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+        Date fecha = evento.getFechaEvento();
+        LocalDate fechaEventoLocal;
+
+        // ✅ CORRECCIÓN PARA java.sql.Date
+        if (fecha instanceof java.sql.Date) {
+            fechaEventoLocal = ((java.sql.Date) fecha).toLocalDate();
+        } else {
+            fechaEventoLocal = fecha.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
+
         LocalDate hoy = LocalDate.now();
 
         if (fechaEventoLocal.isBefore(hoy)) {
@@ -684,7 +698,9 @@ public class EventoBean implements Serializable {
             for (int i = 0; i < ocupaciones.size(); i++) {
                 Evento ocu = ocupaciones.get(i);
                 json.append("{\"start\":\"").append(ocu.getFechaEvento()).append("\"}");
-                if (i < ocupaciones.size() - 1) json.append(",");
+                if (i < ocupaciones.size() - 1) {
+                    json.append(",");
+                }
             }
             json.append("]");
 

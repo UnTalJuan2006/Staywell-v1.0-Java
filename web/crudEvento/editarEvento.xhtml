@@ -131,7 +131,11 @@
                             <h:inputTextarea id="observaciones" value="#{eventoBean.evento.descripcion}" styleClass="form-control" rows="3" />
                         </div>
                         <div class="col-12 d-flex justify-content-end mt-3">
-                            <h:commandButton value="Actualizar" action="#{eventoBean.actualizar}" styleClass="btn btn-primary me-2" />
+                           <h:commandButton value="Actualizar"
+                 action="#{eventoBean.actualizar}"
+                 styleClass="btn btn-primary me-2"
+                  />
+
                             <h:link outcome="/Eventos.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
                         </div>
                     </div>

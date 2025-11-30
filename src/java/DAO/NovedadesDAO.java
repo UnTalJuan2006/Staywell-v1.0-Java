@@ -20,7 +20,7 @@ public class NovedadesDAO {
         List<Novedades> lista = new ArrayList<>();
         String sql = "SELECT n.idNovedad, n.descripcion, n.fechaRegistro, n.fechaFin, n.estado, "
                 + "n.idHabitacion, n.idEspacio, h.numHabitacion, e.nombre "
-                + "FROM novedad n "
+                + "FROM novedades n "
                 + "LEFT JOIN habitacion h ON h.idHabitacion = n.idHabitacion "
                 + "LEFT JOIN espacio e ON e.idEspacio = n.idEspacio "
                 + "ORDER BY n.fechaRegistro DESC";
@@ -38,7 +38,7 @@ public class NovedadesDAO {
     public Novedades buscarPorId(int id) throws SQLException {
         String sql = "SELECT n.idNovedad, n.descripcion, n.fechaRegistro, n.fechaFin, n.estado, "
                 + "n.idHabitacion, n.idEspacio, h.numHabitacion, e.nombre "
-                + "FROM novedad n "
+                + "FROM novedades n "
                 + "LEFT JOIN habitacion h ON h.idHabitacion = n.idHabitacion "
                 + "LEFT JOIN espacio e ON e.idEspacio = n.idEspacio "
                 + "WHERE n.idNovedad = ?";
@@ -57,7 +57,7 @@ public class NovedadesDAO {
     }
 
     public void insertar(Novedades novedad) throws SQLException {
-        String sql = "INSERT INTO novedad (descripcion, fechaRegistro, fechaFin, estado, idHabitacion, idEspacio) "
+        String sql = "INSERT INTO novedades (descripcion, fechaRegistro, fechaFin, estado, idHabitacion, idEspacio) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
@@ -87,7 +87,7 @@ public class NovedadesDAO {
     }
 
     public void actualizar(Novedades novedad) throws SQLException {
-        String sql = "UPDATE novedad SET descripcion = ?, fechaFin = ?, estado = ?, idHabitacion = ?, idEspacio = ? "
+        String sql = "UPDATE novedades SET descripcion = ?, fechaFin = ?, estado = ?, idHabitacion = ?, idEspacio = ? "
                 + "WHERE idNovedad = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
@@ -119,7 +119,7 @@ public class NovedadesDAO {
     }
 
     public void eliminar(int idNovedad) throws SQLException {
-        String sql = "DELETE FROM novedad WHERE idNovedad = ?";
+        String sql = "DELETE FROM novedades WHERE idNovedad = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setInt(1, idNovedad);
@@ -128,7 +128,7 @@ public class NovedadesDAO {
     }
 
     public int contarTotal() throws SQLException {
-        String sql = "SELECT COUNT(*) AS total FROM novedad";
+        String sql = "SELECT COUNT(*) AS total FROM novedades";
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
@@ -139,7 +139,7 @@ public class NovedadesDAO {
     }
 
     public int contarPorEstado(EnumEstadoNovedad estado) throws SQLException {
-        String sql = "SELECT COUNT(*) AS total FROM novedad WHERE estado = ?";
+        String sql = "SELECT COUNT(*) AS total FROM novedades WHERE estado = ?";
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setString(1, estado.name());
             try (ResultSet rs = ps.executeQuery()) {

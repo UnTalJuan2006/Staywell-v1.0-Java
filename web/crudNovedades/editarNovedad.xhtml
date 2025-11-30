@@ -6,115 +6,119 @@
     <f:metadata>
         <f:viewAction action="#{novedadesBean.cargarNovedadPorId}" />
     </f:metadata>
-<h:head>
-    <meta charset="UTF-8" />
-    <title>Editar Novedad</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="../css/admin-crud.css" />
-</h:head>
+    <h:head>
+        <meta charset="UTF-8" />
+        <title>Editar Novedad</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="../css/admin-crud.css" />
+    </h:head>
 
-<h:body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h4><i class="fas fa-hotel"></i> StayWell</h4>
-            <p>Panel Admin</p>
-        </div>
-
-        <nav class="sidebar-nav">
-            <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
-            <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
-            <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
-            <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
-            <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
-            <h:link outcome="/Reservas.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
-            <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
-            <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
-            <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
-            <h:link outcome="/Novedades.xhtml" styleClass="nav-link active"><i class="bi bi-exclamation-diamond me-2"></i> Novedades</h:link>
-        </nav>
-
-        <h:form>
-            <div class="sidebar-footer">
-                <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </h:commandLink>
+    <h:body>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-hotel"></i> StayWell</h4>
+                <p>Panel Admin</p>
             </div>
-        </h:form>
-    </div>
 
-    <div class="main-content">
-        <div class="top-bar d-flex justify-content-between align-items-center">
-            <div class="page-title">
-                <h2><i class="bi bi-pencil-square"></i> Editar novedad</h2>
-                <span>Actualiza el seguimiento de la novedad seleccionada.</span>
-            </div>
-            <h:link outcome="/Novedades.xhtml" styleClass="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Volver
-            </h:link>
-        </div>
+            <nav class="sidebar-nav">
+                <h:link outcome="/HomeAdmin.xhtml" styleClass="nav-link"><i class="bi bi-speedometer2 me-2"></i> Dashboard</h:link>
+                <h:link outcome="/Habitaciones.xhtml" styleClass="nav-link"><i class="bi bi-door-open me-2"></i> Habitaciones</h:link>
+                <h:link outcome="/TipoHabitacion.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Catalogo Habitaciones</h:link>
+                <h:link outcome="/Eventos.xhtml" styleClass="nav-link"><i class="bi bi-calendar-event me-2"></i> Eventos</h:link>
+                <h:link outcome="/Usuarios.xhtml" styleClass="nav-link"><i class="bi bi-people me-2"></i> Usuarios</h:link>
+                <h:link outcome="/Reservas.xhtml" styleClass="nav-link"><i class="bi bi-journal-bookmark me-2"></i> Reservas</h:link>
+                <h:link outcome="/Empleados.xhtml" styleClass="nav-link"><i class="bi bi-person-badge me-2"></i> Empleados</h:link>
+                <h:link outcome="/Espacios.xhtml" styleClass="nav-link"><i class="bi bi-building me-2"></i> Espacios</h:link>
+                <h:link outcome="/Correos.xhtml" styleClass="nav-link"><i class="bi bi-envelope me-2"></i> Correos</h:link>
+                <h:link outcome="/Novedades.xhtml" styleClass="nav-link active"><i class="bi bi-exclamation-diamond me-2"></i> Novedades</h:link>
+            </nav>
 
-        <div class="mt-4 form-card">
-            <h:messages styleClass="alert alert-warning" layout="table" />
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h5 class="mb-0">Datos de la novedad</h5>
-                    <p class="mb-0 section-helper">Selecciona solo un destino: habitación o espacio.</p>
+            <h:form>
+                <div class="sidebar-footer">
+                    <h:commandLink action="#{usuarioBean.cerrarSesion}" styleClass="btn btn-outline-light btn-sm w-100">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </h:commandLink>
                 </div>
-                <div class="card-body">
-                    <h:form>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="habitacion" class="form-label">Habitación</label>
-                                <h:selectOneMenu id="habitacion" value="#{novedadesBean.habitacionSeleccionada}" styleClass="form-select">
-                                    <f:selectItem itemLabel="-- No asignar --" itemValue="" />
-                                    <f:selectItems value="#{novedadesBean.habitaciones}" var="h"
-                                                   itemValue="#{h.idHabitacion}" itemLabel="Habitación #{h.numHabitacion}" />
-                                </h:selectOneMenu>
+            </h:form>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar d-flex justify-content-between align-items-center">
+                <div class="page-title">
+                    <h2><i class="bi bi-pencil-square"></i> Editar novedad</h2>
+                    <span>Actualiza el seguimiento de la novedad seleccionada.</span>
+                </div>
+                <h:link outcome="/Novedades.xhtml" styleClass="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </h:link>
+            </div>
+
+            <div class="mt-4 form-card">
+                <h:messages styleClass="alert alert-warning" layout="table" />
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Datos de la novedad</h5>
+                        <p class="mb-0 section-helper">Selecciona solo un destino: habitación o espacio.</p>
+                    </div>
+                    <div class="card-body">
+                        <h:form>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="habitacion" class="form-label">Habitación</label>
+                                    <h:selectOneMenu id="habitacion" value="#{novedadesBean.habitacionSeleccionada}" styleClass="form-select">
+                                        <f:selectItem itemLabel="-- No asignar --" itemValue="" />
+                                        <f:selectItems value="#{novedadesBean.habitaciones}" var="h"
+                                                       itemValue="#{h.idHabitacion}" itemLabel="Habitación #{h.numHabitacion}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="espacio" class="form-label">Espacio</label>
+                                    <h:selectOneMenu id="espacio" value="#{novedadesBean.espacioSeleccionado}" styleClass="form-select">
+                                        <f:selectItem itemLabel="-- No asignar --" itemValue="" />
+                                        <f:selectItems value="#{novedadesBean.espacios}" var="e"
+                                                       itemValue="#{e.idEspacio}" itemLabel="#{e.nombre}" />
+                                    </h:selectOneMenu>
+                                    <small class="text-muted">Si se selecciona una habitación, deje este campo vacío.</small>
+                                </div>
+                                <div class="col-md-12">
+                                    <label for="descripcion" class="form-label">Descripción</label>
+                                    <h:inputTextarea id="descripcion" value="#{novedadesBean.novedad.descripcion}" rows="4" styleClass="form-control"
+                                                     required="true" requiredMessage="La descripción es obligatoria." />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="estado" class="form-label">Estado</label>
+                                    <h:selectOneMenu id="estado" value="#{novedadesBean.novedad.estado}" styleClass="form-select" required="true"
+                                                     requiredMessage="Seleccione un estado." >
+                                        <f:selectItems value="#{novedadesBean.estados}" var="estado" itemValue="#{estado}" itemLabel="#{estado}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha de registro</label>
+                                    <h:inputText id="FechaInicio" value="#{novedadesBean.novedad.fechaRegistro}"  styleClass="form-control" converter="localDateTimeConverter">
+                                        <f:passThroughAttribute name="type" value="datetime-local" />
+                                    </h:inputText>
+                                </div>
+
+
+                                <div class="col-md-4">
+                                    <label for="fechaFin" class="form-label">Fecha de cierre</label>
+                                    <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control" converter="localDateTimeConverter">
+                                        <f:passThroughAttribute name="type" value="datetime-local" />
+                                    </h:inputText>
+                                    <small class="text-muted">Opcional: define cuándo se resolvió.</small>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="espacio" class="form-label">Espacio</label>
-                                <h:selectOneMenu id="espacio" value="#{novedadesBean.espacioSeleccionado}" styleClass="form-select">
-                                    <f:selectItem itemLabel="-- No asignar --" itemValue="" />
-                                    <f:selectItems value="#{novedadesBean.espacios}" var="e"
-                                                   itemValue="#{e.idEspacio}" itemLabel="#{e.nombre}" />
-                                </h:selectOneMenu>
-                                <small class="text-muted">Si se selecciona una habitación, deje este campo vacío.</small>
+                            <div class="d-flex justify-content-end mt-4">
+                                <h:commandButton value="Actualizar" action="#{novedadesBean.actualizar}" styleClass="btn btn-primary me-2" />
+                                <h:link outcome="/Novedades.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
                             </div>
-                            <div class="col-md-12">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <h:inputTextarea id="descripcion" value="#{novedadesBean.novedad.descripcion}" rows="4" styleClass="form-control"
-                                                 required="true" requiredMessage="La descripción es obligatoria." />
-                            </div>
-                            <div class="col-md-4">
-                                <label for="estado" class="form-label">Estado</label>
-                                <h:selectOneMenu id="estado" value="#{novedadesBean.novedad.estado}" styleClass="form-select" required="true"
-                                                 requiredMessage="Seleccione un estado." >
-                                    <f:selectItems value="#{novedadesBean.estados}" var="estado" itemValue="#{estado}" itemLabel="#{estado}" />
-                                </h:selectOneMenu>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Fecha de registro</label>
-                                <p class="form-control-plaintext">#{novedadesBean.novedad.fechaRegistro}
-                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" /></p>
-                            </div>
-                            <div class="col-md-4">
-                                <label for="fechaFin" class="form-label">Fecha de cierre</label>
-                                <h:inputText id="fechaFin" value="#{novedadesBean.novedad.fechaFin}" styleClass="form-control" converter="localDateTimeConverter">
-                                    <f:passThroughAttribute name="type" value="datetime-local" />
-                                </h:inputText>
-                                <small class="text-muted">Opcional: define cuándo se resolvió.</small>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-4">
-                            <h:commandButton value="Actualizar" action="#{novedadesBean.actualizar}" styleClass="btn btn-primary me-2" />
-                            <h:link outcome="/Novedades.xhtml" styleClass="btn btn-secondary">Cancelar</h:link>
-                        </div>
-                    </h:form>
+                        </h:form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</h:body>
+    </h:body>
 </html>
