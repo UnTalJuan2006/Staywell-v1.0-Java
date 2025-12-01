@@ -3,7 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <head>
+    <h:head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Great Viggio Hotel</title>
@@ -398,6 +398,20 @@
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
 
+            /* Asegura que los componentes JSF con styleClass input-field sean visibles */
+            .input-field {
+                width: 100%;
+                padding: 18px 20px 18px 60px;
+                background: rgba(255, 255, 255, 0.9);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 15px;
+                font-size: 1rem;
+                color: #333;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                outline: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
             .input-box input::placeholder {
                 color: #999;
             }
@@ -701,9 +715,8 @@
                 }
             }
         </style>
-    </head>
-
-    <body>
+    </h:head>
+    <h:body>
         <!-- Efectos de luz -->
         <div class="light-effect" id="lightEffect"></div>
         <div class="particles" id="particles"></div>
@@ -796,5 +809,5 @@
 
         <!-- Script -->
         <script src="login.js"></script>
-    </body>
+    </h:body>
 </html>
