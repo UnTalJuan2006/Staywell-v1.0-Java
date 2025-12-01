@@ -6,6 +6,7 @@ import Modelo.Evento;
 import Modelo.Espacio;
 import Modelo.Usuario;
 import Modelo.EnumEstadoEvento;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -512,10 +513,17 @@ public class EventoDAO {
                 + "AND horaFin IS NOT NULL "
                 + "AND TIMESTAMP(fechaEvento, horaFin) <= NOW()";
 
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        Connection conn = Conexion.conectar();
+        if (conn == null) {
+            return 0;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, ESTADO_FINALIZADO);
             ps.setString(2, ESTADO_ACTIVO);
             return ps.executeUpdate();
+        } finally {
+            conn.close();
         }
     }
 }
