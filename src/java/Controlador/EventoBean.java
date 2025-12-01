@@ -49,9 +49,11 @@ public class EventoBean implements Serializable {
     private Date filtroFechaFin;
 
     private String filtroBusqueda = "";
+    private boolean filtroEventosHoyActivo;
 
     private static final DateTimeFormatter DISPLAY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter HTML_INPUT_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+    private static final DateTimeFormatter FECHA_SIMPLE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Usuario usuarioLogueado;
 
     @PostConstruct
@@ -163,6 +165,18 @@ public class EventoBean implements Serializable {
         listaEspacios = new ArrayList<>();
         listaUsuarios = new ArrayList<>();
         listarPorUsuario = new ArrayList<>();
+    }
+
+    private void activarFiltroEventosHoy() {
+        filtroEventosHoyActivo = true;
+        LocalDate hoy = LocalDate.now();
+        filtroFechaInicio = convertirADate(hoy);
+        filtroFechaFin = convertirADate(hoy);
+        actualizarEventosFiltrados();
+    }
+
+    public void filtrarEventosDeHoy() {
+        activarFiltroEventosHoy();
     }
 
     public void cargarEventos() {
@@ -277,6 +291,7 @@ public class EventoBean implements Serializable {
     }
 
     public void aplicarFiltroFechas() {
+        filtroEventosHoyActivo = false;
         LocalDate fechaInicioLocal = convertirFecha(filtroFechaInicio);
         LocalDate fechaFinLocal = convertirFecha(filtroFechaFin);
 
@@ -295,6 +310,7 @@ public class EventoBean implements Serializable {
     public void limpiarFiltrosFechas() {
         filtroFechaInicio = null;
         filtroFechaFin = null;
+        filtroEventosHoyActivo = false;
         actualizarEventosFiltrados();
     }
 
@@ -315,11 +331,25 @@ public class EventoBean implements Serializable {
                 .toLocalDate();
     }
 
+    private Date convertirADate(LocalDate fecha) {
+        if (fecha == null) {
+            return null;
+        }
+
+        return Date.from(fecha.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
     private void actualizarEventosFiltrados() {
         List<Evento> fuente = listaEventos != null ? listaEventos : new ArrayList<>();
         LocalDate inicio = convertirFecha(filtroFechaInicio);
         LocalDate fin = convertirFecha(filtroFechaFin);
         String terminoNormalizado = normalizarTexto(filtroBusqueda);
+
+        if (filtroEventosHoyActivo) {
+            LocalDate hoy = LocalDate.now();
+            inicio = hoy;
+            fin = hoy;
+        }
 
         if (inicio == null && fin == null && terminoNormalizado.isEmpty()) {
             eventosFiltrados = listaMutable(fuente);
@@ -781,6 +811,19 @@ public class EventoBean implements Serializable {
 
     public void setFiltroBusqueda(String filtroBusqueda) {
         this.filtroBusqueda = filtroBusqueda;
+    }
+
+    public boolean isFiltroEventosHoyActivo() {
+        return filtroEventosHoyActivo;
+    }
+
+    public String getTextoFiltroHoy() {
+        if (!filtroEventosHoyActivo) {
+            return "";
+        }
+
+        return "Mostrando eventos programados para hoy ("
+                + LocalDate.now().format(FECHA_SIMPLE_FORMATTER) + ")";
     }
 
     public void setUsuarioLogueado(Usuario usuarioLogueado) {
