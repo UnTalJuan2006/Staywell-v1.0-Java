@@ -219,6 +219,31 @@
                 background-color: #0056b3;
             }
 
+            .btn-today {
+                background: linear-gradient(135deg, #0d6efd, #17a2b8);
+                color: white;
+                border: none;
+                padding: 12px 18px;
+                border-radius: 10px;
+                font-weight: 600;
+                box-shadow: 0 6px 12px rgba(13, 110, 253, 0.15);
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .btn-today:hover {
+                background: linear-gradient(135deg, #0b5ed7, #138496);
+                transform: translateY(-1px);
+                box-shadow: 0 10px 18px rgba(13, 110, 253, 0.2);
+            }
+
+            .btn-today:active {
+                transform: translateY(0);
+                box-shadow: 0 6px 12px rgba(13, 110, 253, 0.15);
+            }
+
             h3{
                 color:#000000;
                 font-size: unset;
@@ -580,7 +605,7 @@
                     <hr class="my-3" style="opacity: .15;"></hr>
 
                     <div class="row g-4 align-items-end">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="filter-label">Fecha inicial</label>
                             <h:inputText value="#{eventoBean.filtroFechaInicio}"
                                          styleClass="form-control filter-date-input">
@@ -590,7 +615,7 @@
                             </h:inputText>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="filter-label">Fecha final</label>
                             <h:inputText value="#{eventoBean.filtroFechaFin}"
                                          styleClass="form-control filter-date-input">
@@ -600,7 +625,9 @@
                             </h:inputText>
                         </div>
 
-                        <div class="col-md-4 d-flex justify-content-start">
+                        
+
+                        <div class="col-md-3 d-flex justify-content-start">
                             <h:commandButton value="Limpiar filtros"
                                              styleClass="btn btn-outline-secondary btn-clear"
                                              actionListener="#{eventoBean.limpiarFiltrosFechas}">
@@ -616,6 +643,13 @@
                     <div class="d-flex align-items-center mb-3">
                         <h5 class="card-title mb-0">Eventos registrados</h5>
                     </div>
+
+                    <h:panelGroup rendered="#{eventoBean.filtroEventosHoyActivo}">
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            <span>#{eventoBean.textoFiltroHoy}</span>
+                        </div>
+                    </h:panelGroup>
 
                     <h:panelGroup id="panelEventosWrapper">
                         <h:panelGroup rendered="#{empty eventoBean.eventosFiltrados}">
