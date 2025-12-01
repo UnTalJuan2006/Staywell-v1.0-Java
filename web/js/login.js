@@ -1,27 +1,58 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Configuración de formularios
-    setupLoginForm();
+(() => {
+    function byId(id) {
+        return document.getElementById(id);
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function showError(inputId, message) {
+        const input = byId(inputId);
+        if (!input) return;
+
+        let errorDiv = input.parentNode.querySelector('.error-message');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            input.parentNode.appendChild(errorDiv);
+        }
+
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        input.style.borderColor = '#dc2626';
+    }
+
+    function hideError(inputId) {
+        const input = byId(inputId);
+        if (!input) return;
+
+        const errorDiv = input.parentNode.querySelector('.error-message');
+        if (errorDiv) {
+            errorDiv.style.display = 'none';
+        }
+        input.style.borderColor = '';
+    }
 
     function setupLoginForm() {
-        const loginForm = document.getElementById('loginForm');
-        
-        // Validación del formulario de login
-        loginForm.addEventListener('submit', function(e) {
-            const email = document.getElementById('EmailUser').value;
-            const password = document.getElementById('PwUsr').value;
+        const loginForm = byId('loginForm');
+        if (!loginForm) return;
+
+        loginForm.addEventListener('submit', (e) => {
+            const email = byId('EmailUser');
+            const password = byId('PwUsr');
             let isValid = true;
 
-            // Validar email
-            if (!validateEmail(email)) {
+            if (!email || !validateEmail(email.value)) {
                 showError('EmailUser', 'Por favor ingresa un email válido');
                 isValid = false;
             } else {
                 hideError('EmailUser');
             }
 
-            // Validar contraseña
-            if (password.length < 6) {
-                showError('PwUsr', 'La contraseña debe tener al menos 6 caracteres');
+            if (!password || password.value.length < 1) {
+                showError('PwUsr', 'Debe especificar una contraseña');
                 isValid = false;
             } else {
                 hideError('PwUsr');
@@ -33,35 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Funciones de utilidad
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupLoginForm);
+    } else {
+        setupLoginForm();
     }
-
-    function showError(inputId, message) {
-        const input = document.getElementById(inputId);
-        let errorDiv = input.parentNode.querySelector('.error-message');
-        
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            input.parentNode.appendChild(errorDiv);
-        }
-        
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        input.style.borderColor = '#ff6b6b';
-    }
-
-    function hideError(inputId) {
-        const input = document.getElementById(inputId);
-        const errorDiv = input.parentNode.querySelector('.error-message');
-        
-        if (errorDiv) {
-            errorDiv.style.display = 'none';
-        }
-        
-        input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-    }
-});
+})();
