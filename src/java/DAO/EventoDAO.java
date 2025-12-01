@@ -21,7 +21,12 @@ import javax.faces.context.FacesContext;
 
 public class EventoDAO {
 
+    private static final String ESTADO_ACTIVO = EnumEstadoEvento.Activa.name();
+    private static final String ESTADO_FINALIZADO = EnumEstadoEvento.Finalizado.name();
+
     public List<Evento> listar() throws SQLException {
+        finalizarEventosVencidos();
+
         List<Evento> listaEventos = new ArrayList<>();
 
         String sql = "SELECT e.*, "
@@ -43,6 +48,8 @@ public class EventoDAO {
     }
 
     public List<Evento> listarActivos() throws SQLException {
+        finalizarEventosVencidos();
+
         List<Evento> eventosActivos = new ArrayList<>();
 
         String sql = "SELECT e.*, "
@@ -66,6 +73,8 @@ public class EventoDAO {
     }
 
     public List<Evento> listarPorUsuario(int idUsuario) throws SQLException {
+        finalizarEventosVencidos();
+
         List<Evento> eventos = new ArrayList<>();
 
         String sql = "SELECT e.*, "
@@ -157,6 +166,8 @@ public class EventoDAO {
     }
 
     public Evento buscar(int idEvento) throws SQLException {
+        finalizarEventosVencidos();
+
         Evento evento = null;
 
         String sql = "SELECT e.*, "
@@ -461,6 +472,8 @@ public class EventoDAO {
     }
 
     public int contarEventosActivos() throws SQLException {
+        finalizarEventosVencidos();
+
         String sql = "SELECT COUNT(*) AS total FROM evento WHERE UPPER(TRIM(estado)) = 'ACTIVA'";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql);
@@ -480,6 +493,29 @@ public class EventoDAO {
             ps.setInt(1, idEvento);
             ps.executeUpdate();
         }
-        
+
+    }
+
+    /**
+     * Marca como finalizados todos los eventos cuya fecha y hora de fin ya
+     * pasaron. Esto garantiza que los listados y contadores reflejen el estado
+     * real sin requerir acciones manuales desde el panel administrativo.
+     *
+     * @return cantidad de registros actualizados
+     * @throws SQLException si ocurre un error al actualizar los estados
+     */
+    public int finalizarEventosVencidos() throws SQLException {
+        String sql = "UPDATE evento "
+                + "SET estado = ?, fechaActualizacion = NOW() "
+                + "WHERE estado = ? "
+                + "AND fechaEvento IS NOT NULL "
+                + "AND horaFin IS NOT NULL "
+                + "AND TIMESTAMP(fechaEvento, horaFin) <= NOW()";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, ESTADO_FINALIZADO);
+            ps.setString(2, ESTADO_ACTIVO);
+            return ps.executeUpdate();
+        }
     }
 }
