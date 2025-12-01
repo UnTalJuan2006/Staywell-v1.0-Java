@@ -30,7 +30,7 @@
                 overflow: hidden;
             }
 
-            /* Fondo de Nueva York */
+            /* Fondo simple para reducir tiempos de carga */
             body::before {
                 content: '';
                 position: fixed;
@@ -38,88 +38,16 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-image: url('https://us.123rf.com/450wm/f11photo/f11photo1403/f11photo140300074/26434674-horizonte-de-la-ciudad-de-nueva-york-al-atardecer-con-el-empire-state-building-manhattan-en-blanco.jpg?ver=6');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                filter: brightness(0.4) contrast(1.1);
+                background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08), transparent 40%),
+                    radial-gradient(circle at 80% 0%, rgba(26, 124, 143, 0.25), transparent 35%),
+                    linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
                 z-index: -2;
-                animation: backgroundZoom 30s ease-in-out infinite;
-            }
-
-            @keyframes backgroundZoom {
-                0%, 100% {
-                    transform: scale(1);
-                }
-                50% {
-                    transform: scale(1.05);
-                }
             }
 
             /* Efectos de luz */
-            .light-effect {
-                position: fixed;
-                width: 300px;
-                height: 300px;
-                border-radius: 50%;
-                background: radial-gradient(circle,
-                    #ffffff 0%,
-                    rgba(4, 100, 119, 0.15) 30%,
-                    transparent 70%);
-                filter: blur(30px);
-                pointer-events: none;
-                transition: transform 0.1s ease-out;
-                z-index: -1;
-                animation: lightPulse 4s ease-in-out infinite;
-            }
-
-            @keyframes lightPulse {
-                0%, 100% {
-                    opacity: 0.6;
-                    transform: scale(1);
-                }
-                50% {
-                    opacity: 0.9;
-                    transform: scale(1.1);
-                }
-            }
-
-            /* Partículas */
+            .light-effect,
             .particles {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-                pointer-events: none;
-            }
-
-            .particle {
-                position: absolute;
-                width: 4px;
-                height: 4px;
-                background: rgba(255, 255, 255, 0.7);
-                border-radius: 50%;
-                animation: float 20s infinite linear;
-                box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            }
-
-            @keyframes float {
-                0% {
-                    transform: translateY(100vh) translateX(0) rotate(0deg);
-                    opacity: 0;
-                }
-                10% {
-                    opacity: 0.8;
-                }
-                90% {
-                    opacity: 0.8;
-                }
-                100% {
-                    transform: translateY(-100px) translateX(100px) rotate(360deg);
-                    opacity: 0;
-                }
+                display: none;
             }
 
             /* Contenedor principal */
