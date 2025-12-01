@@ -31,6 +31,7 @@ public class NotificacionBean implements Serializable {
     private List<Usuario> listaUsuarios;
     private List<Notificacion> historialNotificaciones;
     private List<Notificacion> notificacionesUsuario;
+    private Notificacion notificacionEdicion;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -75,6 +76,14 @@ public class NotificacionBean implements Serializable {
         return notificacionesUsuario;
     }
 
+    public Notificacion getNotificacionEdicion() {
+        return notificacionEdicion;
+    }
+
+    public void setNotificacionEdicion(Notificacion notificacionEdicion) {
+        this.notificacionEdicion = notificacionEdicion;
+    }
+
     public int getTotalUsuarios() {
         return listaUsuarios != null ? listaUsuarios.size() : 0;
     }
@@ -113,6 +122,48 @@ public class NotificacionBean implements Serializable {
             cargarHistorial();
         } catch (SQLException e) {
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo enviar la notificación general.");
+        }
+    }
+
+    public void prepararEdicion(Notificacion original) {
+        if (original == null) {
+            return;
+        }
+
+        Notificacion copia = new Notificacion();
+        copia.setIdNotificacion(original.getIdNotificacion());
+        copia.setTitulo(original.getTitulo());
+        copia.setMensaje(original.getMensaje());
+        copia.setFechaEnvio(original.getFechaEnvio());
+        copia.setEstado(original.getEstado());
+        copia.setTipo(original.getTipo());
+        copia.setUsuario(original.getUsuario());
+
+        notificacionEdicion = copia;
+    }
+
+    public void actualizarNotificacion() {
+        if (notificacionEdicion == null) {
+            return;
+        }
+
+        try {
+            getNotificacionDAO().actualizar(notificacionEdicion);
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Notificación actualizada correctamente.");
+            cargarHistorial();
+            notificacionEdicion = null;
+        } catch (SQLException e) {
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar la notificación.");
+        }
+    }
+
+    public void eliminarNotificacion(int idNotificacion) {
+        try {
+            getNotificacionDAO().eliminar(idNotificacion);
+            mostrarMensaje(FacesMessage.SEVERITY_INFO, "Éxito", "Notificación eliminada correctamente.");
+            cargarHistorial();
+        } catch (SQLException e) {
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar la notificación.");
         }
     }
 
@@ -156,6 +207,23 @@ public class NotificacionBean implements Serializable {
             notificacionesUsuario = new ArrayList<>();
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las notificaciones.");
         }
+    }
+
+    public void marcarComoLeida(Notificacion notificacion) {
+        if (notificacion == null || EnumEstadoNotificacion.LEIDA.equals(notificacion.getEstado())) {
+            return;
+        }
+
+        try {
+            getNotificacionDAO().actualizarEstado(notificacion.getIdNotificacion(), EnumEstadoNotificacion.LEIDA);
+            cargarNotificacionesSesion();
+        } catch (SQLException e) {
+            mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo actualizar el estado de la notificación.");
+        }
+    }
+
+    public void cancelarEdicion() {
+        notificacionEdicion = null;
     }
 
     private void cargarHistorial() {
