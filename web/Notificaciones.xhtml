@@ -161,7 +161,7 @@
 
             .top-bar h2 {
                 margin: 0;
-                color: #495057;
+                color: #000;   /* NEGRO PURO */
                 font-weight: 600;
                 display: flex;
                 align-items: center;
@@ -230,8 +230,14 @@
             }
 
             @keyframes pulse {
-                0%, 100% { transform: scale(1); opacity: 0.1; }
-                50% { transform: scale(1.1); opacity: 0.2; }
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 0.1;
+                }
+                50% {
+                    transform: scale(1.1);
+                    opacity: 0.2;
+                }
             }
 
             .icon-broadcast {
@@ -427,6 +433,20 @@
                 font-weight: 600;
                 font-size: 0.85rem;
             }
+            
+            /* ÍCONOS DEL MISMO COLOR QUE EL SIDEBAR */
+.icon-broadcast,
+.icon-personal {
+    background: #e6f7ff;      /* fondo suave */
+}
+
+.icon-broadcast i,
+.icon-personal i {
+    color: #1a7c8f;           /* MISMO COLOR DEL SIDEBAR */
+}
+
+            
+            
         </style>
     </h:head>
 
@@ -521,13 +541,11 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
-                <div>
-                    <h2><i class="bi bi-bell-fill"></i> Gestión de Notificaciones</h2>
-                    <small class="text-muted">Envía avisos generales o personalizados y revisa el historial reciente.</small>
-                </div>
-                <div class="text-end">
-                    <span class="badge bg-primary">Usuarios registrados: #{notificacionBean.totalUsuarios}</span>
-                </div>
+                <h2>
+                    <i class="bi bi-bell"></i> Gestión de Notificaciones
+                </h2>
+
+               
             </div>
 
             <h:messages styleClass="alert alert-info mb-4" layout="table" />
@@ -539,7 +557,7 @@
                         <div class="card-icon-wrapper icon-broadcast">
                             <i class="bi bi-megaphone-fill"></i>
                         </div>
-                        
+
                         <h3 class="card-title-main">Notificación General</h3>
                         <p class="card-subtitle">Se enviará a todos los usuarios activos del sistema.</p>
 
@@ -564,7 +582,7 @@
                                     <f:passThroughAttribute name="placeholder" value="Ej: Actualización del sistema" />
                                 </h:inputText>
                             </div>
-                            
+
                             <div class="mb-4">
                                 <h:outputLabel for="mensajeGeneral" styleClass="form-label">
                                     <i class="bi bi-chat-left-text-fill"></i>
@@ -579,7 +597,7 @@
                                     <f:passThroughAttribute name="placeholder" value="Escribe tu mensaje aquí..." />
                                 </h:inputTextarea>
                             </div>
-                            
+
                             <div class="text-end">
                                 <h:commandButton value="Enviar a todos" 
                                                  action="#{notificacionBean.enviarNotificacionGeneral}" 
@@ -597,7 +615,7 @@
                         <div class="card-icon-wrapper icon-personal">
                             <i class="bi bi-person-fill-check"></i>
                         </div>
-                        
+
                         <h3 class="card-title-main">Notificación Personal</h3>
                         <p class="card-subtitle">Envía un mensaje dirigido a un huésped específico.</p>
 
@@ -624,7 +642,7 @@
                                                    itemLabel="#{usuario.nombre} - #{usuario.email}" />
                                 </h:selectOneMenu>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <h:outputLabel for="tituloPersonal" styleClass="form-label">
                                     <i class="bi bi-tag-fill"></i>
@@ -638,7 +656,7 @@
                                     <f:passThroughAttribute name="placeholder" value="Ej: Actualización de tu reserva" />
                                 </h:inputText>
                             </div>
-                            
+
                             <div class="mb-4">
                                 <h:outputLabel for="mensajePersonal" styleClass="form-label">
                                     <i class="bi bi-chat-left-text-fill"></i>
@@ -653,7 +671,7 @@
                                     <f:passThroughAttribute name="placeholder" value="Escribe tu mensaje personalizado aquí..." />
                                 </h:inputTextarea>
                             </div>
-                            
+
                             <div class="text-end">
                                 <h:commandButton value="Enviar notificación" 
                                                  action="#{notificacionBean.enviarNotificacionPersonal}" 
@@ -734,15 +752,15 @@
                                         <td>
                                             <div class="d-flex gap-2">
                                                 <h:commandLink styleClass="btn btn-sm btn-outline-primary"
-                                                              title="Editar notificación"
-                                                              action="#{notificacionBean.prepararEdicion(notif)}">
+                                                               title="Editar notificación"
+                                                               action="#{notificacionBean.prepararEdicion(notif)}">
                                                     <i class="bi bi-pencil-square"></i>
                                                     <f:ajax render="formHistorial" />
                                                 </h:commandLink>
                                                 <h:commandLink styleClass="btn btn-sm btn-outline-danger"
-                                                              title="Eliminar notificación"
-                                                              action="#{notificacionBean.eliminarNotificacion(notif.idNotificacion)}"
-                                                              onclick="return confirm('¿Desea eliminar esta notificación?');">
+                                                               title="Eliminar notificación"
+                                                               action="#{notificacionBean.eliminarNotificacion(notif.idNotificacion)}"
+                                                               onclick="return confirm('¿Desea eliminar esta notificación?');">
                                                     <i class="bi bi-trash"></i>
                                                     <f:ajax render="formHistorial" />
                                                 </h:commandLink>
