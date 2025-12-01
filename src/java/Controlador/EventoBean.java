@@ -176,6 +176,10 @@ public class EventoBean implements Serializable {
         actualizarEventosFiltrados();
     }
 
+    public void filtrarEventosDeHoy() {
+        activarFiltroEventosHoy();
+    }
+
     public void cargarEventos() {
         try {
             List<Evento> eventos = eventoDAO.listar();
