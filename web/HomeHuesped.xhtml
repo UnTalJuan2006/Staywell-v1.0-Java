@@ -768,36 +768,38 @@
                                 </div>
                             </h:panelGroup>
 
-                            <ui:repeat value="#{notificacionBean.notificacionesUsuario}" var="notif">
-                                <h:commandLink styleClass="notification-item #{notif.estado == 'NO_LEIDA' ? 'unread' : ''}"
-                                               action="#{notificacionBean.marcarComoLeida(notif)}"
-                                               style="display:block; text-decoration:none; color:inherit;">
-                                    <f:ajax execute="@this" render=":formBadge:badgeNotificaciones :formNotificacionesUsuario" />
-                                    <div class="notification-icon #{notif.tipo == 'GENERAL' ? 'general' : 'personal'}">
-                                        <i class="bi #{notif.tipo == 'GENERAL' ? 'bi-megaphone' : 'bi-person-fill'}"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <strong>#{notif.titulo}</strong>
-                                                <div class="notification-meta mt-1">
-                                                    <span><i class="bi bi-tag"></i> #{notif.tipo.etiqueta}</span>
-                                                    <span>•</span>
-                                                    <span><i class="bi bi-clock"></i>
-                                                        <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
-                                                    </span>
-                                                    <h:panelGroup rendered="#{notif.usuario ne null}">
-                                                        <span>•</span>
-                                                        <span><i class="bi bi-person"></i> #{notif.usuario.nombre}</span>
-                                                    </h:panelGroup>
-                                                </div>
-                                            </div>
-                                            <span class="badge #{notif.estado == 'NO_LEIDA' ? 'bg-warning text-dark' : 'bg-success'}">#{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}</span>
+                            <h:panelGroup id="listaNotificacionesUsuario">
+                                <ui:repeat value="#{notificacionBean.notificacionesUsuario}" var="notif">
+                                    <h:commandLink styleClass="notification-item #{notif.estado == 'NO_LEIDA' ? 'unread' : ''}"
+                                                   action="#{notificacionBean.marcarComoLeida(notif)}"
+                                                   style="display:block; text-decoration:none; color:inherit;">
+                                        <f:ajax execute="@this" render=":formBadge:badgeNotificaciones :formNotificacionesUsuario:listaNotificacionesUsuario" />
+                                        <div class="notification-icon #{notif.tipo == 'GENERAL' ? 'general' : 'personal'}">
+                                            <i class="bi #{notif.tipo == 'GENERAL' ? 'bi-megaphone' : 'bi-person-fill'}"></i>
                                         </div>
-                                        <p class="mt-2 mb-0" style="color:#4a5568;">#{notif.mensaje}</p>
-                                    </div>
-                                </h:commandLink>
-                            </ui:repeat>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <strong>#{notif.titulo}</strong>
+                                                    <div class="notification-meta mt-1">
+                                                        <span><i class="bi bi-tag"></i> #{notif.tipo.etiqueta}</span>
+                                                        <span>•</span>
+                                                        <span><i class="bi bi-clock"></i>
+                                                            <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
+                                                        </span>
+                                                        <h:panelGroup rendered="#{notif.usuario ne null}">
+                                                            <span>•</span>
+                                                            <span><i class="bi bi-person"></i> #{notif.usuario.nombre}</span>
+                                                        </h:panelGroup>
+                                                    </div>
+                                                </div>
+                                                <span class="badge #{notif.estado == 'NO_LEIDA' ? 'bg-warning text-dark' : 'bg-success'}">#{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}</span>
+                                            </div>
+                                            <p class="mt-2 mb-0" style="color:#4a5568;">#{notif.mensaje}</p>
+                                        </div>
+                                    </h:commandLink>
+                                </ui:repeat>
+                            </h:panelGroup>
                         </div>
                     </div>
                 </div>
