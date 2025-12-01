@@ -33,6 +33,27 @@ public class NotificacionDAO {
         return lista;
     }
 
+    public void actualizar(Notificacion notificacion) throws SQLException {
+        String sql = "UPDATE notificacion SET titulo = ?, mensaje = ? WHERE idNotificacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, notificacion.getTitulo());
+            ps.setString(2, notificacion.getMensaje());
+            ps.setInt(3, notificacion.getIdNotificacion());
+
+            ps.executeUpdate();
+        }
+    }
+
+    public void eliminar(int idNotificacion) throws SQLException {
+        String sql = "DELETE FROM notificacion WHERE idNotificacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setInt(1, idNotificacion);
+            ps.executeUpdate();
+        }
+    }
+
     public List<Notificacion> listarGeneralesYUsuario(int idUsuario) throws SQLException {
         List<Notificacion> lista = new ArrayList<>();
 
@@ -54,6 +75,16 @@ public class NotificacionDAO {
         }
 
         return lista;
+    }
+
+    public void actualizarEstado(int idNotificacion, EnumEstadoNotificacion estado) throws SQLException {
+        String sql = "UPDATE notificacion SET estado = ? WHERE idNotificacion = ?";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, estado.name());
+            ps.setInt(2, idNotificacion);
+            ps.executeUpdate();
+        }
     }
 
     public List<Notificacion> listarPorUsuario(int idUsuario) throws SQLException {
