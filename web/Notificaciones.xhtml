@@ -676,64 +676,118 @@
                     <small class="text-muted">Notificaciones enviadas a usuarios y generales.</small>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Asunto</th>
-                                <th>Tipo</th>
-                                <th>Destinatario</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <h:panelGroup rendered="#{empty notificacionBean.historialNotificaciones}">
+                <h:form id="formHistorial">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-5">
-                                        <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 16px; opacity: 0.4;"></i>
-                                        <div style="font-size: 1.1rem;">No hay notificaciones registradas</div>
-                                        <small>Las notificaciones que envíes aparecerán aquí</small>
-                                    </td>
+                                    <th>Fecha</th>
+                                    <th>Asunto</th>
+                                    <th>Tipo</th>
+                                    <th>Destinatario</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            </h:panelGroup>
+                            </thead>
+                            <tbody>
+                                <h:panelGroup rendered="#{empty notificacionBean.historialNotificaciones}">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 16px; opacity: 0.4;"></i>
+                                            <div style="font-size: 1.1rem;">No hay notificaciones registradas</div>
+                                            <small>Las notificaciones que envíes aparecerán aquí</small>
+                                        </td>
+                                    </tr>
+                                </h:panelGroup>
 
-                            <ui:repeat value="#{notificacionBean.historialNotificaciones}" var="notif">
-                                <tr>
-                                    <td>
-                                        <small class="text-muted">
-                                            <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <strong>#{notif.titulo}</strong>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-#{notif.tipo == 'GENERAL' ? 'primary' : 'info'}">
-                                            <i class="bi bi-#{notif.tipo == 'GENERAL' ? 'megaphone' : 'person'}"></i>
-                                            #{notif.tipo.etiqueta}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <h:panelGroup rendered="#{notif.usuario ne null}">
-                                            <i class="bi bi-person-fill me-1 text-muted"></i>
-                                            #{notif.usuario.nombre}
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{notif.usuario eq null}">
-                                            <i class="bi bi-people-fill me-1 text-muted"></i>
-                                            Todos
-                                        </h:panelGroup>
-                                    </td>
-                                    <td>
-                                        <span class="#{notif.estado == 'NO_LEIDA' ? 'badge-unread' : 'badge-read'}">
-                                            #{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </ui:repeat>
-                        </tbody>
-                    </table>
-                </div>
+                                <ui:repeat value="#{notificacionBean.historialNotificaciones}" var="notif">
+                                    <tr>
+                                        <td>
+                                            <small class="text-muted">
+                                                <h:outputText value="#{notificacionBean.formatearFecha(notif.fechaEnvio)}" />
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <strong>#{notif.titulo}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-#{notif.tipo == 'GENERAL' ? 'primary' : 'info'}">
+                                                <i class="bi bi-#{notif.tipo == 'GENERAL' ? 'megaphone' : 'person'}"></i>
+                                                #{notif.tipo.etiqueta}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <h:panelGroup rendered="#{notif.usuario ne null}">
+                                                <i class="bi bi-person-fill me-1 text-muted"></i>
+                                                #{notif.usuario.nombre}
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{notif.usuario eq null}">
+                                                <i class="bi bi-people-fill me-1 text-muted"></i>
+                                                Todos
+                                            </h:panelGroup>
+                                        </td>
+                                        <td>
+                                            <span class="#{notif.estado == 'NO_LEIDA' ? 'badge-unread' : 'badge-read'}">
+                                                #{notif.estado == 'NO_LEIDA' ? 'No leída' : 'Leída'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                              title="Editar notificación"
+                                                              action="#{notificacionBean.prepararEdicion(notif)}">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                    <f:ajax render="formHistorial" />
+                                                </h:commandLink>
+                                                <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                              title="Eliminar notificación"
+                                                              action="#{notificacionBean.eliminarNotificacion(notif.idNotificacion)}"
+                                                              onclick="return confirm('¿Desea eliminar esta notificación?');">
+                                                    <i class="bi bi-trash"></i>
+                                                    <f:ajax render="formHistorial" />
+                                                </h:commandLink>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h:panelGroup id="panelEdicion" rendered="#{notificacionBean.notificacionEdicion ne null}">
+                        <div class="card mt-4">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-pencil"></i> Editar notificación
+                                </h5>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <h:outputLabel for="tituloEdicion" styleClass="form-label">Asunto</h:outputLabel>
+                                        <h:inputText id="tituloEdicion" value="#{notificacionBean.notificacionEdicion.titulo}" styleClass="form-control" required="true" requiredMessage="El asunto es obligatorio" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h:outputLabel styleClass="form-label">Tipo</h:outputLabel>
+                                        <div class="form-control bg-light">#{notificacionBean.notificacionEdicion.tipo.etiqueta}</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <h:outputLabel for="mensajeEdicion" styleClass="form-label">Mensaje</h:outputLabel>
+                                        <h:inputTextarea id="mensajeEdicion" value="#{notificacionBean.notificacionEdicion.mensaje}" styleClass="form-control" rows="4" required="true" requiredMessage="El mensaje es obligatorio" />
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <h:commandButton value="Cancelar" action="#{notificacionBean.cancelarEdicion}" styleClass="btn btn-outline-secondary">
+                                        <f:ajax render="formHistorial" execute="@this" />
+                                    </h:commandButton>
+                                    <h:commandButton value="Guardar cambios" action="#{notificacionBean.actualizarNotificacion}" styleClass="btn btn-success">
+                                        <f:ajax render="formHistorial" execute="@form" />
+                                    </h:commandButton>
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </h:form>
             </div>
         </div>
     </h:body>
