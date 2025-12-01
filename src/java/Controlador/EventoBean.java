@@ -88,7 +88,6 @@ public class EventoBean implements Serializable {
             try {
                 if (usuarioLogueado.getRol() == EnumRoles.ADMIN) {
                     cargarEventos();
-                    activarFiltroEventosHoy();
                     System.out.println("[DEBUG] Eventos de ADMIN cargados: " + listaEventos.size());
                 } else if (usuarioLogueado.getRol() == EnumRoles.HUESPED) {
                     listarEventosDelUsuario();
