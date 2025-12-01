@@ -78,19 +78,26 @@ public class UsuarioBean implements Serializable {
         }
     }
 
-    @PostConstruct
-    public void init() {
-        try {
-            usuarios = usuarioDAO.listar(); 
-            if (usuarios == null) {
-                usuarios = new ArrayList<>();
-            }
-            usuariosFiltrados = new ArrayList<>(usuarios);
-        } catch (SQLException e) {
-            e.printStackTrace();
+@PostConstruct
+public void init() {
+    try {
+        usuarios = usuarioDAO.listar(); 
+        if (usuarios == null) {
+            usuarios = new ArrayList<>();
         }
-
+        usuariosFiltrados = new ArrayList<>(usuarios);
+    } catch (Exception e) { // 👈 OJO: ahora atrapamos cualquier excepción
+        e.printStackTrace();
+        // Para que nunca sea null
+        if (usuarios == null) {
+            usuarios = new ArrayList<>();
+        }
+        if (usuariosFiltrados == null) {
+            usuariosFiltrados = new ArrayList<>();
+        }
     }
+}
+
 
     public void buscarUsuarios() {
         if (usuarios == null) {
