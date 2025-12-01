@@ -29,7 +29,6 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/PagoDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/PagoBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/HomeAdmin.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/ReservaDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/MisReservas.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoPortalBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/util/ExcelUtil.java</file>
@@ -51,10 +50,28 @@
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/CorreoBean.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudEspacios/editarEspacio.xhtml</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudEspacios/verEspacio.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/EmpleadoDAO.java</file>
             <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Habitaciones.xhtml</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/HabitacionBean.java</file>
-            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/ReservaBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/registro.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/NuevoEventoHuesped.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Novedades.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/NovedadesDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudNovedades/editarNovedad.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudNovedades/verNovedad.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudEvento/editarEvento.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Notificacion.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumEstadoNotificacion.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Novedades.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/NotificacionDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/PagoEventoDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Pagos.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumTipoNotificacion.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/DAO/HabitacionDAO.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/Notificaciones.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/NotificacionBean.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/Evento.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Modelo/EnumEstadoEvento.java</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/web/crudEvento/nuevoEvento.xhtml</file>
+            <file>file:/C:/Users/juanm/OneDrive/Documentos/NetBeansProjects/StayWell.1/src/java/Controlador/EventoHuespedBean.java</file>
         </group>
     </open-files>
 </project-private>
