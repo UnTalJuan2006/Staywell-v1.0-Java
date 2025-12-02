@@ -4,9 +4,11 @@ import Controlador.CorreoBean;
 import DAO.HabitacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
+import DAO.ReservaHabitacionesDAO;
 import DAO.TipoHabitacionDAO;
 import Modelo.EnumEstadoHabitacion;
 import Modelo.EnumEstadoReserva;
+import Modelo.EnumEstadoReservaHabitacion;
 import Modelo.EnumPago;
 import Modelo.Habitacion;
 import Modelo.Reserva;
@@ -47,6 +49,7 @@ public class ReservaHuespedBean implements Serializable {
     private final TipoHabitacionDAO tipoHabitacionDAO = new TipoHabitacionDAO();
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final ReservaDAO reservaDAO = new ReservaDAO();
+    private final ReservaHabitacionesDAO reservaHabitacionesDAO = new ReservaHabitacionesDAO();
     private final PagoDAO pagoDAO = new PagoDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
@@ -54,7 +57,7 @@ public class ReservaHuespedBean implements Serializable {
     private String fechasOcupadasJson = "[]";
 
     private Integer tipoHabitacionSeleccionada;
-    private Integer habitacionSeleccionada;
+    private List<Integer> habitacionesSeleccionadas = new ArrayList<>();
 
     private Date checkin;
     private Date checkout;
@@ -115,7 +118,7 @@ public class ReservaHuespedBean implements Serializable {
 
     public void prepararNuevaReserva() {
         tipoHabitacionSeleccionada = null;
-        setHabitacionSeleccionada(null);
+        habitacionesSeleccionadas = new ArrayList<>();
         habitacionesDisponibles = new ArrayList<>();
         checkin = null;
         checkout = null;
@@ -136,14 +139,14 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public void onTipoHabitacionChange() {
-        setHabitacionSeleccionada(null);
+        habitacionesSeleccionadas = new ArrayList<>();
         actualizarHabitacionesDisponibles();
         actualizarPrecioPorNoche();
         recalcularResumen();
         fechasOcupadasJson = "[]";
     }
 
-    public void onHabitacionChange() {
+    public void onHabitacionesChange() {
         actualizarFechasOcupadas();
         recalcularResumen();
     }
@@ -169,7 +172,7 @@ public class ReservaHuespedBean implements Serializable {
                 List<Habitacion> disponibles = new ArrayList<>();
                 for (Habitacion habitacion : habitacionesPorTipo) {
                     if (EnumEstadoHabitacion.Disponible.equals(habitacion.getEstado())
-                            && reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                            && reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
                         disponibles.add(habitacion);
                     }
                 }
@@ -180,13 +183,9 @@ public class ReservaHuespedBean implements Serializable {
                         .collect(Collectors.toCollection(ArrayList::new));
             }
 
-            if (habitacionSeleccionada != null) {
-                boolean sigueDisponible = habitacionesDisponibles.stream()
-                        .anyMatch(h -> h.getIdHabitacion() == habitacionSeleccionada);
-                if (!sigueDisponible) {
-                    setHabitacionSeleccionada(null);
-                }
-            }
+            habitacionesSeleccionadas = habitacionesSeleccionadas.stream()
+                    .filter(id -> habitacionesDisponibles.stream().anyMatch(h -> h.getIdHabitacion() == id))
+                    .collect(Collectors.toCollection(ArrayList::new));
         } catch (SQLException ex) {
             habitacionesDisponibles = new ArrayList<>();
             FacesContext.getCurrentInstance().addMessage(null,
@@ -225,8 +224,12 @@ public class ReservaHuespedBean implements Serializable {
             return;
         }
 
-        if (precioPorNoche.compareTo(BigDecimal.ZERO) > 0) {
-            totalReserva = precioPorNoche.multiply(BigDecimal.valueOf(numeroNoches));
+        int cantidadHabitaciones = habitacionesSeleccionadas != null ? habitacionesSeleccionadas.size() : 0;
+
+        if (precioPorNoche.compareTo(BigDecimal.ZERO) > 0 && cantidadHabitaciones > 0) {
+            totalReserva = precioPorNoche
+                    .multiply(BigDecimal.valueOf(numeroNoches))
+                    .multiply(BigDecimal.valueOf(cantidadHabitaciones));
         }
 
         calcularDesgloseImpuestos();
@@ -270,38 +273,51 @@ public class ReservaHuespedBean implements Serializable {
         return seleccionado.orElse(null);
     }
 
-    private Habitacion obtenerHabitacionSeleccionada() {
-        if (habitacionSeleccionada == null) {
-            return null;
+    private List<Habitacion> obtenerHabitacionesSeleccionadas() {
+        List<Habitacion> seleccionadas = new ArrayList<>();
+
+        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
+            return seleccionadas;
         }
 
-        Optional<Habitacion> seleccionada = habitacionesDisponibles.stream()
-                .filter(h -> h.getIdHabitacion() == habitacionSeleccionada)
-                .findFirst();
+        for (Integer idHabitacion : habitacionesSeleccionadas) {
+            Optional<Habitacion> enMemoria = habitacionesDisponibles.stream()
+                    .filter(h -> h.getIdHabitacion() == idHabitacion)
+                    .findFirst();
 
-        if (seleccionada.isPresent()) {
-            return seleccionada.get();
+            if (enMemoria.isPresent()) {
+                seleccionadas.add(enMemoria.get());
+                continue;
+            }
+
+            try {
+                Habitacion habitacion = habitacionDAO.buscarPorId(idHabitacion);
+                if (habitacion != null) {
+                    seleccionadas.add(habitacion);
+                }
+            } catch (SQLException ex) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                                "No se pudo obtener la información de la habitación."));
+            }
         }
 
-        try {
-            return habitacionDAO.buscarPorId(habitacionSeleccionada);
-        } catch (SQLException ex) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                            "No se pudo obtener la información de la habitación."));
-            return null;
-        }
+        return seleccionadas;
     }
 
     private void actualizarFechasOcupadas() {
         fechasOcupadasJson = "[]";
 
-        if (habitacionSeleccionada == null) {
+        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
             return;
         }
 
         try {
-            List<Reserva> ocupaciones = reservaDAO.listarOcupacionesHabitacion(habitacionSeleccionada, null);
+            List<Reserva> ocupaciones = new ArrayList<>();
+
+            for (Integer idHabitacion : habitacionesSeleccionadas) {
+                ocupaciones.addAll(reservaDAO.listarOcupacionesHabitacion(idHabitacion, null));
+            }
 
             if (ocupaciones.isEmpty()) {
                 return;
@@ -357,10 +373,10 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
-        Habitacion habitacion = obtenerHabitacionSeleccionada();
-        if (habitacion == null) {
+        List<Habitacion> habitacionesElegidas = obtenerHabitacionesSeleccionadas();
+        if (habitacionesElegidas.isEmpty()) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "Seleccione una habitación disponible."));
+                    "Seleccione al menos una habitación disponible."));
             return null;
         }
 
@@ -379,17 +395,19 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
-//        try {
-//            if (!reservaDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
-//                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
-//                        "La habitación no está disponible en el rango seleccionado."));
-//                return null;
-//            }
-//        } catch (SQLException ex) {
-//            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-//                    "No se pudo verificar la disponibilidad de la habitación."));
-//            return null;
-//        }
+        try {
+            for (Habitacion habitacion : habitacionesElegidas) {
+                if (!reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
+                            "La habitación " + habitacion.getNumHabitacion() + " no está disponible en el rango seleccionado."));
+                    return null;
+                }
+            }
+        } catch (SQLException ex) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo verificar la disponibilidad de las habitaciones."));
+            return null;
+        }
         if (!validarDatosPago(context)) {
             return null;
         }
@@ -398,7 +416,7 @@ public class ReservaHuespedBean implements Serializable {
         EnumPago metodoPagoAlConfirmar = tipoPagoSeleccionado;
 
         Reserva reserva = new Reserva();
-        reserva.setHabitacion(habitacion);
+        reserva.setHabitaciones(habitacionesElegidas);
         reserva.setUsuario(usuarioLogueado);
         reserva.setEstado(EnumEstadoReserva.ACTIVA);
         reserva.setNombreCliente(nombreCliente != null ? nombreCliente : usuarioLogueado.getNombre());
@@ -420,6 +438,10 @@ public class ReservaHuespedBean implements Serializable {
 
             if (idGenerado > 0) {
                 reserva.setIdReserva(idGenerado);
+
+                for (Habitacion habitacion : habitacionesElegidas) {
+                    reservaHabitacionesDAO.registrarRelacion(idGenerado, habitacion.getIdHabitacion(), EnumEstadoReservaHabitacion.Activa);
+                }
 
                 if (!registrarPagoParaReserva(context, reserva)) {
                     return null;
@@ -653,8 +675,14 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public String getResumenHabitacion() {
-        Habitacion habitacion = obtenerHabitacionSeleccionada();
-        return habitacion != null ? "Habitación " + habitacion.getNumHabitacion() : "Sin seleccionar";
+        List<Habitacion> seleccionadas = obtenerHabitacionesSeleccionadas();
+        if (seleccionadas.isEmpty()) {
+            return "Sin seleccionar";
+        }
+
+        return seleccionadas.stream()
+                .map(h -> "Habitación " + h.getNumHabitacion())
+                .collect(Collectors.joining(", "));
     }
 
     public String getResumenCheckin() {
@@ -683,13 +711,14 @@ public class ReservaHuespedBean implements Serializable {
         this.tipoHabitacionSeleccionada = tipoHabitacionSeleccionada;
     }
 
-    public Integer getHabitacionSeleccionada() {
-        return habitacionSeleccionada;
+    public List<Integer> getHabitacionesSeleccionadas() {
+        return habitacionesSeleccionadas;
     }
 
-    public void setHabitacionSeleccionada(Integer habitacionSeleccionada) {
-        this.habitacionSeleccionada = habitacionSeleccionada;
+    public void setHabitacionesSeleccionadas(List<Integer> habitacionesSeleccionadas) {
+        this.habitacionesSeleccionadas = habitacionesSeleccionadas != null ? habitacionesSeleccionadas : new ArrayList<>();
         actualizarFechasOcupadas();
+        recalcularResumen();
     }
 
     public Date getCheckin() {

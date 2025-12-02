@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 public class ReservaHabitaciones implements Serializable {
 
-   
     private int id;
     private Reserva reserva;
     private Habitacion habitacion;
@@ -13,8 +12,6 @@ public class ReservaHabitaciones implements Serializable {
     private String observaciones;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
-
-
 
     public int getId() {
         return id;

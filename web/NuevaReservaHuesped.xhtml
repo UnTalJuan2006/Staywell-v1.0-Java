@@ -848,18 +848,18 @@
 
                                 <div class="form-group">
                                     <label for="habitacion" class="form-label">
-                                        <i class="bi bi-door-open" style="color: #1a7c8f;"></i> Habitación
+                                        <i class="bi bi-door-open" style="color: #1a7c8f;"></i> Habitaciones
                                     </label>
-                                    <h:selectOneMenu id="habitacion" value="#{reservaHuespedBean.habitacionSeleccionada}"
-                                                     styleClass="form-select" disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}"
-                                                     required="true" requiredMessage="Debe seleccionar una habitación.">
-                                        <f:selectItem itemLabel="Seleccione una habitación" itemValue="#{null}" noSelectionOption="true" />
+                                    <p:selectCheckboxMenu id="habitacion" label="Selecciona habitaciones" multiple="true"
+                                                         value="#{reservaHuespedBean.habitacionesSeleccionadas}"
+                                                         disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}"
+                                                         styleClass="form-select">
                                         <f:selectItems value="#{reservaHuespedBean.habitacionesDisponibles}" var="habitacion"
                                                        itemValue="#{habitacion.idHabitacion}"
                                                        itemLabel="Habitación #{habitacion.numHabitacion}" />
-                                        <f:ajax event="change" listener="#{reservaHuespedBean.onHabitacionChange}"
-                                                render="panelResumen ocupacionesJson montoPago" />
-                                    </h:selectOneMenu>
+                                        <p:ajax event="change" listener="#{reservaHuespedBean.onHabitacionesChange}"
+                                                update="panelResumen ocupacionesJson montoPago" />
+                                    </p:selectCheckboxMenu>
                                 </div>
                             </div>
 
