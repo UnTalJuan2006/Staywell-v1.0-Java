@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import com.lowagie.text.DocumentException;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -211,7 +212,7 @@ public void init() {
                 {"Teléfono", reserva.getTelefono()},
                 {"Check-in", formatearFecha(reserva.getCheckin())},
                 {"Check-out", formatearFecha(reserva.getCheckout())},
-                {"Habitación", reserva.getHabitacion() != null ? reserva.getHabitacion().getTipoHabitacion().getNombre() : "Sin asignar"},
+                {"Habitación", !obtenerNumerosHabitaciones(reserva).isEmpty() ? obtenerNumerosHabitaciones(reserva) : "Sin asignar"},
                 {"Estado", reserva.getEstado() != null ? reserva.getEstado().name() : ""},
                 {"Observaciones", reserva.getObservaciones() != null ? reserva.getObservaciones() : "N/A"}
             };
@@ -541,11 +542,17 @@ public void init() {
     }
 
     public String obtenerNombreHabitacion(Reserva reserva) {
-        if (reserva == null || reserva.getHabitacion() == null) {
+        if (reserva == null) {
             return "Sin asignar";
         }
 
-        return "Habitación " + reserva.getHabitacion().getNumHabitacion();
+        String numeros = obtenerNumerosHabitaciones(reserva);
+        return numeros.isEmpty() ? "Sin asignar" : "Habitación " + numeros;
+    }
+
+    public String obtenerResumenHabitaciones(Reserva reserva) {
+        String numeros = obtenerNumerosHabitaciones(reserva);
+        return numeros.isEmpty() ? "Sin asignar" : numeros;
     }
 
     private String toHtmlInputValue(LocalDateTime fecha) {
@@ -738,6 +745,16 @@ public void init() {
                 .replace("&", "\\u0026");
     }
 
+    private String obtenerNumerosHabitaciones(Reserva reservaActual) {
+        if (reservaActual == null || reservaActual.getHabitaciones() == null || reservaActual.getHabitaciones().isEmpty()) {
+            return "";
+        }
+
+        return reservaActual.getHabitaciones().stream()
+                .map(h -> String.valueOf(h.getNumHabitacion()))
+                .collect(Collectors.joining(", "));
+    }
+
     public void filtrarHabitacionesPorTipo() {
         if (habitacionesFiltradas == null) {
             habitacionesFiltradas = new ArrayList<>();
@@ -875,15 +892,18 @@ public void init() {
         String numeroHabitacion = "";
         String nombreHabitacion = "";
 
-        if (reservaActual.getHabitacion() != null) {
-            numeroHabitacion = String.valueOf(reservaActual.getHabitacion().getNumHabitacion());
+        if (reservaActual.getHabitaciones() != null && !reservaActual.getHabitaciones().isEmpty()) {
+            numeroHabitacion = reservaActual.getHabitaciones().stream()
+                    .map(h -> String.valueOf(h.getNumHabitacion()))
+                    .collect(Collectors.joining(", "));
 
-            if (reservaActual.getHabitacion().getTipoHabitacion() != null
-                    && reservaActual.getHabitacion().getTipoHabitacion().getNombre() != null) {
-                nombreHabitacion = reservaActual.getHabitacion().getTipoHabitacion().getNombre();
-            } else if (reservaActual.getHabitacion().getNombreTipoHabitacion() != null) {
-                nombreHabitacion = reservaActual.getHabitacion().getNombreTipoHabitacion();
-            }
+            nombreHabitacion = reservaActual.getHabitaciones().stream()
+                    .map(Habitacion::getTipoHabitacion)
+                    .filter(java.util.Objects::nonNull)
+                    .map(TipoHabitacion::getNombre)
+                    .filter(java.util.Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.joining(", "));
         }
 
         String nombreUsuario = reservaActual.getNombreCliente() != null
@@ -915,7 +935,7 @@ public void init() {
                 r.getEmail(),
                 r.getTelefono(),
                 r.getObservaciones(),
-                r.getHabitacion().getIdHabitacion()
+                obtenerNumerosHabitaciones(r)
             })
                     .collect(java.util.stream.Collectors.toList());
 
@@ -945,7 +965,7 @@ public void init() {
                 r.getEmail(),
                 r.getTelefono(),
                 r.getObservaciones(),
-                r.getHabitacion() != null ? r.getHabitacion().getIdHabitacion() : ""
+                obtenerNumerosHabitaciones(r)
             })
                     .collect(java.util.stream.Collectors.toList());
 

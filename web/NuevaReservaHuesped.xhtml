@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       lang="es">
     <h:head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
@@ -861,6 +862,22 @@
                                                 update="panelResumen ocupacionesJson montoPago" />
                                     </p:selectCheckboxMenu>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="cantidadHabitaciones" class="form-label">
+                                        <i class="bi bi-123" style="color: #1a7c8f;"></i> Cantidad
+                                    </label>
+                                    <p:inputNumber id="cantidadHabitaciones" value="#{reservaHuespedBean.cantidadHabitacionesSeleccionadas}"
+                                                   disabled="#{reservaHuespedBean.habitacionInputDeshabilitado}"
+                                                   minValue="1" styleClass="form-control">
+                                        <p:ajax event="valueChange" listener="#{reservaHuespedBean.onCantidadHabitacionesChange}"
+                                                update="habitacion panelResumen ocupacionesJson montoPago" />
+                                    </p:inputNumber>
+                                    <p:commandButton value="Agregar habitaciones" icon="bi bi-plus-circle"
+                                                     actionListener="#{reservaHuespedBean.agregarSeleccionHabitaciones}"
+                                                     update="habitacion panelResumen ocupacionesJson montoPago seleccionPorTipo"
+                                                     styleClass="btn btn-sm btn-primary mt-2" />
+                                </div>
                             </div>
 
                             <!-- Fila 2: Huésped y Nombre del Cliente -->
@@ -943,6 +960,51 @@
                                                      styleClass="form-control" rows="4" />
                                 </div>
                             </div>
+
+                            <h:panelGroup id="seleccionPorTipo" layout="block">
+                                <div class="form-card">
+                                    <h5><i class="bi bi-list-check"></i> Habitaciones seleccionadas</h5>
+                                    <h:panelGroup rendered="#{empty reservaHuespedBean.seleccionesPorTipo}">
+                                        <div class="alert alert-info mb-0">Aún no has agregado habitaciones a la reserva.</div>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup rendered="#{not empty reservaHuespedBean.seleccionesPorTipo}">
+                                        <table class="table table-sm align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tipo</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Habitaciones</th>
+                                                    <th>Subtotal</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{reservaHuespedBean.seleccionesPorTipo}" var="seleccion">
+                                                    <tr>
+                                                        <td>#{seleccion.tipo.nombre}</td>
+                                                        <td>#{seleccion.cantidad}</td>
+                                                        <td>#{seleccion.numerosHabitaciones}</td>
+                                                        <td>
+                                                            <h:outputText value="#{seleccion.calcularTotalPorNoches(reservaHuespedBean.numeroNoches)}">
+                                                                <f:convertNumber type="currency" currencySymbol="$" groupingUsed="true"
+                                                                                 minFractionDigits="2" maxFractionDigits="2" />
+                                                            </h:outputText>
+                                                        </td>
+                                                        <td>
+                                                            <p:commandLink styleClass="btn btn-outline-danger btn-sm"
+                                                                           actionListener="#{reservaHuespedBean.eliminarSeleccionTipo(seleccion.tipo.idTipoHabitacion)}"
+                                                                           update="seleccionPorTipo panelResumen habitacion ocupacionesJson montoPago">
+                                                                <i class="bi bi-trash"></i>
+                                                            </p:commandLink>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </h:panelGroup>
+                                </div>
+                            </h:panelGroup>
                         </div>
 
                         <!-- RESUMEN Y PAGO -->
@@ -951,15 +1013,24 @@
                                 <div class="summary-card">
                                     <h5><i class="bi bi-receipt"></i> Resumen</h5>
 
-                                    <div class="summary-item">
-                                        <strong>Tipo:</strong>
-                                        <span>#{reservaHuespedBean.resumenTipoHabitacion}</span>
-                                    </div>
-
-                                    <div class="summary-item">
-                                        <strong>Habitación:</strong>
-                                        <span>#{reservaHuespedBean.resumenHabitacion}</span>
-                                    </div>
+                                    <h:panelGroup rendered="#{not empty reservaHuespedBean.seleccionesPorTipo}">
+                                        <div class="summary-item" style="flex-direction: column; align-items: flex-start;">
+                                            <strong>Habitaciones añadidas:</strong>
+                                            <ul style="padding-left: 18px; margin: 6px 0 0 0;">
+                                                <ui:repeat value="#{reservaHuespedBean.seleccionesPorTipo}" var="seleccion">
+                                                    <li>
+                                                        #{seleccion.tipo.nombre} - #{seleccion.cantidad} hab. (#{seleccion.numerosHabitaciones})
+                                                    </li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </div>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{empty reservaHuespedBean.seleccionesPorTipo}">
+                                        <div class="summary-item">
+                                            <strong>Habitaciones:</strong>
+                                            <span>#{reservaHuespedBean.resumenHabitacion}</span>
+                                        </div>
+                                    </h:panelGroup>
 
                                     <div class="summary-item">
                                         <strong>Entrada:</strong>
@@ -974,6 +1045,11 @@
                                     <div class="summary-item">
                                         <strong>Noches:</strong>
                                         <span>#{reservaHuespedBean.numeroNoches}</span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Total de habitaciones:</strong>
+                                        <span>#{reservaHuespedBean.cantidadTotalHabitacionesSeleccionadas}</span>
                                     </div>
 
                                     <div class="summary-item">

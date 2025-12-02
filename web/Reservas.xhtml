@@ -646,7 +646,7 @@
                                                 <tr>
                                                     <td>#{loop.index + 1}</td>
                                                     <td>
-                                                        Habitación #{reserva.habitacion != null ? reserva.habitacion.numHabitacion : 'Sin asignar'}
+                                                        #{reservaBean.obtenerResumenHabitaciones(reserva)}
                                                     </td>
                                                     <td>#{reserva.nombreCliente}</td>
                                                     <td>#{reservaBean.formatearFecha(reserva.checkin)}</td>
