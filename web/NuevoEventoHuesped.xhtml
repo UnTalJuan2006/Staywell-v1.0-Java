@@ -1110,105 +1110,108 @@
                 </h:form>
             </div>
         </div>
-        <script type="text/javascript">
-            (function () {
+      <script type="text/javascript">
+//<![CDATA[
+(function () {
 
-                function parseOcupaciones() {
-                    const nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-                    const rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-                    if (!rawJson) {
-                        return [];
-                    }
+    function parseOcupaciones() {
+        var nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+        var rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+        if (!rawJson) {
+            return [];
+        }
 
-                    try {
-                        const datos = JSON.parse(rawJson);
-                        if (!Array.isArray(datos)) {
-                            return [];
-                        }
+        try {
+            var datos = JSON.parse(rawJson);
+            if (!Array.isArray(datos)) {
+                return [];
+            }
 
-                        return datos.map(function (rango) {
-                            if (!rango || !rango.from) {
-                                return null;
-                            }
-
-                            const from = new Date(rango.from);
-                            const to = new Date(rango.to || rango.from);
-
-                            if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                                return null;
-                            }
-
-                            return {from: from, to: to};
-                        }).filter(Boolean);
-
-                    } catch (e) {
-                        console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-                        return [];
-                    }
+            return datos.map(function (rango) {
+                if (!rango || !rango.from) {
+                    return null;
                 }
 
-                function initHoraPicker(componenteId) {
-                    const input = document.getElementById("formEvento:" + componenteId);
-                    if (!input || !window.flatpickr) {
-                        return;
-                    }
+                var from = new Date(rango.from);
+                var to = new Date(rango.to || rango.from);
 
-                    if (input._flatpickr) {
-                        input._flatpickr.destroy();
-                    }
-
-                    window.flatpickr(input, {
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                        time_24hr: true,
-                        allowInput: true
-                    });
+                if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                    return null;
                 }
 
-                function initFechaPicker(disabledRanges) {
-                    const input = document.getElementById("formEvento:fechaEvento");
-                    if (!input || !window.flatpickr) {
-                        return;
-                    }
+                return {from: from, to: to};
+            }).filter(Boolean);
 
-                    if (input._flatpickr) {
-                        input._flatpickr.destroy();
-                    }
+        } catch (e) {
+            console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+            return [];
+        }
+    }
 
-                    window.flatpickr(input, {
-                        dateFormat: "Y-m-d",
-                        altInput: true,
-                        altFormat: "d/m/Y",
-                        minDate: "today",
-                        allowInput: false,
-                        disable: disabledRanges
-                    });
-                }
+    function initHoraPicker(componenteId) {
+        var input = document.getElementById("formEvento:" + componenteId);
+        if (!input || !window.flatpickr) {
+            return;
+        }
 
-                function inicializarPickersEvento() {
-                    if (!window.flatpickr) {
-                        return;
-                    }
+        if (input._flatpickr) {
+            input._flatpickr.destroy();
+        }
 
-                    const rangosDeshabilitados = parseOcupaciones();
-                    initFechaPicker(rangosDeshabilitados);
-                    initHoraPicker("horaInicio");
-                    initHoraPicker("horaFin");
-                }
+        window.flatpickr(input, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            allowInput: true
+        });
+    }
 
-                document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+    function initFechaPicker(disabledRanges) {
+        var input = document.getElementById("formEvento:fechaEvento");
+        if (!input || !window.flatpickr) {
+            return;
+        }
 
-                if (window.jsf & amp; & amp; jsf.ajax) {
-                    jsf.ajax.addOnEvent(function (data) {
-                        if (data.status === 'success') {
-                            inicializarPickersEvento();
-                        }
-                    });
-                }
+        if (input._flatpickr) {
+            input._flatpickr.destroy();
+        }
 
-            })();
-        </script>
+        window.flatpickr(input, {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            minDate: "today",
+            allowInput: false,
+            disable: disabledRanges
+        });
+    }
+
+    function inicializarPickersEvento() {
+        if (!window.flatpickr) {
+            return;
+        }
+
+        var rangosDeshabilitados = parseOcupaciones();
+        initFechaPicker(rangosDeshabilitados);
+        initHoraPicker("horaInicio");
+        initHoraPicker("horaFin");
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+
+    if (window.jsf && jsf.ajax) {
+        jsf.ajax.addOnEvent(function (data) {
+            if (data.status === 'success') {
+                inicializarPickersEvento();
+            }
+        });
+    }
+
+})();
+//]]>
+</script>
+
 
     </h:body>
 </html>
