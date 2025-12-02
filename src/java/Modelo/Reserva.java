@@ -17,6 +17,7 @@ public class Reserva {
     private String telefono;
     private String observaciones;
     private Habitacion habitacion;
+    private java.util.List<Habitacion> habitaciones = new java.util.ArrayList<>();
     private Usuario usuario;
 
     public int getIdReserva() {
@@ -92,11 +93,32 @@ public class Reserva {
     }
 
     public Habitacion getHabitacion() {
-        return habitacion;
+        if (habitacion != null) {
+            return habitacion;
+        }
+        if (habitaciones != null && !habitaciones.isEmpty()) {
+            return habitaciones.get(0);
+        }
+        return null;
     }
 
     public void setHabitacion(Habitacion habitacion) {
         this.habitacion = habitacion;
+        if (habitacion != null) {
+            this.habitaciones = new java.util.ArrayList<>();
+            this.habitaciones.add(habitacion);
+        }
+    }
+
+    public java.util.List<Habitacion> getHabitaciones() {
+        return habitaciones;
+    }
+
+    public void setHabitaciones(java.util.List<Habitacion> habitaciones) {
+        this.habitaciones = habitaciones;
+        if (habitaciones != null && !habitaciones.isEmpty()) {
+            this.habitacion = habitaciones.get(0);
+        }
     }
 
     public Usuario getUsuario() {

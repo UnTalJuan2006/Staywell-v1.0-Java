@@ -2,9 +2,10 @@ package DAO;
 
 import Controlador.Conexion;
 import Modelo.EnumEstadoReserva;
+import Modelo.EnumEstadoReservaHabitacion;
 import Modelo.Habitacion;
 import Modelo.Reserva;
-import Modelo.TipoHabitacion;
+import Modelo.ReservaHabitaciones;
 import Modelo.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,22 +22,22 @@ import javax.faces.context.FacesContext;
 
 public class ReservaDAO {
 
+    private final ReservaHabitacionesDAO reservaHabitacionesDAO = new ReservaHabitacionesDAO();
+
     public List<Reserva> listar() throws SQLException {
         finalizarReservasVencidas();
 
         List<Reserva> listaReservas = new ArrayList<>();
-        String sql = "SELECT r.*, h.numHabitacion AS numeroHabitacion, h.idTipoHabitacion AS habitacionTipoId, "
-                + "th.nombre AS nombreTipoHabitacion, th.descripcion AS descripcionTipoHabitacion, "
-                + "u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
+        String sql = "SELECT r.*, u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
                 + "FROM reserva r "
-                + "LEFT JOIN habitacion h ON r.idHabitacion = h.idHabitacion "
-                + "LEFT JOIN tipohabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion "
                 + "LEFT JOIN usuario u ON r.idUsuario = u.idUsuario";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                listaReservas.add(mapearReserva(rs));
+                Reserva reserva = mapearReserva(rs);
+                adjuntarHabitaciones(reserva);
+                listaReservas.add(reserva);
             }
         }
 
@@ -47,40 +48,17 @@ public class ReservaDAO {
         finalizarReservasVencidas();
 
         List<Reserva> reservas = new ArrayList<>();
-        String sql = "SELECT r.*, h.numHabitacion AS numeroHabitacion, "
-                + "th.nombre AS nombreTipoHabitacion, th.capacidad AS capacidadTipoHabitacion "
+        String sql = "SELECT r.*, u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
                 + "FROM reserva r "
-                + "LEFT JOIN habitacion h ON r.idHabitacion = h.idHabitacion "
-                + "LEFT JOIN tipohabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion "
+                + "LEFT JOIN usuario u ON r.idUsuario = u.idUsuario "
                 + "WHERE r.idUsuario = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setInt(1, idUsuario);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Reserva reserva = new Reserva();
-                    reserva.setIdReserva(rs.getInt("idReserva"));
-                    reserva.setCheckin(rs.getTimestamp("checkin").toLocalDateTime());
-                    reserva.setCheckout(rs.getTimestamp("checkout").toLocalDateTime());
-                    reserva.setFechaReserva(rs.getTimestamp("fechaReserva").toLocalDateTime());
-                    reserva.setEstado(EnumEstadoReserva.valueOf(rs.getString("estado")));
-                    reserva.setNombreCliente(rs.getString("nombreCliente"));
-                    reserva.setEmail(rs.getString("email"));
-                    reserva.setTelefono(rs.getString("telefono"));
-                    reserva.setObservaciones(rs.getString("observaciones"));
-
-                    // Habitacion
-                    Habitacion h = new Habitacion();
-                    h.setNumHabitacion(rs.getInt("numeroHabitacion"));
-
-                    // TipoHabitacion
-                    TipoHabitacion th = new TipoHabitacion();
-                    th.setNombre(rs.getString("nombreTipoHabitacion"));
-                    th.setCapacidad(rs.getInt("capacidadTipoHabitacion"));
-
-                    h.setTipoHabitacion(th);
-                    reserva.setHabitacion(h);
-
+                    Reserva reserva = mapearReserva(rs);
+                    adjuntarHabitaciones(reserva);
                     reservas.add(reserva);
                 }
             }
@@ -104,12 +82,8 @@ public class ReservaDAO {
 
     public Reserva buscar(int idReserva) throws SQLException {
         Reserva reserva = null;
-        String sql = "SELECT r.*, h.numHabitacion AS numeroHabitacion, h.idTipoHabitacion AS habitacionTipoId, "
-                + "th.nombre AS nombreTipoHabitacion, th.descripcion AS descripcionTipoHabitacion, "
-                + "u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
+        String sql = "SELECT r.*, u.nombre AS nombreUsuario, u.email AS correoUsuario, u.telefono AS telefonoUsuario "
                 + "FROM reserva r "
-                + "LEFT JOIN habitacion h ON r.idHabitacion = h.idHabitacion "
-                + "LEFT JOIN tipohabitacion th ON h.idTipoHabitacion = th.idTipoHabitacion "
                 + "LEFT JOIN usuario u ON r.idUsuario = u.idUsuario "
                 + "WHERE r.idReserva = ?";
 
@@ -119,6 +93,7 @@ public class ReservaDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     reserva = mapearReserva(rs);
+                    adjuntarHabitaciones(reserva);
                 }
             }
         }
@@ -127,8 +102,8 @@ public class ReservaDAO {
     }
 
     public int agregarReserva(Reserva reserva) throws SQLException {
-        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
-                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idUsuario) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conexion = Conexion.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -141,8 +116,7 @@ public class ReservaDAO {
             ps.setString(6, reserva.getEmail());
             ps.setString(7, reserva.getTelefono());
             ps.setString(8, reserva.getObservaciones());
-            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(10, reserva.getUsuario().getIdUsuario());
+            ps.setInt(9, reserva.getUsuario().getIdUsuario());
 
             ps.executeUpdate();
 
@@ -165,8 +139,8 @@ public class ReservaDAO {
             throw new SQLException("No hay usuario logueado en la sesión.");
         }
 
-        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idHabitacion, idUsuario) "
-                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reserva (checkin, checkout, fechaReserva, estado, nombreCliente, email, telefono, observaciones, idUsuario) "
+                + "VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conexion = Conexion.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -181,8 +155,7 @@ public class ReservaDAO {
             ps.setString(6, reserva.getEmail());
             ps.setString(7, reserva.getTelefono());
             ps.setString(8, reserva.getObservaciones());
-            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(10, usuarioLogueado.getIdUsuario());
+            ps.setInt(9, usuarioLogueado.getIdUsuario());
 
             ps.executeUpdate();
 
@@ -199,7 +172,7 @@ public class ReservaDAO {
     
 
     public void actualizar(Reserva reserva) throws SQLException {
-        String sql = "UPDATE reserva SET checkin = ?, checkout = ?, fechaReserva = ?, estado = ?, nombreCliente = ?, email = ?, telefono = ?, observaciones = ?, idHabitacion = ?, idUsuario = ? WHERE idReserva = ?";
+        String sql = "UPDATE reserva SET checkin = ?, checkout = ?, fechaReserva = ?, estado = ?, nombreCliente = ?, email = ?, telefono = ?, observaciones = ?, idUsuario = ? WHERE idReserva = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
             ps.setTimestamp(1, reserva.getCheckin() != null ? Timestamp.valueOf(reserva.getCheckin()) : null);
@@ -210,9 +183,8 @@ public class ReservaDAO {
             ps.setString(6, reserva.getEmail());
             ps.setString(7, reserva.getTelefono());
             ps.setString(8, reserva.getObservaciones());
-            ps.setInt(9, reserva.getHabitacion().getIdHabitacion());
-            ps.setInt(10, reserva.getUsuario().getIdUsuario());
-            ps.setInt(11, reserva.getIdReserva());
+            ps.setInt(9, reserva.getUsuario().getIdUsuario());
+            ps.setInt(10, reserva.getIdReserva());
 
             ps.executeUpdate();
         }
@@ -234,53 +206,27 @@ public class ReservaDAO {
             throw new IllegalArgumentException("Las fechas de verificación no pueden ser nulas");
         }
 
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM reserva WHERE idHabitacion = ? "
-                + "AND (? < COALESCE(checkout, ?)) "
-                + "AND (? > COALESCE(checkin, ?))");
-
-        if (reservaExcluirId != null) {
-            sql.append(" AND idReserva <> ?");
-        }
-
-        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql.toString())) {
-            Timestamp checkinTs = Timestamp.valueOf(checkin);
-            Timestamp checkoutTs = Timestamp.valueOf(checkout);
-
-            ps.setInt(1, habitacionId);
-            ps.setTimestamp(2, checkinTs);
-            ps.setTimestamp(3, checkoutTs);
-            ps.setTimestamp(4, checkoutTs);
-            ps.setTimestamp(5, checkinTs);
-
-            if (reservaExcluirId != null) {
-                ps.setInt(6, reservaExcluirId);
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) == 0;
-                }
-            }
-        }
-
-        return true;
+        return reservaHabitacionesDAO.habitacionDisponible(habitacionId, checkin, checkout, reservaExcluirId);
     }
 
     public List<Reserva> listarOcupacionesHabitacion(int habitacionId, Integer reservaExcluirId) throws SQLException {
         List<Reserva> ocupaciones = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT idReserva, checkin, checkout FROM reserva WHERE idHabitacion = ?");
+        StringBuilder sql = new StringBuilder("SELECT r.idReserva, r.checkin, r.checkout FROM reservahabitaciones rh "
+                + "INNER JOIN reserva r ON r.idReserva = rh.idReserva "
+                + "WHERE rh.idHabitacion = ? AND rh.estado = ?");
 
         if (reservaExcluirId != null) {
-            sql.append(" AND idReserva <> ?");
+            sql.append(" AND r.idReserva <> ?");
         }
 
-        sql.append(" ORDER BY checkin");
+        sql.append(" ORDER BY r.checkin");
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql.toString())) {
             ps.setInt(1, habitacionId);
+            ps.setString(2, EnumEstadoReservaHabitacion.Activa.name());
 
             if (reservaExcluirId != null) {
-                ps.setInt(2, reservaExcluirId);
+                ps.setInt(3, reservaExcluirId);
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -307,6 +253,7 @@ public class ReservaDAO {
     }
 
     public void eliminar(int idReserva) throws SQLException {
+        reservaHabitacionesDAO.eliminarPorReserva(idReserva);
         String sql = "DELETE FROM reserva WHERE idReserva = ?";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
@@ -363,19 +310,6 @@ public class ReservaDAO {
         reserva.setTelefono(rs.getString("telefono"));
         reserva.setObservaciones(rs.getString("observaciones"));
 
-        Habitacion habitacion = new Habitacion();
-        habitacion.setIdHabitacion(rs.getInt("idHabitacion"));
-        habitacion.setNumHabitacion(rs.getInt("numeroHabitacion"));
-
-        if (rs.getObject("habitacionTipoId") != null) {
-            Modelo.TipoHabitacion tipoHabitacion = new Modelo.TipoHabitacion();
-            tipoHabitacion.setIdTipoHabitacion(rs.getInt("habitacionTipoId"));
-            tipoHabitacion.setNombre(rs.getString("nombreTipoHabitacion"));
-            tipoHabitacion.setDescripcion(rs.getString("descripcionTipoHabitacion"));
-            habitacion.setTipoHabitacion(tipoHabitacion);
-        }
-        reserva.setHabitacion(habitacion);
-
         Usuario usuario = new Usuario();
         usuario.setIdUsuario(rs.getInt("idUsuario"));
         usuario.setNombre(rs.getString("nombreUsuario"));
@@ -384,6 +318,21 @@ public class ReservaDAO {
         reserva.setUsuario(usuario);
 
         return reserva;
+    }
+
+    private void adjuntarHabitaciones(Reserva reserva) throws SQLException {
+        if (reserva == null || reserva.getIdReserva() <= 0) {
+            return;
+        }
+
+        List<ReservaHabitaciones> relaciones = reservaHabitacionesDAO.obtenerHabitacionesPorReserva(reserva.getIdReserva());
+        List<Habitacion> habitaciones = new ArrayList<>();
+
+        for (ReservaHabitaciones relacion : relaciones) {
+            habitaciones.add(relacion.getHabitacion());
+        }
+
+        reserva.setHabitaciones(habitaciones);
     }
 
   public Map<String, Integer> obtenerReservasPorMes(LocalDate fechaInicio) throws SQLException {
