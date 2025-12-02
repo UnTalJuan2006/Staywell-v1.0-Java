@@ -57,7 +57,9 @@ public class ReservaHuespedBean implements Serializable {
     private String fechasOcupadasJson = "[]";
 
     private Integer tipoHabitacionSeleccionada;
+    private Integer cantidadHabitacionesSeleccionadas;
     private List<Integer> habitacionesSeleccionadas = new ArrayList<>();
+    private final java.util.Map<Integer, SeleccionHabitacionesTipo> seleccionesPorTipo = new java.util.LinkedHashMap<>();
 
     private Date checkin;
     private Date checkout;
@@ -68,7 +70,6 @@ public class ReservaHuespedBean implements Serializable {
     private String email;
     private String telefono;
 
-    private BigDecimal precioPorNoche = BigDecimal.ZERO;
     private BigDecimal totalReserva = BigDecimal.ZERO;
     private BigDecimal subtotalReserva = BigDecimal.ZERO;
     private BigDecimal ivaReserva = BigDecimal.ZERO;
@@ -87,6 +88,52 @@ public class ReservaHuespedBean implements Serializable {
     private LocalDateTime fechaTransaccion;
     private BigDecimal totalConfirmado = BigDecimal.ZERO;
     private EnumPago metodoPagoConfirmado;
+
+    public static class SeleccionHabitacionesTipo implements Serializable {
+
+        private TipoHabitacion tipo;
+        private List<Habitacion> habitaciones = new ArrayList<>();
+
+        public TipoHabitacion getTipo() {
+            return tipo;
+        }
+
+        public void setTipo(TipoHabitacion tipo) {
+            this.tipo = tipo;
+        }
+
+        public List<Habitacion> getHabitaciones() {
+            return habitaciones;
+        }
+
+        public void setHabitaciones(List<Habitacion> habitaciones) {
+            this.habitaciones = habitaciones;
+        }
+
+        public int getCantidad() {
+            return habitaciones != null ? habitaciones.size() : 0;
+        }
+
+        public BigDecimal calcularTotalPorNoches(long noches) {
+            if (tipo == null || tipo.getPrecio() <= 0 || noches <= 0) {
+                return BigDecimal.ZERO;
+            }
+
+            return BigDecimal.valueOf(tipo.getPrecio())
+                    .multiply(BigDecimal.valueOf(noches))
+                    .multiply(BigDecimal.valueOf(getCantidad()));
+        }
+
+        public String getNumerosHabitaciones() {
+            if (habitaciones == null || habitaciones.isEmpty()) {
+                return "";
+            }
+
+            return habitaciones.stream()
+                    .map(h -> String.valueOf(h.getNumHabitacion()))
+                    .collect(Collectors.joining(", "));
+        }
+    }
 
     @PostConstruct
     public void init() {
@@ -118,8 +165,10 @@ public class ReservaHuespedBean implements Serializable {
 
     public void prepararNuevaReserva() {
         tipoHabitacionSeleccionada = null;
+        cantidadHabitacionesSeleccionadas = null;
         habitacionesSeleccionadas = new ArrayList<>();
         habitacionesDisponibles = new ArrayList<>();
+        seleccionesPorTipo.clear();
         checkin = null;
         checkout = null;
         observaciones = null;
@@ -127,7 +176,6 @@ public class ReservaHuespedBean implements Serializable {
         totalReserva = BigDecimal.ZERO;
         subtotalReserva = BigDecimal.ZERO;
         ivaReserva = BigDecimal.ZERO;
-        precioPorNoche = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
         tipoPagoSeleccionado = null;
         numeroTarjeta = null;
@@ -140,8 +188,8 @@ public class ReservaHuespedBean implements Serializable {
 
     public void onTipoHabitacionChange() {
         habitacionesSeleccionadas = new ArrayList<>();
+        cantidadHabitacionesSeleccionadas = null;
         actualizarHabitacionesDisponibles();
-        actualizarPrecioPorNoche();
         recalcularResumen();
         fechasOcupadasJson = "[]";
     }
@@ -153,6 +201,12 @@ public class ReservaHuespedBean implements Serializable {
 
     public void onFechasChange() {
         actualizarHabitacionesDisponibles();
+        revalidarSeleccionesConFechas();
+        recalcularResumen();
+    }
+
+    public void onCantidadHabitacionesChange() {
+        ajustarSeleccionSegunCantidad();
         recalcularResumen();
     }
 
@@ -172,6 +226,7 @@ public class ReservaHuespedBean implements Serializable {
                 List<Habitacion> disponibles = new ArrayList<>();
                 for (Habitacion habitacion : habitacionesPorTipo) {
                     if (EnumEstadoHabitacion.Disponible.equals(habitacion.getEstado())
+                            && !habitacionYaSeleccionada(habitacion.getIdHabitacion())
                             && reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
                         disponibles.add(habitacion);
                     }
@@ -179,7 +234,7 @@ public class ReservaHuespedBean implements Serializable {
                 habitacionesDisponibles = disponibles;
             } else {
                 habitacionesDisponibles = habitacionesPorTipo.stream()
-                        .filter(h -> EnumEstadoHabitacion.Disponible.equals(h.getEstado()))
+                        .filter(h -> EnumEstadoHabitacion.Disponible.equals(h.getEstado()) && !habitacionYaSeleccionada(h.getIdHabitacion()))
                         .collect(Collectors.toCollection(ArrayList::new));
             }
 
@@ -194,16 +249,7 @@ public class ReservaHuespedBean implements Serializable {
         }
     }
 
-    private void actualizarPrecioPorNoche() {
-        precioPorNoche = BigDecimal.ZERO;
-        TipoHabitacion tipo = obtenerTipoSeleccionado();
-        if (tipo != null) {
-            precioPorNoche = BigDecimal.valueOf(tipo.getPrecio());
-        }
-    }
-
     private void recalcularResumen() {
-        actualizarPrecioPorNoche();
         numeroNoches = 0;
         totalReserva = BigDecimal.ZERO;
 
@@ -224,13 +270,9 @@ public class ReservaHuespedBean implements Serializable {
             return;
         }
 
-        int cantidadHabitaciones = habitacionesSeleccionadas != null ? habitacionesSeleccionadas.size() : 0;
-
-        if (precioPorNoche.compareTo(BigDecimal.ZERO) > 0 && cantidadHabitaciones > 0) {
-            totalReserva = precioPorNoche
-                    .multiply(BigDecimal.valueOf(numeroNoches))
-                    .multiply(BigDecimal.valueOf(cantidadHabitaciones));
-        }
+        totalReserva = obtenerSeleccionesCompletas().stream()
+                .map(sel -> sel.calcularTotalPorNoches(numeroNoches))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         calcularDesgloseImpuestos();
     }
@@ -273,14 +315,47 @@ public class ReservaHuespedBean implements Serializable {
         return seleccionado.orElse(null);
     }
 
-    private List<Habitacion> obtenerHabitacionesSeleccionadas() {
+    private boolean habitacionYaSeleccionada(int idHabitacion) {
+        return seleccionesPorTipo.values().stream()
+                .anyMatch(sel -> sel.getHabitaciones().stream()
+                        .anyMatch(h -> h.getIdHabitacion() == idHabitacion));
+    }
+
+    private List<Integer> obtenerIdsHabitacionesSeleccionadas() {
+        List<Integer> ids = seleccionesPorTipo.values().stream()
+                .flatMap(sel -> sel.getHabitaciones().stream())
+                .map(Habitacion::getIdHabitacion)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (habitacionesSeleccionadas != null) {
+            ids.addAll(habitacionesSeleccionadas);
+        }
+
+        return ids;
+    }
+
+    private List<SeleccionHabitacionesTipo> obtenerSeleccionesCompletas() {
+        List<SeleccionHabitacionesTipo> selecciones = new ArrayList<>(seleccionesPorTipo.values());
+
+        if (tipoHabitacionSeleccionada != null && habitacionesSeleccionadas != null && !habitacionesSeleccionadas.isEmpty()) {
+            TipoHabitacion tipo = obtenerTipoSeleccionado();
+            SeleccionHabitacionesTipo seleccionTemporal = new SeleccionHabitacionesTipo();
+            seleccionTemporal.setTipo(tipo);
+            seleccionTemporal.setHabitaciones(obtenerHabitacionesDesdeIds(habitacionesSeleccionadas));
+            selecciones.add(seleccionTemporal);
+        }
+
+        return selecciones;
+    }
+
+    private List<Habitacion> obtenerHabitacionesDesdeIds(List<Integer> ids) {
         List<Habitacion> seleccionadas = new ArrayList<>();
 
-        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
+        if (ids == null || ids.isEmpty()) {
             return seleccionadas;
         }
 
-        for (Integer idHabitacion : habitacionesSeleccionadas) {
+        for (Integer idHabitacion : ids) {
             Optional<Habitacion> enMemoria = habitacionesDisponibles.stream()
                     .filter(h -> h.getIdHabitacion() == idHabitacion)
                     .findFirst();
@@ -305,17 +380,180 @@ public class ReservaHuespedBean implements Serializable {
         return seleccionadas;
     }
 
+    private boolean validarDisponibilidadHabitaciones(LocalDateTime fechaEntrada, LocalDateTime fechaSalida, List<Habitacion> habitacionesElegidas) {
+        try {
+            for (Habitacion habitacion : habitacionesElegidas) {
+                if (!reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
+                            "La habitación " + habitacion.getNumHabitacion() + " no está disponible en el rango seleccionado."));
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                    "No se pudo verificar la disponibilidad de las habitaciones."));
+            return false;
+        }
+
+        return true;
+    }
+
+    public void agregarSeleccionHabitaciones() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        TipoHabitacion tipo = obtenerTipoSeleccionado();
+        if (tipo == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Tipo requerido",
+                    "Seleccione un tipo de habitación."));
+            return;
+        }
+
+        if (checkin == null || checkout == null) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Fechas requeridas",
+                    "Seleccione las fechas antes de elegir habitaciones."));
+            return;
+        }
+
+        ajustarSeleccionSegunCantidad();
+
+        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Habitaciones requeridas",
+                    "Seleccione al menos una habitación disponible."));
+            return;
+        }
+
+        LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
+        LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
+
+        List<Habitacion> seleccionadas = obtenerHabitacionesDesdeIds(habitacionesSeleccionadas);
+        if (!validarDisponibilidadHabitaciones(fechaEntrada, fechaSalida, seleccionadas)) {
+            return;
+        }
+
+        SeleccionHabitacionesTipo seleccion = new SeleccionHabitacionesTipo();
+        seleccion.setTipo(tipo);
+        seleccion.setHabitaciones(seleccionadas);
+        seleccionesPorTipo.put(tipo.getIdTipoHabitacion(), seleccion);
+
+        habitacionesSeleccionadas = new ArrayList<>();
+        cantidadHabitacionesSeleccionadas = null;
+        actualizarHabitacionesDisponibles();
+        recalcularResumen();
+        actualizarFechasOcupadas();
+    }
+
+    public void eliminarSeleccionTipo(Integer tipoId) {
+        if (tipoId == null) {
+            return;
+        }
+
+        seleccionesPorTipo.remove(tipoId);
+        actualizarHabitacionesDisponibles();
+        recalcularResumen();
+        actualizarFechasOcupadas();
+    }
+
+    public List<Habitacion> obtenerHabitacionesSeleccionadas() {
+        List<Habitacion> seleccionadas = seleccionesPorTipo.values().stream()
+                .flatMap(sel -> sel.getHabitaciones().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        if (tipoHabitacionSeleccionada != null && habitacionesSeleccionadas != null && !habitacionesSeleccionadas.isEmpty()) {
+            seleccionadas.addAll(obtenerHabitacionesDesdeIds(habitacionesSeleccionadas));
+        }
+
+        return seleccionadas;
+    }
+
+    private void ajustarSeleccionSegunCantidad() {
+        if (habitacionesDisponibles == null || habitacionesDisponibles.isEmpty()) {
+            habitacionesSeleccionadas = new ArrayList<>();
+            return;
+        }
+
+        if (cantidadHabitacionesSeleccionadas == null || cantidadHabitacionesSeleccionadas <= 0) {
+            habitacionesSeleccionadas = new ArrayList<>();
+            return;
+        }
+
+        List<Integer> seleccionActual = habitacionesSeleccionadas != null ? new ArrayList<>(habitacionesSeleccionadas) : new ArrayList<>();
+
+        // Remover excedentes si hay más seleccionadas que la cantidad
+        if (seleccionActual.size() > cantidadHabitacionesSeleccionadas) {
+            seleccionActual = seleccionActual.stream()
+                    .limit(cantidadHabitacionesSeleccionadas)
+                    .collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        // Añadir habitaciones disponibles hasta completar la cantidad solicitada
+        for (Habitacion disponible : habitacionesDisponibles) {
+            if (seleccionActual.size() >= cantidadHabitacionesSeleccionadas) {
+                break;
+            }
+            if (!seleccionActual.contains(disponible.getIdHabitacion())) {
+                seleccionActual.add(disponible.getIdHabitacion());
+            }
+        }
+
+        if (seleccionActual.size() < cantidadHabitacionesSeleccionadas) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Disponibilidad insuficiente",
+                            "No hay suficientes habitaciones disponibles del tipo seleccionado."));
+        }
+
+        habitacionesSeleccionadas = seleccionActual;
+    }
+
+    private void revalidarSeleccionesConFechas() {
+        LocalDateTime fechaEntrada = convertirAHoraExacta(checkin);
+        LocalDateTime fechaSalida = convertirAHoraExacta(checkout);
+
+        if (fechaEntrada == null || fechaSalida == null || seleccionesPorTipo.isEmpty()) {
+            return;
+        }
+
+        List<Integer> tiposRemovidos = new ArrayList<>();
+
+        for (java.util.Map.Entry<Integer, SeleccionHabitacionesTipo> entry : seleccionesPorTipo.entrySet()) {
+            SeleccionHabitacionesTipo seleccion = entry.getValue();
+            List<Habitacion> validas = new ArrayList<>();
+
+            for (Habitacion habitacion : seleccion.getHabitaciones()) {
+                try {
+                    if (reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
+                        validas.add(habitacion);
+                    }
+                } catch (SQLException ex) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
+                                    "No se pudo validar la disponibilidad de la habitación " + habitacion.getNumHabitacion() + "."));
+                }
+            }
+
+            if (validas.isEmpty()) {
+                tiposRemovidos.add(entry.getKey());
+            } else {
+                seleccion.setHabitaciones(validas);
+            }
+        }
+
+        for (Integer tipoId : tiposRemovidos) {
+            seleccionesPorTipo.remove(tipoId);
+        }
+    }
+
     private void actualizarFechasOcupadas() {
         fechasOcupadasJson = "[]";
 
-        if (habitacionesSeleccionadas == null || habitacionesSeleccionadas.isEmpty()) {
+        List<Integer> idsSeleccionados = obtenerIdsHabitacionesSeleccionadas();
+        if (idsSeleccionados.isEmpty()) {
             return;
         }
 
         try {
             List<Reserva> ocupaciones = new ArrayList<>();
 
-            for (Integer idHabitacion : habitacionesSeleccionadas) {
+            for (Integer idHabitacion : idsSeleccionados) {
                 ocupaciones.addAll(reservaDAO.listarOcupacionesHabitacion(idHabitacion, null));
             }
 
@@ -367,12 +605,6 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
-        if (tipoHabitacionSeleccionada == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
-                    "Seleccione un tipo de habitación."));
-            return null;
-        }
-
         List<Habitacion> habitacionesElegidas = obtenerHabitacionesSeleccionadas();
         if (habitacionesElegidas.isEmpty()) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia",
@@ -395,17 +627,7 @@ public class ReservaHuespedBean implements Serializable {
             return null;
         }
 
-        try {
-            for (Habitacion habitacion : habitacionesElegidas) {
-                if (!reservaHabitacionesDAO.habitacionDisponible(habitacion.getIdHabitacion(), fechaEntrada, fechaSalida, null)) {
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No disponible",
-                            "La habitación " + habitacion.getNumHabitacion() + " no está disponible en el rango seleccionado."));
-                    return null;
-                }
-            }
-        } catch (SQLException ex) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                    "No se pudo verificar la disponibilidad de las habitaciones."));
+        if (!validarDisponibilidadHabitaciones(fechaEntrada, fechaSalida, habitacionesElegidas)) {
             return null;
         }
         if (!validarDatosPago(context)) {
@@ -670,6 +892,13 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public String getResumenTipoHabitacion() {
+        if (!seleccionesPorTipo.isEmpty()) {
+            if (seleccionesPorTipo.size() > 1) {
+                return "Múltiples tipos";
+            }
+            return seleccionesPorTipo.values().iterator().next().getTipo().getNombre();
+        }
+
         TipoHabitacion tipo = obtenerTipoSeleccionado();
         return tipo != null ? tipo.getNombre() : "Sin seleccionar";
     }
@@ -719,6 +948,15 @@ public class ReservaHuespedBean implements Serializable {
         this.habitacionesSeleccionadas = habitacionesSeleccionadas != null ? habitacionesSeleccionadas : new ArrayList<>();
         actualizarFechasOcupadas();
         recalcularResumen();
+    }
+
+    public Integer getCantidadHabitacionesSeleccionadas() {
+        return cantidadHabitacionesSeleccionadas;
+    }
+
+    public void setCantidadHabitacionesSeleccionadas(Integer cantidadHabitacionesSeleccionadas) {
+        this.cantidadHabitacionesSeleccionadas = cantidadHabitacionesSeleccionadas;
+        onCantidadHabitacionesChange();
     }
 
     public Date getCheckin() {
@@ -772,7 +1010,15 @@ public class ReservaHuespedBean implements Serializable {
     }
 
     public BigDecimal getPrecioPorNoche() {
-        return precioPorNoche;
+        return obtenerSeleccionesCompletas().stream()
+                .map(sel -> {
+                    if (sel.getTipo() == null) {
+                        return BigDecimal.ZERO;
+                    }
+                    return BigDecimal.valueOf(sel.getTipo().getPrecio())
+                            .multiply(BigDecimal.valueOf(sel.getCantidad()));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public BigDecimal getTotalReserva() {
@@ -845,5 +1091,13 @@ public class ReservaHuespedBean implements Serializable {
 
     public void setCodigoSeguridadTarjeta(String codigoSeguridadTarjeta) {
         this.codigoSeguridadTarjeta = codigoSeguridadTarjeta;
+    }
+
+    public List<SeleccionHabitacionesTipo> getSeleccionesPorTipo() {
+        return new ArrayList<>(seleccionesPorTipo.values());
+    }
+
+    public long getCantidadTotalHabitacionesSeleccionadas() {
+        return obtenerHabitacionesSeleccionadas().size();
     }
 }
