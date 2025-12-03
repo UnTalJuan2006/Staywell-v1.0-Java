@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -74,6 +75,16 @@ public class NotificacionBean implements Serializable {
 
     public List<Notificacion> getNotificacionesUsuario() {
         return notificacionesUsuario;
+    }
+
+    public List<Notificacion> getUltimasNotificaciones() {
+        if (notificacionesUsuario == null) {
+            return new ArrayList<>();
+        }
+
+        return notificacionesUsuario.stream()
+                .limit(5)
+                .collect(Collectors.toList());
     }
 
     public Notificacion getNotificacionEdicion() {
