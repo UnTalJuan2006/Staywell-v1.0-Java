@@ -60,6 +60,43 @@ public class UsuarioDAO {
         return listaUsuarios;
     }
 
+    public List<Usuario> listarAdministradores() throws SQLException {
+        List<Usuario> administradores = new ArrayList<>();
+        String sql = "SELECT * FROM usuario WHERE LOWER(rol) = 'admin'";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Usuario u = new Usuario();
+                u.setIdUsuario(rs.getInt("idUsuario"));
+                u.setNombre(rs.getString("nombre"));
+                u.setEmail(rs.getString("email"));
+
+                Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
+                if (fechaCreacion != null) {
+                    u.setFechaCreacion(fechaCreacion.toLocalDateTime());
+                }
+
+                Timestamp fechaActualizacion = rs.getTimestamp("fechaActualizacion");
+                if (fechaActualizacion != null) {
+                    u.setFechaActualizacion(fechaActualizacion.toLocalDateTime());
+                }
+
+                u.setRol(EnumRoles.ADMIN);
+                u.setEstado(EnumEstadoUsuario.valueOf(rs.getString("estado")));
+                u.setDireccion(rs.getString("direccion"));
+                u.setTelefono(rs.getString("telefono"));
+
+                administradores.add(u);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar administradores: " + e.getMessage());
+            throw e;
+        }
+
+        return administradores;
+    }
+
     public void agregar(Usuario u) throws SQLException {
         String sql = "INSERT INTO usuario (nombre, email, fechaCreacion, fechaActualizacion, rol, password, estado, direccion, telefono) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";

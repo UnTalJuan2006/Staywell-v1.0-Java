@@ -77,6 +77,30 @@ public class NotificacionDAO {
         return lista;
     }
 
+    public List<Notificacion> listarNuevasReservasParaAdmin(int idUsuario) throws SQLException {
+        List<Notificacion> lista = new ArrayList<>();
+
+        String sql = "SELECT n.idNotificacion, n.titulo, n.mensaje, n.fechaEnvio, n.estado, n.tipo, "
+                + "u.idUsuario, u.nombre, u.email "
+                + "FROM notificacion n "
+                + "LEFT JOIN usuario u ON n.idUsuario = u.idUsuario "
+                + "WHERE n.tipo = ? AND (n.idUsuario IS NULL OR n.idUsuario = ?) "
+                + "ORDER BY n.fechaEnvio DESC";
+
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+            ps.setString(1, EnumTipoNotificacion.RESERVANUEVA.getValorBaseDatos());
+            ps.setInt(2, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearNotificacion(rs));
+                }
+            }
+        }
+
+        return lista;
+    }
+
     public void actualizarEstado(int idNotificacion, EnumEstadoNotificacion estado) throws SQLException {
         String sql = "UPDATE notificacion SET estado = ? WHERE idNotificacion = ?";
 
@@ -111,20 +135,31 @@ public class NotificacionDAO {
     
     public void enviarPorUsuario(Notificacion notificacion, int idUsuario) throws SQLException {
 
-    String sql = "INSERT INTO notificacion (titulo, mensaje, fechaEnvio, estado, tipo, idUsuario) "
-               + "VALUES (?, ?, NOW(), ?, ?, ?)";
+        String sql = "INSERT INTO notificacion (titulo, mensaje, fechaEnvio, estado, tipo, idUsuario) "
+                + "VALUES (?, ?, NOW(), ?, ?, ?)";
 
-    try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
+        try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
 
-        ps.setString(1, notificacion.getTitulo());
-        ps.setString(2, notificacion.getMensaje());
-        ps.setString(3, notificacion.getEstado().name());
-        ps.setString(4, notificacion.getTipo().name());
-        ps.setInt(5, idUsuario);
+            ps.setString(1, notificacion.getTitulo());
+            ps.setString(2, notificacion.getMensaje());
+            ps.setString(3, notificacion.getEstado().name());
+            ps.setString(4, notificacion.getTipo().getValorBaseDatos());
+            ps.setInt(5, idUsuario);
 
-        ps.executeUpdate();
+            ps.executeUpdate();
+        }
     }
-}
+
+    public void enviarNuevasReservasParaAdmins(Notificacion notificacion, List<Usuario> administradores) throws SQLException {
+        if (administradores == null || administradores.isEmpty()) {
+            enviarGeneral(notificacion);
+            return;
+        }
+
+        for (Usuario admin : administradores) {
+            enviarPorUsuario(notificacion, admin.getIdUsuario());
+        }
+    }
     
     public void enviarGeneral(Notificacion notificacion) throws SQLException {
 
@@ -136,7 +171,7 @@ public class NotificacionDAO {
             ps.setString(1, notificacion.getTitulo());
             ps.setString(2, notificacion.getMensaje());
             ps.setString(3, notificacion.getEstado().name());
-            ps.setString(4, notificacion.getTipo().name());
+            ps.setString(4, notificacion.getTipo().getValorBaseDatos());
 
             ps.executeUpdate();
         }
@@ -148,9 +183,13 @@ public class NotificacionDAO {
         notificacion.setIdNotificacion(rs.getInt("idNotificacion"));
         notificacion.setTitulo(rs.getString("titulo"));
         notificacion.setMensaje(rs.getString("mensaje"));
-        notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
+
+        java.sql.Timestamp fechaEnvio = rs.getTimestamp("fechaEnvio");
+        if (fechaEnvio != null) {
+            notificacion.setFechaEnvio(fechaEnvio.toLocalDateTime());
+        }
         notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado").toUpperCase()));
-        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo").toUpperCase()));
+        notificacion.setTipo(EnumTipoNotificacion.desdeBaseDatos(rs.getString("tipo")));
 
         int idUsuario = rs.getInt("idUsuario");
         if (!rs.wasNull()) {
