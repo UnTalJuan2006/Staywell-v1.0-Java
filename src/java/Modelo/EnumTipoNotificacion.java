@@ -11,7 +11,7 @@ package Modelo;
 public enum EnumTipoNotificacion {
     GENERAL("GENERAL", "General"),
     PERSONAL("PERSONAL", "Personal"),
-    RESERVANUEVA("NUEVARESERVA", "Nueva reserva", "ReservaNueva", "NuevaReserva");
+    RESERVANUEVA("ReservaNueva", "Nueva reserva", "NUEVARESERVA", "NuevaReserva");
 
     private final String etiqueta;
     private final String valorBaseDatos;
