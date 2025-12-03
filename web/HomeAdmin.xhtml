@@ -540,9 +540,9 @@
                                            styleClass="notification-bell" type="button"
                                            oncomplete="PF('notificationPanelWidget').toggle(this);">
                                 <i class="bi bi-bell-fill"></i>
-                                <h:panelGroup id="notificationBadge" rendered="#{notificacionBean.totalNoLeidas > 0}"
+                                <h:panelGroup id="notificationBadge" rendered="#{notificacionBean.totalNoLeidasNuevasReservas > 0}"
                                              styleClass="notification-badge">
-                                    #{notificacionBean.totalNoLeidas}
+                                    #{notificacionBean.totalNoLeidasNuevasReservas}
                                 </h:panelGroup>
                             </p:commandLink>
 
@@ -558,7 +558,7 @@
                                     <small>Solo se muestran alertas de creación</small>
                                 </div>
 
-                                <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificaciones}" styleClass="notification-item" layout="block">
+                                <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificacionesNuevasReservas}" styleClass="notification-item" layout="block">
                                     <div class="notification-bullet">
                                         <i class="bi bi-inboxes"></i>
                                     </div>
@@ -569,7 +569,7 @@
                                 </h:panelGroup>
 
                                 <div class="notification-list">
-                                    <ui:repeat value="#{notificacionBean.ultimasNotificaciones}" var="notif">
+                                    <ui:repeat value="#{notificacionBean.ultimasNotificacionesNuevasReservas}" var="notif">
                                         <div class="notification-item">
                                             <div class="notification-bullet">
                                                 <i class="bi bi-house-heart"></i>
