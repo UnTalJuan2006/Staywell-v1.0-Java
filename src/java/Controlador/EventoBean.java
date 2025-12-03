@@ -367,6 +367,10 @@ public class EventoBean implements Serializable {
 
             boolean coincide = true;
 
+            if (filtroEventosHoyActivo && eventoActual.getEstado() != EnumEstadoEvento.Activa) {
+                continue;
+            }
+
             if (inicio != null) {
                 coincide = coincide && (fechaEventoLocal != null && !fechaEventoLocal.isBefore(inicio));
             }
@@ -822,7 +826,7 @@ public class EventoBean implements Serializable {
             return "";
         }
 
-        return "Mostrando eventos programados para hoy ("
+        return "Mostrando eventos activos programados para hoy ("
                 + LocalDate.now().format(FECHA_SIMPLE_FORMATTER) + ")";
     }
 
