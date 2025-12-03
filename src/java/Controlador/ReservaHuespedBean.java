@@ -461,7 +461,8 @@ public class ReservaHuespedBean implements Serializable {
 
     private void notificarNuevaReserva(Reserva reserva) {
         Notificacion notificacion = new Notificacion();
-        notificacion.setTitulo("Nueva reserva creada");
+        notificacion.setTitulo("Nueva reserva creada exitosamente");
+
         String habitacionInfo;
         if (reserva.getHabitacion() != null) {
             String tipoNombre = reserva.getHabitacion().getTipoHabitacion() != null
@@ -473,10 +474,19 @@ public class ReservaHuespedBean implements Serializable {
             habitacionInfo = "la habitación asignada";
         }
 
-        String mensaje = String.format("Se ha registrado la reserva #%d para %s en %s.",
+        String rangoFechas = String.format("del %s al %s",
+                formatearFechaCorta(reserva.getCheckin()),
+                formatearFechaCorta(reserva.getCheckout()));
+
+        String mensaje = String.format(
+                "Se creó la reserva #%d para %s en %s %s. Contacto: %s / %s.",
                 reserva.getIdReserva(),
                 reserva.getNombreCliente(),
-                habitacionInfo);
+                habitacionInfo,
+                rangoFechas,
+                Optional.ofNullable(reserva.getEmail()).orElse("Sin correo"),
+                Optional.ofNullable(reserva.getTelefono()).orElse("Sin teléfono"));
+
         notificacion.setMensaje(mensaje);
         notificacion.setFechaEnvio(LocalDateTime.now());
         notificacion.setEstado(EnumEstadoNotificacion.NO_LEIDA);
@@ -488,6 +498,14 @@ public class ReservaHuespedBean implements Serializable {
         } catch (SQLException e) {
             System.err.println("No se pudo registrar la notificación de nueva reserva: " + e.getMessage());
         }
+    }
+
+    private String formatearFechaCorta(LocalDateTime fecha) {
+        if (fecha == null) {
+            return "-";
+        }
+
+        return fecha.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     private boolean validarDatosPago(FacesContext context) {
