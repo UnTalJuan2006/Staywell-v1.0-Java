@@ -10,22 +10,26 @@
         :root { --accent: #1a7c8f; --dark: #131318; --muted: #5f5f68; --bg: #fbf6f5; }
         body { background-color: var(--bg); }
         .main { margin-top: 110px; }
-        .hero-banner { position: relative; height: 340px; overflow: hidden; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+        .hero-banner { position: relative; height: 360px; overflow: hidden; border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
         .hero-banner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.65); }
         .hero-copy { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; padding: 0 4rem; color: #fff; text-shadow: 0 8px 18px rgba(0,0,0,0.35); }
         .hero-copy h1 { font-size: 2.6rem; letter-spacing: 1px; }
-        .hero-copy p { max-width: 640px; font-size: 1.05rem; }
+        .hero-copy p { max-width: 720px; font-size: 1.05rem; }
+        .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); padding: 10px 14px; border-radius: 14px; font-weight: 600; }
         .content-wrapper { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem 4rem; display: grid; gap: 2rem; }
         .card { background: #fff; border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.07); }
-        .card h2 { color: var(--dark); margin-bottom: 0.8rem; font-size: 1.8rem; }
+        .card h2 { color: var(--dark); margin-bottom: 0.6rem; font-size: 1.8rem; }
         .muted { color: var(--muted); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
-        .feature { display: flex; gap: 14px; padding: 12px 10px; border-radius: 12px; background: rgba(255,255,255,0.85); border: 1px solid #ececec; }
+        .feature { display: flex; gap: 14px; padding: 12px 10px; border-radius: 12px; background: rgba(255,255,255,0.9); border: 1px solid #ececec; }
         .feature i { color: var(--accent); font-size: 1.2rem; }
-        .data-box { padding: 14px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(26,124,143,0.12), rgba(26,124,143,0.05)); border: 1px solid rgba(26,124,143,0.15); }
+        .highlight { padding: 14px 16px; border-radius: 12px; background: linear-gradient(135deg, rgba(26,124,143,0.12), rgba(26,124,143,0.05)); border: 1px solid rgba(26,124,143,0.15); }
         .cta-box { background: linear-gradient(120deg, #1a7c8f, #0d5a69); color: #fff; padding: 2rem; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
         .cta-button { background: #fff; color: var(--dark); padding: 12px 18px; border-radius: 12px; text-decoration: none; font-weight: 700; transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .cta-button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.12); }
+        .list { display: grid; gap: 12px; margin-top: 12px; }
+        .list-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; background: rgba(26,124,143,0.06); border: 1px solid rgba(26,124,143,0.12); }
+        .list-item i { color: var(--accent); font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -35,8 +39,8 @@
             <nav class="header-navigation">
                 <ul>
                     <li><a href="index.html">Inicio</a></li>
-                    <li><a href="Eventos.xhtml">Eventos</a></li>
-                    <li><a class="boton" href="login.xhtml">Solicitar cotización</a></li>
+                    <li><a href="Habitaciones.xhtml">Habitaciones</a></li>
+                    <li><a class="boton" href="login.xhtml">Reservar ahora</a></li>
                 </ul>
             </nav>
         </div>
@@ -44,71 +48,94 @@
 
     <main class="main">
         <section class="hero-banner">
-            <img src="img/reuniones.jpg" alt="Salón de eventos" />
+            <img src="img/eventos-corporativos.jpg" alt="Eventos corporativos" />
             <div class="hero-copy">
                 <h1>Eventos Corporativos</h1>
-                <p>Espacios flexibles, tecnología integrada y servicio especializado para congresos, board meetings y lanzamientos de marca.</p>
-                <div class="data-box">Coordinador dedicado y montaje personalizado.</div>
+                <p>Salones versátiles, tecnología audiovisual y un equipo dedicado para convertir cada reunión en una experiencia impecable.</p>
+                <div class="badge"><i class="fa-solid fa-briefcase"></i>Convenciones, lanzamientos y directorios</div>
             </div>
         </section>
 
         <section class="content-wrapper">
             <div class="card">
-                <h2>Salones diseñados para impactar</h2>
-                <p class="muted">Contamos con salones modulables con luz natural, acústica optimizada y mobiliario ergonómico. El equipo audiovisual incluye pantallas LED, microfonía inalámbrica y conectividad de alta velocidad, todo gestionado por nuestro staff técnico.</p>
+                <h2>Versatilidad y precisión logística</h2>
+                <p class="muted">El centro de eventos del Great Viggio ofrece salones con luz natural, aislación acústica y montajes personalizables. Nuestro equipo coordina cada detalle: agenda, señalización, Wi-Fi dedicado y soporte técnico permanente.</p>
                 <div class="grid">
                     <div class="feature">
-                        <i class="fa-solid fa-chalkboard"></i>
+                        <i class="fa-solid fa-rectangle-list"></i>
                         <div>
-                            <strong>Capacidad y formatos</strong>
-                            <p class="muted">Desde directorios para 12 personas hasta montajes tipo auditorio para 200 asistentes.</p>
+                            <strong>Salones modulares</strong>
+                            <p class="muted">Espacios que se adaptan a directorios, workshops, cocteles o ferias comerciales.</p>
                         </div>
                     </div>
                     <div class="feature">
-                        <i class="fa-solid fa-diagram-project"></i>
+                        <i class="fa-solid fa-display"></i>
                         <div>
-                            <strong>Producción integral</strong>
-                            <p class="muted">Escenografía, branding, streaming híbrido y soporte técnico en sitio.</p>
+                            <strong>Producción audiovisual</strong>
+                            <p class="muted">Pantallas LED, micrófonos inalámbricos, streaming híbrido y cabinas de traducción.</p>
                         </div>
                     </div>
                     <div class="feature">
                         <i class="fa-solid fa-bell-concierge"></i>
                         <div>
-                            <strong>Catering corporativo</strong>
-                            <p class="muted">Coffee breaks, almuerzos ejecutivos y cocteles diseñados por nuestro chef.</p>
+                            <strong>Coordinador dedicado</strong>
+                            <p class="muted">Un ejecutivo asignado acompaña el evento desde la planeación hasta el desmontaje.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h2>Disponibilidad &amp; servicios incluidos</h2>
+                <h2>Servicios complementarios</h2>
+                <div class="list">
+                    <div class="list-item">
+                        <i class="fa-solid fa-mug-saucer"></i>
+                        <div>
+                            <strong>Catering corporativo</strong>
+                            <p class="muted">Coffee breaks temáticos, menús saludables, estaciones de coctelería y finger food.</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <i class="fa-solid fa-wifi"></i>
+                        <div>
+                            <strong>Conectividad premium</strong>
+                            <p class="muted">Internet dedicado, redundancia de señal y soporte en sala durante la jornada.</p>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <i class="fa-solid fa-shuttle-space"></i>
+                        <div>
+                            <strong>Logística integral</strong>
+                            <p class="muted">Traslados aeropuerto-hotel, asignación de habitaciones y rutas personalizadas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Disponibilidad &amp; contacto</h2>
                 <div class="grid">
-                    <div class="data-box">
+                    <div class="highlight">
                         <strong>Horarios:</strong>
-                        <p class="muted">Reservas desde las 7:00 a.m. hasta las 11:00 p.m.</p>
+                        <p class="muted">Lunes a sábado · 7:00 a.m. – 11:00 p.m. · Consultar domingos según agenda.</p>
                     </div>
-                    <div class="data-box">
-                        <strong>Equipamiento:</strong>
-                        <p class="muted">Pantallas 4K, proyectores láser, sonido envolvente y asistencia técnica.</p>
+                    <div class="highlight">
+                        <strong>Capacidad:</strong>
+                        <p class="muted">Desde 10 hasta 250 asistentes según montaje. Se incluyen planos y aforos sugeridos.</p>
                     </div>
-                    <div class="data-box">
-                        <strong>Soporte:</strong>
-                        <p class="muted">Coordinador de eventos, señalética, papelería y centro de impresión.</p>
-                    </div>
-                    <div class="data-box">
+                    <div class="highlight">
                         <strong>Contacto:</strong>
-                        <p class="muted">Ext. 305 · eventos@greatviggio.com</p>
+                        <p class="muted">Ext. 410 · eventos@greatviggio.com · Respuesta en menos de 24 h hábiles.</p>
                     </div>
                 </div>
             </div>
 
             <div class="cta-box">
                 <div>
-                    <h3>Convierte tu próxima reunión en una experiencia memorable</h3>
-                    <p>Solicita un layout personalizado, bloquea fechas y coordina visitas técnicas.</p>
+                    <h3>Planifica tu próximo encuentro</h3>
+                    <p>Cuéntanos el objetivo de tu reunión y te enviaremos una propuesta con montaje, catering y tecnología.</p>
                 </div>
-                <a class="cta-button" href="login.xhtml">Contactar al equipo</a>
+                <a class="cta-button" href="login.xhtml">Iniciar sesión para cotizar</a>
             </div>
         </section>
     </main>
