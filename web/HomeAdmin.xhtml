@@ -486,7 +486,8 @@
 
                         <div class="notification-wrapper">
                             <p:commandLink id="notificationBell" process="@this" update="notificationPanel"
-                                           styleClass="notification-bell" type="button">
+                                           styleClass="notification-bell" type="button"
+                                           oncomplete="PF('notificationPanelWidget').toggle(this);">
                                 <i class="bi bi-bell-fill"></i>
                                 <h:panelGroup id="notificationBadge" rendered="#{notificacionBean.totalNoLeidas > 0}"
                                              styleClass="notification-badge">
@@ -496,7 +497,8 @@
 
                             <p:overlayPanel id="notificationPanel" for="notificationBell" showEvent="click"
                                             hideEffect="fade" my="right top" at="right bottom"
-                                            styleClass="notification-panel" dismissable="true">
+                                            styleClass="notification-panel" dismissable="true"
+                                            widgetVar="notificationPanelWidget" appendTo="@(body)">
                                 <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificaciones}">
                                     <span>No hay notificaciones nuevas.</span>
                                 </h:panelGroup>
