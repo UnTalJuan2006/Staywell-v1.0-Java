@@ -10,7 +10,9 @@ package Modelo;
  */
 public enum EnumTipoNotificacion {
     GENERAL("General"),
-    PERSONAL("Personal");
+    PERSONAL("Personal"),
+    RESERVANUEVA("ReservaNueva");
+    
 
     private final String etiqueta;
 
