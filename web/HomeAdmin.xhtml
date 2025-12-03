@@ -3,6 +3,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       lang="es">
 
     <h:head>
@@ -303,6 +304,74 @@
             .sidebar::-webkit-scrollbar-thumb:hover {
                 background: rgba(255, 255, 255, 0.4);
             }
+
+            .notification-wrapper {
+                position: relative;
+                margin-right: 16px;
+            }
+
+            .notification-bell {
+                background: none;
+                border: none;
+                position: relative;
+                font-size: 22px;
+                color: #1a7c8f;
+                cursor: pointer;
+                padding: 8px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: color 0.2s ease;
+            }
+
+            .notification-bell:hover {
+                color: #125b69;
+            }
+
+            .notification-badge {
+                position: absolute;
+                top: 4px;
+                right: 2px;
+                background: #e63946;
+                color: white;
+                border-radius: 999px;
+                padding: 2px 6px;
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 1;
+            }
+
+            .notification-panel {
+                width: 320px;
+                border-radius: 12px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                border: 1px solid #e9ecef !important;
+            }
+
+            .notification-item {
+                padding: 12px 8px;
+                border-bottom: 1px solid #f1f3f5;
+            }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+            .notification-title {
+                font-weight: 700;
+                color: #1a7c8f;
+                margin-bottom: 4px;
+            }
+
+            .notification-message {
+                color: #4a5568;
+                font-size: 0.95rem;
+            }
+
+            .notification-date {
+                font-size: 0.8rem;
+                color: #718096;
+            }
         </style>
     </h:head>
 
@@ -410,12 +479,42 @@
         <div class="main-content">
             <div class="top-bar d-flex justify-content-between align-items-center">
                 <h2><i class="fas fa-tachometer-alt"></i> Dashboard Administrativo</h2>
-                <div class="user-info">
-                    <span class="me-3">
+                <div class="user-info d-flex align-items-center">
+                    <h:form id="notificationForm" styleClass="d-flex align-items-center">
+                        <p:poll interval="15" listener="#{notificacionBean.cargarNotificacionesSesion}"
+                                update="notificationPanel notificationBadge" />
+
+                        <div class="notification-wrapper">
+                            <p:commandLink id="notificationBell" process="@this" update="notificationPanel"
+                                           styleClass="notification-bell" type="button"
+                                           oncomplete="PF('notificationPanelWidget').toggle(this);">
+                                <i class="bi bi-bell-fill"></i>
+                                <h:panelGroup id="notificationBadge" rendered="#{notificacionBean.totalNoLeidas > 0}"
+                                             styleClass="notification-badge">
+                                    #{notificacionBean.totalNoLeidas}
+                                </h:panelGroup>
+                            </p:commandLink>
+
+                            <p:overlayPanel id="notificationPanel" for="notificationBell" showEvent="click"
+                                            hideEffect="fade" my="right top" at="right bottom"
+                                            styleClass="notification-panel" dismissable="true"
+                                            widgetVar="notificationPanelWidget" appendTo="@(body)">
+                                <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificaciones}">
+                                    <span>No hay notificaciones nuevas.</span>
+                                </h:panelGroup>
+                                <ui:repeat value="#{notificacionBean.ultimasNotificaciones}" var="notif">
+                                    <div class="notification-item">
+                                        <div class="notification-title">#{notif.titulo}</div>
+                                        <div class="notification-message">#{notif.mensaje}</div>
+                                        <div class="notification-date">#{notificacionBean.formatearFecha(notif.fechaEnvio)}</div>
+                                    </div>
+                                </ui:repeat>
+                            </p:overlayPanel>
+                        </div>
+                    </h:form>
+                    <span class="ms-3">
                         Bienvenido, <strong>#{usuarioLogueado.nombre}</strong>
                     </span>
-
-
                 </div>
             </div>
 
