@@ -244,19 +244,18 @@ public class NotificacionBean implements Serializable {
         }
 
         try {
+            boolean esAdmin = EnumRoles.ADMIN.equals(usuarioLogueado.getRol());
+
             List<Notificacion> notificaciones = getNotificacionDAO()
                     .listarGeneralesYUsuario(usuarioLogueado.getIdUsuario());
 
-            boolean esAdmin = EnumRoles.ADMIN.equals(usuarioLogueado.getRol());
-
             notificacionesUsuario = notificaciones.stream()
-                    .filter(n -> esAdmin || !EnumTipoNotificacion.NUEVARESERVA.equals(n.getTipo()))
+                    .filter(n -> !EnumTipoNotificacion.NUEVARESERVA.equals(n.getTipo()))
                     .collect(Collectors.toList());
 
             if (esAdmin) {
-                notificacionesNuevasReservas = notificaciones.stream()
-                        .filter(n -> EnumTipoNotificacion.NUEVARESERVA.equals(n.getTipo()))
-                        .collect(Collectors.toList());
+                notificacionesNuevasReservas = getNotificacionDAO()
+                        .listarNuevasReservasParaAdmin(usuarioLogueado.getIdUsuario());
             } else {
                 notificacionesNuevasReservas = new ArrayList<>();
             }

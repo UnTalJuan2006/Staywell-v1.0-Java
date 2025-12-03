@@ -484,15 +484,7 @@ public class ReservaHuespedBean implements Serializable {
 
         try {
             List<Usuario> administradores = usuarioDAO.listarAdministradores();
-
-            if (administradores.isEmpty()) {
-                notificacionDAO.enviarGeneral(notificacion);
-                return;
-            }
-
-            for (Usuario admin : administradores) {
-                notificacionDAO.enviarPorUsuario(notificacion, admin.getIdUsuario());
-            }
+            notificacionDAO.enviarNuevasReservasParaAdmins(notificacion, administradores);
         } catch (SQLException e) {
             System.err.println("No se pudo registrar la notificación de nueva reserva: " + e.getMessage());
         }
