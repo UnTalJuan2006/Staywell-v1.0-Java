@@ -2,16 +2,20 @@ package Controlador;
 
 import Controlador.CorreoBean;
 import DAO.HabitacionDAO;
+import DAO.NotificacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
 import Modelo.EnumEstadoHabitacion;
+import Modelo.EnumEstadoNotificacion;
 import Modelo.EnumEstadoReserva;
 import Modelo.EnumPago;
 import Modelo.Habitacion;
+import Modelo.Notificacion;
 import Modelo.Reserva;
 import Modelo.Pago;
 import Modelo.TipoHabitacion;
+import Modelo.EnumTipoNotificacion;
 import Modelo.Usuario;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -48,6 +52,7 @@ public class ReservaHuespedBean implements Serializable {
     private final HabitacionDAO habitacionDAO = new HabitacionDAO();
     private final ReservaDAO reservaDAO = new ReservaDAO();
     private final PagoDAO pagoDAO = new PagoDAO();
+    private final NotificacionDAO notificacionDAO = new NotificacionDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
@@ -425,6 +430,8 @@ public class ReservaHuespedBean implements Serializable {
                     return null;
                 }
 
+                notificarNuevaReserva(reserva);
+
                 context.getExternalContext().getFlash().setKeepMessages(true);
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito",
                         "Reserva y pago confirmados correctamente."));
@@ -448,6 +455,36 @@ public class ReservaHuespedBean implements Serializable {
         }
 
         return null;
+    }
+
+    private void notificarNuevaReserva(Reserva reserva) {
+        Notificacion notificacion = new Notificacion();
+        notificacion.setTitulo("Nueva reserva creada");
+        String habitacionInfo;
+        if (reserva.getHabitacion() != null) {
+            String tipoNombre = reserva.getHabitacion().getTipoHabitacion() != null
+                    ? reserva.getHabitacion().getTipoHabitacion().getNombre()
+                    : "";
+            String tipoTexto = tipoNombre.isEmpty() ? "" : " (" + tipoNombre + ")";
+            habitacionInfo = String.format("habitación %d%s", reserva.getHabitacion().getNumHabitacion(), tipoTexto);
+        } else {
+            habitacionInfo = "la habitación asignada";
+        }
+
+        String mensaje = String.format("Se ha registrado la reserva #%d para %s en %s.",
+                reserva.getIdReserva(),
+                reserva.getNombreCliente(),
+                habitacionInfo);
+        notificacion.setMensaje(mensaje);
+        notificacion.setFechaEnvio(LocalDateTime.now());
+        notificacion.setEstado(EnumEstadoNotificacion.NO_LEIDA);
+        notificacion.setTipo(EnumTipoNotificacion.GENERAL);
+
+        try {
+            notificacionDAO.enviarGeneral(notificacion);
+        } catch (SQLException e) {
+            System.err.println("No se pudo registrar la notificación de nueva reserva: " + e.getMessage());
+        }
     }
 
     private boolean validarDatosPago(FacesContext context) {

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -74,6 +75,16 @@ public class NotificacionBean implements Serializable {
 
     public List<Notificacion> getNotificacionesUsuario() {
         return notificacionesUsuario;
+    }
+
+    public List<Notificacion> getUltimasNotificaciones() {
+        if (notificacionesUsuario == null) {
+            return new ArrayList<>();
+        }
+
+        return notificacionesUsuario.stream()
+                .limit(5)
+                .collect(Collectors.toList());
     }
 
     public Notificacion getNotificacionEdicion() {
@@ -202,7 +213,10 @@ public class NotificacionBean implements Serializable {
         }
 
         try {
-            notificacionesUsuario = getNotificacionDAO().listarGeneralesYUsuario(usuarioLogueado.getIdUsuario());
+            notificacionesUsuario = getNotificacionDAO().listarGeneralesYUsuario(usuarioLogueado.getIdUsuario())
+                    .stream()
+                    .filter(n -> n.getTitulo() != null && n.getTitulo().equalsIgnoreCase("Nueva reserva creada"))
+                    .collect(Collectors.toList());
         } catch (SQLException e) {
             notificacionesUsuario = new ArrayList<>();
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las notificaciones.");
