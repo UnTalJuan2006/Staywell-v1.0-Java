@@ -152,7 +152,6 @@ public class NotificacionDAO {
 
     public void enviarNuevasReservasParaAdmins(Notificacion notificacion, List<Usuario> administradores) throws SQLException {
         if (administradores == null || administradores.isEmpty()) {
-            enviarGeneral(notificacion);
             return;
         }
 
