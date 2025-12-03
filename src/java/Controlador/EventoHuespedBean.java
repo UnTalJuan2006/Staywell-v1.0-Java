@@ -46,6 +46,7 @@ public class EventoHuespedBean implements Serializable {
 
     private List<Espacio> espacios = new ArrayList<>();
     private String fechasOcupadasJson = "[]";
+    private String ocupacionesHorasJson = "[]";
 
     private Integer espacioSeleccionado;
     private String nombreEvento;
@@ -126,6 +127,7 @@ public class EventoHuespedBean implements Serializable {
         subtotalEvento = BigDecimal.ZERO;
         ivaEvento = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
+        ocupacionesHorasJson = "[]";
         tipoPagoSeleccionado = null;
         numeroTarjeta = null;
         titularTarjeta = null;
@@ -163,12 +165,16 @@ public class EventoHuespedBean implements Serializable {
     // UI: cambios y cálculos
     // -------------------------
     public void onEspacioChange() {
+        horaInicio = null;
+        horaFin = null;
         actualizarPrecioPorEspacio();
         actualizarFechasOcupadas();
+        actualizarOcupacionesPorFecha();
         recalcularTotal();
     }
 
     public void onFechasChange() {
+        actualizarOcupacionesPorFecha();
         recalcularTotal();
     }
 
@@ -257,40 +263,64 @@ public class EventoHuespedBean implements Serializable {
             return;
         }
 
-        try {
-            List<Evento> ocupaciones = eventoDAO.listarOcupacionesEspacio(espacioSeleccionado, null);
+        Espacio espacio = espacioDAO.buscar(espacioSeleccionado);
+        if (espacio != null && EnumEstadoEspacio.Mantenimiento.equals(espacio.getEstado())) {
+            fechasOcupadasJson = "[{\"from\":\"1900-01-01\",\"to\":\"2099-12-31\"}]";
+        }
+    }
 
-            if (ocupaciones == null || ocupaciones.isEmpty()) {
-                fechasOcupadasJson = "[]";
+    private void actualizarOcupacionesPorFecha() {
+        ocupacionesHorasJson = "[]";
+
+        if (espacioSeleccionado == null || fechaEvento == null) {
+            return;
+        }
+
+        try {
+            Espacio espacio = espacioDAO.buscar(espacioSeleccionado);
+            if (espacio != null && EnumEstadoEspacio.Mantenimiento.equals(espacio.getEstado())) {
+                ocupacionesHorasJson = "[{\"start\":\"00:00\",\"end\":\"23:59\",\"estado\":\"Mantenimiento\"}]";
                 return;
             }
 
-            StringBuilder jsonBuilder = new StringBuilder("[");
-            boolean first = true;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            List<Evento> ocupaciones = eventoDAO.listarOcupacionesPorFecha(espacioSeleccionado, fechaEvento, null);
 
-            for (Evento ev : ocupaciones) {
-                if (ev.getFechaEvento() == null) {
+            if (ocupaciones == null || ocupaciones.isEmpty()) {
+                ocupacionesHorasJson = "[]";
+                return;
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            StringBuilder json = new StringBuilder("[");
+            boolean first = true;
+
+            for (Evento evento : ocupaciones) {
+                if (evento.getHoraInicio() == null || evento.getHoraFin() == null) {
                     continue;
                 }
-                String fecha = sdf.format(ev.getFechaEvento());
+
                 if (!first) {
-                    jsonBuilder.append(',');
+                    json.append(",");
                 }
-                jsonBuilder.append("{")
-                        .append("\"from\":\"").append(fecha).append("\",")
-                        .append("\"to\":\"").append(fecha).append("\"")
-                        .append("}");
+
+                json.append("{\"start\":\"")
+                        .append(formatter.format(evento.getHoraInicio()))
+                        .append("\",\"end\":\"")
+                        .append(formatter.format(evento.getHoraFin()))
+                        .append("\",\"estado\":\"")
+                        .append(evento.getEstado() != null ? evento.getEstado().name() : "Ocupado")
+                        .append("\"}");
                 first = false;
             }
-            jsonBuilder.append("]");
-            fechasOcupadasJson = jsonBuilder.toString();
+
+            json.append("]");
+            ocupacionesHorasJson = json.toString();
         } catch (SQLException ex) {
-            fechasOcupadasJson = "[]";
+            ocupacionesHorasJson = "[]";
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error",
-                            "No se pudo consultar la disponibilidad del espacio: " + ex.getMessage()));
-            System.err.println("Error actualizarFechasOcupadas(): " + ex.getMessage());
+                            "No se pudo consultar las horas ocupadas del espacio: " + ex.getMessage()));
+            System.err.println("Error actualizarOcupacionesPorFecha(): " + ex.getMessage());
         }
     }
 
@@ -518,10 +548,11 @@ public class EventoHuespedBean implements Serializable {
 
     private boolean validarDisponibilidadEvento(FacesContext context) {
         try {
-            boolean disponible = eventoDAO.espacioDisponible(espacioSeleccionado, fechaEvento, null);
+            boolean disponible = eventoDAO.espacioDisponiblePorHoras(espacioSeleccionado, fechaEvento, horaInicio, horaFin,
+                    null);
             if (!disponible) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Fechas no disponibles",
-                        "El espacio ya está reservado en el rango seleccionado."));
+                        "El espacio ya está reservado en el rango de horas seleccionado."));
                 return false;
             }
         } catch (SQLException ex) {
@@ -556,6 +587,10 @@ public class EventoHuespedBean implements Serializable {
         return fechasOcupadasJson;
     }
 
+    public String getOcupacionesHorasJson() {
+        return ocupacionesHorasJson;
+    }
+
     public Integer getEspacioSeleccionado() {
         return espacioSeleccionado;
     }
@@ -564,6 +599,7 @@ public class EventoHuespedBean implements Serializable {
         this.espacioSeleccionado = espacioSeleccionado;
         actualizarPrecioPorEspacio();
         actualizarFechasOcupadas();
+        actualizarOcupacionesPorFecha();
     }
 
     public String getNombreEvento() {

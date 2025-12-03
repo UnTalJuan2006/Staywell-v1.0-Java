@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -414,6 +415,55 @@ public class EventoDAO {
         return false;
     }
 
+    public boolean espacioDisponiblePorHoras(int espacioId, Date fechaEvento, LocalTime horaInicio,
+            LocalTime horaFin, Integer eventoExcluirId) throws SQLException {
+
+        if (fechaEvento == null || horaInicio == null || horaFin == null) {
+            throw new IllegalArgumentException("La fecha y las horas del evento no pueden ser nulas");
+        }
+
+        if (!horaFin.isAfter(horaInicio)) {
+            throw new IllegalArgumentException("La hora final debe ser posterior a la hora inicial");
+        }
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM evento WHERE idEspacio = ? AND fechaEvento = ? "
+                        + "AND (estado IS NULL OR estado <> ?) "
+                        + "AND horaInicio < ? AND horaFin > ?");
+
+        if (eventoExcluirId != null) {
+            sql.append(" AND idEvento <> ?");
+        }
+
+        try (Connection conn = Conexion.conectar()) {
+            if (conn == null) {
+                throw new SQLException("No se pudo establecer conexión a la base de datos.");
+            }
+
+            finalizarEventosVencidos(conn);
+
+            try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                ps.setInt(1, espacioId);
+                ps.setDate(2, new java.sql.Date(fechaEvento.getTime()));
+                ps.setString(3, EnumEstadoEvento.Cancelado.name());
+                ps.setTime(4, Time.valueOf(horaFin));
+                ps.setTime(5, Time.valueOf(horaInicio));
+
+                if (eventoExcluirId != null) {
+                    ps.setInt(6, eventoExcluirId);
+                }
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt(1) == 0;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public List<Evento> listarOcupacionesEspacio(int espacioId, Integer eventoExcluirId) throws SQLException {
         List<Evento> ocupaciones = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT idEvento, fechaEvento FROM evento WHERE idEspacio = ? ");
@@ -447,6 +497,66 @@ public class EventoDAO {
                         java.sql.Date fechaSQL = rs.getDate("fechaEvento");
                         if (fechaSQL != null) {
                             evento.setFechaEvento(new java.util.Date(fechaSQL.getTime()));
+                        }
+
+                        ocupaciones.add(evento);
+                    }
+                }
+            }
+        }
+
+        return ocupaciones;
+    }
+
+    public List<Evento> listarOcupacionesPorFecha(int espacioId, Date fechaEvento, Integer eventoExcluirId)
+            throws SQLException {
+
+        List<Evento> ocupaciones = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT idEvento, horaInicio, horaFin, estado FROM evento WHERE idEspacio = ? AND fechaEvento = ? "
+                        + "AND (estado IS NULL OR estado <> ?)");
+
+        if (eventoExcluirId != null) {
+            sql.append(" AND idEvento <> ?");
+        }
+
+        sql.append(" ORDER BY horaInicio");
+
+        try (Connection conn = Conexion.conectar()) {
+            if (conn == null) {
+                throw new SQLException("No se pudo establecer conexión a la base de datos.");
+            }
+
+            finalizarEventosVencidos(conn);
+
+            try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                ps.setInt(1, espacioId);
+                ps.setDate(2, new java.sql.Date(fechaEvento.getTime()));
+                ps.setString(3, EnumEstadoEvento.Cancelado.name());
+
+                if (eventoExcluirId != null) {
+                    ps.setInt(4, eventoExcluirId);
+                }
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Evento evento = new Evento();
+                        evento.setIdEvento(rs.getInt("idEvento"));
+
+                        Time horaInicio = rs.getTime("horaInicio");
+                        if (horaInicio != null) {
+                            evento.setHoraInicio(horaInicio.toLocalTime());
+                        }
+
+                        Time horaFin = rs.getTime("horaFin");
+                        if (horaFin != null) {
+                            evento.setHoraFin(horaFin.toLocalTime());
+                        }
+
+                        String estado = rs.getString("estado");
+                        if (estado != null && !estado.isEmpty()) {
+                            evento.setEstado(EnumEstadoEvento.valueOf(estado));
                         }
 
                         ocupaciones.add(evento);
