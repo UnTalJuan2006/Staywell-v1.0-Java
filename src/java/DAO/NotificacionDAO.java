@@ -183,7 +183,11 @@ public class NotificacionDAO {
         notificacion.setIdNotificacion(rs.getInt("idNotificacion"));
         notificacion.setTitulo(rs.getString("titulo"));
         notificacion.setMensaje(rs.getString("mensaje"));
-        notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
+
+        java.sql.Timestamp fechaEnvio = rs.getTimestamp("fechaEnvio");
+        if (fechaEnvio != null) {
+            notificacion.setFechaEnvio(fechaEnvio.toLocalDateTime());
+        }
         notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado").toUpperCase()));
         notificacion.setTipo(EnumTipoNotificacion.desdeBaseDatos(rs.getString("tipo")));
 

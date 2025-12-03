@@ -9,16 +9,18 @@ package Modelo;
  * @author juanm
  */
 public enum EnumTipoNotificacion {
-    GENERAL("General", "General"),
-    PERSONAL("Personal", "Personal"),
-    RESERVANUEVA("ReservaNueva", "Nueva reserva");
+    GENERAL("GENERAL", "General"),
+    PERSONAL("PERSONAL", "Personal"),
+    RESERVANUEVA("NUEVARESERVA", "Nueva reserva", "ReservaNueva", "NuevaReserva");
 
     private final String etiqueta;
     private final String valorBaseDatos;
+    private final String[] aliasBaseDatos;
 
-    EnumTipoNotificacion(String valorBaseDatos, String etiqueta) {
+    EnumTipoNotificacion(String valorBaseDatos, String etiqueta, String... aliasBaseDatos) {
         this.valorBaseDatos = valorBaseDatos;
         this.etiqueta = etiqueta;
+        this.aliasBaseDatos = aliasBaseDatos;
     }
 
     public String getEtiqueta() {
@@ -37,6 +39,12 @@ public enum EnumTipoNotificacion {
         for (EnumTipoNotificacion tipo : values()) {
             if (tipo.valorBaseDatos.equalsIgnoreCase(valor)) {
                 return tipo;
+            }
+
+            for (String alias : tipo.aliasBaseDatos) {
+                if (alias.equalsIgnoreCase(valor)) {
+                    return tipo;
+                }
             }
         }
 
