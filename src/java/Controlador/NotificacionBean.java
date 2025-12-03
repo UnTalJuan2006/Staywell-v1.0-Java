@@ -250,7 +250,7 @@ public class NotificacionBean implements Serializable {
                     .listarGeneralesYUsuario(usuarioLogueado.getIdUsuario());
 
             notificacionesUsuario = notificaciones.stream()
-                    .filter(n -> !EnumTipoNotificacion.NUEVARESERVA.equals(n.getTipo()))
+                    .filter(n -> !EnumTipoNotificacion.RESERVANUEVA.equals(n.getTipo()))
                     .collect(Collectors.toList());
 
             if (esAdmin) {

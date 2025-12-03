@@ -480,7 +480,7 @@ public class ReservaHuespedBean implements Serializable {
         notificacion.setMensaje(mensaje);
         notificacion.setFechaEnvio(LocalDateTime.now());
         notificacion.setEstado(EnumEstadoNotificacion.NO_LEIDA);
-        notificacion.setTipo(EnumTipoNotificacion.NUEVARESERVA);
+        notificacion.setTipo(EnumTipoNotificacion.RESERVANUEVA);
 
         try {
             List<Usuario> administradores = usuarioDAO.listarAdministradores();

@@ -88,7 +88,7 @@ public class NotificacionDAO {
                 + "ORDER BY n.fechaEnvio DESC";
 
         try (PreparedStatement ps = Conexion.conectar().prepareStatement(sql)) {
-            ps.setString(1, EnumTipoNotificacion.NUEVARESERVA.name());
+            ps.setString(1, EnumTipoNotificacion.RESERVANUEVA.getValorBaseDatos());
             ps.setInt(2, idUsuario);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -143,7 +143,7 @@ public class NotificacionDAO {
             ps.setString(1, notificacion.getTitulo());
             ps.setString(2, notificacion.getMensaje());
             ps.setString(3, notificacion.getEstado().name());
-            ps.setString(4, notificacion.getTipo().name());
+            ps.setString(4, notificacion.getTipo().getValorBaseDatos());
             ps.setInt(5, idUsuario);
 
             ps.executeUpdate();
@@ -171,7 +171,7 @@ public class NotificacionDAO {
             ps.setString(1, notificacion.getTitulo());
             ps.setString(2, notificacion.getMensaje());
             ps.setString(3, notificacion.getEstado().name());
-            ps.setString(4, notificacion.getTipo().name());
+            ps.setString(4, notificacion.getTipo().getValorBaseDatos());
 
             ps.executeUpdate();
         }
@@ -185,7 +185,7 @@ public class NotificacionDAO {
         notificacion.setMensaje(rs.getString("mensaje"));
         notificacion.setFechaEnvio(rs.getTimestamp("fechaEnvio").toLocalDateTime());
         notificacion.setEstado(EnumEstadoNotificacion.valueOf(rs.getString("estado").toUpperCase()));
-        notificacion.setTipo(EnumTipoNotificacion.valueOf(rs.getString("tipo").toUpperCase()));
+        notificacion.setTipo(EnumTipoNotificacion.desdeBaseDatos(rs.getString("tipo")));
 
         int idUsuario = rs.getInt("idUsuario");
         if (!rs.wasNull()) {
