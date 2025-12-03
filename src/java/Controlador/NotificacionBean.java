@@ -3,6 +3,7 @@ package Controlador;
 import DAO.NotificacionDAO;
 import DAO.UsuarioDAO;
 import Modelo.EnumEstadoNotificacion;
+import Modelo.EnumRoles;
 import Modelo.EnumTipoNotificacion;
 import Modelo.Notificacion;
 import Modelo.Usuario;
@@ -32,6 +33,7 @@ public class NotificacionBean implements Serializable {
     private List<Usuario> listaUsuarios;
     private List<Notificacion> historialNotificaciones;
     private List<Notificacion> notificacionesUsuario;
+    private List<Notificacion> notificacionesNuevasReservas;
     private Notificacion notificacionEdicion;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -43,6 +45,7 @@ public class NotificacionBean implements Serializable {
     public void init() {
         notificacionGeneral = crearBorrador(EnumTipoNotificacion.GENERAL);
         notificacionPersonal = crearBorrador(EnumTipoNotificacion.PERSONAL);
+        notificacionesNuevasReservas = new ArrayList<>();
 
         cargarUsuarios();
         cargarHistorial();
@@ -77,12 +80,26 @@ public class NotificacionBean implements Serializable {
         return notificacionesUsuario;
     }
 
+    public List<Notificacion> getNotificacionesNuevasReservas() {
+        return notificacionesNuevasReservas;
+    }
+
     public List<Notificacion> getUltimasNotificaciones() {
         if (notificacionesUsuario == null) {
             return new ArrayList<>();
         }
 
         return notificacionesUsuario.stream()
+                .limit(5)
+                .collect(Collectors.toList());
+    }
+
+    public List<Notificacion> getUltimasNotificacionesNuevasReservas() {
+        if (notificacionesNuevasReservas == null) {
+            return new ArrayList<>();
+        }
+
+        return notificacionesNuevasReservas.stream()
                 .limit(5)
                 .collect(Collectors.toList());
     }
@@ -106,6 +123,20 @@ public class NotificacionBean implements Serializable {
 
         long total = 0;
         for (Notificacion notif : notificacionesUsuario) {
+            if (EnumEstadoNotificacion.NO_LEIDA.equals(notif.getEstado())) {
+                total++;
+            }
+        }
+        return total;
+    }
+
+    public long getTotalNoLeidasNuevasReservas() {
+        if (notificacionesNuevasReservas == null) {
+            return 0;
+        }
+
+        long total = 0;
+        for (Notificacion notif : notificacionesNuevasReservas) {
             if (EnumEstadoNotificacion.NO_LEIDA.equals(notif.getEstado())) {
                 total++;
             }
@@ -213,12 +244,24 @@ public class NotificacionBean implements Serializable {
         }
 
         try {
-            notificacionesUsuario = getNotificacionDAO().listarGeneralesYUsuario(usuarioLogueado.getIdUsuario())
-                    .stream()
-                    .filter(n -> n.getTitulo() != null && n.getTitulo().equalsIgnoreCase("Nueva reserva creada"))
+            boolean esAdmin = EnumRoles.ADMIN.equals(usuarioLogueado.getRol());
+
+            List<Notificacion> notificaciones = getNotificacionDAO()
+                    .listarGeneralesYUsuario(usuarioLogueado.getIdUsuario());
+
+            notificacionesUsuario = notificaciones.stream()
+                    .filter(n -> !EnumTipoNotificacion.NUEVARESERVA.equals(n.getTipo()))
                     .collect(Collectors.toList());
+
+            if (esAdmin) {
+                notificacionesNuevasReservas = getNotificacionDAO()
+                        .listarNuevasReservasParaAdmin(usuarioLogueado.getIdUsuario());
+            } else {
+                notificacionesNuevasReservas = new ArrayList<>();
+            }
         } catch (SQLException e) {
             notificacionesUsuario = new ArrayList<>();
+            notificacionesNuevasReservas = new ArrayList<>();
             mostrarMensaje(FacesMessage.SEVERITY_ERROR, "Error", "No se pudieron cargar las notificaciones.");
         }
     }
