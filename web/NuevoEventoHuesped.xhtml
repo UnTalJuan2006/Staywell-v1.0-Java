@@ -283,6 +283,204 @@
                 grid-template-columns: 1fr;
             }
 
+            .time-grid-card {
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                padding: 1.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .time-calendar__header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+                padding: 0.4rem 0.75rem 0.25rem;
+                border-bottom: 1px dashed #dce8e5;
+            }
+
+            .time-calendar__title {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .time-calendar__title h6 {
+                font-weight: 800;
+                color: #0f5b51;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 1rem;
+            }
+
+            .time-calendar__title small {
+                color: #6a7a89;
+            }
+
+            .time-calendar__chip {
+                background: #e8f5f3;
+                color: #0d7a6f;
+                padding: 0.55rem 0.9rem;
+                border-radius: 12px;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .time-grid__legend {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-top: 0.75rem;
+                color: #555;
+                font-size: 0.9rem;
+                flex-wrap: wrap;
+            }
+
+            .time-grid__legend span {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 10px;
+                border-radius: 10px;
+                background: #f7fbfb;
+                border: 1px solid #ecf2f1;
+            }
+
+            .time-grid__legend i {
+                font-size: 0.9rem;
+            }
+
+            .time-calendar {
+                margin-top: 1rem;
+                background: linear-gradient(135deg, rgba(26, 155, 142, 0.04) 0%, rgba(15, 123, 111, 0.04) 100%);
+                border: 1.5px dashed #d6e6e2;
+                border-radius: 12px;
+                padding: 1rem;
+            }
+
+            .time-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 0.9rem;
+                margin-top: 1rem;
+            }
+
+            .time-slot {
+                border: 1.5px solid #dce8e5;
+                border-radius: 14px;
+                padding: 0.9rem;
+                font-weight: 700;
+                color: #0f5b51;
+                background: #ffffff;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+                box-shadow: 0 8px 16px rgba(13, 122, 111, 0.08);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .time-slot__time {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 1.05rem;
+            }
+
+            .time-slot__time i {
+                color: #156b7d;
+                font-size: 1rem;
+            }
+
+            .time-slot__range {
+                font-weight: 600;
+                color: #5f6b7a;
+                font-size: 0.9rem;
+            }
+
+            .time-slot__status {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 8px;
+                border-radius: 8px;
+                width: fit-content;
+                font-size: 0.85rem;
+                font-weight: 700;
+            }
+
+            .time-slot:hover {
+                border-color: #1a7c8f;
+                box-shadow: 0 12px 26px rgba(26, 124, 143, 0.18);
+                transform: translateY(-2px);
+            }
+
+            .time-slot.is-disabled {
+                background: #fff7f7;
+                color: #c0392b;
+                cursor: not-allowed;
+                border-color: #f3c7c7;
+                box-shadow: none;
+            }
+
+            .time-slot.is-disabled .time-slot__status {
+                background: #fde9e9;
+                color: #c0392b;
+            }
+
+            .time-slot:not(.is-disabled) .time-slot__status {
+                background: #e7f6ef;
+                color: #0f6c7f;
+            }
+
+            .time-slot.is-selected {
+                background: linear-gradient(135deg, #1a7c8f 0%, #156b7d 100%);
+                color: #fff;
+                border-color: #0f6c7f;
+                box-shadow: 0 14px 28px rgba(26, 124, 143, 0.35);
+            }
+
+            .time-slot.is-selected .time-slot__range,
+            .time-slot.is-selected .time-slot__status,
+            .time-slot.is-selected .time-slot__time i {
+                color: #fff;
+            }
+
+            .time-slot.is-selected .time-slot__status {
+                background: rgba(255, 255, 255, 0.18);
+            }
+
+            .time-slot.is-start, .time-slot.is-end {
+                border-width: 2px;
+            }
+
+            .time-grid__message {
+                margin-top: 0.85rem;
+                color: #0d7a6f;
+                font-weight: 700;
+                font-size: 0.95rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 14px;
+                background: #e7f6ef;
+                border-radius: 10px;
+                border: 1px solid #d6e6e2;
+            }
+
+            .time-grid__message--alert {
+                color: #c0392b;
+                background: #fde9e9;
+                border-color: #f3c7c7;
+            }
+
             .summary-card {
                 background: white;
                 border-radius: 12px;
@@ -717,6 +915,7 @@
                         <div class="form-card">
                             <h5><i class="bi bi-building"></i> Datos del Evento</h5>
                             <h:outputText id="ocupacionesJson" value="#{eventoHuespedBean.fechasOcupadasJson}" styleClass="d-none" />
+                            <h:outputText id="ocupacionesHorasJson" value="#{eventoHuespedBean.ocupacionesHorasJson}" styleClass="d-none" />
 
                             <div class="form-row">
                                 <div class="form-group">
@@ -751,7 +950,7 @@
                                     <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
-                                        <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago fechaEvento ocupacionesJson" />
+                                        <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago fechaEvento ocupacionesJson ocupacionesHorasJson selectorHorarios" />
                                     </h:selectOneMenu>
                                 </div>
 
@@ -763,7 +962,7 @@
                                                  requiredMessage="Selecciona la fecha del evento.">
                                         <f:passThroughAttribute name="type" value="text" />
                                         <f:convertDateTime pattern="yyyy-MM-dd" />
-                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
+                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago selectorHorarios ocupacionesHorasJson" />
                                     </h:inputText>
                                     <h:message for="fechaEvento" styleClass="text-danger small" />
                                 </div>
@@ -790,6 +989,32 @@
                                     </h:inputText>
                                 </div>
                             </div>
+
+                            <h:panelGroup id="selectorHorarios" layout="block" styleClass="time-grid-card">
+                                <div class="time-calendar__header">
+                                    <div class="time-calendar__title">
+                                        <h6><i class="bi bi-calendar-week" style="color: #1a7c8f;"></i> Calendario de horas disponibles</h6>
+                                        <small>Elige el bloque de inicio y el bloque de fin haciendo clic sobre las tarjetas</small>
+                                    </div>
+                                    <div class="time-calendar__chip">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <h:outputText value="#{eventoHuespedBean.fechaEvento}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </div>
+                                </div>
+
+                                <div class="time-calendar">
+                                    <div class="time-grid__legend">
+                                        <span><i class="bi bi-check2-square" style="color:#4caf50;"></i>Disponible</span>
+                                        <span><i class="bi bi-lock-fill" style="color:#c0392b;"></i>Ocupado / Mantenimiento</span>
+                                        <span><i class="bi bi-lightning-charge-fill" style="color:#156b7d;"></i>Rango seleccionado</span>
+                                    </div>
+
+                                    <div id="gridHorario" class="time-grid"></div>
+                                    <div id="mensajeHorario" class="time-grid__message"></div>
+                                </div>
+                            </h:panelGroup>
                         </div>
 
                         <div class="summary-column">
@@ -1114,6 +1339,10 @@
 //<![CDATA[
 (function () {
 
+    var seleccionHorario = {inicio: null, fin: null};
+    var slotsHorario = [];
+    var bloqueosHorario = [];
+
     function parseOcupaciones() {
         var nodoFechas = document.getElementById("formEvento:ocupacionesJson");
         var rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
@@ -1145,6 +1374,261 @@
         } catch (e) {
             console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
             return [];
+        }
+    }
+
+    function parseOcupacionesHoras() {
+        var nodoHoras = document.getElementById("formEvento:ocupacionesHorasJson");
+        var rawJson = nodoHoras ? ((nodoHoras.value || nodoHoras.textContent || "").trim()) : "";
+
+        if (!rawJson) {
+            return [];
+        }
+
+        try {
+            var datos = JSON.parse(rawJson);
+            if (!Array.isArray(datos)) {
+                return [];
+            }
+
+            return datos.map(function (rango) {
+                if (!rango || !rango.start || !rango.end) {
+                    return null;
+                }
+
+                var inicio = aMinutos(rango.start);
+                var fin = aMinutos(rango.end);
+
+                if (isNaN(inicio) || isNaN(fin)) {
+                    return null;
+                }
+
+                if (fin <= inicio) {
+                    fin = inicio + 60;
+                }
+
+                return {
+                    start: inicio,
+                    end: fin,
+                    estado: rango.estado || "Ocupado"
+                };
+            }).filter(Boolean);
+
+        } catch (e) {
+            console.warn("No se pudieron interpretar las horas ocupadas", e);
+            return [];
+        }
+    }
+
+    function aMinutos(horaTexto) {
+        if (!horaTexto) {
+            return NaN;
+        }
+
+        var partes = horaTexto.split(":");
+        if (partes.length < 2) {
+            return NaN;
+        }
+
+        var horas = parseInt(partes[0], 10);
+        var minutos = parseInt(partes[1], 10);
+
+        if (isNaN(horas) || isNaN(minutos)) {
+            return NaN;
+        }
+
+        return (horas * 60) + minutos;
+    }
+
+    function formatearMinutos(totalMinutos) {
+        var horas = Math.floor(totalMinutos / 60);
+        var minutos = totalMinutos % 60;
+        var h = horas < 10 ? "0" + horas : horas;
+        var m = minutos < 10 ? "0" + minutos : minutos;
+        return h + ":" + m;
+    }
+
+    function slotBloqueado(inicio, fin) {
+        return bloqueosHorario.some(function (bloqueo) {
+            return inicio < bloqueo.end && fin > bloqueo.start;
+        });
+    }
+
+    function hayBloqueoEnRango(inicio, fin) {
+        return bloqueosHorario.some(function (bloqueo) {
+            return inicio < bloqueo.end && fin > bloqueo.start;
+        });
+    }
+
+    function actualizarMensajeHorario(texto, esAlerta) {
+        var mensaje = document.getElementById("mensajeHorario");
+        if (!mensaje) {
+            return;
+        }
+
+        var icono = esAlerta ? "bi-exclamation-triangle-fill" : "bi-info-circle-fill";
+        mensaje.innerHTML = '<i class="bi ' + icono + '"></i> ' + (texto || "");
+        mensaje.classList.toggle("time-grid__message--alert", !!esAlerta);
+    }
+
+    function actualizarInputsHorario() {
+        var inicioInput = document.getElementById("formEvento:horaInicio");
+        var finInput = document.getElementById("formEvento:horaFin");
+
+        if (!inicioInput || !finInput) {
+            return;
+        }
+
+        inicioInput.value = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "";
+        finInput.value = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "";
+
+        if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
+            inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
+            finInput.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+    }
+
+    function pintarSeleccion() {
+        if (!Array.isArray(slotsHorario)) {
+            return;
+        }
+
+        slotsHorario.forEach(function (slot) {
+            var inicioSlot = parseInt(slot.dataset.inicio, 10) || 0;
+            var finSlot = inicioSlot + 60;
+
+            slot.classList.remove('is-selected', 'is-start', 'is-end');
+
+            if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null
+                    && inicioSlot >= seleccionHorario.inicio && finSlot <= seleccionHorario.fin) {
+                slot.classList.add('is-selected');
+            }
+
+            if (seleccionHorario.inicio !== null && inicioSlot === seleccionHorario.inicio) {
+                slot.classList.add('is-start');
+            }
+
+            if (seleccionHorario.fin !== null && finSlot === seleccionHorario.fin) {
+                slot.classList.add('is-end');
+            }
+        });
+    }
+
+    function sincronizarSeleccionExistente() {
+        var inicioInput = document.getElementById("formEvento:horaInicio");
+        var finInput = document.getElementById("formEvento:horaFin");
+
+        if (!inicioInput || !finInput) {
+            return;
+        }
+
+        var inicioMin = aMinutos(inicioInput.value);
+        var finMin = aMinutos(finInput.value);
+
+        if (!isNaN(inicioMin) && !isNaN(finMin) && finMin > inicioMin && !hayBloqueoEnRango(inicioMin, finMin)) {
+            seleccionHorario.inicio = inicioMin;
+            seleccionHorario.fin = finMin;
+        }
+    }
+
+    function manejarClickSlot(minutoInicio) {
+        var fechaInput = document.getElementById("formEvento:fechaEvento");
+        var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
+
+        if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
+            actualizarMensajeHorario("Selecciona primero el espacio y la fecha del evento.", true);
+            return;
+        }
+
+        if (seleccionHorario.inicio === null || seleccionHorario.fin !== null) {
+            seleccionHorario.inicio = minutoInicio;
+            seleccionHorario.fin = null;
+            actualizarMensajeHorario("Ahora elige la hora de fin.", false);
+            actualizarInputsHorario();
+            pintarSeleccion();
+            return;
+        }
+
+        if (minutoInicio <= seleccionHorario.inicio) {
+            seleccionHorario.inicio = minutoInicio;
+            seleccionHorario.fin = null;
+            actualizarMensajeHorario("Selecciona un horario posterior para la hora de fin.", false);
+            actualizarInputsHorario();
+            pintarSeleccion();
+            return;
+        }
+
+        if (hayBloqueoEnRango(seleccionHorario.inicio, minutoInicio)) {
+            actualizarMensajeHorario("El rango seleccionado cruza con un horario ocupado.", true);
+            return;
+        }
+
+        seleccionHorario.fin = minutoInicio;
+
+        actualizarInputsHorario();
+        actualizarMensajeHorario(
+                "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
+                false);
+        pintarSeleccion();
+    }
+
+    function construirGridHorario() {
+        var contenedor = document.getElementById("gridHorario");
+        if (!contenedor) {
+            return;
+        }
+
+        contenedor.innerHTML = "";
+        slotsHorario = [];
+        bloqueosHorario = parseOcupacionesHoras();
+        seleccionHorario = {inicio: null, fin: null};
+
+        var fechaInput = document.getElementById("formEvento:fechaEvento");
+        var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
+
+        if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
+            actualizarMensajeHorario("Selecciona un espacio y una fecha para ver las franjas disponibles.", false);
+            return;
+        }
+
+        sincronizarSeleccionExistente();
+
+        for (var hora = 6; hora < 24; hora++) {
+            var inicioSlot = hora * 60;
+            var finSlot = inicioSlot + 60;
+            var estaBloqueado = slotBloqueado(inicioSlot, finSlot);
+            var estadoTexto = estaBloqueado ? "Bloqueado" : "Disponible";
+            var iconoEstado = estaBloqueado ? "bi-lock-fill" : "bi-check-circle";
+
+            var slot = document.createElement("div");
+            slot.className = "time-slot" + (estaBloqueado ? " is-disabled" : "");
+            slot.dataset.inicio = inicioSlot;
+            slot.innerHTML = ''
+                    + '<div class="time-slot__time"><i class="bi bi-alarm"></i>' + formatearMinutos(inicioSlot) + '</div>'
+                    + '<div class="time-slot__range">Hasta ' + formatearMinutos(finSlot) + '</div>'
+                    + '<div class="time-slot__status"><i class="bi ' + iconoEstado + '"></i>' + estadoTexto + '</div>';
+
+            if (!estaBloqueado) {
+                slot.addEventListener("click", function (evt) {
+                    var minuto = parseInt(evt.currentTarget.dataset.inicio, 10) || 0;
+                    manejarClickSlot(minuto);
+                });
+            }
+
+            contenedor.appendChild(slot);
+            slotsHorario.push(slot);
+        }
+
+        pintarSeleccion();
+
+        if (seleccionHorario.inicio === null) {
+            actualizarMensajeHorario("Elige la hora de inicio para tu evento.", false);
+        } else if (seleccionHorario.fin === null) {
+            actualizarMensajeHorario("Selecciona la hora de fin para definir el rango.", false);
+        } else {
+            actualizarMensajeHorario(
+                    "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
+                    false);
         }
     }
 
@@ -1198,12 +1682,16 @@
         initHoraPicker("horaFin");
     }
 
-    document.addEventListener("DOMContentLoaded", inicializarPickersEvento);
+    document.addEventListener("DOMContentLoaded", function () {
+        inicializarPickersEvento();
+        construirGridHorario();
+    });
 
     if (window.jsf && jsf.ajax) {
         jsf.ajax.addOnEvent(function (data) {
             if (data.status === 'success') {
                 inicializarPickersEvento();
+                construirGridHorario();
             }
         });
     }
