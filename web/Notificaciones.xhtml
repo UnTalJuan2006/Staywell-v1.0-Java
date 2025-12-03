@@ -729,8 +729,8 @@
                                             <strong>#{notif.titulo}</strong>
                                         </td>
                                         <td>
-                                            <span class="badge bg-#{notif.tipo == 'GENERAL' ? 'primary' : 'info'}">
-                                                <i class="bi bi-#{notif.tipo == 'GENERAL' ? 'megaphone' : 'person'}"></i>
+                                            <span class="badge #{notif.tipo == 'GENERAL' ? 'bg-primary' : (notif.tipo == 'NUEVARESERVA' ? 'bg-warning text-dark' : 'bg-info')}">
+                                                <i class="bi #{notif.tipo == 'GENERAL' ? 'bi-megaphone' : (notif.tipo == 'NUEVARESERVA' ? 'bi-bell-fill' : 'bi-person')}"></i>
                                                 #{notif.tipo.etiqueta}
                                             </span>
                                         </td>

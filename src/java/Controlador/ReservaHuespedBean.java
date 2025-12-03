@@ -6,6 +6,7 @@ import DAO.NotificacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
+import DAO.UsuarioDAO;
 import Modelo.EnumEstadoHabitacion;
 import Modelo.EnumEstadoNotificacion;
 import Modelo.EnumEstadoReserva;
@@ -53,6 +54,7 @@ public class ReservaHuespedBean implements Serializable {
     private final ReservaDAO reservaDAO = new ReservaDAO();
     private final PagoDAO pagoDAO = new PagoDAO();
     private final NotificacionDAO notificacionDAO = new NotificacionDAO();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
@@ -478,10 +480,19 @@ public class ReservaHuespedBean implements Serializable {
         notificacion.setMensaje(mensaje);
         notificacion.setFechaEnvio(LocalDateTime.now());
         notificacion.setEstado(EnumEstadoNotificacion.NO_LEIDA);
-        notificacion.setTipo(EnumTipoNotificacion.GENERAL);
+        notificacion.setTipo(EnumTipoNotificacion.NUEVARESERVA);
 
         try {
-            notificacionDAO.enviarGeneral(notificacion);
+            List<Usuario> administradores = usuarioDAO.listarAdministradores();
+
+            if (administradores.isEmpty()) {
+                notificacionDAO.enviarGeneral(notificacion);
+                return;
+            }
+
+            for (Usuario admin : administradores) {
+                notificacionDAO.enviarPorUsuario(notificacion, admin.getIdUsuario());
+            }
         } catch (SQLException e) {
             System.err.println("No se pudo registrar la notificación de nueva reserva: " + e.getMessage());
         }
