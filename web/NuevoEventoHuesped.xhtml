@@ -947,7 +947,7 @@
                                     <label class="form-label">
                                         <i class="bi bi-geo-alt" style="color: #1a7c8f;"></i> Espacio
                                     </label>
-                                    <h:selectOneMenu value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
+                                    <h:selectOneMenu id="espacioSeleccionado" value="#{eventoHuespedBean.espacioSeleccionado}" styleClass="form-select" required="true">
                                         <f:selectItem itemLabel="Seleccione un espacio" itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{eventoHuespedBean.espacios}" var="espacio" itemValue="#{espacio.idEspacio}" itemLabel="#{espacio.nombre}" />
                                         <f:ajax listener="#{eventoHuespedBean.onEspacioChange}" render="resumenCard montoPago fechaEvento ocupacionesJson ocupacionesHorasJson selectorHorarios" />
@@ -968,29 +968,31 @@
                                 </div>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-clock-history" style="color: #1a7c8f;"></i> Hora inicio
-                                    </label>
-                                    <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de inicio.">
-                                        <f:converter converterId="localTimeConverter" />
-                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
-                                    </h:inputText>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">
-                                        <i class="bi bi-clock" style="color: #1a7c8f;"></i> Hora fin
-                                    </label>
-                                    <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" styleClass="form-control" required="true" requiredMessage="Selecciona la hora de fin.">
-                                        <f:converter converterId="localTimeConverter" />
-                                        <f:ajax event="change" listener="#{eventoHuespedBean.onFechasChange}" render="resumenCard montoPago" />
-                                    </h:inputText>
-                                </div>
-                            </div>
-
                             <h:panelGroup id="selectorHorarios" layout="block" styleClass="time-grid-card">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2" style="margin-bottom: 0.75rem;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge" style="background:#e7f6ef; color:#0d7a6f; padding:10px 12px; font-weight:700; border-radius:10px;">
+                                            <i class="bi bi-clock-history me-1"></i>
+                                            Inicio: <span id="badgeHoraInicio">No seleccionado</span>
+                                        </span>
+                                        <span class="badge" style="background:#eef2ff; color:#4253af; padding:10px 12px; font-weight:700; border-radius:10px;">
+                                            <i class="bi bi-clock me-1"></i>
+                                            Fin: <span id="badgeHoraFin">No seleccionado</span>
+                                        </span>
+                                    </div>
+                                    <div class="text-muted small d-flex align-items-center gap-2">
+                                        <i class="bi bi-mouse"></i>
+                                        <span>Haz clic en la hora de inicio y luego en la hora de fin</span>
+                                    </div>
+                                </div>
+
+                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}">
+                                    <f:converter converterId="localTimeConverter" />
+                                </h:inputHidden>
+                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}">
+                                    <f:converter converterId="localTimeConverter" />
+                                </h:inputHidden>
+
                                 <div class="time-calendar__header">
                                     <div class="time-calendar__title">
                                         <h6><i class="bi bi-calendar-week" style="color: #1a7c8f;"></i> Calendario de horas disponibles</h6>
@@ -1471,6 +1473,19 @@
         mensaje.classList.toggle("time-grid__message--alert", !!esAlerta);
     }
 
+    function actualizarBadgesHorario() {
+        var badgeInicio = document.getElementById("badgeHoraInicio");
+        var badgeFin = document.getElementById("badgeHoraFin");
+
+        if (badgeInicio) {
+            badgeInicio.textContent = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "No seleccionado";
+        }
+
+        if (badgeFin) {
+            badgeFin.textContent = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "No seleccionado";
+        }
+    }
+
     function actualizarInputsHorario() {
         var inicioInput = document.getElementById("formEvento:horaInicio");
         var finInput = document.getElementById("formEvento:horaFin");
@@ -1481,6 +1496,8 @@
 
         inicioInput.value = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "";
         finInput.value = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "";
+
+        actualizarBadgesHorario();
 
         if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
             inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
@@ -1528,6 +1545,7 @@
         if (!isNaN(inicioMin) && !isNaN(finMin) && finMin > inicioMin && !hayBloqueoEnRango(inicioMin, finMin)) {
             seleccionHorario.inicio = inicioMin;
             seleccionHorario.fin = finMin;
+            actualizarInputsHorario();
         }
     }
 
@@ -1582,6 +1600,7 @@
         slotsHorario = [];
         bloqueosHorario = parseOcupacionesHoras();
         seleccionHorario = {inicio: null, fin: null};
+        actualizarInputsHorario();
 
         var fechaInput = document.getElementById("formEvento:fechaEvento");
         var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
@@ -1632,25 +1651,6 @@
         }
     }
 
-    function initHoraPicker(componenteId) {
-        var input = document.getElementById("formEvento:" + componenteId);
-        if (!input || !window.flatpickr) {
-            return;
-        }
-
-        if (input._flatpickr) {
-            input._flatpickr.destroy();
-        }
-
-        window.flatpickr(input, {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            allowInput: true
-        });
-    }
-
     function initFechaPicker(disabledRanges) {
         var input = document.getElementById("formEvento:fechaEvento");
         if (!input || !window.flatpickr) {
@@ -1678,8 +1678,6 @@
 
         var rangosDeshabilitados = parseOcupaciones();
         initFechaPicker(rangosDeshabilitados);
-        initHoraPicker("horaInicio");
-        initHoraPicker("horaFin");
     }
 
     document.addEventListener("DOMContentLoaded", function () {
