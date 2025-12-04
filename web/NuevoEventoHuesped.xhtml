@@ -1071,16 +1071,18 @@
                                     </div>
                                 </div>
 
-                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}">
+                                <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
                                     <f:converter converterId="localTimeConverter" />
                                     <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
                                             render="resumenCard montoPago resumenPago" />
-                                </h:inputHidden>
-                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}">
+                                </h:inputText>
+                                <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
                                     <f:converter converterId="localTimeConverter" />
                                     <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
                                             render="resumenCard montoPago resumenPago" />
-                                </h:inputHidden>
+                                </h:inputText>
 
 
                                 <div class="time-calendar__header">
