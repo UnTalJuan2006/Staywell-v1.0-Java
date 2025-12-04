@@ -1604,6 +1604,14 @@
                     if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
                         inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
                         finInput.dispatchEvent(new Event('change', {bubbles: true}));
+
+                        if (window.jsf && jsf.ajax) {
+                            var executeTargets = inicioInput.id + " " + finInput.id;
+                            jsf.ajax.request(inicioInput, null, {
+                                execute: executeTargets,
+                                render: "formEvento:resumenCard formEvento:montoPago formEvento:resumenPago"
+                            });
+                        }
                     }
                 }
 
