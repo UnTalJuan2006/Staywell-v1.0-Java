@@ -1071,8 +1071,18 @@
                                     </div>
                                 </div>
 
-                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}" />
-                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}" />
+                                <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputText>
+                                <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputText>
 
 
                                 <div class="time-calendar__header">
@@ -1599,14 +1609,6 @@
                     if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
                         inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
                         finInput.dispatchEvent(new Event('change', {bubbles: true}));
-
-                        if (window.jsf && jsf.ajax) {
-                            var executeTargets = inicioInput.id + " " + finInput.id;
-                            jsf.ajax.request(inicioInput, null, {
-                                execute: executeTargets,
-                                render: "formEvento:resumenCard formEvento:montoPago formEvento:resumenPago"
-                            });
-                        }
                     }
                 }
 
@@ -1681,12 +1683,14 @@
                         return;
                     }
 
-                    if (hayBloqueoEnRango(seleccionHorario.inicio, minutoInicio)) {
+                    var finCandidato = minutoInicio + 60;
+
+                    if (hayBloqueoEnRango(seleccionHorario.inicio, finCandidato)) {
                         actualizarMensajeHorario("El rango seleccionado cruza con un horario ocupado.", true);
                         return;
                     }
 
-                    seleccionHorario.fin = minutoInicio;
+                    seleccionHorario.fin = finCandidato;
 
                     actualizarInputsHorario();
                     actualizarMensajeHorario(
@@ -1705,7 +1709,6 @@
                     slotsHorario = [];
                     bloqueosHorario = parseOcupacionesHoras();
                     seleccionHorario = {inicio: null, fin: null};
-                    actualizarInputsHorario();
 
                     var fechaInput = document.getElementById("formEvento:fechaEvento");
                     var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
@@ -1716,6 +1719,7 @@
                     }
 
                     sincronizarSeleccionExistente();
+                    actualizarInputsHorario();
 
                     for (var hora = 6; hora < 24; hora++) {
                         var inicioSlot = hora * 60;
