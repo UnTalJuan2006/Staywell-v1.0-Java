@@ -1071,8 +1071,18 @@
                                     </div>
                                 </div>
 
-                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}" />
-                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}" />
+                                <h:inputText id="horaInicio" value="#{eventoHuespedBean.horaInicio}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputText>
+                                <h:inputText id="horaFin" value="#{eventoHuespedBean.horaFin}" style="display:none;">
+                                    <f:passThroughAttribute name="type" value="hidden" />
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputText>
 
 
                                 <div class="time-calendar__header">
@@ -1599,14 +1609,6 @@
                     if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
                         inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
                         finInput.dispatchEvent(new Event('change', {bubbles: true}));
-
-                        if (window.jsf && jsf.ajax) {
-                            var executeTargets = inicioInput.id + " " + finInput.id;
-                            jsf.ajax.request(inicioInput, null, {
-                                execute: executeTargets,
-                                render: "formEvento:resumenCard formEvento:montoPago formEvento:resumenPago"
-                            });
-                        }
                     }
                 }
 
