@@ -1073,9 +1073,11 @@
 
                                 <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}">
                                     <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorasChange}" render="resumenCard montoPago resumenPago" />
                                 </h:inputHidden>
                                 <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}">
                                     <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorasChange}" render="resumenCard montoPago resumenPago" />
                                 </h:inputHidden>
 
                                 <div class="time-calendar__header">

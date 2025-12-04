@@ -632,6 +632,7 @@ public class EventoHuespedBean implements Serializable {
 
     public void setHoraInicio(LocalTime horaInicio) {
         this.horaInicio = horaInicio;
+        recalcularTotal();
     }
 
     public LocalTime getHoraFin() {
@@ -640,6 +641,11 @@ public class EventoHuespedBean implements Serializable {
 
     public void setHoraFin(LocalTime horaFin) {
         this.horaFin = horaFin;
+        recalcularTotal();
+    }
+
+    public void onHorasChange() {
+        recalcularTotal();
     }
 
     public String getNombreCliente() {
