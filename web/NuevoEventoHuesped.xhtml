@@ -1071,8 +1071,16 @@
                                     </div>
                                 </div>
 
-                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}" />
-                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}" />
+                                <h:inputHidden id="horaInicio" value="#{eventoHuespedBean.horaInicio}">
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputHidden>
+                                <h:inputHidden id="horaFin" value="#{eventoHuespedBean.horaFin}">
+                                    <f:converter converterId="localTimeConverter" />
+                                    <f:ajax event="change" listener="#{eventoHuespedBean.onHorarioChange}"
+                                            render="resumenCard montoPago resumenPago" />
+                                </h:inputHidden>
 
 
                                 <div class="time-calendar__header">
@@ -1599,14 +1607,6 @@
                     if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
                         inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
                         finInput.dispatchEvent(new Event('change', {bubbles: true}));
-
-                        if (window.jsf && jsf.ajax) {
-                            var executeTargets = inicioInput.id + " " + finInput.id;
-                            jsf.ajax.request(inicioInput, null, {
-                                execute: executeTargets,
-                                render: "formEvento:resumenCard formEvento:montoPago formEvento:resumenPago"
-                            });
-                        }
                     }
                 }
 

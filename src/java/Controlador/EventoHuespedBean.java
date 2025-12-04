@@ -180,6 +180,10 @@ public class EventoHuespedBean implements Serializable {
         recalcularTotal();
     }
 
+    public void onHorarioChange() {
+        recalcularTotal();
+    }
+
     /**
      * Versión corregida: sin reflexión, sin catch vacío. Asume que
      * Espacio.getCostoHora() devuelve double (ajusta si tu modelo difiere).
