@@ -1683,12 +1683,14 @@
                         return;
                     }
 
-                    if (hayBloqueoEnRango(seleccionHorario.inicio, minutoInicio)) {
+                    var finCandidato = minutoInicio + 60;
+
+                    if (hayBloqueoEnRango(seleccionHorario.inicio, finCandidato)) {
                         actualizarMensajeHorario("El rango seleccionado cruza con un horario ocupado.", true);
                         return;
                     }
 
-                    seleccionHorario.fin = minutoInicio;
+                    seleccionHorario.fin = finCandidato;
 
                     actualizarInputsHorario();
                     actualizarMensajeHorario(
@@ -1707,7 +1709,6 @@
                     slotsHorario = [];
                     bloqueosHorario = parseOcupacionesHoras();
                     seleccionHorario = {inicio: null, fin: null};
-                    actualizarInputsHorario();
 
                     var fechaInput = document.getElementById("formEvento:fechaEvento");
                     var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
@@ -1718,6 +1719,7 @@
                     }
 
                     sincronizarSeleccionExistente();
+                    actualizarInputsHorario();
 
                     for (var hora = 6; hora < 24; hora++) {
                         var inicioSlot = hora * 60;
