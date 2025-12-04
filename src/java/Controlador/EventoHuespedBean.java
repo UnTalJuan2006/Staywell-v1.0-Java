@@ -58,6 +58,7 @@ public class EventoHuespedBean implements Serializable {
 
     private BigDecimal precioDia = BigDecimal.ZERO;
     private BigDecimal totalEvento = BigDecimal.ZERO;
+    private BigDecimal horasEvento = BigDecimal.ZERO;
 
     private Usuario usuarioLogueado;
 
@@ -124,6 +125,7 @@ public class EventoHuespedBean implements Serializable {
         nombreCliente = usuarioLogueado != null ? usuarioLogueado.getNombre() : null;
         precioDia = BigDecimal.ZERO;
         totalEvento = BigDecimal.ZERO;
+        horasEvento = BigDecimal.ZERO;
         subtotalEvento = BigDecimal.ZERO;
         ivaEvento = BigDecimal.ZERO;
         fechasOcupadasJson = "[]";
@@ -226,27 +228,30 @@ public class EventoHuespedBean implements Serializable {
 
         if (espacioSeleccionado == null || precioDia.compareTo(BigDecimal.ZERO) <= 0) {
             totalEvento = BigDecimal.ZERO;
+            horasEvento = BigDecimal.ZERO;
             subtotalEvento = BigDecimal.ZERO;
             ivaEvento = BigDecimal.ZERO;
             return;
         }
 
-        BigDecimal totalCalculado = precioDia;
+        BigDecimal totalCalculado = BigDecimal.ZERO;
+        BigDecimal horasCalculadas = BigDecimal.ZERO;
 
         if (horaInicio != null && horaFin != null && horaFin.isAfter(horaInicio)) {
             long minutos = Duration.between(horaInicio, horaFin).toMinutes();
             if (minutos > 0) {
-                BigDecimal horas = BigDecimal.valueOf(minutos)
+                horasCalculadas = BigDecimal.valueOf(minutos)
                         .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
 
-                if (horas.compareTo(BigDecimal.ONE) < 0) {
-                    horas = BigDecimal.ONE;
+                if (horasCalculadas.compareTo(BigDecimal.ONE) < 0) {
+                    horasCalculadas = BigDecimal.ONE;
                 }
 
-                totalCalculado = precioDia.multiply(horas);
+                totalCalculado = precioDia.multiply(horasCalculadas);
             }
         }
 
+        horasEvento = horasCalculadas.setScale(2, RoundingMode.HALF_UP);
         totalEvento = totalCalculado.setScale(2, RoundingMode.HALF_UP);
         subtotalEvento = totalEvento
                 .divide(BigDecimal.ONE.add(IVA_RATE), 2, RoundingMode.HALF_UP);
@@ -632,6 +637,7 @@ public class EventoHuespedBean implements Serializable {
 
     public void setHoraInicio(LocalTime horaInicio) {
         this.horaInicio = horaInicio;
+        recalcularTotal();
     }
 
     public LocalTime getHoraFin() {
@@ -640,6 +646,11 @@ public class EventoHuespedBean implements Serializable {
 
     public void setHoraFin(LocalTime horaFin) {
         this.horaFin = horaFin;
+        recalcularTotal();
+    }
+
+    public void onHorasChange() {
+        recalcularTotal();
     }
 
     public String getNombreCliente() {
@@ -656,6 +667,10 @@ public class EventoHuespedBean implements Serializable {
 
     public BigDecimal getTotalEvento() {
         return totalEvento;
+    }
+
+    public BigDecimal getHorasEvento() {
+        return horasEvento;
     }
 
     public String getNombreEspacioSeleccionado() {
