@@ -234,8 +234,8 @@ public class EventoHuespedBean implements Serializable {
             return;
         }
 
-        BigDecimal totalCalculado = BigDecimal.ZERO;
         BigDecimal horasCalculadas = BigDecimal.ZERO;
+        BigDecimal subtotalCalculado = BigDecimal.ZERO;
 
         if (horaInicio != null && horaFin != null && horaFin.isAfter(horaInicio)) {
             long minutos = Duration.between(horaInicio, horaFin).toMinutes();
@@ -247,15 +247,14 @@ public class EventoHuespedBean implements Serializable {
                     horasCalculadas = BigDecimal.ONE;
                 }
 
-                totalCalculado = precioDia.multiply(horasCalculadas);
+                subtotalCalculado = precioDia.multiply(horasCalculadas);
             }
         }
 
         horasEvento = horasCalculadas.setScale(2, RoundingMode.HALF_UP);
-        totalEvento = totalCalculado.setScale(2, RoundingMode.HALF_UP);
-        subtotalEvento = totalEvento
-                .divide(BigDecimal.ONE.add(IVA_RATE), 2, RoundingMode.HALF_UP);
-        ivaEvento = totalEvento.subtract(subtotalEvento).setScale(2, RoundingMode.HALF_UP);
+        subtotalEvento = subtotalCalculado.setScale(2, RoundingMode.HALF_UP);
+        ivaEvento = subtotalEvento.multiply(IVA_RATE).setScale(2, RoundingMode.HALF_UP);
+        totalEvento = subtotalEvento.add(ivaEvento).setScale(2, RoundingMode.HALF_UP);
     }
 
     // -------------------------
