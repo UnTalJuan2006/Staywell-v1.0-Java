@@ -1133,9 +1133,24 @@
                                     <div class="summary-item">
                                         <strong>Horario:</strong>
                                         <span>
-                                            <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}" />
-                                            <h:outputText value=" - #{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}" />
+                                            <h:outputText value="#{eventoHuespedBean.horaInicio}" rendered="#{not empty eventoHuespedBean.horaInicio}">
+                                                <f:converter converterId="localTimeConverter" />
+                                            </h:outputText>
+                                            <h:outputText value=" - " rendered="#{not empty eventoHuespedBean.horaInicio and not empty eventoHuespedBean.horaFin}" />
+                                            <h:outputText value="#{eventoHuespedBean.horaFin}" rendered="#{not empty eventoHuespedBean.horaFin}">
+                                                <f:converter converterId="localTimeConverter" />
+                                            </h:outputText>
                                             <h:outputText value="Pendiente" rendered="#{empty eventoHuespedBean.horaInicio and empty eventoHuespedBean.horaFin}" />
+                                        </span>
+                                    </div>
+
+                                    <div class="summary-item">
+                                        <strong>Duración estimada:</strong>
+                                        <span>
+                                            <h:outputText value="#{eventoHuespedBean.horasEvento}">
+                                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                            </h:outputText>
+                                            <h:outputText value=" horas" />
                                         </span>
                                     </div>
 
