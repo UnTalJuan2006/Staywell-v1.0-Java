@@ -222,10 +222,41 @@
                 gap: 2rem;
                 max-width: 1300px;
             }
+            /* Ajustar la columna de resumen para mejor comportamiento sticky */
             .summary-column {
                 display: flex;
                 flex-direction: column;
                 gap: 1.5rem;
+                align-self: flex-start; /* Importante para sticky */
+            }
+
+            /* Card de resumen con sticky mejorado */
+            .summary-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 1.5rem;
+                position: sticky;
+                top: 32px; /* Ajustado para mejor posicionamiento */
+                z-index: 10;
+            }
+
+            /* Card de pago con sticky mejorado */
+            .payment-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+                padding: 1.8rem;
+                position: sticky;
+                top: 32px; /* Mismo valor que summary-card */
+                z-index: 10;
+                margin-top: 1.5rem; /* Espaciado entre cards */
+            }
+
+            /* Alternativa: Si quieres que ambas cards se peguen juntas al hacer scroll */
+            .payment-card.sticky-together {
+                position: sticky;
+                top: calc(32px + 420px); /* 32px del top + altura aproximada del summary-card */
             }
 
             .form-card {
@@ -826,6 +857,58 @@
             }
             
             
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* Reducido de 140px a 110px */
+    gap: 0.75rem; /* Gap más pequeño */
+    margin-top: 1rem;
+}
+
+.time-slot {
+    border: 1.5px solid #dce8e5;
+    border-radius: 12px;
+    padding: 0.6rem 0.7rem; /* Padding más compacto */
+    font-weight: 700;
+    color: #0f5b51;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(13, 122, 111, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Gap reducido */
+}
+
+.time-slot__time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.95rem; /* Texto más pequeño */
+}
+
+.time-slot__time i {
+    color: #156b7d;
+    font-size: 0.9rem; /* Icono más pequeño */
+}
+
+.time-slot__range {
+    font-weight: 600;
+    color: #5f6b7a;
+    font-size: 0.8rem; /* Más pequeño */
+}
+
+.time-slot__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 6px; /* Más compacto */
+    border-radius: 6px;
+    width: fit-content;
+    font-size: 0.75rem; /* Más pequeño */
+    font-weight: 600;
+}
+
         </style>
     </h:head>
 
@@ -1092,7 +1175,7 @@
                                 </div>
                             </h:panelGroup>
 
-                            <div class="payment-card">
+                            <div class="payment-card ">
                                 <h5><i class="bi bi-shield-lock"></i> Método de pago</h5>
 
                                 <div class="payment-summary">
@@ -1339,366 +1422,366 @@
                 </h:form>
             </div>
         </div>
-      <script type="text/javascript">
-//<![CDATA[
-(function () {
+        <script type="text/javascript">
+  //<![CDATA[
+            (function () {
 
-    var seleccionHorario = {inicio: null, fin: null};
-    var slotsHorario = [];
-    var bloqueosHorario = [];
+                var seleccionHorario = {inicio: null, fin: null};
+                var slotsHorario = [];
+                var bloqueosHorario = [];
 
-    function parseOcupaciones() {
-        var nodoFechas = document.getElementById("formEvento:ocupacionesJson");
-        var rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
-        if (!rawJson) {
-            return [];
-        }
+                function parseOcupaciones() {
+                    var nodoFechas = document.getElementById("formEvento:ocupacionesJson");
+                    var rawJson = nodoFechas ? ((nodoFechas.value || nodoFechas.textContent || "").trim()) : "";
+                    if (!rawJson) {
+                        return [];
+                    }
 
-        try {
-            var datos = JSON.parse(rawJson);
-            if (!Array.isArray(datos)) {
-                return [];
-            }
+                    try {
+                        var datos = JSON.parse(rawJson);
+                        if (!Array.isArray(datos)) {
+                            return [];
+                        }
 
-            return datos.map(function (rango) {
-                if (!rango || !rango.from) {
-                    return null;
+                        return datos.map(function (rango) {
+                            if (!rango || !rango.from) {
+                                return null;
+                            }
+
+                            var from = new Date(rango.from);
+                            var to = new Date(rango.to || rango.from);
+
+                            if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+                                return null;
+                            }
+
+                            return {from: from, to: to};
+                        }).filter(Boolean);
+
+                    } catch (e) {
+                        console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
+                        return [];
+                    }
                 }
 
-                var from = new Date(rango.from);
-                var to = new Date(rango.to || rango.from);
+                function parseOcupacionesHoras() {
+                    var nodoHoras = document.getElementById("formEvento:ocupacionesHorasJson");
+                    var rawJson = nodoHoras ? ((nodoHoras.value || nodoHoras.textContent || "").trim()) : "";
 
-                if (isNaN(from.getTime()) || isNaN(to.getTime())) {
-                    return null;
+                    if (!rawJson) {
+                        return [];
+                    }
+
+                    try {
+                        var datos = JSON.parse(rawJson);
+                        if (!Array.isArray(datos)) {
+                            return [];
+                        }
+
+                        return datos.map(function (rango) {
+                            if (!rango || !rango.start || !rango.end) {
+                                return null;
+                            }
+
+                            var inicio = aMinutos(rango.start);
+                            var fin = aMinutos(rango.end);
+
+                            if (isNaN(inicio) || isNaN(fin)) {
+                                return null;
+                            }
+
+                            if (fin <= inicio) {
+                                fin = inicio + 60;
+                            }
+
+                            return {
+                                start: inicio,
+                                end: fin,
+                                estado: rango.estado || "Ocupado"
+                            };
+                        }).filter(Boolean);
+
+                    } catch (e) {
+                        console.warn("No se pudieron interpretar las horas ocupadas", e);
+                        return [];
+                    }
                 }
 
-                return {from: from, to: to};
-            }).filter(Boolean);
+                function aMinutos(horaTexto) {
+                    if (!horaTexto) {
+                        return NaN;
+                    }
 
-        } catch (e) {
-            console.warn("No se pudieron interpretar las fechas ocupadas del espacio", e);
-            return [];
-        }
-    }
+                    var partes = horaTexto.split(":");
+                    if (partes.length < 2) {
+                        return NaN;
+                    }
 
-    function parseOcupacionesHoras() {
-        var nodoHoras = document.getElementById("formEvento:ocupacionesHorasJson");
-        var rawJson = nodoHoras ? ((nodoHoras.value || nodoHoras.textContent || "").trim()) : "";
+                    var horas = parseInt(partes[0], 10);
+                    var minutos = parseInt(partes[1], 10);
 
-        if (!rawJson) {
-            return [];
-        }
+                    if (isNaN(horas) || isNaN(minutos)) {
+                        return NaN;
+                    }
 
-        try {
-            var datos = JSON.parse(rawJson);
-            if (!Array.isArray(datos)) {
-                return [];
-            }
-
-            return datos.map(function (rango) {
-                if (!rango || !rango.start || !rango.end) {
-                    return null;
+                    return (horas * 60) + minutos;
                 }
 
-                var inicio = aMinutos(rango.start);
-                var fin = aMinutos(rango.end);
-
-                if (isNaN(inicio) || isNaN(fin)) {
-                    return null;
+                function formatearMinutos(totalMinutos) {
+                    var horas = Math.floor(totalMinutos / 60);
+                    var minutos = totalMinutos % 60;
+                    var h = horas < 10 ? "0" + horas : horas;
+                    var m = minutos < 10 ? "0" + minutos : minutos;
+                    return h + ":" + m;
                 }
 
-                if (fin <= inicio) {
-                    fin = inicio + 60;
+                function slotBloqueado(inicio, fin) {
+                    return bloqueosHorario.some(function (bloqueo) {
+                        return inicio < bloqueo.end && fin > bloqueo.start;
+                    });
                 }
 
-                return {
-                    start: inicio,
-                    end: fin,
-                    estado: rango.estado || "Ocupado"
-                };
-            }).filter(Boolean);
+                function hayBloqueoEnRango(inicio, fin) {
+                    return bloqueosHorario.some(function (bloqueo) {
+                        return inicio < bloqueo.end && fin > bloqueo.start;
+                    });
+                }
 
-        } catch (e) {
-            console.warn("No se pudieron interpretar las horas ocupadas", e);
-            return [];
-        }
-    }
+                function actualizarMensajeHorario(texto, esAlerta) {
+                    var mensaje = document.getElementById("mensajeHorario");
+                    if (!mensaje) {
+                        return;
+                    }
 
-    function aMinutos(horaTexto) {
-        if (!horaTexto) {
-            return NaN;
-        }
+                    var icono = esAlerta ? "bi-exclamation-triangle-fill" : "bi-info-circle-fill";
+                    mensaje.innerHTML = '<i class="bi ' + icono + '"></i> ' + (texto || "");
+                    mensaje.classList.toggle("time-grid__message--alert", !!esAlerta);
+                }
 
-        var partes = horaTexto.split(":");
-        if (partes.length < 2) {
-            return NaN;
-        }
+                function actualizarBadgesHorario() {
+                    var badgeInicio = document.getElementById("badgeHoraInicio");
+                    var badgeFin = document.getElementById("badgeHoraFin");
 
-        var horas = parseInt(partes[0], 10);
-        var minutos = parseInt(partes[1], 10);
+                    if (badgeInicio) {
+                        badgeInicio.textContent = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "No seleccionado";
+                    }
 
-        if (isNaN(horas) || isNaN(minutos)) {
-            return NaN;
-        }
+                    if (badgeFin) {
+                        badgeFin.textContent = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "No seleccionado";
+                    }
+                }
 
-        return (horas * 60) + minutos;
-    }
+                function actualizarInputsHorario() {
+                    var inicioInput = document.getElementById("formEvento:horaInicio");
+                    var finInput = document.getElementById("formEvento:horaFin");
 
-    function formatearMinutos(totalMinutos) {
-        var horas = Math.floor(totalMinutos / 60);
-        var minutos = totalMinutos % 60;
-        var h = horas < 10 ? "0" + horas : horas;
-        var m = minutos < 10 ? "0" + minutos : minutos;
-        return h + ":" + m;
-    }
+                    if (!inicioInput || !finInput) {
+                        return;
+                    }
 
-    function slotBloqueado(inicio, fin) {
-        return bloqueosHorario.some(function (bloqueo) {
-            return inicio < bloqueo.end && fin > bloqueo.start;
-        });
-    }
+                    inicioInput.value = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "";
+                    finInput.value = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "";
 
-    function hayBloqueoEnRango(inicio, fin) {
-        return bloqueosHorario.some(function (bloqueo) {
-            return inicio < bloqueo.end && fin > bloqueo.start;
-        });
-    }
+                    actualizarBadgesHorario();
 
-    function actualizarMensajeHorario(texto, esAlerta) {
-        var mensaje = document.getElementById("mensajeHorario");
-        if (!mensaje) {
-            return;
-        }
+                    if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
+                        inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
+                        finInput.dispatchEvent(new Event('change', {bubbles: true}));
+                    }
+                }
 
-        var icono = esAlerta ? "bi-exclamation-triangle-fill" : "bi-info-circle-fill";
-        mensaje.innerHTML = '<i class="bi ' + icono + '"></i> ' + (texto || "");
-        mensaje.classList.toggle("time-grid__message--alert", !!esAlerta);
-    }
+                function pintarSeleccion() {
+                    if (!Array.isArray(slotsHorario)) {
+                        return;
+                    }
 
-    function actualizarBadgesHorario() {
-        var badgeInicio = document.getElementById("badgeHoraInicio");
-        var badgeFin = document.getElementById("badgeHoraFin");
+                    slotsHorario.forEach(function (slot) {
+                        var inicioSlot = parseInt(slot.dataset.inicio, 10) || 0;
+                        var finSlot = inicioSlot + 60;
 
-        if (badgeInicio) {
-            badgeInicio.textContent = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "No seleccionado";
-        }
+                        slot.classList.remove('is-selected', 'is-start', 'is-end');
 
-        if (badgeFin) {
-            badgeFin.textContent = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "No seleccionado";
-        }
-    }
+                        if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null
+                                && inicioSlot >= seleccionHorario.inicio && finSlot <= seleccionHorario.fin) {
+                            slot.classList.add('is-selected');
+                        }
 
-    function actualizarInputsHorario() {
-        var inicioInput = document.getElementById("formEvento:horaInicio");
-        var finInput = document.getElementById("formEvento:horaFin");
+                        if (seleccionHorario.inicio !== null && inicioSlot === seleccionHorario.inicio) {
+                            slot.classList.add('is-start');
+                        }
 
-        if (!inicioInput || !finInput) {
-            return;
-        }
+                        if (seleccionHorario.fin !== null && finSlot === seleccionHorario.fin) {
+                            slot.classList.add('is-end');
+                        }
+                    });
+                }
 
-        inicioInput.value = seleccionHorario.inicio !== null ? formatearMinutos(seleccionHorario.inicio) : "";
-        finInput.value = seleccionHorario.fin !== null ? formatearMinutos(seleccionHorario.fin) : "";
+                function sincronizarSeleccionExistente() {
+                    var inicioInput = document.getElementById("formEvento:horaInicio");
+                    var finInput = document.getElementById("formEvento:horaFin");
 
-        actualizarBadgesHorario();
+                    if (!inicioInput || !finInput) {
+                        return;
+                    }
 
-        if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null) {
-            inicioInput.dispatchEvent(new Event('change', {bubbles: true}));
-            finInput.dispatchEvent(new Event('change', {bubbles: true}));
-        }
-    }
+                    var inicioMin = aMinutos(inicioInput.value);
+                    var finMin = aMinutos(finInput.value);
 
-    function pintarSeleccion() {
-        if (!Array.isArray(slotsHorario)) {
-            return;
-        }
+                    if (!isNaN(inicioMin) && !isNaN(finMin) && finMin > inicioMin && !hayBloqueoEnRango(inicioMin, finMin)) {
+                        seleccionHorario.inicio = inicioMin;
+                        seleccionHorario.fin = finMin;
+                        actualizarInputsHorario();
+                    }
+                }
 
-        slotsHorario.forEach(function (slot) {
-            var inicioSlot = parseInt(slot.dataset.inicio, 10) || 0;
-            var finSlot = inicioSlot + 60;
+                function manejarClickSlot(minutoInicio) {
+                    var fechaInput = document.getElementById("formEvento:fechaEvento");
+                    var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
 
-            slot.classList.remove('is-selected', 'is-start', 'is-end');
+                    if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
+                        actualizarMensajeHorario("Selecciona primero el espacio y la fecha del evento.", true);
+                        return;
+                    }
 
-            if (seleccionHorario.inicio !== null && seleccionHorario.fin !== null
-                    && inicioSlot >= seleccionHorario.inicio && finSlot <= seleccionHorario.fin) {
-                slot.classList.add('is-selected');
-            }
+                    if (seleccionHorario.inicio === null || seleccionHorario.fin !== null) {
+                        seleccionHorario.inicio = minutoInicio;
+                        seleccionHorario.fin = null;
+                        actualizarMensajeHorario("Ahora elige la hora de fin.", false);
+                        actualizarInputsHorario();
+                        pintarSeleccion();
+                        return;
+                    }
 
-            if (seleccionHorario.inicio !== null && inicioSlot === seleccionHorario.inicio) {
-                slot.classList.add('is-start');
-            }
+                    if (minutoInicio <= seleccionHorario.inicio) {
+                        seleccionHorario.inicio = minutoInicio;
+                        seleccionHorario.fin = null;
+                        actualizarMensajeHorario("Selecciona un horario posterior para la hora de fin.", false);
+                        actualizarInputsHorario();
+                        pintarSeleccion();
+                        return;
+                    }
 
-            if (seleccionHorario.fin !== null && finSlot === seleccionHorario.fin) {
-                slot.classList.add('is-end');
-            }
-        });
-    }
+                    if (hayBloqueoEnRango(seleccionHorario.inicio, minutoInicio)) {
+                        actualizarMensajeHorario("El rango seleccionado cruza con un horario ocupado.", true);
+                        return;
+                    }
 
-    function sincronizarSeleccionExistente() {
-        var inicioInput = document.getElementById("formEvento:horaInicio");
-        var finInput = document.getElementById("formEvento:horaFin");
+                    seleccionHorario.fin = minutoInicio;
 
-        if (!inicioInput || !finInput) {
-            return;
-        }
+                    actualizarInputsHorario();
+                    actualizarMensajeHorario(
+                            "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
+                            false);
+                    pintarSeleccion();
+                }
 
-        var inicioMin = aMinutos(inicioInput.value);
-        var finMin = aMinutos(finInput.value);
+                function construirGridHorario() {
+                    var contenedor = document.getElementById("gridHorario");
+                    if (!contenedor) {
+                        return;
+                    }
 
-        if (!isNaN(inicioMin) && !isNaN(finMin) && finMin > inicioMin && !hayBloqueoEnRango(inicioMin, finMin)) {
-            seleccionHorario.inicio = inicioMin;
-            seleccionHorario.fin = finMin;
-            actualizarInputsHorario();
-        }
-    }
+                    contenedor.innerHTML = "";
+                    slotsHorario = [];
+                    bloqueosHorario = parseOcupacionesHoras();
+                    seleccionHorario = {inicio: null, fin: null};
+                    actualizarInputsHorario();
 
-    function manejarClickSlot(minutoInicio) {
-        var fechaInput = document.getElementById("formEvento:fechaEvento");
-        var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
+                    var fechaInput = document.getElementById("formEvento:fechaEvento");
+                    var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
 
-        if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
-            actualizarMensajeHorario("Selecciona primero el espacio y la fecha del evento.", true);
-            return;
-        }
+                    if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
+                        actualizarMensajeHorario("Selecciona un espacio y una fecha para ver las franjas disponibles.", false);
+                        return;
+                    }
 
-        if (seleccionHorario.inicio === null || seleccionHorario.fin !== null) {
-            seleccionHorario.inicio = minutoInicio;
-            seleccionHorario.fin = null;
-            actualizarMensajeHorario("Ahora elige la hora de fin.", false);
-            actualizarInputsHorario();
-            pintarSeleccion();
-            return;
-        }
+                    sincronizarSeleccionExistente();
 
-        if (minutoInicio <= seleccionHorario.inicio) {
-            seleccionHorario.inicio = minutoInicio;
-            seleccionHorario.fin = null;
-            actualizarMensajeHorario("Selecciona un horario posterior para la hora de fin.", false);
-            actualizarInputsHorario();
-            pintarSeleccion();
-            return;
-        }
+                    for (var hora = 6; hora < 24; hora++) {
+                        var inicioSlot = hora * 60;
+                        var finSlot = inicioSlot + 60;
+                        var estaBloqueado = slotBloqueado(inicioSlot, finSlot);
+                        var estadoTexto = estaBloqueado ? "Bloqueado" : "Disponible";
+                        var iconoEstado = estaBloqueado ? "bi-lock-fill" : "bi-check-circle";
 
-        if (hayBloqueoEnRango(seleccionHorario.inicio, minutoInicio)) {
-            actualizarMensajeHorario("El rango seleccionado cruza con un horario ocupado.", true);
-            return;
-        }
+                        var slot = document.createElement("div");
+                        slot.className = "time-slot" + (estaBloqueado ? " is-disabled" : "");
+                        slot.dataset.inicio = inicioSlot;
+                        slot.innerHTML = ''
+                                + '<div class="time-slot__time"><i class="bi bi-alarm"></i>' + formatearMinutos(inicioSlot) + '</div>'
+                                + '<div class="time-slot__range">Hasta ' + formatearMinutos(finSlot) + '</div>'
+                                + '<div class="time-slot__status"><i class="bi ' + iconoEstado + '"></i>' + estadoTexto + '</div>';
 
-        seleccionHorario.fin = minutoInicio;
+                        if (!estaBloqueado) {
+                            slot.addEventListener("click", function (evt) {
+                                var minuto = parseInt(evt.currentTarget.dataset.inicio, 10) || 0;
+                                manejarClickSlot(minuto);
+                            });
+                        }
 
-        actualizarInputsHorario();
-        actualizarMensajeHorario(
-                "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
-                false);
-        pintarSeleccion();
-    }
+                        contenedor.appendChild(slot);
+                        slotsHorario.push(slot);
+                    }
 
-    function construirGridHorario() {
-        var contenedor = document.getElementById("gridHorario");
-        if (!contenedor) {
-            return;
-        }
+                    pintarSeleccion();
 
-        contenedor.innerHTML = "";
-        slotsHorario = [];
-        bloqueosHorario = parseOcupacionesHoras();
-        seleccionHorario = {inicio: null, fin: null};
-        actualizarInputsHorario();
+                    if (seleccionHorario.inicio === null) {
+                        actualizarMensajeHorario("Elige la hora de inicio para tu evento.", false);
+                    } else if (seleccionHorario.fin === null) {
+                        actualizarMensajeHorario("Selecciona la hora de fin para definir el rango.", false);
+                    } else {
+                        actualizarMensajeHorario(
+                                "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
+                                false);
+                    }
+                }
 
-        var fechaInput = document.getElementById("formEvento:fechaEvento");
-        var espacioInput = document.getElementById("formEvento:espacioSeleccionado");
+                function initFechaPicker(disabledRanges) {
+                    var input = document.getElementById("formEvento:fechaEvento");
+                    if (!input || !window.flatpickr) {
+                        return;
+                    }
 
-        if (!fechaInput || !fechaInput.value || !espacioInput || !espacioInput.value) {
-            actualizarMensajeHorario("Selecciona un espacio y una fecha para ver las franjas disponibles.", false);
-            return;
-        }
+                    if (input._flatpickr) {
+                        input._flatpickr.destroy();
+                    }
 
-        sincronizarSeleccionExistente();
+                    window.flatpickr(input, {
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "d/m/Y",
+                        minDate: "today",
+                        allowInput: false,
+                        disable: disabledRanges
+                    });
+                }
 
-        for (var hora = 6; hora < 24; hora++) {
-            var inicioSlot = hora * 60;
-            var finSlot = inicioSlot + 60;
-            var estaBloqueado = slotBloqueado(inicioSlot, finSlot);
-            var estadoTexto = estaBloqueado ? "Bloqueado" : "Disponible";
-            var iconoEstado = estaBloqueado ? "bi-lock-fill" : "bi-check-circle";
+                function inicializarPickersEvento() {
+                    if (!window.flatpickr) {
+                        return;
+                    }
 
-            var slot = document.createElement("div");
-            slot.className = "time-slot" + (estaBloqueado ? " is-disabled" : "");
-            slot.dataset.inicio = inicioSlot;
-            slot.innerHTML = ''
-                    + '<div class="time-slot__time"><i class="bi bi-alarm"></i>' + formatearMinutos(inicioSlot) + '</div>'
-                    + '<div class="time-slot__range">Hasta ' + formatearMinutos(finSlot) + '</div>'
-                    + '<div class="time-slot__status"><i class="bi ' + iconoEstado + '"></i>' + estadoTexto + '</div>';
+                    var rangosDeshabilitados = parseOcupaciones();
+                    initFechaPicker(rangosDeshabilitados);
+                }
 
-            if (!estaBloqueado) {
-                slot.addEventListener("click", function (evt) {
-                    var minuto = parseInt(evt.currentTarget.dataset.inicio, 10) || 0;
-                    manejarClickSlot(minuto);
+                document.addEventListener("DOMContentLoaded", function () {
+                    inicializarPickersEvento();
+                    construirGridHorario();
                 });
-            }
 
-            contenedor.appendChild(slot);
-            slotsHorario.push(slot);
-        }
+                if (window.jsf && jsf.ajax) {
+                    jsf.ajax.addOnEvent(function (data) {
+                        if (data.status === 'success') {
+                            inicializarPickersEvento();
+                            construirGridHorario();
+                        }
+                    });
+                }
 
-        pintarSeleccion();
-
-        if (seleccionHorario.inicio === null) {
-            actualizarMensajeHorario("Elige la hora de inicio para tu evento.", false);
-        } else if (seleccionHorario.fin === null) {
-            actualizarMensajeHorario("Selecciona la hora de fin para definir el rango.", false);
-        } else {
-            actualizarMensajeHorario(
-                    "Horario seleccionado: " + formatearMinutos(seleccionHorario.inicio) + " - " + formatearMinutos(seleccionHorario.fin) + ".",
-                    false);
-        }
-    }
-
-    function initFechaPicker(disabledRanges) {
-        var input = document.getElementById("formEvento:fechaEvento");
-        if (!input || !window.flatpickr) {
-            return;
-        }
-
-        if (input._flatpickr) {
-            input._flatpickr.destroy();
-        }
-
-        window.flatpickr(input, {
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d/m/Y",
-            minDate: "today",
-            allowInput: false,
-            disable: disabledRanges
-        });
-    }
-
-    function inicializarPickersEvento() {
-        if (!window.flatpickr) {
-            return;
-        }
-
-        var rangosDeshabilitados = parseOcupaciones();
-        initFechaPicker(rangosDeshabilitados);
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        inicializarPickersEvento();
-        construirGridHorario();
-    });
-
-    if (window.jsf && jsf.ajax) {
-        jsf.ajax.addOnEvent(function (data) {
-            if (data.status === 'success') {
-                inicializarPickersEvento();
-                construirGridHorario();
-            }
-        });
-    }
-
-})();
-//]]>
-</script>
+            })();
+  //]]>
+        </script>
 
 
     </h:body>
