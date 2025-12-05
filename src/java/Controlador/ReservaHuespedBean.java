@@ -6,7 +6,6 @@ import DAO.NotificacionDAO;
 import DAO.PagoDAO;
 import DAO.ReservaDAO;
 import DAO.TipoHabitacionDAO;
-import DAO.UsuarioDAO;
 import Modelo.EnumEstadoHabitacion;
 import Modelo.EnumEstadoNotificacion;
 import Modelo.EnumEstadoReserva;
@@ -54,7 +53,6 @@ public class ReservaHuespedBean implements Serializable {
     private final ReservaDAO reservaDAO = new ReservaDAO();
     private final PagoDAO pagoDAO = new PagoDAO();
     private final NotificacionDAO notificacionDAO = new NotificacionDAO();
-    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     private List<TipoHabitacion> tiposHabitacion = new ArrayList<>();
     private List<Habitacion> habitacionesDisponibles = new ArrayList<>();
@@ -461,7 +459,7 @@ public class ReservaHuespedBean implements Serializable {
 
     private void notificarNuevaReserva(Reserva reserva) {
         Notificacion notificacion = new Notificacion();
-        notificacion.setTitulo("Nueva reserva creada exitosamente");
+        notificacion.setTitulo("Nueva Reserva Registrada");
 
         String habitacionInfo;
         if (reserva.getHabitacion() != null) {
@@ -479,13 +477,11 @@ public class ReservaHuespedBean implements Serializable {
                 formatearFechaCorta(reserva.getCheckout()));
 
         String mensaje = String.format(
-                "Se creó la reserva #%d para %s en %s %s. Contacto: %s / %s.",
+                "Un huésped ha creado la reserva #%d para %s en %s %s.",
                 reserva.getIdReserva(),
                 reserva.getNombreCliente(),
                 habitacionInfo,
-                rangoFechas,
-                Optional.ofNullable(reserva.getEmail()).orElse("Sin correo"),
-                Optional.ofNullable(reserva.getTelefono()).orElse("Sin teléfono"));
+                rangoFechas);
 
         notificacion.setMensaje(mensaje);
         notificacion.setFechaEnvio(LocalDateTime.now());
@@ -493,14 +489,7 @@ public class ReservaHuespedBean implements Serializable {
         notificacion.setTipo(EnumTipoNotificacion.RESERVANUEVA);
 
         try {
-            List<Usuario> administradores = usuarioDAO.listarAdministradores();
-
-            if (administradores == null || administradores.isEmpty()) {
-                System.out.println("No se enviaron notificaciones de nueva reserva porque no hay administradores registrados.");
-                return;
-            }
-
-            notificacionDAO.enviarNuevasReservasParaAdmins(notificacion, administradores);
+            notificacionDAO.enviarGeneral(notificacion);
         } catch (SQLException e) {
             System.err.println("No se pudo registrar la notificación de nueva reserva: " + e.getMessage());
         }
