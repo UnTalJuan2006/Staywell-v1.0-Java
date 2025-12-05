@@ -536,9 +536,12 @@
                                 update="notificationPanel notificationBadge notificationContent" />
 
                         <div class="notification-wrapper">
-                            <p:commandLink id="notificationBell" process="@this" update="notificationBadge notificationContent"
-                                           styleClass="notification-bell" type="button"
-                                           oncomplete="PF('notificationPanelWidget').show(this);">
+                            <p:commandLink id="notificationBell"
+               styleClass="notification-bell"
+               process="@this"
+               update="notificationBadge notificationPanel"
+               onclick="PF('notificationPanelWidget').toggle(this); return false;">
+
                                 <i class="bi bi-bell-fill"></i>
                                 <h:panelGroup id="notificationBadge" rendered="#{notificacionBean.totalNoLeidasNuevasReservas > 0}"
                                              styleClass="notification-badge">
