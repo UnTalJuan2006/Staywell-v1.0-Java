@@ -578,6 +578,14 @@
                                                 <div class="notification-title">#{notif.titulo}</div>
                                                 <div class="notification-message">#{notif.mensaje}</div>
                                                 <div class="notification-date">#{notificacionBean.formatearFecha(notif.fechaEnvio)}</div>
+                                                <div class="mt-2">
+                                                    <p:commandButton value="Marcar como leída"
+                                                                     styleClass="btn btn-success btn-sm"
+                                                                     rendered="#{notif.estado eq 'NO_LEIDA'}"
+                                                                     process="@this"
+                                                                     actionListener="#{notificacionBean.marcarComoLeida(notif)}"
+                                                                     update="notificationPanel notificationBadge" />
+                                                </div>
                                             </div>
                                         </div>
                                     </ui:repeat>
