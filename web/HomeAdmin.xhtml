@@ -533,7 +533,7 @@
                 <div class="user-info d-flex align-items-center">
                     <h:form id="notificationForm" styleClass="d-flex align-items-center">
                         <p:poll interval="15" listener="#{notificacionBean.cargarNotificacionesSesion}"
-                                update="notificationPanel notificationBadge" />
+                                update="notificationPanel notificationBadge notificationContent" />
 
                         <div class="notification-wrapper">
                             <p:commandLink id="notificationBell" process="@this" update="notificationPanel"
@@ -550,38 +550,48 @@
                                             hideEffect="fade" my="right top" at="right bottom"
                                             styleClass="notification-panel" dismissable="true"
                                             widgetVar="notificationPanelWidget" appendTo="@(body)">
-                                <div class="notification-header">
-                                    <div class="notification-header-title">
-                                        <i class="bi bi-bell"></i>
-                                        <span>Nuevas reservas</span>
-                                    </div>
-                                    <small>Solo se muestran alertas de creación</small>
-                                </div>
-
-                                <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificacionesNuevasReservas}" styleClass="notification-item" layout="block">
-                                    <div class="notification-bullet">
-                                        <i class="bi bi-inboxes"></i>
-                                    </div>
-                                    <div>
-                                        <div class="notification-title">Sin notificaciones recientes</div>
-                                        <div class="notification-message">Aún no se han generado nuevas reservas.</div>
-                                    </div>
-                                </h:panelGroup>
-
-                                <div class="notification-list">
-                                    <ui:repeat value="#{notificacionBean.ultimasNotificacionesNuevasReservas}" var="notif">
-                                        <div class="notification-item">
-                                            <div class="notification-bullet">
-                                                <i class="bi bi-house-heart"></i>
-                                            </div>
-                                            <div>
-                                                <div class="notification-title">#{notif.titulo}</div>
-                                                <div class="notification-message">#{notif.mensaje}</div>
-                                                <div class="notification-date">#{notificacionBean.formatearFecha(notif.fechaEnvio)}</div>
-                                            </div>
+                                <p:outputPanel id="notificationContent" deferred="true">
+                                    <div class="notification-header">
+                                        <div class="notification-header-title">
+                                            <i class="bi bi-bell"></i>
+                                            <span>Nuevas reservas</span>
                                         </div>
-                                    </ui:repeat>
-                                </div>
+                                        <small>Solo se muestran alertas de creación</small>
+                                    </div>
+
+                                    <h:panelGroup rendered="#{empty notificacionBean.ultimasNotificacionesNuevasReservas}" styleClass="notification-item" layout="block">
+                                        <div class="notification-bullet">
+                                            <i class="bi bi-inboxes"></i>
+                                        </div>
+                                        <div>
+                                            <div class="notification-title">Sin notificaciones recientes</div>
+                                            <div class="notification-message">Aún no se han generado nuevas reservas.</div>
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <div class="notification-list">
+                                        <ui:repeat value="#{notificacionBean.ultimasNotificacionesNuevasReservas}" var="notif">
+                                            <div class="notification-item">
+                                                <div class="notification-bullet">
+                                                    <i class="bi bi-house-heart"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="notification-title">#{notif.titulo}</div>
+                                                    <div class="notification-message">#{notif.mensaje}</div>
+                                                    <div class="notification-date">#{notificacionBean.formatearFecha(notif.fechaEnvio)}</div>
+                                                    <div class="mt-2">
+                                                        <p:commandButton value="Marcar como leída"
+                                                                         styleClass="btn btn-success btn-sm"
+                                                                         rendered="#{notif.estado eq 'NO_LEIDA'}"
+                                                                         process="@this"
+                                                                         actionListener="#{notificacionBean.marcarComoLeida(notif)}"
+                                                                         update="notificationPanel notificationBadge notificationContent" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ui:repeat>
+                                    </div>
+                                </p:outputPanel>
                             </p:overlayPanel>
                         </div>
                     </h:form>

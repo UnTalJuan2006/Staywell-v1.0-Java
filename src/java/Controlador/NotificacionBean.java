@@ -100,6 +100,7 @@ public class NotificacionBean implements Serializable {
         }
 
         return notificacionesNuevasReservas.stream()
+                .filter(n -> EnumEstadoNotificacion.NO_LEIDA.equals(n.getEstado()))
                 .limit(5)
                 .collect(Collectors.toList());
     }
