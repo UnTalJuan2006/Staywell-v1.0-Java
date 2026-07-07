@@ -16,7 +16,6 @@ import Modelo.Reserva;
 import Modelo.Pago;
 import Modelo.TipoHabitacion;
 import Modelo.EnumTipoNotificacion;
-import Modelo.Usuario;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
